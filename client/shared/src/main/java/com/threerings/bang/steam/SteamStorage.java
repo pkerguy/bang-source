@@ -105,11 +105,6 @@ public class SteamStorage {
             public void onMicroTxnAuthorization(int appID, long orderID, boolean authorized) {
 
             }
-
-            @Override
-            public void onEncryptedAppTicket(SteamResult result) {
-
-            }
         };
     }
 }

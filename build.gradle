@@ -6,7 +6,7 @@ allprojects {
     gdxVersion = "1.5.4"
     naryaVersion = "1.15"
     nenyaVersion = "1.7-SNAPSHOT"
-    towns = [ "frontier_town", "indian_post" ]
+    towns = ["frontier_town", "indian_post"]
     // indicates whether we're building for test or production
     // when "package" target is invoked the deployment will be set to "prod"
     deployment = "test"
@@ -21,37 +21,38 @@ allprojects {
     provided
     tools
 
-  dependencies {
-    compile "com.threerings:nenya:1.7"
-    compile "com.threerings:nenya-tools:1.7"
-    compile "com.code-disaster.steamworks4j:steamworks4j:1.6.3-SNAPSHOT"
-    tools "com.threerings:narya-tools:${naryaVersion}"
-    tools project(":tools")
-  }
-
-  sourceSets {
-    main {
-      compileClasspath += configurations.provided
-      runtimeClasspath += configurations.provided
+    dependencies {
+      compile "com.threerings:nenya:1.7"
+      compile "com.threerings:nenya-tools:1.7"
+      compile "com.code-disaster.steamworks4j:steamworks4j:1.6.3-SNAPSHOT"
+      tools "com.threerings:narya-tools:${naryaVersion}"
+      tools project(":tools")
     }
-    test {
-      compileClasspath += configurations.provided
-      runtimeClasspath += configurations.provided
-    }
-  }
 
-  repositories {
-    mavenLocal()
-    mavenCentral()
-    maven {
-      credentials {
-        username "deployment"
-        password "Fc9uRkx5lr"
+    sourceSets {
+      main {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
       }
-      url "http://148.251.113.74:8081/nexus/content/repositories/releases/"
+      test {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+      }
     }
-    maven {
-      url "https://oss.sonatype.org/content/repositories/snapshots/"
+
+    repositories {
+      mavenLocal()
+      mavenCentral()
+      maven {
+        credentials {
+          username "deployment"
+          password "Fc9uRkx5lr"
+        }
+        url "http://148.251.113.74:8081/nexus/content/repositories/releases/"
+      }
+      maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+      }
     }
   }
 }

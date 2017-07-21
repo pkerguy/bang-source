@@ -20,12 +20,11 @@ allprojects {
   configurations {
     provided
     tools
-  }
 
   dependencies {
     compile "com.threerings:nenya:1.7"
     compile "com.threerings:nenya-tools:1.7"
-    compile "steam:steamworks4j:1.7"
+    compile "com.code-disaster.steamworks4j:steamworks4j:1.6.3-SNAPSHOT"
     tools "com.threerings:narya-tools:${naryaVersion}"
     tools project(":tools")
   }
@@ -50,6 +49,9 @@ allprojects {
         password "Fc9uRkx5lr"
       }
       url "http://148.251.113.74:8081/nexus/content/repositories/releases/"
+    }
+    maven {
+      url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
   }
 }

@@ -3,3 +3,7 @@ etc/bang-client.pro
 etc/proguard/*.map
 log/*.log
 .gradle
+.idea/*
+.gradle/*
+*.class
+*build/*

@@ -19,7 +19,7 @@ public class SteamStorage {
                         "Please make sure to be running Steam before trying to run Bang! Howdy.",
                         "Steam is not running",
                         JOptionPane.ERROR_MESSAGE);
-                return;
+                System.exit(0);
             }
         } catch (SteamException e) {
             e.printStackTrace();
@@ -27,7 +27,7 @@ public class SteamStorage {
                     "An exception occurred while trying to attach to Steam.",
                     "Steam Exception",
                     JOptionPane.ERROR_MESSAGE);
-            return;
+            System.exit(0);
         }
         userCallback = new SteamUserCallback() {
             @Override

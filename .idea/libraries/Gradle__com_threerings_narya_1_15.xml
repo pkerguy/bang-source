@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: com.threerings:narya:1.15">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/threerings/narya/1.15/narya-1.15.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

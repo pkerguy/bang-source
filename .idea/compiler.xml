@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="app_main" target="1.8" />
+      <module name="app_test" target="1.8" />
+      <module name="assets_main" target="1.8" />
+      <module name="assets_test" target="1.8" />
+      <module name="bang-client" target="1.5" />
+      <module name="bang-game" target="1.5" />
+      <module name="bang-game_main" target="1.8" />
+      <module name="bang-game_test" target="1.8" />
+      <module name="bui_main" target="1.8" />
+      <module name="bui_test" target="1.8" />
+      <module name="client-client_desktop_main" target="1.8" />
+      <module name="client-client_desktop_main~1" target="1.8" />
+      <module name="client-client_desktop_test" target="1.8" />
+      <module name="client-client_desktop_test~1" target="1.8" />
+      <module name="client_desktop_main" target="1.8" />
+      <module name="client_desktop_main~1" target="1.8" />
+      <module name="client_desktop_test" target="1.8" />
+      <module name="client_desktop_test~1" target="1.8" />
+      <module name="client_getdown_main" target="1.8" />
+      <module name="client_getdown_test" target="1.8" />
+      <module name="client_shared_main" target="1.8" />
+      <module name="client_shared_test" target="1.8" />
+      <module name="jme_main" target="1.8" />
+      <module name="jme_test" target="1.8" />
+      <module name="server_main" target="1.8" />
+      <module name="server_test" target="1.8" />
+      <module name="tools_main" target="1.8" />
+      <module name="tools_test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

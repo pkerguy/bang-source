@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.threerings:getdown:1.4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/threerings/getdown/1.4/getdown-1.4.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.threerings/getdown/1.4/7bbb4f1d2471e825c790b134d2c6f38820d92899/getdown-1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.threerings/getdown/1.4/4825c0c82982b033e5ffe7ea4a1ec02fbfc88ff2/getdown-1.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: com.threerings:ooo-util:1.4.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/threerings/ooo-util/1.4.1/ooo-util-1.4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

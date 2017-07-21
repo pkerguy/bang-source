@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.samskivert:depot:1.7">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/samskivert/depot/1.7/depot-1.7.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.samskivert/depot/1.7/d63a6a947c336dfe1002123518bcadfb3a47a8d2/depot-1.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.samskivert/depot/1.7/caaf937253f14697871f71d2c3d01a55fdfd1b4c/depot-1.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

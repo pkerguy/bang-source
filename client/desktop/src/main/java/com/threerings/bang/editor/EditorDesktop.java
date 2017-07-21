@@ -3,24 +3,19 @@
 
 package com.threerings.bang.editor;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import javax.swing.JFrame;
+import com.badlogic.gdx.backends.lwjgl.*;
+import com.google.inject.*;
+import com.threerings.bang.client.*;
+import com.threerings.bang.steam.*;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import com.google.inject.Guice;
-
-import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-
-import com.threerings.bang.client.BangApp;
+import javax.swing.*;
+import java.awt.*;
 
 public class EditorDesktop
 {
     public static void main (String[] args) {
+
+        SteamStorage.init();
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy Editor";
         cfg.width = 1024;

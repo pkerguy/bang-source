@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app_main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app_main.iml" group="app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app_test.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app_test.iml" group="app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/assets/assets.iml" filepath="$PROJECT_DIR$/.idea/modules/assets/assets.iml" group="assets" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/assets/assets_main.iml" filepath="$PROJECT_DIR$/.idea/modules/assets/assets_main.iml" group="assets" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/assets/assets_test.iml" filepath="$PROJECT_DIR$/.idea/modules/assets/assets_test.iml" group="assets" />
+      <module fileurl="file://$PROJECT_DIR$/client/bang-client.iml" filepath="$PROJECT_DIR$/client/bang-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bang-game.iml" filepath="$PROJECT_DIR$/.idea/modules/bang-game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bang-game_main.iml" filepath="$PROJECT_DIR$/.idea/modules/bang-game_main.iml" group="bang-game" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bang-game_test.iml" filepath="$PROJECT_DIR$/.idea/modules/bang-game_test.iml" group="bang-game" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bui/bui.iml" filepath="$PROJECT_DIR$/.idea/modules/bui/bui.iml" group="bui" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bui/bui_main.iml" filepath="$PROJECT_DIR$/.idea/modules/bui/bui_main.iml" group="bui" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bui/bui_test.iml" filepath="$PROJECT_DIR$/.idea/modules/bui/bui_test.iml" group="bui" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/desktop/client_desktop.iml" filepath="$PROJECT_DIR$/.idea/modules/client/desktop/client_desktop.iml" group="client/desktop" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/desktop/client_desktop_main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/desktop/client_desktop_main.iml" group="client/desktop" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/desktop/client_desktop_test.iml" filepath="$PROJECT_DIR$/.idea/modules/client/desktop/client_desktop_test.iml" group="client/desktop" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/getdown/client_getdown.iml" filepath="$PROJECT_DIR$/.idea/modules/client/getdown/client_getdown.iml" group="client/getdown" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/getdown/client_getdown_main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/getdown/client_getdown_main.iml" group="client/getdown" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/getdown/client_getdown_test.iml" filepath="$PROJECT_DIR$/.idea/modules/client/getdown/client_getdown_test.iml" group="client/getdown" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/shared/client_shared.iml" filepath="$PROJECT_DIR$/.idea/modules/client/shared/client_shared.iml" group="client/shared" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/shared/client_shared_main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/shared/client_shared_main.iml" group="client/shared" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/shared/client_shared_test.iml" filepath="$PROJECT_DIR$/.idea/modules/client/shared/client_shared_test.iml" group="client/shared" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jme/jme.iml" filepath="$PROJECT_DIR$/.idea/modules/jme/jme.iml" group="jme" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jme/jme_main.iml" filepath="$PROJECT_DIR$/.idea/modules/jme/jme_main.iml" group="jme" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jme/jme_test.iml" filepath="$PROJECT_DIR$/.idea/modules/jme/jme_test.iml" group="jme" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server_main.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server_test.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/tools.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/tools.iml" group="tools" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/tools_main.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/tools_main.iml" group="tools" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tools/tools_test.iml" filepath="$PROJECT_DIR$/.idea/modules/tools/tools_test.iml" group="tools" />
+    </modules>
+  </component>
+</project>

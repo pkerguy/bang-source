@@ -3,60 +3,31 @@
 
 package com.threerings.bang.server.ooo;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.servlet.JDBCTableSiteIdentifier;
-import com.samskivert.servlet.user.InvalidUsernameException;
-import com.samskivert.servlet.user.Password;
-import com.samskivert.servlet.user.UserExistsException;
-import com.samskivert.servlet.user.Username;
-import com.samskivert.util.HashIntMap;
+import com.codedisaster.steamworks.SteamAuth.*;
+import com.codedisaster.steamworks.*;
+import com.google.inject.*;
+import com.samskivert.io.*;
+import com.samskivert.jdbc.*;
+import com.samskivert.servlet.*;
+import com.samskivert.servlet.user.*;
+import com.samskivert.util.*;
 import com.samskivert.util.RandomUtil;
-import com.samskivert.util.StringUtil;
+import com.threerings.bang.admin.server.*;
+import com.threerings.bang.data.*;
+import com.threerings.bang.server.*;
+import com.threerings.bang.server.persist.*;
+import com.threerings.bang.steam.*;
+import com.threerings.bang.util.*;
+import com.threerings.presents.net.*;
+import com.threerings.presents.server.net.*;
+import com.threerings.user.*;
+import com.threerings.util.*;
 
-import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
+import java.sql.Date;
+import java.sql.*;
+import java.util.*;
 
-import com.threerings.user.OOOAuxData;
-import com.threerings.user.OOOUser;
-import com.threerings.user.OOOUserManager;
-import com.threerings.user.OOOUserRepository;
-import com.threerings.user.RewardInfo;
-import com.threerings.user.RewardRecord;
-import com.threerings.user.RewardRepository;
-
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.net.AuthResponse;
-import com.threerings.presents.net.AuthResponseData;
-
-import com.threerings.presents.server.net.AuthingConnection;
-
-import com.threerings.bang.admin.server.RuntimeConfig;
-
-import com.threerings.bang.data.BangAuthResponseData;
-import com.threerings.bang.data.BangCodes;
-import com.threerings.bang.data.BangCredentials;
-import com.threerings.bang.data.BangTokenRing;
-import com.threerings.bang.server.BangAuthenticator;
-import com.threerings.bang.server.BangClientResolver;
-import com.threerings.bang.server.BangServer;
-import com.threerings.bang.server.ServerConfig;
-import com.threerings.bang.server.persist.PlayerRecord;
-import com.threerings.bang.server.persist.PlayerRepository;
-import com.threerings.bang.util.BangUtil;
-import com.threerings.bang.util.DeploymentConfig;
-import com.threerings.bang.util.IdentUtil;
-
-import static com.threerings.bang.Log.log;
+import static com.threerings.bang.Log.*;
 import static com.threerings.bang.data.BangAuthCodes.*;
 
 /**
@@ -218,13 +189,10 @@ public class OOOAuthenticator extends BangAuthenticator
             return;
         }
 
-        // if they supplied a known non-unique machine identifier, create one for them
+        // if they supplied a known non-unique machine identifier, deny them entry
         if (IdentUtil.isBogusIdent(creds.ident.substring(1))) {
-            String sident = StringUtil.md5hex("" + Math.random() + System.currentTimeMillis());
-            creds.ident = "S" + IdentUtil.encodeIdent(sident);
-            BangServer.generalLog("creating_ident " + username + " ip:" + conn.getInetAddress() +
-                                  " id:" + creds.ident);
-            rdata.ident = creds.ident;
+            rdata.code = SERVER_ERROR;
+            return;
         }
 
         // convert the encrypted ident to the original MD5 hash
@@ -249,15 +217,32 @@ public class OOOAuthenticator extends BangAuthenticator
         PlayerRecord prec = _playrepo.loadPlayer(username);
         String password = creds.getPassword();
 
+        try {
+            BeginAuthSessionResult result = SteamStorage.user.beginAuthSession(creds.ticketBuffer, creds.steamID);
+            if(result != BeginAuthSessionResult.OK)
+            {
+                rdata.code = INVALID_PASSWORD;
+                return;
+            }
+
+        } catch (SteamException e) {
+            e.printStackTrace();
+            rdata.code = SERVER_ERROR;
+            return;
+        }
+
         if (user == null && prec == null &&
                 (!StringUtil.isBlank(username) || !StringUtil.isBlank(password))) {
-            rdata.code = NO_SUCH_USER;
+
+            createAccount(username, password, "steamauth@yourfunworld.com", "bang", creds.ident, java.sql.Date.valueOf("1990-01-01"));
+            user = _authrep.loadUser(username, true);
+            prec = _playrepo.loadPlayer(username);
             return;
         }
 
         boolean anonymous = user == null;
 
-        if (anonymous && !RuntimeConfig.server.anonymousAccessEnabled) {
+        if (anonymous) {
             rdata.code = NO_ANONYMOUS_ACCESS;
             return;
         }

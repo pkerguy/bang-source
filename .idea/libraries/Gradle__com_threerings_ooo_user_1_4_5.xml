@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.threerings:ooo-user:1.4.5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/threerings/ooo-user/1.4.5/ooo-user-1.4.5.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.threerings/ooo-user/1.4.5/4ca112d35043cea3c640ea88e6c7f8bcd8999fc0/ooo-user-1.4.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.threerings/ooo-user/1.4.5/947c05502318700cabee5a16cdc007afe0a1afb7/ooo-user-1.4.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -3,48 +3,27 @@
 
 package com.threerings.bang.client;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
+import com.codedisaster.steamworks.*;
+import com.codedisaster.steamworks.SteamAuth.*;
+import com.jme.input.*;
+import com.jme.renderer.*;
+import com.jme.util.*;
+import com.jmex.bui.*;
+import com.jmex.bui.event.*;
+import com.samskivert.util.*;
+import com.threerings.bang.client.bui.*;
+import com.threerings.bang.game.client.*;
+import com.threerings.bang.steam.*;
+import com.threerings.bang.util.*;
+import com.threerings.jme.*;
+import com.threerings.jme.camera.*;
+import com.threerings.presents.client.*;
+import com.threerings.util.*;
 
-import com.jme.input.InputHandler;
-import com.jme.renderer.Camera;
-import com.jme.util.LoggingSystem;
+import java.io.*;
+import java.util.logging.*;
 
-import com.jmex.bui.BButton;
-import com.jmex.bui.BComponent;
-import com.jmex.bui.BRootNode;
-import com.jmex.bui.PolledRootNode;
-import com.jmex.bui.event.ActionEvent;
-import com.jmex.bui.event.BEvent;
-import com.jmex.bui.event.TextEvent;
-
-import com.samskivert.util.FormatterUtil;
-import com.samskivert.util.LoggingLogProvider;
-import com.samskivert.util.OneLineLogFormatter;
-import com.samskivert.util.RecentList;
-import com.samskivert.util.RepeatRecordFilter;
-import com.samskivert.util.StringUtil;
-import com.samskivert.util.SystemInfo;
-
-import com.threerings.util.MessageManager;
-import com.threerings.util.Name;
-
-import com.threerings.presents.client.Client;
-
-import com.threerings.jme.JmeApp;
-import com.threerings.jme.camera.CameraHandler;
-
-import com.threerings.bang.game.client.GameCameraHandler;
-import com.threerings.bang.game.client.GameInputHandler;
-
-import com.threerings.bang.client.bui.SelectableIcon;
-import com.threerings.bang.util.DeploymentConfig;
-
-import static com.threerings.bang.Log.log;
+import static com.threerings.bang.Log.*;
 
 /**
  * Provides the main entry point for the Bang! client.
@@ -162,11 +141,6 @@ public class BangApp extends JmeApp
         client.setServer(server, ports);
         client.setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
-        // configure the client with credentials if they were supplied
-        if (username != null && password != null) {
-            client.setCredentials(_client.createCredentials(new Name(username), password));
-        }
-
         // now start up the main event loop
         // run();
     }
@@ -275,12 +249,25 @@ public class BangApp extends JmeApp
     {
         super.update(frameTick);
         _client._soundmgr.updateStreams(_frameTime);
+        if (SteamAPI.isSteamRunning()) {
+            if(SteamStorage.user.userHasLicenseForApp(SteamStorage.user.getSteamID(), 100) != UserHasLicenseForAppResult.HasLicense)
+            {
+                super.cleanup(); // They didn't really buy the game, let's stop their game.
+                return;
+            }
+            SteamAPI.runCallbacks();
+        } else {
+            super.cleanup(); // Steam stopped so terminate the game
+        }
+
     }
 
     @Override // documentation inherited
     protected void cleanup ()
     {
         super.cleanup();
+
+        SteamAPI.shutdown(); // Gracefully end our Steam API.
 
         // let the client clean things up before we shutdown
         _client.willExit();

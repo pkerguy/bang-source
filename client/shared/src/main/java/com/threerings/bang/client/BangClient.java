@@ -3,113 +3,55 @@
 
 package com.threerings.bang.client;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-
-import com.badlogic.gdx.Input.Keys;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-import com.jme.renderer.ColorRGBA;
-import com.jmex.bui.BWindow;
-import com.jmex.bui.event.ActionEvent;
-import com.jmex.bui.event.ActionListener;
-import com.jmex.bui.event.BEvent;
+import com.badlogic.gdx.Input.*;
+import com.codedisaster.steamworks.*;
+import com.google.common.collect.*;
+import com.jme.renderer.*;
+import com.jmex.bui.*;
+import com.jmex.bui.event.*;
 import com.jmex.bui.event.EventListener;
-
-import com.samskivert.servlet.user.Password;
-import com.samskivert.text.MessageUtil;
-import com.samskivert.util.ArrayUtil;
+import com.samskivert.text.*;
+import com.samskivert.util.*;
 import com.samskivert.util.Config;
-import com.samskivert.util.Interval;
-import com.samskivert.util.ResultListener;
-import com.samskivert.util.RunQueue;
-import com.samskivert.util.StringUtil;
-import com.threerings.util.BrowserUtil;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
+import com.threerings.admin.data.*;
+import com.threerings.bang.avatar.client.*;
+import com.threerings.bang.bounty.data.*;
+import com.threerings.bang.chat.client.*;
+import com.threerings.bang.client.bui.*;
+import com.threerings.bang.client.util.*;
+import com.threerings.bang.data.*;
+import com.threerings.bang.game.client.*;
+import com.threerings.bang.game.client.effect.*;
+import com.threerings.bang.game.data.*;
+import com.threerings.bang.game.data.scenario.*;
+import com.threerings.bang.gang.data.*;
+import com.threerings.bang.ranch.data.*;
+import com.threerings.bang.saloon.data.Criterion;
+import com.threerings.bang.saloon.data.*;
+import com.threerings.bang.station.client.*;
+import com.threerings.bang.util.*;
+import com.threerings.crowd.chat.client.*;
+import com.threerings.crowd.chat.data.*;
+import com.threerings.crowd.client.*;
+import com.threerings.crowd.data.*;
+import com.threerings.getdown.util.*;
+import com.threerings.jme.effect.*;
+import com.threerings.openal.*;
+import com.threerings.presents.client.*;
+import com.threerings.presents.dobj.*;
+import com.threerings.util.*;
+import org.lwjgl.opengl.*;
 
-import com.threerings.getdown.util.LaunchUtil;
+import java.io.*;
+import java.net.*;
+import java.nio.*;
+import java.util.*;
+import java.util.regex.*;
+
+import static com.threerings.bang.Log.*;
+
 // import com.threerings.hemiptera.data.Report;
 // import com.threerings.hemiptera.util.SendReportUtil;
-
-import com.threerings.jme.effect.FadeInOutEffect;
-import com.threerings.jme.effect.WindowSlider;
-
-import com.threerings.openal.FileStream;
-
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.SetAdapter;
-
-import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.chat.client.CurseFilter;
-import com.threerings.crowd.chat.client.MuteDirector;
-import com.threerings.crowd.chat.data.ChatCodes;
-import com.threerings.crowd.client.BodyService;
-import com.threerings.crowd.client.LocationAdapter;
-import com.threerings.crowd.client.PlaceView;
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.admin.data.AdminCodes;
-
-import com.threerings.bang.avatar.client.CreateAvatarView;
-import com.threerings.bang.ranch.data.RanchObject;
-import com.threerings.bang.station.client.FreePassView;
-import com.threerings.bang.station.client.PassDetailsView;
-
-import com.threerings.bang.chat.client.BangChatDirector;
-import com.threerings.bang.chat.client.PardnerChatView;
-import com.threerings.bang.chat.client.SystemChatView;
-
-import com.threerings.bang.game.client.BangView;
-import com.threerings.bang.game.client.effect.ParticlePool;
-import com.threerings.bang.game.data.BangObject;
-import com.threerings.bang.game.data.scenario.ScenarioInfo;
-
-import com.threerings.bang.bounty.data.OfficeObject;
-import com.threerings.bang.gang.data.HideoutObject;
-import com.threerings.bang.saloon.data.Criterion;
-import com.threerings.bang.saloon.data.ParlorObject;
-import com.threerings.bang.saloon.data.SaloonObject;
-
-import com.threerings.bang.client.bui.OptionDialog;
-import com.threerings.bang.client.util.BoardCache;
-import com.threerings.bang.client.util.ReportingListener;
-import com.threerings.bang.data.BangAuthCodes;
-import com.threerings.bang.data.BangAuthResponseData;
-import com.threerings.bang.data.BangBootstrapData;
-import com.threerings.bang.data.BangCodes;
-import com.threerings.bang.data.BangCredentials;
-import com.threerings.bang.data.FreeTicket;
-import com.threerings.bang.data.GuestHandle;
-import com.threerings.bang.data.Handle;
-import com.threerings.bang.data.Notification;
-import com.threerings.bang.data.PlayerObject;
-import com.threerings.bang.data.Shop;
-import com.threerings.bang.data.StatType;
-import com.threerings.bang.data.TrainTicket;
-import com.threerings.bang.util.BangContext;
-import com.threerings.bang.util.DeploymentConfig;
-import com.threerings.bang.util.IdentUtil;
-
-import static com.threerings.bang.Log.log;
 
 /**
  * Takes care of instantiating all of the proper managers and loading up all of the necessary
@@ -831,10 +773,10 @@ public class BangClient extends BasicClient
      * @param username the username to use when logging in.
      * @param password the cleartext of the password to use when logging in.
      */
-    public BangCredentials createCredentials (Name username, String password)
+    public BangCredentials createCredentials (Name username, ByteBuffer password, SteamID userID)
     {
         BangCredentials creds = new BangCredentials(
-            username, (password == null ? null : Password.makeFromClear(password)));
+            username, password, userID);
         creds.ident = IdentUtil.getMachineIdentifier();
         // if we got a real ident from the client, mark it as such
         if (creds.ident != null && !creds.ident.matches("S[A-Za-z0-9/+]{32}")) {

@@ -3,10 +3,11 @@
 
 package com.threerings.bang.data;
 
-import com.samskivert.servlet.user.Password;
+import com.codedisaster.steamworks.*;
+import com.threerings.presents.net.*;
+import com.threerings.util.*;
 
-import com.threerings.presents.net.UsernamePasswordCreds;
-import com.threerings.util.Name;
+import java.nio.*;
 
 /**
  * Contains extra information used during authentication with the game server.
@@ -22,13 +23,18 @@ public class BangCredentials extends UsernamePasswordCreds
     /** The affiliate for anonymous access users. */
     public String affiliate;
 
+    public ByteBuffer ticketBuffer;
+    public SteamID steamID;
+
     /**
      * Creates credentials with the specified username and password.
      * {@link #ident} should be set before logging in.
      */
-    public BangCredentials (Name username, Password password)
+    public BangCredentials (Name username, ByteBuffer password, SteamID userID)
     {
-        super(username, password == null ? "" : password.getEncrypted());
+        super(username, "UNUSED"); // We'll use the ticketBuffer instead now
+        this.ticketBuffer = password;
+        this.steamID = userID;
         anonymous = password == null;
     }
 

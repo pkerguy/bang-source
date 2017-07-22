@@ -10,6 +10,7 @@ import com.jme.renderer.*;
 import com.jmex.bui.*;
 import com.jmex.bui.event.*;
 import com.jmex.bui.event.EventListener;
+import com.samskivert.servlet.user.*;
 import com.samskivert.text.*;
 import com.samskivert.util.*;
 import com.samskivert.util.Config;
@@ -777,7 +778,7 @@ public class BangClient extends BasicClient
     public BangCredentials createCredentials (Name username, String password)
     {
         BangCredentials creds = new BangCredentials(
-            username, password);
+            username, Password.makeFromClear(password).getEncrypted());
         creds.ident = SteamStorage.user.getSteamID().toString();
         // if we got a real ident from the client, mark it as such
         if (creds.anonymous) {

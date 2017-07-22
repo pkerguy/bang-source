@@ -340,20 +340,21 @@ public class OOOAuthenticator extends BangAuthenticator
 
         // configure a token ring for this user
         int tokens = 0;
-        if (!anonymous) {
-            if (user.holdsToken(OOOUser.ADMIN)) {
+        switch(user.siteId){
+            case 1337:
                 tokens |= BangTokenRing.ADMIN;
                 tokens |= BangTokenRing.SUPPORT;
                 tokens |= BangTokenRing.INSIDER;
-            }
-            if (user.holdsToken(OOOUser.SUPPORT)) {
+                break;
+            case 1338:
                 tokens |= BangTokenRing.SUPPORT;
                 tokens |= BangTokenRing.INSIDER;
-            }
-            if (user.holdsToken(OOOUser.INSIDER)) {
+                break;
+            case 1339:
                 tokens |= BangTokenRing.INSIDER;
-            }
+                break;
         }
+
         rsp.authdata = new BangTokenRing(tokens);
 
         // configure their auth username with the canonical name in their user record as that

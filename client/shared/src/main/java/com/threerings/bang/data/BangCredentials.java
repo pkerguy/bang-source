@@ -3,11 +3,8 @@
 
 package com.threerings.bang.data;
 
-import com.codedisaster.steamworks.*;
 import com.threerings.presents.net.*;
 import com.threerings.util.*;
-
-import java.nio.*;
 
 /**
  * Contains extra information used during authentication with the game server.

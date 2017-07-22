@@ -8,9 +8,10 @@ import com.threerings.bang.steam.*;
 
 public class BangDesktop
 {
-    // Probably shouldn't be using Message Boxes for this purpose, but let's try it out anyway.
     public static void main (String[] args) {
+        System.out.println("Running Bang! Howdy Steam");
         SteamStorage.init();
+        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy";
         cfg.width = 1024;

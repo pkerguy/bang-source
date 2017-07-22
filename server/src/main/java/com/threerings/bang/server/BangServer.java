@@ -216,7 +216,8 @@ public class BangServer extends CrowdServer
         conprov = _conprov;
         perCtx = _perCtx;
 
-        SteamServer.init(); // We're using this instead of the Shared one (SteamStorage) because some things like System.exit and Messageboxes aren't wanted
+        // TODO: FIX THIS STEAM STUFF
+        // SteamServer.init(); // We're using this instead of the Shared one (SteamStorage) because some things like System.exit and Messageboxes aren't wanted
 
         // make sure we have a valid payment type configured
         try {

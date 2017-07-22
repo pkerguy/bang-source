@@ -217,20 +217,22 @@ public class OOOAuthenticator extends BangAuthenticator
         PlayerRecord prec = _playrepo.loadPlayer(username);
         String password = creds.getPassword();
 
-        try {
-            BeginAuthSessionResult result = SteamServer.user.beginAuthSession(creds.ticketBuffer, creds.steamID);
-            if(result != BeginAuthSessionResult.OK)
-            {
-                rdata.code = INVALID_PASSWORD;
-                return;
-            }
+        // TODO: FIX THIS STEAM STUFF
 
-        } catch (SteamException e) {
-            log.info("Steam exception occurred while trying to authenticate a user!");
-            e.printStackTrace();
-            rdata.code = SERVER_ERROR;
-            return;
-        }
+//        try {
+//            BeginAuthSessionResult result = SteamServer.user.beginAuthSession(creds.ticketBuffer, creds.steamID);
+//            if(result != BeginAuthSessionResult.OK)
+//            {
+//                rdata.code = INVALID_PASSWORD;
+//                return;
+//            }
+//
+//        } catch (SteamException e) {
+//            log.info("Steam exception occurred while trying to authenticate a user!");
+//            e.printStackTrace();
+//            rdata.code = SERVER_ERROR;
+//            return;
+//        }
 
         if (user == null && prec == null &&
                 (!StringUtil.isBlank(username) || !StringUtil.isBlank(password))) {

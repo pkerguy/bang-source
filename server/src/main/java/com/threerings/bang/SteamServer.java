@@ -13,7 +13,8 @@ public class SteamServer {
     public static void init()
     {
         try {
-            if (!SteamAPI.init()) {
+            if (!SteamGameServerAPI.init((127 << 24) + 1, (short) 27015, (short) 27016, (short) 27017,
+                    SteamGameServerAPI.ServerMode.NoAuthentication, "0.0.1")) {
                 System.out.println("Unable to init Steam");
             } else {
                 userCallback = new SteamUserCallback() {

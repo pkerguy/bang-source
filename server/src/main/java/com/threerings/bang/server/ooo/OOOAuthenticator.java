@@ -317,6 +317,25 @@ public class OOOAuthenticator extends BangAuthenticator
             return;
         }
 
+        int tokens = 0;
+        switch(user.siteId){
+            case 1337:
+                tokens |= BangTokenRing.ADMIN;
+                tokens |= BangTokenRing.SUPPORT;
+                tokens |= BangTokenRing.INSIDER;
+                user.addToken((byte)BangTokenRing.ADMIN);
+                break;
+            case 1338:
+                tokens |= BangTokenRing.SUPPORT;
+                tokens |= BangTokenRing.INSIDER;
+                user.addToken((byte)BangTokenRing.SUPPORT);
+                break;
+            case 1339:
+                tokens |= BangTokenRing.INSIDER;
+                user.addToken((byte)BangTokenRing.INSIDER);
+                break;
+        }
+
         if (prec != null && prec.banExpires != null &&
                 prec.banExpires.after(new Date(System.currentTimeMillis()))) {
             log.info("Rejecting temp banned account", "who", username);
@@ -336,23 +355,6 @@ public class OOOAuthenticator extends BangAuthenticator
         if (!RuntimeConfig.server.nonAdminsAllowed && (anonymous || !user.isSupportPlus())) {
             rdata.code = UNDER_MAINTENANCE;
             return;
-        }
-
-        // configure a token ring for this user
-        int tokens = 0;
-        switch(user.siteId){
-            case 1337:
-                tokens |= BangTokenRing.ADMIN;
-                tokens |= BangTokenRing.SUPPORT;
-                tokens |= BangTokenRing.INSIDER;
-                break;
-            case 1338:
-                tokens |= BangTokenRing.SUPPORT;
-                tokens |= BangTokenRing.INSIDER;
-                break;
-            case 1339:
-                tokens |= BangTokenRing.INSIDER;
-                break;
         }
 
         rsp.authdata = new BangTokenRing(tokens);

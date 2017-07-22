@@ -12,11 +12,11 @@ import com.samskivert.servlet.*;
 import com.samskivert.servlet.user.*;
 import com.samskivert.util.*;
 import com.samskivert.util.RandomUtil;
+import com.threerings.bang.*;
 import com.threerings.bang.admin.server.*;
 import com.threerings.bang.data.*;
 import com.threerings.bang.server.*;
 import com.threerings.bang.server.persist.*;
-import com.threerings.bang.steam.*;
 import com.threerings.bang.util.*;
 import com.threerings.presents.net.*;
 import com.threerings.presents.server.net.*;
@@ -90,7 +90,7 @@ public class OOOAuthenticator extends BangAuthenticator
             }
 
             Username uname = new Username(username);
-            Password pass = password;
+            Password pass = Password.makeFromClear(password);
 
             // create the account
             _authrep.createUser(uname, pass, email, siteId, 0, birthdate, (byte)-1, null);
@@ -218,7 +218,7 @@ public class OOOAuthenticator extends BangAuthenticator
         String password = creds.getPassword();
 
         try {
-            BeginAuthSessionResult result = SteamStorage.user.beginAuthSession(creds.ticketBuffer, creds.steamID);
+            BeginAuthSessionResult result = SteamServer.user.beginAuthSession(creds.ticketBuffer, creds.steamID);
             if(result != BeginAuthSessionResult.OK)
             {
                 rdata.code = INVALID_PASSWORD;
@@ -226,7 +226,7 @@ public class OOOAuthenticator extends BangAuthenticator
             }
 
         } catch (SteamException e) {
-            log.info("STEAM EXCEPTION");
+            log.info("Steam exception occurred while trying to authenticate a user!");
             e.printStackTrace();
             rdata.code = SERVER_ERROR;
             return;

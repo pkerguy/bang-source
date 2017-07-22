@@ -3,86 +3,50 @@
 
 package com.threerings.bang.server;
 
-import java.io.File;
-import java.util.Iterator;
-
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-
-import com.samskivert.depot.ConnectionProvider;
-import com.samskivert.depot.PersistenceContext;
-import com.samskivert.depot.StaticConnectionProvider;
-
-import com.samskivert.util.AuditLogger;
-import com.samskivert.util.Interval;
-import com.samskivert.util.Invoker;
-
-import com.threerings.admin.server.ConfigRegistry;
-import com.threerings.admin.server.DatabaseConfigRegistry;
-import com.threerings.cast.bundle.BundledComponentRepository;
-import com.threerings.resource.ResourceManager;
-import com.threerings.util.Name;
-
-import com.threerings.presents.annotation.AuthInvoker;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientManager;
-import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsAuthInvoker;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.PresentsInvoker;
-import com.threerings.presents.server.PresentsSession;
-import com.threerings.presents.server.ReportManager;
-import com.threerings.presents.server.SessionFactory;
-import com.threerings.presents.server.net.PresentsConnectionManager;
-
-import com.threerings.crowd.chat.server.ChatProvider;
-import com.threerings.crowd.server.BodyLocator;
-import com.threerings.crowd.server.BodyManager;
-import com.threerings.crowd.server.CrowdServer;
-import com.threerings.crowd.server.LocationManager;
-import com.threerings.crowd.server.PlaceRegistry;
-
+import com.google.inject.*;
+import com.samskivert.depot.*;
+import com.samskivert.util.*;
+import com.threerings.admin.server.*;
+import com.threerings.bang.*;
+import com.threerings.bang.admin.server.*;
+import com.threerings.bang.avatar.data.*;
+import com.threerings.bang.avatar.server.*;
+import com.threerings.bang.avatar.util.*;
+import com.threerings.bang.bounty.data.*;
+import com.threerings.bang.bounty.server.*;
+import com.threerings.bang.bounty.server.persist.*;
+import com.threerings.bang.chat.server.*;
+import com.threerings.bang.data.*;
+import com.threerings.bang.gang.data.*;
+import com.threerings.bang.gang.server.*;
+import com.threerings.bang.ranch.data.*;
+import com.threerings.bang.ranch.server.*;
+import com.threerings.bang.saloon.data.*;
+import com.threerings.bang.saloon.server.*;
+import com.threerings.bang.station.data.*;
+import com.threerings.bang.station.server.*;
+import com.threerings.bang.store.data.*;
+import com.threerings.bang.store.server.*;
+import com.threerings.bang.tourney.server.*;
+import com.threerings.bang.util.*;
+import com.threerings.cast.bundle.*;
+import com.threerings.crowd.chat.server.*;
+import com.threerings.crowd.server.*;
 import com.threerings.parlor.server.ParlorManager;
+import com.threerings.presents.annotation.*;
+import com.threerings.presents.data.*;
+import com.threerings.presents.net.*;
+import com.threerings.presents.peer.server.*;
+import com.threerings.presents.server.*;
+import com.threerings.presents.server.net.*;
+import com.threerings.resource.*;
+import com.threerings.user.depot.*;
+import com.threerings.util.*;
 
-import com.threerings.user.depot.AccountActionRepository;
+import java.io.*;
+import java.util.*;
 
-import com.threerings.bang.avatar.data.AvatarCodes;
-import com.threerings.bang.avatar.data.BarberConfig;
-import com.threerings.bang.avatar.server.BarberManager;
-import com.threerings.bang.avatar.util.AvatarLogic;
-
-import com.threerings.bang.admin.server.BangAdminManager;
-import com.threerings.bang.admin.server.RuntimeConfig;
-import com.threerings.bang.bounty.data.OfficeConfig;
-import com.threerings.bang.bounty.server.OfficeManager;
-import com.threerings.bang.bounty.server.persist.BountyRepository;
-import com.threerings.bang.chat.server.BangChatManager;
-import com.threerings.bang.chat.server.BangChatProvider;
-import com.threerings.bang.gang.data.HideoutConfig;
-import com.threerings.bang.gang.server.GangManager;
-import com.threerings.bang.gang.server.HideoutManager;
-import com.threerings.bang.ranch.data.RanchConfig;
-import com.threerings.bang.ranch.server.RanchManager;
-import com.threerings.bang.saloon.data.SaloonConfig;
-import com.threerings.bang.saloon.server.SaloonManager;
-import com.threerings.bang.station.data.StationConfig;
-import com.threerings.bang.station.server.StationManager;
-import com.threerings.bang.store.data.StoreConfig;
-import com.threerings.bang.store.server.StoreManager;
-import com.threerings.bang.tourney.server.BangTourniesManager;
-
-import com.threerings.bang.data.PlayerObject;
-import com.threerings.bang.data.TownObject;
-import com.threerings.bang.util.DeploymentConfig;
-
-import static com.threerings.bang.Log.log;
+import static com.threerings.bang.Log.*;
 
 /**
  * Creates and manages all the services needed on the bang server.
@@ -251,6 +215,8 @@ public class BangServer extends CrowdServer
         // create out database connection provider this must be done before calling super.init()
         conprov = _conprov;
         perCtx = _perCtx;
+
+        SteamServer.init(); // We're using this instead of the Shared one (SteamStorage) because some things like System.exit and Messageboxes aren't wanted
 
         // make sure we have a valid payment type configured
         try {

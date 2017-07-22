@@ -164,8 +164,8 @@ public class LogonView extends BWindow
         BContainer row = GroupLayout.makeHBox(GroupLayout.LEFT);
         ((GroupLayout)row.getLayoutManager()).setOffAxisJustification(GroupLayout.BOTTOM);
 
-        BContainer grid = new BContainer(new TableLayout(2, 5, 5));
-        grid.add(new BLabel("Your Steam Account will be used to Login"));
+//        BContainer grid = new BContainer(new TableLayout(2, 5, 5));
+//        grid.add(new BLabel("Your Steam Account will be used to Login"));
 //        grid.add(new BLabel(_msgs.get("m.username"), "logon_label"));
 //        grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
 //        _username.setPreferredWidth(150);
@@ -173,7 +173,7 @@ public class LogonView extends BWindow
 //        grid.add(_password = new BPasswordField());
 //        _password.setPreferredWidth(150);
 //        _password.addListener(this);
-        row.add(grid);
+//        row.add(grid);
 
         BContainer col = GroupLayout.makeVBox(GroupLayout.CENTER);
         row.add(col);
@@ -181,8 +181,8 @@ public class LogonView extends BWindow
         _logon.setStyleClass("big_button");
         // use a special sound effect for logon (the ricochet that we also use for window open)
         _logon.setProperty("feedback_sound", BangUI.FeedbackSound.WINDOW_OPEN);
-        col.add(_action = new BButton(_msgs.get("m.new_account"), this, "new_account"));
-        _action.setStyleClass("logon_new");
+        //col.add(_action = new BButton(_msgs.get("m.new_account"), this, "new_account"));
+        //_action.setStyleClass("logon_new");
         add(row, new Rectangle(40, 200, 365, 80));
 
         // disable the logon button until a password is entered (and until we're initialized)
@@ -222,7 +222,7 @@ public class LogonView extends BWindow
                 }
 
                 // TODO wtf is pSize for?
-                String username = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
+                String username = String.valueOf(SteamStorage.user.getSteamID());
                 final ByteBuffer pTicket = ByteBuffer.allocateDirect(1024);
                 final int[] pSize = {pTicket.capacity()};
                 try {
@@ -308,11 +308,6 @@ public class LogonView extends BWindow
              _status.setStatus(_msgs.get("m.init_complete"), false);
             _logon.setEnabled(true);
             _initialized = true;
-
-            // if we already have credentials (set on the command line during testing), auto-logon
-            if (_ctx.getClient().getCredentials() != null) {
-                _ctx.getClient().logon();
-            }
         }
     }
 
@@ -449,5 +444,4 @@ public class LogonView extends BWindow
 
     protected StatusLabel _status;
     protected boolean _initialized;
-    protected URL _shownURL;
 }

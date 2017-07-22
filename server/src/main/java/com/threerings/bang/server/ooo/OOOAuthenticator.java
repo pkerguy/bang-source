@@ -90,7 +90,7 @@ public class OOOAuthenticator extends BangAuthenticator
             }
 
             Username uname = new Username(username);
-            Password pass = Password.makeFromCrypto(password);
+            Password pass = password;
 
             // create the account
             _authrep.createUser(uname, pass, email, siteId, 0, birthdate, (byte)-1, null);
@@ -226,6 +226,7 @@ public class OOOAuthenticator extends BangAuthenticator
             }
 
         } catch (SteamException e) {
+            log.info("STEAM EXCEPTION");
             e.printStackTrace();
             rdata.code = SERVER_ERROR;
             return;

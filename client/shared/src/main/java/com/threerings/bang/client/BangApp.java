@@ -4,7 +4,6 @@
 package com.threerings.bang.client;
 
 import com.codedisaster.steamworks.*;
-import com.codedisaster.steamworks.SteamAuth.*;
 import com.jme.input.*;
 import com.jme.renderer.*;
 import com.jme.util.*;
@@ -13,7 +12,6 @@ import com.jmex.bui.event.*;
 import com.samskivert.util.*;
 import com.threerings.bang.client.bui.*;
 import com.threerings.bang.game.client.*;
-import com.threerings.bang.steam.*;
 import com.threerings.bang.util.*;
 import com.threerings.jme.*;
 import com.threerings.jme.camera.*;
@@ -41,32 +39,32 @@ public class BangApp extends JmeApp
     {
         // potentially redirect stdout and stderr to a log file
         File nlog = null;
-        if (System.getProperty("no_log_redir") == null) {
-            // first delete any previous previous log file
-            File olog = new File(BangClient.localDataDir("old-" + logfile));
-            if (olog.exists()) {
-                olog.delete();
-            }
-
-            // next rename the previous log file
-            nlog = new File(BangClient.localDataDir(logfile));
-            if (nlog.exists()) {
-                nlog.renameTo(olog);
-            }
-
-            // and now redirect our output
-            try {
-                PrintStream logOut = new PrintStream(new FileOutputStream(nlog), true);
-                System.setOut(logOut);
-                System.setErr(logOut);
-
-            } catch (IOException ioe) {
-                log.warning("Failed to open debug log", "path", nlog, "error", ioe);
-            }
-        }
+//        if (System.getProperty("no_log_redir") == null) {
+//            // first delete any previous previous log file
+//            File olog = new File(BangClient.localDataDir("old-" + logfile));
+//            if (olog.exists()) {
+//                olog.delete();
+//            }
+//
+//            // next rename the previous log file
+//            nlog = new File(BangClient.localDataDir(logfile));
+//            if (nlog.exists()) {
+//                nlog.renameTo(olog);
+//            }
+//
+//            // and now redirect our output
+//            try {
+//                PrintStream logOut = new PrintStream(new FileOutputStream(nlog), true);
+//                System.setOut(logOut);
+//                System.setErr(logOut);
+//
+//            } catch (IOException ioe) {
+//                log.warning("Failed to open debug log", "path", nlog, "error", ioe);
+//            }
+//        }
 
         // turn off JME's verbose logging
-        LoggingSystem.getLogger().setLevel(Level.WARNING);
+        LoggingSystem.getLogger().setLevel(Level.OFF);
 
         // set up the proper logging services
         com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
@@ -129,6 +127,7 @@ public class BangApp extends JmeApp
 
         // speed up key input
         _input.setActionSpeed(150f);
+
     }
 
     public void run (String server, int[] ports, String username, String password)
@@ -249,17 +248,6 @@ public class BangApp extends JmeApp
     {
         super.update(frameTick);
         _client._soundmgr.updateStreams(_frameTime);
-        if (SteamAPI.isSteamRunning()) {
-            if(SteamStorage.user.userHasLicenseForApp(SteamStorage.user.getSteamID(), 100) != UserHasLicenseForAppResult.HasLicense)
-            {
-                super.cleanup(); // They didn't really buy the game, let's stop their game.
-                return;
-            }
-            SteamAPI.runCallbacks();
-        } else {
-            super.cleanup(); // Steam stopped so terminate the game
-        }
-
     }
 
     @Override // documentation inherited

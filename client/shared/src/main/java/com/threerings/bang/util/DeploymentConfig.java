@@ -3,15 +3,13 @@
 
 package com.threerings.bang.util;
 
-import java.net.URL;
+import com.samskivert.util.*;
+import com.threerings.bang.data.*;
+import com.threerings.presents.client.*;
 
-import com.samskivert.util.Config;
+import java.net.*;
 
-import com.threerings.presents.client.Client;
-
-import com.threerings.bang.data.BangCredentials;
-
-import static com.threerings.bang.Log.log;
+import static com.threerings.bang.Log.*;
 
 /**
  * Properties that are specific to a particular Bang! game deployment (client and server code plus

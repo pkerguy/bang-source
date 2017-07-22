@@ -23,18 +23,13 @@ public class BangCredentials extends UsernamePasswordCreds
     /** The affiliate for anonymous access users. */
     public String affiliate;
 
-    public ByteBuffer ticketBuffer;
-    public SteamID steamID;
-
     /**
      * Creates credentials with the specified username and password.
      * {@link #ident} should be set before logging in.
      */
-    public BangCredentials (Name username, ByteBuffer password, SteamID userID)
+    public BangCredentials (Name username, String password)
     {
-        super(username, "UNUSED"); // We'll use the ticketBuffer instead now
-        this.ticketBuffer = password;
-        this.steamID = userID;
+        super(username, password); // We'll use the ticketBuffer instead now
         anonymous = password == null;
     }
 

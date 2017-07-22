@@ -3,10 +3,12 @@
 
 package com.threerings.bang.editor;
 
-import com.badlogic.gdx.backends.lwjgl.*;
-import com.google.inject.*;
-import com.threerings.bang.client.*;
-import com.threerings.bang.steam.*;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.threerings.bang.client.BangApp;
+import com.threerings.bang.steam.SteamStorage;
 
 import javax.swing.*;
 import java.awt.*;

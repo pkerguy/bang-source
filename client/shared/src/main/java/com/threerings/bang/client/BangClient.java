@@ -29,6 +29,7 @@ import com.threerings.bang.ranch.data.*;
 import com.threerings.bang.saloon.data.Criterion;
 import com.threerings.bang.saloon.data.*;
 import com.threerings.bang.station.client.*;
+import com.threerings.bang.steam.*;
 import com.threerings.bang.util.*;
 import com.threerings.crowd.chat.client.*;
 import com.threerings.crowd.chat.data.*;
@@ -773,15 +774,12 @@ public class BangClient extends BasicClient
      * @param username the username to use when logging in.
      * @param password the cleartext of the password to use when logging in.
      */
-    public BangCredentials createCredentials (Name username, ByteBuffer password, SteamID userID)
+    public BangCredentials createCredentials (Name username, String password)
     {
         BangCredentials creds = new BangCredentials(
-            username, password, userID);
-        creds.ident = IdentUtil.getMachineIdentifier();
+            username, password);
+        creds.ident = SteamStorage.user.getSteamID().toString();
         // if we got a real ident from the client, mark it as such
-        if (creds.ident != null && !creds.ident.matches("S[A-Za-z0-9/+]{32}")) {
-            creds.ident = "C" + creds.ident;
-        }
         if (creds.anonymous) {
             creds.affiliate = getAffiliateFromInstallFile();
         }

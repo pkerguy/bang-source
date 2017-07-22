@@ -186,18 +186,6 @@ public class OOOAuthenticator extends BangAuthenticator
             return;
         }
 
-        // convert the encrypted ident to the original MD5 hash
-        try {
-            String prefix = creds.ident.substring(0, 1);
-            creds.ident = prefix + IdentUtil.decodeIdent(creds.ident.substring(1));
-        } catch (Exception e) {
-            log.warning("Received spoofed ident", "who", username, "err", e.getMessage());
-            BangServer.generalLog("refusing_spoofed_ident " + username +
-                                  " ip:" + conn.getInetAddress() + " id:" + creds.ident);
-            rdata.code = SERVER_ERROR;
-            return;
-        }
-
         // load up their user account record
         OOOUser user = _authrep.loadUser(username, true);
 

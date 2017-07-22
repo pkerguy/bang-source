@@ -3,7 +3,6 @@
 
 package com.threerings.bang.client;
 
-import com.codedisaster.steamworks.*;
 import com.jme.renderer.*;
 import com.jmex.bui.*;
 import com.jmex.bui.event.*;
@@ -21,7 +20,6 @@ import com.threerings.util.*;
 
 import java.io.*;
 import java.net.*;
-import java.nio.*;
 import java.text.*;
 import java.util.*;
 
@@ -31,7 +29,7 @@ import static com.threerings.bang.Log.*;
  * Displays a simple user interface for logging in.
  */
 public class LogonView extends BWindow
-    implements ActionListener, BasicClient.InitObserver
+        implements ActionListener, BasicClient.InitObserver
 {
     /**
      * Converts an arbitrary exception into a translatable error string (which should be looked up
@@ -45,7 +43,7 @@ public class LogonView extends BWindow
      * sceduled downtime.
      */
     public static Tuple<String,Boolean> decodeLogonException (
-        BangContext ctx, Exception cause)
+            BangContext ctx, Exception cause)
     {
         String msg = cause.getMessage();
         boolean connectionFailure = false;
@@ -105,14 +103,14 @@ public class LogonView extends BWindow
         _msgs = ctx.getMessageManager().getBundle(BangAuthCodes.AUTH_MSGS);
         String username = BangPrefs.config.getValue("username", "");
         if (StringUtil.isBlank(username) || Boolean.getBoolean("new_user")) {
-            showNewUserView(false);
+            showLoginView(); // showNewUserView(false);
         } else {
             showLoginView();
         }
 
         // pick a unit from the town they most recently logged into
         UnitConfig[] units = UnitConfig.getTownUnits(BangPrefs.getLastTownId(username),
-            EnumSet.of(UnitConfig.Rank.BIGSHOT, UnitConfig.Rank.NORMAL));
+                EnumSet.of(UnitConfig.Rank.BIGSHOT, UnitConfig.Rank.NORMAL));
         if (units.length > 0) {
             _unitIcon = BangUI.getUnitIcon(RandomUtil.pickRandom(units));
         }
@@ -126,7 +124,7 @@ public class LogonView extends BWindow
         removeAll();
 
         BContainer cont = new BContainer(GroupLayout.makeHoriz(
-                    GroupLayout.STRETCH, GroupLayout.CENTER, GroupLayout.NONE));
+                GroupLayout.STRETCH, GroupLayout.CENTER, GroupLayout.NONE));
         ((GroupLayout)cont.getLayoutManager()).setGap(20);
 
         String btn1 = "m.continue_player", act1 = "anonymous";
@@ -163,17 +161,15 @@ public class LogonView extends BWindow
 
         BContainer row = GroupLayout.makeHBox(GroupLayout.LEFT);
         ((GroupLayout)row.getLayoutManager()).setOffAxisJustification(GroupLayout.BOTTOM);
-
-//        BContainer grid = new BContainer(new TableLayout(2, 5, 5));
-//        grid.add(new BLabel("Your Steam Account will be used to Login"));
-//        grid.add(new BLabel(_msgs.get("m.username"), "logon_label"));
-//        grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
-//        _username.setPreferredWidth(150);
-//        grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
-//        grid.add(_password = new BPasswordField());
-//        _password.setPreferredWidth(150);
-//        _password.addListener(this);
-//        row.add(grid);
+        BContainer grid = new BContainer(new TableLayout(2, 5, 5));
+        //grid.add(new BLabel(_msgs.get("m.username"), "logon_label"));
+        //grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
+        //_username.setPreferredWidth(150);
+        grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
+        grid.add(_password = new BPasswordField());
+        _password.setPreferredWidth(150);
+        _password.addListener(this);
+        row.add(grid);
 
         BContainer col = GroupLayout.makeVBox(GroupLayout.CENTER);
         row.add(col);
@@ -182,15 +178,15 @@ public class LogonView extends BWindow
         // use a special sound effect for logon (the ricochet that we also use for window open)
         _logon.setProperty("feedback_sound", BangUI.FeedbackSound.WINDOW_OPEN);
         //col.add(_action = new BButton(_msgs.get("m.new_account"), this, "new_account"));
-        //_action.setStyleClass("logon_new");
+        _action.setStyleClass("logon_new");
         add(row, new Rectangle(40, 200, 365, 80));
 
         // disable the logon button until a password is entered (and until we're initialized)
-//        new EnablingValidator(_password, _logon) {
-//            protected boolean checkEnabled (String text) {
-//                return super.checkEnabled(text) && _initialized;
-//            }
-//        };
+        new EnablingValidator(_password, _logon) {
+            protected boolean checkEnabled (String text) {
+                return super.checkEnabled(text) && _initialized;
+            }
+        };
 
         showStatus();
     }
@@ -213,35 +209,25 @@ public class LogonView extends BWindow
     // documentation inherited from interface ActionListener
     public void actionPerformed (ActionEvent event)
     {
-        //if (event.getSource() == _password || "logon".equals(event.getAction())) {
-        switch (event.getAction()) {
+        switch (event.getSource() == _password ? "logon" : event.getAction()) {
             case "logon":
                 if (!_initialized) {
                     log.warning("Not finished initializing. Hang tight.");
                     return;
                 }
 
-                // TODO wtf is pSize for?
-                String username = String.valueOf(SteamStorage.user.getSteamID());
-                final ByteBuffer pTicket = ByteBuffer.allocateDirect(1024);
-                final int[] pSize = {pTicket.capacity()};
-                try {
-                    final SteamAuthTicket ticketHandle = SteamStorage.user.getAuthSessionTicket(pTicket, pSize);
+                String username = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
+                String password = _password.getText();
 
-                    // try to connect to the town lobby server that this player last accessed
-                    String townId = BangPrefs.getLastTownId(username);
-                    // but make sure this town has been activated on this client
-                    if (!BangClient.isTownActive(townId)) {
-                        // fall back to frontier town if it has not
-                        townId = BangCodes.FRONTIER_TOWN;
-                    }
-
-                    logon(townId, username, pTicket); // Send the Steam Auth Ticket to the server for verification and then logon
-
-                } catch (SteamException error) {
-                    error.printStackTrace();
-                    System.exit(1);
+                // try to connect to the town lobby server that this player last accessed
+                String townId = BangPrefs.getLastTownId(username);
+                // but make sure this town has been activated on this client
+                if (!BangClient.isTownActive(townId)) {
+                    // fall back to frontier town if it has not
+                    townId = BangCodes.FRONTIER_TOWN;
                 }
+
+                logon(townId, username, password);
 
                 break;
             case "options":
@@ -254,7 +240,10 @@ public class LogonView extends BWindow
 
                 break;
             case "new_account":
-                _status.setStatus("Simply press login and your Steam will act as your login", true);
+                String affsuf = BangClient.getAffiliateFromInstallFile();
+                affsuf = (affsuf == null) ? null : ("affiliate=" + affsuf);
+                _ctx.showURL(DeploymentConfig.getNewAccountURL(affsuf));
+                _status.setStatus(_msgs.get("m.new_account_launched"), false);
 
                 break;
             case "anon_account":
@@ -284,16 +273,19 @@ public class LogonView extends BWindow
         }
     }
 
-    public void logon (String townId, String username, ByteBuffer password)
+    public void logon (String townId, String username, String password)
     {
         _status.setStatus(_msgs.get("m.logging_on"), false);
 
+        log.info("Set version to: " + DeploymentConfig.getVersion());
+        _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
+
         _ctx.getClient().setServer(DeploymentConfig.getServerHost(townId),
-                                   DeploymentConfig.getServerPorts(townId));
+                DeploymentConfig.getServerPorts(townId));
 
         // configure the client with the supplied credentials
         _ctx.getClient().setCredentials(
-            _ctx.getBangClient().createCredentials(new Name(username), password, SteamStorage.user.getSteamID()));
+                _ctx.getBangClient().createCredentials(new Name(username), password));
 
         // now we can log on
         _ctx.getClient().logon();
@@ -305,9 +297,20 @@ public class LogonView extends BWindow
         if (percent < 100) {
             _status.setStatus(_msgs.get("m.init_progress", ""+percent), false);
         } else {
-             _status.setStatus(_msgs.get("m.init_complete"), false);
-            _logon.setEnabled(true);
+            if (_username != null) {
+                _status.setStatus(_msgs.get("m.init_complete"), false);
+                _logon.setEnabled(!StringUtil.isBlank(_password.getText()));
+            } else {
+                _status.setStatus(_msgs.get("m.status_new"), false);
+                _anon.setEnabled(true);
+                _account.setEnabled(true);
+            }
             _initialized = true;
+
+            // if we already have credentials (set on the command line during testing), auto-logon
+            if (_ctx.getClient().getCredentials() != null) {
+                _ctx.getClient().logon();
+            }
         }
     }
 
@@ -315,6 +318,15 @@ public class LogonView extends BWindow
     protected void wasAdded ()
     {
         super.wasAdded();
+
+        // focus the appropriate textfield
+        if (_username != null) {
+            if (StringUtil.isBlank(_username.getText())) {
+                _username.requestFocus();
+            } else {
+                _password.requestFocus();
+            }
+        }
 
         if (_unitIcon != null) {
             _unitIcon.wasAdded();
@@ -358,13 +370,13 @@ public class LogonView extends BWindow
         OptionDialog.showConfirmDialog(_ctx, BangAuthCodes.AUTH_MSGS, "m.tb_title",
                 MessageBundle.tcompose("m.tb_info", reason, expires),
                 new String[] { "m.exit", "m.tb_tos" }, new OptionDialog.ResponseReceiver() {
-            public void resultPosted (int button, Object result) {
-                if (button == 1) {
-                    _ctx.showURL(DeploymentConfig.getTosURL());
-                }
-                _ctx.getApp().stop();
-            }
-        });
+                    public void resultPosted (int button, Object result) {
+                        if (button == 1) {
+                            _ctx.showURL(DeploymentConfig.getTosURL());
+                        }
+                        _ctx.getApp().stop();
+                    }
+                });
     }
 
     protected void showBannedDialog (String reason)
@@ -372,10 +384,10 @@ public class LogonView extends BWindow
         OptionDialog.showConfirmDialog(_ctx, BangAuthCodes.AUTH_MSGS, "m.ban_title",
                 MessageBundle.tcompose("m.ban_info", reason),
                 new String[] { "m.exit" }, new OptionDialog.ResponseReceiver() {
-            public void resultPosted (int button, Object result) {
-                _ctx.getApp().stop();
-            }
-        });
+                    public void resultPosted (int button, Object result) {
+                        _ctx.getApp().stop();
+                    }
+                });
     }
 
     protected ClientAdapter _listener = new ClientAdapter() {
@@ -383,7 +395,7 @@ public class LogonView extends BWindow
             _status.setStatus(_msgs.get("m.logged_on"), false);
             PlayerObject user = (PlayerObject)client.getClientObject();
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
-                                      user.username.toString());
+                    user.username.toString());
         }
 
         public void clientFailedToLogon (Client client, Exception cause) {
@@ -401,19 +413,19 @@ public class LogonView extends BWindow
             }
 
             if (cmsg.indexOf(BangAuthCodes.NO_TICKET) != -1) {
-                BangPrefs.setLastTownId(String.valueOf(SteamStorage.user.getSteamID().getAccountID()), BangCodes.FRONTIER_TOWN);
+                BangPrefs.setLastTownId(_username.getText(), BangCodes.FRONTIER_TOWN);
 
-            // if we got a no such user message and we're anonymous, clear it out
+                // if we got a no such user message and we're anonymous, clear it out
             } else if (cmsg.indexOf(BangAuthCodes.NO_SUCH_USER) != -1 &&
-                        StringUtil.isBlank(BangPrefs.config.getValue("username", ""))) {
+                    StringUtil.isBlank(BangPrefs.config.getValue("username", ""))) {
                 BangPrefs.config.setValue("anonymous", "");
                 showNewUserView(false);
 
-            // if we got a no anonymous user message, change to user login mode
+                // if we got a no anonymous user message, change to user login mode
             } else if (cmsg.indexOf(BangAuthCodes.NO_ANONYMOUS_ACCESS) != -1) {
                 showLoginView();
 
-            // see if we are temp banned
+                // see if we are temp banned
             } else if (cmsg.startsWith(BangAuthCodes.TEMP_BANNED)) {
                 String params = cmsg.substring(BangAuthCodes.TEMP_BANNED.length());
                 int idx = params.indexOf("|");
@@ -424,7 +436,7 @@ public class LogonView extends BWindow
                         showTempBanDialog(reason, time);
                     } catch (NumberFormatException nfe) {
                         log.warning("Unable to read time from temp banned message",
-                                    "cmsg", cmsg + ".");
+                                "cmsg", cmsg + ".");
                     }
                 }
 
@@ -439,9 +451,12 @@ public class LogonView extends BWindow
     protected BangContext _ctx;
     protected MessageBundle _msgs;
 
+    protected BTextField _username;
+    protected BPasswordField _password;
     protected BButton _logon, _action, _account, _anon;
     protected BIcon _unitIcon;
 
     protected StatusLabel _status;
     protected boolean _initialized;
+    protected URL _shownURL;
 }

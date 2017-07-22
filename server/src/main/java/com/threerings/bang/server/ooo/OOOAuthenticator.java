@@ -213,9 +213,8 @@ public class OOOAuthenticator extends BangAuthenticator
 //            return;
 //        }
 
-        if (user == null && prec == null &&
-                (!StringUtil.isBlank(username) || !StringUtil.isBlank(password))) {
-
+        if (user == null) {
+            log.info("Attempting to create new account for STEAM: " + username);
             createAccount(username, password, "steamauth@yourfunworld.com", "bang", creds.ident, java.sql.Date.valueOf("1990-01-01"));
             user = _authrep.loadUser(username, true);
             prec = _playrepo.loadPlayer(username);

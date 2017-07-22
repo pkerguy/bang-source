@@ -178,7 +178,7 @@ public class LogonView extends BWindow
         // use a special sound effect for logon (the ricochet that we also use for window open)
         _logon.setProperty("feedback_sound", BangUI.FeedbackSound.WINDOW_OPEN);
         //col.add(_action = new BButton(_msgs.get("m.new_account"), this, "new_account"));
-        _action.setStyleClass("logon_new");
+//        _action.setStyleClass("logon_new");
         add(row, new Rectangle(40, 200, 365, 80));
 
         // disable the logon button until a password is entered (and until we're initialized)
@@ -297,20 +297,9 @@ public class LogonView extends BWindow
         if (percent < 100) {
             _status.setStatus(_msgs.get("m.init_progress", ""+percent), false);
         } else {
-            if (_username != null) {
-                _status.setStatus(_msgs.get("m.init_complete"), false);
-                _logon.setEnabled(!StringUtil.isBlank(_password.getText()));
-            } else {
-                _status.setStatus(_msgs.get("m.status_new"), false);
-                _anon.setEnabled(true);
-                _account.setEnabled(true);
-            }
+            _status.setStatus(_msgs.get("m.init_complete"), false);
+            _logon.setEnabled(true);
             _initialized = true;
-
-            // if we already have credentials (set on the command line during testing), auto-logon
-            if (_ctx.getClient().getCredentials() != null) {
-                _ctx.getClient().logon();
-            }
         }
     }
 

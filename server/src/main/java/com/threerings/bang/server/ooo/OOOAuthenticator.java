@@ -3,8 +3,6 @@
 
 package com.threerings.bang.server.ooo;
 
-import com.codedisaster.steamworks.SteamAuth.*;
-import com.codedisaster.steamworks.*;
 import com.google.inject.*;
 import com.samskivert.io.*;
 import com.samskivert.jdbc.*;
@@ -12,7 +10,6 @@ import com.samskivert.servlet.*;
 import com.samskivert.servlet.user.*;
 import com.samskivert.util.*;
 import com.samskivert.util.RandomUtil;
-import com.threerings.bang.*;
 import com.threerings.bang.admin.server.*;
 import com.threerings.bang.data.*;
 import com.threerings.bang.server.*;
@@ -189,12 +186,6 @@ public class OOOAuthenticator extends BangAuthenticator
             return;
         }
 
-        // if they supplied a known non-unique machine identifier, deny them entry
-        if (IdentUtil.isBogusIdent(creds.ident.substring(1))) {
-            rdata.code = SERVER_ERROR;
-            return;
-        }
-
         // convert the encrypted ident to the original MD5 hash
         try {
             String prefix = creds.ident.substring(0, 1);
@@ -240,7 +231,6 @@ public class OOOAuthenticator extends BangAuthenticator
             createAccount(username, password, "steamauth@yourfunworld.com", "bang", creds.ident, java.sql.Date.valueOf("1990-01-01"));
             user = _authrep.loadUser(username, true);
             prec = _playrepo.loadPlayer(username);
-            return;
         }
 
         boolean anonymous = user == null;

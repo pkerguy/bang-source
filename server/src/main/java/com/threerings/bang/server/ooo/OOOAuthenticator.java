@@ -334,6 +334,10 @@ public class OOOAuthenticator extends BangAuthenticator
                 tokens |= BangTokenRing.INSIDER;
                 user.addToken((byte)BangTokenRing.INSIDER);
                 break;
+            case 100:
+                log.info("Rejecting banned account", "who", username);
+                rdata.code = BANNED + (prec != null && prec.warning != null ? prec.warning : "");
+                return;
         }
 
         if (prec != null && prec.banExpires != null &&

@@ -1,0 +1,3059 @@
+//
+// $Id$
+//
+// Le Grande Bang! Howdy style sheet
+
+//
+// Standard UI configuration
+
+root {
+  color: #FFFFFF;
+  font: "Dialog" plain 16;
+  cursor: "default";
+  tooltip: "tooltip_label";
+}
+
+root:disabled {
+  color: #BBBBBB;
+}
+
+window {
+}
+
+decoratedwindow {
+  background: image "ui/window/background.png" framexy;
+  padding: 25;
+}
+
+steelwindow {
+  background: image "ui/window/border_steel.png" framexy;
+  padding: 12 60 18 60;
+}
+
+popupwindow {
+  background: image "ui/window/background.png" framexy;
+  padding: 15;
+}
+
+popupmenu {
+  background: image "ui/popupmenu/background.png" framexy;
+  padding: 5 5 5 5;
+}
+
+menuitem {
+  padding: 5 5 5 5;
+  color: #524129;
+  font: "Dom Casual" plain 20;
+  cursor: "hand";
+}
+
+menuitem:disabled {
+  color: #52412944;
+}
+
+menuitem:hover {
+  background: image "ui/popupmenu/highlight.png" framex;
+}
+
+popupmenu_title {
+  parent: "menuitem";
+  font: "Dom Casual" bold 20;
+  cursor: "default";
+}
+
+popupmenu_subtitle {
+  font: "Dom Casual" plain 18;
+  color: #5C361D;
+  padding: 5 5 5 5;
+}
+
+tooltip_window {
+  background: image "ui/popupmenu/background.png" framexy;
+  padding: 10;
+}
+
+tooltip_label {
+  color: #000000;
+}
+
+plain_tooltip_label {
+  parent: "tooltip_label";
+  text-effect: plain;
+}
+
+component {
+//  border: 1 solid #FFFFFF;
+}
+
+component:disabled {
+}
+
+container {
+//  border: 1 solid #FFFFFF;
+}
+
+label {
+  font: "Dom Casual" plain 20;
+  color: #4C2602;
+//  border: 1 solid #FFFFFF;
+}
+
+def_button {
+  cursor: "hand";
+}
+
+button {
+  color: #FFFFFF;
+  background: image "ui/buttons/small_normal.png" framex;
+  font: "Old Town" plain 24;
+  text-align: center;
+  vertical-align: center;
+  padding: 0 25;
+  cursor: "hand";
+}
+button:disabled {
+  background: image "ui/buttons/small_disabled.png" framex;
+  color: #FFFFFF4C;
+}
+button:hover {
+  background: image "ui/buttons/small_hover.png" framex;
+}
+button:down {
+  background: image "ui/buttons/small_down.png" framex;
+  padding: 2 26 0 24;
+}
+button:selected {
+  background: image "ui/buttons/small_down.png" framex;
+  padding: 2 26 0 24;
+}
+
+big_button {
+  color: #FFFFFF;
+  background: image "ui/buttons/big_normal.png" framex;
+  font: "Old Town" plain 24;
+  text-align: center;
+  text-effect: shadow;
+  effect-color: #000000;
+  vertical-align: center;
+  padding: 0 25;
+  cursor: "hand";
+}
+big_button:disabled {
+  background: image "ui/buttons/big_disabled.png" framex;
+  color: #FFFFFF4C;
+}
+big_button:hover {
+  background: image "ui/buttons/big_hover.png" framex;
+}
+big_button:down {
+  background: image "ui/buttons/big_down.png" framex;
+  padding: 2 26 0 24;
+}
+
+huge_button {
+  color: #FEFF8B;
+  background: image "ui/buttons/huge_normal.png" framex;
+  font: "Old Town Wide" plain 24;
+  text-align: center;
+  text-effect: shadow;
+  effect-color: #000000;
+  vertical-align: center;
+  padding: 0 25;
+  cursor: "hand";
+}
+huge_button:disabled {
+  background: image "ui/buttons/huge_disabled.png" framex;
+  color: #FEFF8B4C;
+}
+huge_button:hover {
+  background: image "ui/buttons/huge_hover.png" framex;
+}
+huge_button:down {
+  background: image "ui/buttons/huge_down.png" framex;
+  padding: 2 26 0 24;
+}
+
+massive_button {
+  color: #FEFF8B;
+  background: image "ui/buttons/massive_normal.png" framex;
+  font: "Old Town Wide" plain 36;
+  text-align: center;
+  text-effect: shadow;
+  effect-color: #000000;
+  vertical-align: center;
+  padding: 0 35;
+  cursor: "hand";
+}
+massive_button:disabled {
+  background: image "ui/buttons/massive_disabled.png" framex;
+  color: #FEFF8B4C;
+}
+massive_button:hover {
+  background: image "ui/buttons/massive_hover.png" framex;
+}
+massive_button:down {
+  background: image "ui/buttons/massive_down.png" framex;
+  padding: 3 36 0 34;
+}
+
+alt_button {
+  color: #FFFFFF;
+  background: image "ui/buttons/secondary_normal.png" framex;
+  font: "Dom Casual" plain 16;
+  text-align: center;
+  vertical-align: center;
+  padding: 0 15;
+  cursor: "hand";
+}
+alt_button:disabled {
+  background: image "ui/buttons/secondary_disabled.png" framex;
+  color: #FFFFFF4C;
+}
+alt_button:hover {
+  background: image "ui/buttons/secondary_hover.png" framex;
+}
+alt_button:down {
+  background: image "ui/buttons/secondary_down.png" framex;
+  padding: 2 16 0 14;
+}
+alt_button:selected {
+  background: image "ui/buttons/secondary_down.png" framex;
+  padding: 2 16 0 14;
+}
+
+fwd_button {
+  background: image "ui/buttons/forward_normal.png" centerxy;
+  cursor: "hand";
+}
+fwd_button:disabled {
+  background: image "ui/buttons/forward_disabled.png" centerxy;
+}
+fwd_button:hover {
+  background: image "ui/buttons/forward_hover.png" centerxy;
+}
+fwd_button:down {
+  background: image "ui/buttons/forward_down.png" centerxy;
+}
+
+back_button {
+  background: image "ui/buttons/back_normal.png" centerxy;
+  cursor: "hand";
+}
+back_button:disabled {
+  background: image "ui/buttons/back_disabled.png" centerxy;
+}
+back_button:hover {
+  background: image "ui/buttons/back_hover.png" centerxy;
+}
+back_button:down {
+  background: image "ui/buttons/back_down.png" centerxy;
+}
+
+arrow_fwd_button {
+  background: image "ui/buttons/arrow_forward_normal.png" centerxy;
+  cursor: "hand";
+}
+arrow_fwd_button:disabled {
+  background: image "ui/buttons/arrow_forward_disabled.png" centerxy;
+}
+arrow_fwd_button:hover {
+  background: image "ui/buttons/arrow_forward_hover.png" centerxy;
+}
+arrow_fwd_button:down {
+  background: image "ui/buttons/arrow_forward_down.png" centerxy;
+}
+
+arrow_back_button {
+  background: image "ui/buttons/arrow_back_normal.png" centerxy;
+  cursor: "hand";
+}
+arrow_back_button:disabled {
+  background: image "ui/buttons/arrow_back_disabled.png" centerxy;
+}
+arrow_back_button:hover {
+  background: image "ui/buttons/arrow_back_hover.png" centerxy;
+}
+arrow_back_button:down {
+  background: image "ui/buttons/arrow_back_down.png" centerxy;
+}
+
+arrow_button {
+  parent: alt_button;
+  padding: 4 1;
+}
+arrow_button:hover {
+  parent: "alt_button:hover";
+}
+arrow_button:down {
+  parent: "alt_button:down";
+  padding: 5 2 3 0;
+}
+arrow_button:disabled {
+  parent: "alt_button:disabled";
+}
+
+dice_button {
+  parent: alt_button;
+  padding: 4 5;
+}
+dice_button:hover {
+  parent: "alt_button:hover";
+}
+dice_button:down {
+  parent: "alt_button:down";
+  padding: 5 7 3 3;
+}
+dice_button:disabled {
+  parent: "alt_button:disabled";
+}
+
+n_state_button {
+  text-align: center;
+  vertical-align: center;
+  background: image "ui/buttons/n_state_normal0.png" framex;
+  cursor: "hand";
+}
+
+n_state_button:hover {
+  background: image "ui/buttons/n_state_hover0.png" framex;
+}
+
+tabbedpane {
+  background: image "ui/window/border_ornate.png" framexy;
+}
+
+tabbedpane_close {
+  background: image "ui/icons/16_icon.png" centerxy;
+  padding: 0 25;
+}
+
+tab {
+  color: #8c562a;
+  background: image "ui/tabs/small_normal.png" framex;
+  font: "Old Town" plain 24;
+  text-align: left;
+  vertical-align: center;
+  padding: 0 25;
+  cursor: "hand";
+}
+tab:down {
+  color: #462300;
+  background: image "ui/tabs/small_down.png" framex;
+}
+tab:selected {
+  color: #462300;
+  background: image "ui/tabs/small_down.png" framex;
+}
+
+combobox {
+  font: "Dom Casual" plain 16;
+  color: #FFFFFF;
+  background: image "ui/combobox/normal.png" framex;
+  padding: 5 22 5 10;
+  text-align: center;
+  cursor: "hand";
+}
+
+combobox:hover {
+  background: image "ui/combobox/hover.png" framex;
+}
+
+combobox:down {
+  background: image "ui/combobox/hover.png" framex;
+}
+
+combobox:disabled {
+  color: #999999;
+}
+
+textfield {
+  color: #524129;
+  font: "Dom Casual" plain 20;
+  background: image "ui/textfield.png" framex;
+  padding: 5;
+  cursor: "text";
+}
+
+textfield:disabled {
+  color: #999999;
+}
+
+textarea {
+  color: #524129;
+  background: image "ui/textfield.png" framexy;
+  padding: 5;
+}
+
+checkbox {
+  font: "Dom Casual" plain 20;
+  icon: image "ui/checkbox/unchecked.png";
+  color: #4C2602;
+  cursor: "hand";
+}
+
+checkbox:selected {
+  icon: image "ui/checkbox/checked.png";
+}
+
+checkbox:disabled {
+  icon: image "ui/checkbox/unchecked_disabled.png";
+}
+
+checkbox:disselected {
+  icon: image "ui/checkbox/checked_disabled.png";
+}
+
+scrollbar_hthumb {
+  background: image "ui/scrollbar/thumb_normal.png" framex;
+  cursor: "hand";
+}
+
+scrollbar_hthumb:down {
+  background: image "ui/scrollbar/thumb_down.png" framex;
+}
+
+scrollbar_hthumb:disabled {
+  background: image "ui/scrollbar/thumb_disabled.png" framex;
+}
+
+scrollbar_vthumb {
+  background: image "ui/scrollbar/thumb_normal.png" framey;
+  cursor: "hand";
+}
+
+scrollbar_vthumb:down {
+  background: image "ui/scrollbar/thumb_down.png" framey;
+}
+
+scrollbar_vthumb:disabled {
+  background: image "ui/scrollbar/thumb_disabled.png" framey;
+}
+
+scrollbar_hwell {
+  background: image "ui/scrollbar/well_normal.png" framex;
+  padding: 2 3 2 3;
+  cursor: "hand";
+}
+
+scrollbar_hwell:disabled {
+  background: image "ui/scrollbar/well_disabled.png" framex;
+}
+
+scrollbar_vwell {
+  background: image "ui/scrollbar/well_normal.png" framey;
+  padding: 2 3 2 3;
+  cursor: "hand";
+}
+
+scrollbar_vwell:disabled {
+  background: image "ui/scrollbar/well_disabled.png" framey;
+}
+
+scrollbar_hless {
+  icon: image "ui/scrollbar/left_normal.png" centerxy;
+  cursor: "hand";
+}
+
+scrollbar_hless:down {
+  icon: image "ui/scrollbar/left_down.png" centerxy;
+}
+
+scrollbar_hless:disabled {
+  icon: image "ui/scrollbar/left_disabled.png" centerxy;
+}
+
+scrollbar_vless {
+  background: image "ui/scrollbar/top_normal.png" centerxy;
+  cursor: "hand";
+}
+
+scrollbar_vless:down {
+  background: image "ui/scrollbar/top_down.png" centerxy;
+}
+
+scrollbar_vless:disabled {
+  background: image "ui/scrollbar/top_disabled.png" centerxy;
+}
+
+scrollbar_hmore {
+  icon: image "ui/scrollbar/right_normal.png" centerxy;
+  cursor: "hand";
+}
+
+scrollbar_hmore:down {
+  icon: image "ui/scrollbar/right_down.png" centerxy;
+}
+
+scrollbar_hmore:disabled {
+  icon: image "ui/scrollbar/right_disabled.png" centerxy;
+}
+
+scrollbar_vmore {
+  background: image "ui/scrollbar/bottom_normal.png" centerxy;
+  cursor: "hand";
+}
+
+scrollbar_vmore:down {
+  background: image "ui/scrollbar/bottom_down.png" centerxy;
+}
+
+scrollbar_vmore:disabled {
+  background: image "ui/scrollbar/bottom_disabled.png" centerxy;
+}
+
+hslider {
+  icon: image "ui/slider/normal.png";
+  background: image "ui/slider/well.png" framex;
+  cursor: "hand";
+}
+hslider:down {
+  icon: image "ui/slider/down.png";
+}
+hslider:hover {
+  icon: image "ui/slider/hover.png";
+}
+hslider:disabled {
+  icon: image "ui/slider/disabled.png";
+}
+
+vslider {
+  icon: image "ui/buttons/secondary_normal.png";
+  border: 1 solid #000000;
+}
+
+list {
+  padding: 5 5 5 5;
+}
+
+list_entry {
+  padding: 5 5 5 5;
+  color: #524129;
+  font: "Dom Casual" plain 20;
+}
+
+list_entry:selected {
+  background: image "ui/popupmenu/highlight.png" framexy;
+}
+
+//
+// Global styles
+
+window_title {
+  font: "Old Town Wide" plain 30;
+  text-align: center;
+  background: image "ui/window/scroll_title.png" framex;
+  padding: 0 50 10 50;
+  text-effect: shadow;
+  color: #4C2602;
+  effect-color: #D1C581;
+}
+
+medium_title {
+  font: "Dom Casual" bold 24;
+  text-effect: outline;
+  color: #FFFFFF;
+  effect-color: #6A482E;
+}
+
+left_label {
+  parent: "label";
+  text-align: left;
+}
+
+center_label {
+  parent: "label";
+  text-align: center;
+}
+
+right_label {
+  parent: "label";
+  text-align: right;
+}
+
+unit_label {
+  font: "Dom Casual" plain 16;
+  text-align: center;
+  padding: 2;
+}
+
+unit_label:selected {
+  border: 1 solid #FFFFFF;
+  padding: 2;
+}
+
+card_label {
+  font: "Dom Casual" plain 16;
+  text-align: center;
+  padding: 2;
+}
+
+card_label:selected {
+  border: 1 solid #FFFFFF;
+  padding: 2;
+}
+
+badge_label {
+  font: "Dom Casual" plain 16;
+  text-align: center;
+}
+
+padded_box {
+  border: 1 solid #000000;
+  padding: 5;
+}
+
+padded {
+  padding: 10 20;
+}
+
+side_padded {
+  padding: 0 10;
+}
+
+shop_view {
+  color: #3E1B00;
+}
+
+status_label {
+  text-align: center;
+  vertical-align: center;
+//  border: 1 solid #000000;
+}
+
+shop_status {
+  parent: "status_label";
+  font: "Helvetica" plain 15;
+  color: #D1B770;
+}
+
+money_label {
+  color: #FFFFFF;
+  font: "Helvetica" plain 15;
+  text-align: center;
+}
+
+price_label {
+  parent: "label";
+  text-align: right;
+  color: #FFFFFF;
+}
+
+free_label {
+  font: "Dom Casual" plain 18;
+  text-align: center;
+  padding: 0 0 0 10;
+  color: #FFFFFF;
+}
+
+wallet_name {
+  font: "Dom Casual" plain 15;
+  color: #F2DC00;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+color_selector {
+  background: image "ui/barber/swatch_dot.png";
+  cursor: "hand";
+}
+
+color_selector_popup {
+  background: image "ui/barber/swatch_extend.png" framexy;
+  padding: 0 5 0 0;
+}
+
+color_selector_item {
+  padding: 0 0 0 0;
+  cursor: "hand";
+}
+
+debug_log {
+  color: #524129;
+  background: image "ui/textfield.png" framexy;
+  padding: 5;
+}
+
+config_object_view {
+  padding: 10 20 15 15;
+}
+
+config_field_label {
+  color: #4C2602;
+}
+
+config_help_label {
+  font: "Helvetica" plain 12;
+  color: #4C2602;
+}
+
+table_header {
+  font: "Dom Casual" plain 14;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+table_label {
+  font: "Dom Casual" plain 19;
+  color: #4C2804;
+  text-align: right;
+}
+
+table_data {
+  font: "Dom Casual" plain 19;
+  color: #FFFFFF;
+  text-align: left;
+}
+
+chat_history_log {
+  color: #524129;
+  background: image "ui/textfield.png" framexy;
+  padding: 5;
+  text-effect: plain;
+}
+
+
+//
+// Dialog Window styles
+
+dialog_window {
+  parent: decoratedwindow;
+  padding: 15 50;
+}
+
+dialog_text {
+  color: #4C2602;
+  text-align: center;
+}
+
+dialog_text_left {
+  parent: "dialog_text";
+  text-align: left;
+}
+
+dialog_label {
+  font: "Old Town Wide" plain 24;
+  text-align: center;
+}
+
+dialog_tip {
+  font: "Helvetica" plain 12;
+  color: #4C2602;
+  text-align: center;
+}
+
+//
+// Icon Palette styles
+
+palette_border {
+  background: image "ui/window/border_ornate.png" framexy;
+  padding: 8 8;
+}
+
+palette_background {
+  background: image "ui/palette/background.png" tilexy;
+}
+
+small_palette_background {
+  background: image "ui/palette/small_background.png" tilexy;
+}
+
+palette_buttons {
+  padding: 1 23 1 18;
+}
+
+palette_icon {
+  font: "Dom Casual" plain 16;
+  color: #400F01;
+  background: blank;
+  text-align: center;
+  vertical-align: top;
+  padding: 24 4 4 4;
+  cursor: "hand";
+  line-spacing: -4;
+}
+
+palette_icon:selected {
+  font: "Dom Casual" plain 18;
+  color: #FFFFFF;
+  text-effect: shadow;
+  effect-color: #6A482E;
+  background: image "ui/palette/selected.png" framexy;
+}
+
+card_palette_icon {
+  font: "Dom Casual" plain 10;
+  color: #400F01;
+  background: blank;
+  text-align: center;
+  vertical-align: top;
+  padding: 12 2 2 2;
+  background: image "ui/palette/card_background.png" framexy;
+  cursor: "hand";
+}
+
+card_palette_icon:selected {
+  background: image "ui/palette/card_selected.png" framexy;
+}
+
+//
+// Logon View styles
+
+logon_view {
+  background: image "ui/logon.png" scalexy;
+  padding: 350 217 0 330;
+}
+
+logon_label {
+  font: "Dom Casual" plain 24;
+  text-effect: outline;
+  color: #FFFFFF;
+  effect-color: #6A482E;
+}
+
+logon_new {
+  font: "Helvetica" plain 12;
+  color: #FFFFFF;
+  padding: 1 1;
+  cursor: "hand";
+}
+
+logon_new:hover {
+  color: #E8BB2E;
+}
+
+logon_new:down {
+  color: #E8BB2E;
+  padding: 2 2 0 0;
+}
+
+logon_status {
+  parent: "status_label";
+  font: "Helvetica" plain 14;
+  color: #E8BB2E;
+}
+
+//
+// Options View styles
+
+options_tab {
+  padding: 25 0;
+}
+
+mute_list_pane {
+  background: image "ui/popupmenu/background.png" framexy;
+  padding: 5 5 5 5;
+}
+
+//
+// Status View styles
+
+status_view {
+  background: image "ui/status/background.png" centerxy;
+  padding: 65 0 0 0;
+}
+
+status_handle {
+  font: "Dom Casual" plain 22;
+  text-align: center;
+  color: #4d2a04;
+}
+
+status_tabinfo {
+  font: "Helvetica" plain 15;
+  text-align: center;
+  vertical-align: top;
+  color: #ffefc0;
+}
+
+stats_view {
+  padding: 5;
+  color: #000000;
+}
+
+look_upsell {
+  font: "Helvetica" plain 11;
+  text-align: center;
+  vertical-align: center;
+  color: #4d2a04;
+}
+
+//
+// Tutorial View styles
+
+tview_title {
+  font: "Dom Casual" bold 36;
+  text-effect: shadow;
+  color: #FFFFFF;
+  effect-color: #6C5237;
+  text-align: center;
+}
+
+tview_desc {
+  parent: "label";
+  color: #754A21;
+}
+
+tview_list {
+  font: "Dom Casual Thin" plain 20;
+  color: #652708;
+}
+
+//
+// Where To View styles
+
+where_title {
+  parent: "label";
+  font: "Dom Casual" bold 32;
+  text-effect: shadow;
+  color: #FFFFFF;
+  effect-color: #6C5237;
+  text-align: left;
+}
+
+where_info {
+  parent: "label";
+  font: "Dom Casual Thin" plain 18;
+}
+
+where_bubble {
+  parent: "label";
+  background: image "ui/whereto/bubble.png" framexy 70 140;
+  padding: 15 15 35 15;
+}
+
+where_shop {
+  background: image "ui/whereto/frame_town.png" centerxy;
+  padding: 3 4 4 3;
+}
+
+//
+// Pardner View styles
+
+pardner_view {
+  color: #7e4e26;
+  font: "Old Town" plain 24;
+}
+
+pardner_icon {
+  parent: def_button;
+  font: "Dom Casual" plain 15;
+  color: #4a2805;
+  background: blank;
+  text-align: center;
+  vertical-align: top;
+}
+
+pardner_icon:selected {
+  background: image "ui/palette/selected.png" framexy;
+}
+
+pardner_icon:last_session {
+  color: #7e4e26;
+  font: "Old Town Wide" plain 15;
+}
+
+pardner_status {
+  font: "Dom Casual" plain 20;
+  color: #4a2805;
+  text-align: center;
+  vertical-align: top;
+}
+
+pardner_chat_view {
+  background: image "ui/window/grip_background.png" framexy;
+  padding: 30 15 15 15;
+}
+
+//
+// Wanted Poster View styles
+
+poster_popup {
+  background: image "ui/window/background.png" framexy;
+  padding: 16 8;
+}
+
+poster_view {
+  background: image "ui/wanted/background.png" centerxy;
+}
+
+poster_rankings_box {
+  text-align: center;
+}
+
+poster_rank_scenario {
+  font: "Dom Casual" plain 20;
+  color: #4a2805;
+  text-align: left;
+}
+
+poster_rank_standing_low {
+  font: "Dom Casual" plain 20;
+  color: #996633;
+  text-align: left;
+}
+
+poster_rank_standing_mid {
+  font: "Dom Casual" plain 20;
+  color: #4a2805;
+  text-align: left;
+}
+
+poster_rank_standing_high {
+  font: "Dom Casual" plain 20;
+  color: #4a2805;
+  text-align: left;
+}
+
+poster_handle_box {
+  color: #4a2805;
+  text-align: center;
+}
+
+poster_handle {
+  font: "Old Town" plain 64;
+}
+
+poster_gang {
+  font: "Dom Casual" plain 20;
+  color: #4a2805;
+  size: 170 -1;
+  cursor: "hand";
+}
+
+poster_avatar {
+  size: 243 300;
+}
+
+poster_statement_box {
+  color: #4a2805;
+  text-align: center;
+  text-effect: plain;
+}
+
+poster_statement {
+  font: "Dom Casual" plain 20;
+}
+
+poster_statement_field {
+  parent: "textfield";
+  font: "Dom Casual" plain 18;
+  cursor: "text";
+}
+
+poster_edit_popup {
+  background: image "ui/window/background.png" framexy;
+  padding: 8;
+}
+
+poster_edit_view {
+}
+
+//
+// Friendly Folk styles
+
+folk_list_box {
+  background: image "ui/saloon/friendlyfolks_box.png";
+  padding: 5 15 5 40;
+}
+
+folk_label {
+  font: "Dom Casual" plain 18;
+}
+
+folk_pardner {
+  padding: 0 0 0 8;
+}
+
+folk_menu {
+  parent: "popupmenu";
+}
+
+folk_howto {
+  font: "Helvetica" plain 14;
+  padding: 7 20 0 0;
+}
+
+folk_howto_button {
+  background: image "ui/pstatus/folks/circle_normal.png" centerxy;
+  text-align: center;
+  vertical-align: center;
+}
+
+//
+// Town View styles
+
+tutorials_button {
+  background: image "ui/buttons/tutorials_normal.png" centerxy;
+  cursor: "hand";
+}
+tutorials_button:hover {
+  background: image "ui/buttons/tutorials_hover.png" centerxy;
+}
+tutorials_button:down {
+  background: image "ui/buttons/tutorials_down.png" centerxy;
+}
+
+saddlebag_button {
+  background: image "ui/buttons/saddlebag_normal.png" centerxy;
+  cursor: "hand";
+}
+saddlebag_button:hover {
+  background: image "ui/buttons/saddlebag_hover.png" centerxy;
+}
+saddlebag_button:down {
+  background: image "ui/buttons/saddlebag_down.png" centerxy;
+}
+
+pardners_button {
+  background: image "ui/buttons/pardners_normal.png" centerxy;
+  cursor: "hand";
+}
+pardners_button:hover {
+  background: image "ui/buttons/pardners_hover.png" centerxy;
+}
+pardners_button:down {
+  background: image "ui/buttons/pardners_down.png" centerxy;
+}
+
+tip_label {
+  font: "Dom Casual" plain 18;
+  color: #FEF3B4;
+  text-align: center;
+  padding: 0 0 4 20;
+}
+
+exit_button {
+  background: image "ui/buttons/exit_normal.png" centerxy;
+  cursor: "hand";
+}
+exit_button:hover {
+  background: image "ui/buttons/exit_hover.png" centerxy;
+}
+exit_button:down {
+  background: image "ui/buttons/exit_down.png" centerxy;
+}
+
+town_menubar {
+  background: image "ui/town/menubg.png" framexy 82 200 0 530;
+  padding: 0 16 5 40;
+}
+
+town_tip {
+  background: solid #FFFFFF;
+  border: 1 solid #000000;
+  color: #000000;
+  padding: 10 10 10 10;
+}
+
+//
+// General chat styles
+
+place_chat_viewport {
+  background: image "ui/window/border_ornate.png" framexy;
+  padding: 10 20 15 15;
+}
+
+comic_chat_viewport {
+  padding: 10 20 15 15;
+}
+
+chat_speaker_label {
+  font: "Dom Casual" plain 14;
+  text-align: center;
+  cursor: "hand";
+}
+
+sent_chat_bubble {
+  font: "Dom Casual" plain 18;
+  color: #003b27;
+  text-align: center;
+  vertical-align: center;
+  padding: 10 10 10 18;
+  text-effect: plain;
+}
+
+received_chat_bubble {
+  font: "Dom Casual" plain 18;
+  color: #09103a;
+  text-align: center;
+  vertical-align: center;
+  padding: 10 18 10 10;
+  text-effect: plain;
+}
+
+sent_chat {
+  font: "Dom Casual" plain 16;
+  color: #222222;
+  text-effect: plain;
+}
+
+received_chat {
+  parent: "sent_chat";
+  color: #000000;
+  text-effect: plain;
+}
+
+send_button {
+  padding: 0 16;
+  parent: "button";
+}
+send_button:disabled {
+  padding: 0 16;
+  parent: "button:disabled";
+}
+
+//
+// System chat view styles
+
+system_chat_view {
+    border: 20 blank;
+}
+
+system_chat_label {
+  font: "Dom Casual" plain 16;
+  color: #000000;
+  text-effect: plain;
+  text-align: center;
+  vertical-align: center;
+  border: 1 solid #000000;
+  padding: 7;
+  background: solid #E8504E;
+}
+
+attention_chat_label {
+  parent: "system_chat_label";
+  background: solid #DDC872;
+}
+
+feedback_chat_label {
+  parent: "system_chat_label";
+  background: solid #D7B377;
+  text-align: left;
+}
+
+info_chat_label {
+  parent: "system_chat_label";
+  background: solid #FFDA00;
+}
+
+//
+// Pre-game styles
+player_marquee_cont {
+  padding: 10;
+}
+
+team_marquee_cont {
+  padding: 5;
+}
+
+player_marquee_label {
+  font: "Dom Casual" plain 24;
+  color: #FFFFFF;
+  background: image "ui/frames/big_scroll0.png" centerx;
+  text-align: center;
+  vertical-align: center;
+  padding: 0 0 11 0;
+}
+
+player_marquee_label1 {
+  parent: "player_marquee_label";
+  background: image "ui/frames/big_scroll1.png" centerx;
+}
+
+player_marquee_label2 {
+  parent: "player_marquee_label";
+  background: image "ui/frames/big_scroll2.png" centerx;
+}
+
+player_marquee_label3 {
+  parent: "player_marquee_label";
+  background: image "ui/frames/big_scroll3.png" centerx;
+}
+
+player_marquee_label4 {
+  parent: "player_marquee_label";
+  background: image "ui/frames/big_scroll4.png" centerx;
+}
+
+player_marquee_label5 {
+  parent: "player_marquee_label";
+  background: image "ui/frames/big_scroll5.png" centerx;
+}
+
+player_marquee_label6 {
+  parent: "player_marquee_label";
+  background: image "ui/frames/big_scroll6.png" centerx;
+}
+
+player_marquee_label7 {
+  parent: "player_marquee_label";
+  background: image "ui/frames/big_scroll7.png" centerx;
+}
+
+marquee_vs {
+  font: "Old Town" bold 58;
+  color: #FFFFFF;
+  text-effect: outline;
+  effect-color: #000000;
+  padding: 0 0 26 0;
+}
+
+team_marquee_scroll1 {
+  font: "Dom Casual" plain 22;
+  color: #FFFFFF;
+  text-align:center;
+  vertical-align: center;
+  background: image "ui/frames/team_scroll1.png" centerx;
+  padding: 0 0 7 0;
+}
+
+team_marquee_scroll2 {
+  parent: "team_marquee_scroll1";
+  background: image "ui/frames/team_scroll2.png" centerx;
+}
+
+team_marquee_scroll3 {
+  parent: "team_marquee_scroll1";
+  background: image "ui/frames/team_scroll3.png" centerx;
+}
+
+team_marquee_scroll4 {
+  parent: "team_marquee_scroll1";
+  background: image "ui/frames/team_scroll4.png" centerx;
+}
+
+team_marquee_scroll5 {
+  parent: "team_marquee_scroll1";
+  background: image "ui/frames/team_scroll5.png" centerx;
+  padding: 0 11 7 11;
+}
+
+team_marquee_scroll6 {
+  parent: "team_marquee_scroll5";
+  background: image "ui/frames/team_scroll6.png" centerx;
+}
+
+team_marquee_scroll7 {
+  parent: "team_marquee_scroll5";
+  background: image "ui/frames/team_scroll7.png" centerx;
+}
+
+team_marquee_label {
+  font: "Dom Casual" plain 22;
+  color: #FFFFFF;
+  text-align:center;
+  vertical-align: center;
+}
+
+gang_marquee_label1 {
+  font: "Dom Casual" plain 16;
+  color: #FFFFFF;
+  background: image "ui/frames/small_scroll1.png" centerx;
+  text-align: center;
+  vertical-align: center;
+  padding: 0 7 5 7;
+}
+
+gang_marquee_label2 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/small_scroll2.png" centerx;
+}
+
+gang_marquee_label3 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/small_scroll3.png" centerx;
+}
+
+gang_marquee_label4 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/small_scroll4.png" centerx;
+}
+
+gang_marquee_label5 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/small_scroll5.png" centerx;
+}
+
+gang_marquee_label6 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/small_scroll6.png" centerx;
+}
+
+gang_marquee_label7 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/small_scroll7.png" centerx;
+}
+
+gang_team_label5 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/gang_scroll5.png" centerx;
+}
+
+gang_team_label6 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/gang_scroll6.png" centerx;
+}
+
+gang_team_label7 {
+  parent: "gang_marquee_label1";
+  background: image "ui/frames/gang_scroll7.png" centerx;
+}
+
+pick_subtitle {
+  font: "Dom Casual" plain 19;
+  padding: 0 0 0 15;
+}
+pick_subtitle:disabled {
+  color: #FFFFFF44;
+}
+
+pick_unit_name {
+  font: "Dom Casual" plain 20;
+  text-effect: shadow;
+  color: #FFFFFF;
+  effect-color: #47311C;
+  text-align: center;
+}
+
+pick_team_choice {
+  font: "Dom Casual" plain 19;
+  background: image "ui/pregame/unit_bg.png" centerxy;
+  text-align: center;
+  color: #442801;
+}
+
+pick_message {
+  parent: "label";
+  text-align: center;
+  vertical-align: center;
+}
+
+pick_tip {
+  font: "Helvetica" plain 15;
+  color: #4C2602;
+  text-align: center;
+}
+
+card_icon {
+  background: image "ui/pstatus/card_up.png" centerxy;
+}
+
+//
+// In-game styles
+
+marquee_title {
+  font: "Old Town" plain 96;
+  color: #FFFFFF;
+}
+
+marquee_subtitle {
+  font: "Dom Casual" bold 24;
+  text-align: center;
+  color: #FFFFFF;
+  text-effect: shadow;
+  effect-color: #000000;
+}
+
+marquee {
+  font: "Old Town" plain 96;
+  color: #FFFFFF;
+  text-effect: outline;
+  effect-color: #000000;
+}
+
+loading_marquee {
+  font: "Dom Casual" plain 24;
+  color: #FFFFFF;
+}
+
+player_status_win {
+  background: blank;
+}
+
+player_status_cont {
+  background: image "ui/pstatus/dashboard.png" centerxy;
+  font: "Dom Casual" bold 16;
+}
+
+player_status_ff {
+  background: image "ui/pstatus/folks/circle_normal.png" centerxy;
+  padding: 7 7 7 7;
+  cursor: hand;
+}
+
+player_status_ff:hover {
+  background: image "ui/pstatus/folks/circle_hover.png" centerxy;
+  padding: 7 7 7 7;
+}
+
+player_status_ff_menuitem {
+  parent: "menuitem";
+  color: #4C2602;
+  font: "Dom Casual" plain 16;
+}
+
+player_status_ff_menuitem:hover {
+  parent: "menuitem:hover";
+}
+
+card_button {
+  background: image "ui/pstatus/card_up.png" centerxy;
+  padding: 1 1 0 0;
+}
+
+card_button:down {
+  background: image "ui/pstatus/card_down.png" centerxy;
+  padding: 2 0 0 1;
+}
+
+card_found_button {
+  background: image "ui/pstatus/card_found_up.png" centerxy;
+  padding: 1 1 0 0;
+}
+
+card_found_button:down {
+  background: image "ui/pstatus/card_found_down.png" centerxy;
+  padding: 2 0 0 1;
+}
+
+round_timer {
+  background: image "ui/gauge/background.png" centerxy;
+}
+
+overlay_chat {
+  font: "Dom Casual" plain 20;
+  text-effect: shadow;
+  effect-color: #000000;
+}
+
+tutorial_window {
+  background: image "ui/tutorials/bubble.png" framexy;
+  padding: 25;
+}
+
+tutorial_forward {
+  background: image "ui/icons/right_arrow.png";
+  cursor: "hand";
+}
+tutorial_forward:hover {
+  background: image "ui/icons/right_arrow_hover.png";
+}
+tutorial_forward:down {
+  background: image "ui/icons/right_arrow.png";
+}
+tutorial_forward:disabled {
+  background: blank 32 21;
+}
+
+tutorial_back {
+  background: image "ui/icons/left_arrow.png";
+  cursor: "hand";
+}
+tutorial_back:hover {
+  background: image "ui/icons/left_arrow_hover.png";
+}
+tutorial_back:down {
+  background: image "ui/icons/left_arrow.png";
+}
+tutorial_back:disabled {
+  background: blank 32 21;
+}
+
+tutorial_title {
+  font: "Old Town" bold 34;
+  color: #FFFFFF;
+  text-effect: shadow;
+  effect-color: #000000;
+  text-align: center;
+}
+
+tutorial_text {
+  font: "Dom Casual" plain 20;
+  color: #4C2602;
+  text-align: left;
+}
+
+tutorial_text:disabled {
+  color: #4C260277;
+}
+
+tutorial_click {
+  font: "Old Town" bold 24;
+  color: #FEDA13;
+  text-effect: shadow;
+  effect-color: #493F05;
+  text-align: center;
+}
+
+tutorial_click:disabled {
+  color: #00000000;
+}
+
+tutorial_steps {
+  parent: "tutorial_click";
+  color: #4C2602;
+  // we need this so that we are the same height as tutorial_click text
+  effect-color: #FFFFFF00;
+  text-align: right;
+}
+
+context_help_title {
+  font: "Dom Casual" bold 20;
+  color: #000000;
+  text-align: center;
+}
+
+context_help_text {
+  font: "Dom Casual" plain 20;
+  color: #4C2602;
+  text-align: left;
+  vertical-align: top;
+}
+
+bounty_req_window {
+  background: image "ui/tutorials/bubble.png" framexy;
+  padding: 20 15 10 15;
+}
+
+bounty_req_status {
+  font: "Dom Casual" plain 14;
+}
+
+//
+// Unit Status View
+
+unit_status_label {
+  text-align: center;
+  vertical-align: center;
+}
+
+unit_status_closed {
+  background: image "ui/ustatus/unitstatus_closed.png" centerxy;
+}
+
+unit_status_closed:hover {
+  background: image "ui/ustatus/unitstatus_closed_hover.png" centerxy;
+}
+
+unit_status_container {
+  background: image "ui/ustatus/unitstatus_open.png" framexy 97 32 21 54;
+  padding: 3 9 11 42;
+}
+
+unit_status_name {
+  font: "Dom Casual" plain 16;
+  color: #FFFFFF;
+  text-align: center;
+  text-effect: shadow;
+  effect-color: #341900;
+}
+
+unit_status_health0 {
+  font: "Dom Casual" plain 14;
+  color: #FFFFFF;
+  text-effect: outline;
+  effect-size: 4;
+  effect-color: #202020;
+}
+
+unit_status_health1 {
+  parent: unit_status_health0;
+  effect-color: #002033;
+}
+
+unit_status_health2 {
+  parent: unit_status_health0;
+  effect-color: #330000;
+}
+
+unit_status_health3 {
+  parent: unit_status_health0;
+  effect-color: #003300;
+}
+
+unit_status_health4 {
+  parent: unit_status_health0;
+  effect-color: #333300;
+}
+
+unit_status_health5 {
+  parent: unit_status_health0;
+  effect-color: #331800;
+}
+
+unit_status_health6 {
+  parent: unit_status_health0;
+  effect-color: #042533;
+}
+
+unit_status_health7 {
+  parent: unit_status_health0;
+  effect-color: #160633;
+}
+
+unit_status_details {
+  font: "Dom Casual" plain 12;
+  color: #341900;
+  text-align: center;
+  vertical-align: top;
+}
+
+unit_status_number {
+  parent: unit_status_details;
+  color: #FFFFFF;
+}
+
+unit_status_holding {
+  parent: unit_status_details;
+  text-align: left;
+  vertical-align: center;
+  color: #FFFFFF;
+}
+
+unit_status_influence {
+  parent: unit_status_holding;
+  color: #FFD100;
+}
+
+unit_status_hindrance {
+  parent: unit_status_holding;
+  color: #6D0C08;
+}
+
+//
+// Hero Building HUD
+
+hero_level_label {
+  parent: "label";
+  font: "Dom Casual" plain 22;
+}
+
+hero_level0 {
+  font: "Old Town" plain 30;
+  color: #FFFFFF;
+  text-effect: outline;
+  effect-size: 4;
+  effect-color: #202020;
+}
+
+hero_level1 {
+  parent: hero_level0;
+  effect-color: #002033;
+}
+
+hero_level2 {
+  parent: hero_level0;
+  effect-color: #330000;
+}
+
+hero_level3 {
+  parent: hero_level0;
+  effect-color: #003300;
+}
+
+hero_level4 {
+  parent: hero_level0;
+  effect-color: #333300;
+}
+
+hero_level5 {
+  parent: hero_level0;
+  effect-color: #331800;
+}
+
+hero_level6 {
+  parent: hero_level0;
+  effect-color: #042533;
+}
+
+hero_level7 {
+  parent: hero_level0;
+  effect-color: #160633;
+}
+
+//
+// Player Status View
+
+player_status_name {
+  font: "Dom Casual" plain 13;
+  text-align: center;
+  padding: 1 0 0 0;
+  color: #FFFFFF;
+}
+player_status0 {
+  parent: "player_status_name";
+  color: #0000CC;
+}
+player_status1 {
+  parent: "player_status_name";
+  color: #CC0000;
+}
+player_status2 {
+  parent: "player_status_name";
+  color: #00AA00;
+}
+player_status3 {
+  parent: "player_status_name";
+  color: #888800;
+}
+
+player_status_score {
+  color: #FFFFFF;
+}
+
+//
+// Shared Shop Styles
+
+shopkeep_name_label {
+  font: "Dom Casual" bold 18;
+  color: #006500;
+  text-align: center;
+}
+
+town_name_label {
+  font: "Old Town Wide" plain 17;
+  color: #442801;
+  text-align: center;
+}
+
+//
+// General Store styles
+
+goods_descrip {
+  background: blank;
+  font: "Helvetica" plain 15;
+  color: #F7E17E;
+  vertical-align: top;
+}
+
+//
+// Song Download View styles
+
+song_note {
+  parent: "label";
+  font: "Dom Casual" plain 17;
+}
+
+//
+// Bank styles
+
+bank_title {
+  font: "Dom Casual" bold 17;
+  color: #897301;
+}
+
+bank_post_title {
+  font: "Dom Casual" bold 17;
+  color: #414D36;
+}
+
+offer_unavail {
+  parent: "status_label";
+  font: "Helvetica" plain 15;
+  color: #4C2602;
+}
+
+offer_right {
+  parent: "label";
+  color: #FFFFFF;
+}
+
+offer_cont {
+  background: image "ui/bank/field.png" centerxy;
+}
+
+bank_divider {
+  background: image "ui/bank/divider.png" framex;
+}
+
+bank_only {
+  font: "Dom Casual" bold 24;
+  color: #4C2602;
+//  border: 1 solid #FFFFFF;
+}
+
+pass_cost {
+  font:"Dom Casual" bold 32;
+  color: #FFFFFF;
+  text-effect: outline;
+  effect-color: #4C2602;
+}
+
+//
+// Barber styles
+
+barber_tip_label {
+  parent: "center_label";
+  font: "Helvetica" plain 15;
+}
+
+avatar_view {
+  color: #442801;
+  padding: 7 12 7 12;
+  text-align: center;
+  vertical-align: bottom;
+  cursor: "hand";
+}
+
+avatar_view_framed_2 {
+  parent: "avatar_view";
+  background: image "ui/frames/big_background.png" centerxy;
+  font: "Dom Casual" plain 24;
+}
+
+avatar_view_framed_4 {
+  parent: "avatar_view";
+  font: "Dom Casual" plain 14;
+  background: image "ui/frames/small_background.png" centerxy;
+}
+
+avatar_view_framed_8 {
+  font: "Dom Casual" plain 13;
+  padding: 0 12 5 10;
+}
+
+avatar_view_unframed_2 {
+  parent: "avatar_view";
+  font: "Dom Casual" plain 24;
+}
+
+avatar_view_unframed_4 {
+  parent: "avatar_view";
+  font: "Dom Casual" plain 14;
+}
+
+avatar_view_unframed_8 {
+  parent: "avatar_view";
+  font: "Dom Casual" plain 13;
+  padding: 0 12 5 10;
+}
+
+colorsel_label {
+  font: "Dom Casual" plain 20;
+  text-align: right;
+}
+
+fa_inner_box {
+  background: image "ui/window/border_ornate.png" framexy;
+  padding: 20 50;
+}
+
+barber_char_header {
+  font: "Old Town Wide" plain 40;
+  text-align: center;
+  text-effect: shadow;
+  color: #4C2602;
+  effect-color: #D1C581;
+}
+
+barber_char_tip {
+  font: "Helvetica" plain 12;
+}
+
+barber_char_cost {
+  parent: "money_label";
+  color: #4C2602;
+}
+
+//
+// Saloon styles
+
+news_view {
+  padding: 18 10 10 10;
+  // border: 1 solid #FFFFFF;
+}
+
+news_nameplate {
+  text-align: right;
+  padding: 7 10 0 0;
+}
+
+news_masthead {
+  background: image "ui/saloon/lines.png" centerxy;
+  padding: 2 0 0 0;
+}
+
+news_mastlabel {
+  color: #553817;
+  font: "Dom Casual" plain 14;
+}
+
+news_news {
+  parent: def_button;
+  background: image "ui/saloon/news_normal.png";
+}
+
+news_news:selected {
+  background: image "ui/saloon/news_selected.png";
+}
+
+news_folks {
+  parent: def_button;
+  background: image "ui/saloon/folks_normal.png";
+}
+
+news_folks:selected {
+  background: image "ui/saloon/folks_selected.png";
+}
+
+news_top_scores {
+  parent: def_button;
+  background: image "ui/saloon/top_scores_normal.png";
+}
+
+news_top_scores:selected {
+  background: image "ui/saloon/top_scores_selected.png";
+}
+
+news_contents {
+  padding: 0 10 10 11;
+}
+
+news_help {
+  padding: 5 30 0 15;
+}
+
+news_scroll {
+  padding: 0 0 15 0;
+}
+
+news_buttons {
+  padding: 0 35 5 0;
+}
+
+top10_this_week {
+  parent: def_button;
+  background: image "ui/saloon/this_week_normal.png";
+}
+
+top10_this_week:selected {
+  background: image "ui/saloon/this_week_selected.png";
+}
+
+top10_last_week {
+  parent: def_button;
+  background: image "ui/saloon/last_week_normal.png";
+}
+
+top10_last_week:selected {
+  background: image "ui/saloon/last_week_selected.png";
+}
+
+top10_lifetime {
+  parent: def_button;
+  background: image "ui/saloon/lifetime_normal.png";
+}
+
+top10_lifetime:selected {
+  background: image "ui/saloon/lifetime_selected.png";
+}
+
+top10_title {
+  font: "Old Town Wide" plain 24;
+  text-align: center;
+  text-effect: shadow;
+  color: #4C2602;
+  effect-color: #D1C581;
+}
+
+top_score_view {
+  padding: 0 10;
+}
+
+top_score_header {
+  parent: "label";
+  font: "Old Town Wide" plain 24;
+  text-align: center;
+}
+
+top_score_category {
+  parent: "label";
+  font: "Dom Casual" bold 20;
+  text-align: center;
+}
+
+top_score_list {
+  parent: "label";
+  font: "Dom Casual" plain 16;
+  cursor: "hand";
+}
+
+parlor_list {
+  padding: 0 5 0 0;
+}
+
+parlor_label {
+  font: "Dom Casual" plain 20;
+  color: #524129;
+}
+
+match_label {
+  font: "Dom Casual" plain 20;
+  color: #897301;
+  text-align: right;
+}
+
+match_info {
+  font: "Dom Casual" plain 20;
+  color: #524129;
+  text-align: center;
+}
+
+match_header {
+  parent: match_label;
+  text-align: center;
+}
+
+parlor_scenbox {
+  padding: 1 0 9 0;
+}
+
+parlor_scenarios {
+  background: image "ui/textfield.png" framexy;
+  padding: 10;
+}
+
+starting_label {
+  font: "Dom Casual" plain 20;
+  color: #FFFFFF;
+  text-effect: shadow;
+  effect-color: #897301;
+}
+
+match_view {
+  padding: 0 10 5 10;
+//  border: 1 solid #000000;
+}
+
+match_slot {
+  font: "Dom Casual" plain 13;
+  text-align: center;
+  vertical-align: bottom;
+  padding: 0 12 5 12;
+}
+
+match_slot_white {
+  parent: match_slot;
+  color: #FFFFFF;
+}
+
+tin_can_slot0 {
+  font: "Dom Casual" plain 13;
+  text-align: center;
+  color: #FFFFFF;
+  background: image "ui/frames/tiny_scroll0.png" centerxy;
+  padding: 0 0 3;
+}
+
+tin_can_slot1 {
+  parent: "tin_can_slot0";
+  background: image "ui/frames/tiny_scroll1.png" centerxy;
+}
+
+tin_can_slot2 {
+  parent: "tin_can_slot0";
+  background: image "ui/frames/tiny_scroll2.png" centerxy;
+}
+
+tin_can_slot3 {
+  parent: "tin_can_slot0";
+  background: image "ui/frames/tiny_scroll3.png" centerxy;
+}
+
+tin_can_slot4 {
+  parent: "tin_can_slot0";
+  background: image "ui/frames/tiny_scroll4.png" centerxy;
+}
+
+tin_can_slot5 {
+  parent: "tin_can_slot0";
+  background: image "ui/frames/tiny_scroll5.png" centerxy;
+}
+
+tin_can_slot6 {
+  parent: "tin_can_slot0";
+  background: image "ui/frames/tiny_scroll6.png" centerxy;
+}
+
+tin_can_slot7 {
+  parent: "tin_can_slot0";
+  background: image "ui/frames/tiny_scroll7.png" centerxy;
+}
+
+match_chat_header {
+  padding: 16 0 5 8;
+}
+
+match_chat {
+  padding: 0 3 0 6;
+}
+
+match_chat_text {
+  font: "Dom Casual" plain 16;
+  // border: 1 solid #000000;
+}
+
+match_chat_input {
+  parent: "textfield";
+  font: "Dom Casual" plain 16;
+  cursor: "text";
+}
+
+lobby_chat {
+  padding: 0 5 5 5;
+}
+
+//
+// Ranch styles
+
+ranch_unit_name {
+  font: "Dom Casual" plain 24;
+  text-effect: shadow;
+  color: #FFFFFF;
+  effect-color: #6A482E;
+  text-align: center;
+  vertical-align: center;
+}
+
+ranch_unit_details {
+  font: "Helvetica" plain 15;
+  color: #4C2804;
+  vertical-align: top;
+}
+
+ranch_practice_info {
+  font: "Helvetica" plain 14;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+ranch_recruit {
+  font: "Dom Casual" plain 19;
+  color: #4C2804;
+  text-align: left;
+}
+
+big_unit_view {
+  background: image "ui/frames/big_background.png" centerxy;
+  padding: 7 12 7 12;
+}
+
+medium_unit_view {
+  background: image "ui/frames/medium_background.png" centerxy;
+  padding: 7 12 7 12;
+}
+
+//
+// Train Station styles
+
+station_map {
+  background: image "ui/station/map.png" centerxy;
+}
+
+ticket_info {
+  parent: "label";
+  padding: 5 0 5 10;
+  font: "Dom Casual" plain 18;
+  color: #766300;
+  text-align: center;
+}
+
+map_here {
+  background: image "ui/station/youarehere.png" centerxy;
+}
+
+map_take {
+  background: image "ui/station/take_train.png" centerxy;
+  cursor: "hand";
+}
+map_take:hover {
+  background: image "ui/station/take_train_hover.png" centerxy;
+}
+map_take:disabled {
+  background: blank;
+}
+
+map_frontier_town {
+  cursor: "hand";
+}
+map_frontier_town:hover {
+  background: image "ui/station/frontier_town_hover.png" centerxy;
+}
+
+map_indian_post {
+  cursor: "hand";
+}
+map_indian_post:hover {
+  background: image "ui/station/indian_post_hover.png" centerxy;
+}
+
+map_boom_town {
+  cursor: "hand";
+}
+map_boom_town:hover {
+  background: image "ui/station/boom_town_hover.png" centerxy;
+}
+
+//
+// Hideout styles
+
+about_gangs_title {
+  padding: 10 20 5 0;
+}
+
+hideout_text {
+  font: "Helvetica" plain 12;
+  color: #4C2602;
+}
+
+about_gangs {
+  parent: "hideout_text";
+  padding: 0 20 10 145;
+}
+
+start_gang {
+  parent: "hideout_text";
+  padding: 5 60 5 0;
+}
+
+start_gang_reqs {
+  parent: "hideout_text";
+  padding: 0 190 5 0;
+}
+
+start_gang_cost {
+  parent: "money_label";
+  color: #4C2602;
+}
+
+gang_directory_title {
+  padding: 0 20 0 0;
+}
+
+directory_view {
+  background: image "ui/hideout/fields_directory.png" centerxy;
+}
+
+directory_letter {
+  font: "Old Town" plain 28;
+  color: #896D35;
+  padding: 0 2 0 3;
+  text-align: center;
+}
+
+directory_letter:selected {
+  font: "Old Town" bold 28;
+  color: #652708;
+}
+
+directory_pane {
+  padding: 0 45 8 50;
+  size: 494 230;
+}
+
+directory_entry {
+  font: "Dom Casual" plain 18;
+  color: #5C361D;
+  padding: 5 5;
+  cursor: "hand";
+}
+
+roster_view {
+  background: image "ui/hideout/fields_roster.png" centerxy;
+}
+
+roster_pane {
+  padding: 3 13 3 20;
+  size: 494 258;
+}
+
+roster_title {
+  font: "Old Town" plain 28;
+  color: #652708;
+  padding: 7 0 0 7;
+}
+
+leader_view {
+  font: "Dom Casual" plain 14;
+  color: #5C361D;
+  text-align: center;
+  padding: 17 25 0 0;
+  cursor: "hand";
+}
+
+roster_table {
+  padding: 5 0 10 45;
+}
+
+roster_entry {
+  font: "Dom Casual" plain 17;
+  color: #5C361D;
+  padding: 0 20 0 0;
+  cursor: "hand";
+}
+roster_entry_offline {
+  parent: "roster_entry";
+  color: #9C7D40;
+}
+roster_entry_inactive {
+  parent: "roster_entry";
+  color: #A99A78;
+}
+
+history_view {
+  background: image "ui/window/border_ornate.png" framexy;
+  size: 700 -1;
+  padding: 15 15;
+}
+
+history_date {
+  font: "Dom Casual" plain 17;
+  color: #5C361D;
+  vertical-align: top;
+  size: 135 -1;
+}
+
+history_desc {
+  font: "Dom Casual" plain 17;
+  color: #5C361D;
+}
+
+play_view {
+  background: image "ui/hideout/fields_play.png" centerxy;
+  padding: 0 5 3 0;
+}
+
+table_view {
+  parent: "play_view";
+  padding: 0 5 3 24;
+}
+
+play_tip {
+  font: "Helvetica" plain 12;
+  color: #4C2602;
+  text-align: center;
+  vertical-align: center;
+  padding: 5 40 0 40;
+}
+
+hideout_match_view {
+  size: 440 255;
+  padding: 0 10 20 10;
+}
+
+gang_info_design {
+  padding: 0 15;
+}
+
+gang_info_content {
+  padding: 5 0;
+  size: -1 185;
+}
+
+gang_title {
+  font: "Old Town" bold 36;
+  color: #652708;
+  size: 380 -1;
+  text-align: center;
+}
+
+gang_notoriety {
+  font: "Dom Casual" plain 22;
+  color: #5C361D;
+  text-align: center;
+}
+
+gang_statement {
+  parent: "hideout_text";
+  text-effect: plain;
+  text-align: center;
+  vertical-align: center;
+  tooltip: "plain_tooltip_label";
+}
+
+gang_page_button {
+  parent: "alt_button";
+  tooltip: "plain_tooltip_label";
+}
+
+gang_coffers {
+  parent: "money_label";
+  color: #4C2602;
+}
+
+coffer_label {
+  font: "Dom Casual" plain 18;
+  color: #5C361D;
+  text-align: center;
+}
+
+menu_play {
+  parent: "def_button";
+  background: image "ui/hideout/menu_play.png" centerxy;
+}
+menu_play:selected {
+  parent: "def_button";
+  background: image "ui/hideout/menu_play_selected.png" centerxy;
+}
+menu_play:disabled {
+  background: image "ui/hideout/menu_play_disabled.png" centerxy;
+}
+
+menu_roster {
+  parent: "def_button";
+  background: image "ui/hideout/menu_roster.png" centerxy;
+}
+menu_roster:selected {
+  parent: "def_button";
+  background: image "ui/hideout/menu_roster_selected.png" centerxy;
+}
+
+menu_directory {
+  parent: "def_button";
+  background: image "ui/hideout/menu_directory.png" centerxy;
+}
+menu_directory:selected {
+  parent: "def_button";
+  background: image "ui/hideout/menu_directory_selected.png" centerxy;
+}
+
+menu_table {
+  parent: "def_button";
+  background: image "ui/hideout/menu_table.png" centerxy;
+}
+menu_table:selected {
+  parent: "def_button";
+  background: image "ui/hideout/menu_table_selected.png" centerxy;
+}
+menu_table:disabled {
+  background: image "ui/hideout/menu_table_disabled.png" centerxy;
+}
+
+hideout_members {
+  background: image "ui/hideout/fields_members_in_hideout.png" centerxy;
+  size: 434 148;
+  padding: 8 19;
+}
+
+hideout_members_title {
+  font: "Dom Casual" plain 18;
+  color: #88582A;
+  text-align: center;
+}
+
+hideout_members_entry {
+  font: "Dom Casual" plain 17;
+  color: #5C361D;
+  text-align: center;
+  padding: 0 20;
+  cursor: "hand";
+}
+
+gang_chat {
+  size: 430 360;
+  padding: 2 2;
+}
+
+gang_rank_view {
+  padding: 5 5;
+}
+
+// Gang buckle dialog styles
+
+buckle_view {
+  color: #442801;
+  padding: 7 12 7 12;
+  text-align: center;
+  vertical-align: bottom;
+  font: "Dom Casual" plain 14;
+  cursor: "hand";
+}
+
+buckle_dialog {
+  background: image "ui/window/border_wood.png" framexy;
+  padding: 30 30 15 50;
+}
+
+buckle_tabs {
+  background: image "ui/hideout/buckle_tabs.png" centery;
+}
+
+buckle_palette {
+  background: image "ui/hideout/buckle_palette_background.png" tilexy;
+}
+
+buckle_heading {
+  font: "Old Town" bold 27;
+  color: #FFFFFF;
+  text-effect: outline;
+  effect-color: #6C5237;
+}
+
+buckle_label {
+  font: "Dom Casual" plain 16;
+  color: #FFFFFF;
+  padding: 0 5 1 5;
+}
+
+buckle_tip {
+  font: "Dialog" plain 14;
+  color: #EACE86;
+  text-align: center;
+  padding: 15 0;
+}
+
+small_arrow_button {
+  parent: "alt_button";
+  padding: 0 5;
+}
+small_arrow_button:disabled {
+  parent: "alt_button:disabled";
+}
+small_arrow_button:hover {
+  parent: "alt_button:hover";
+}
+small_arrow_button:down {
+  parent: "alt_button:down";
+  padding: 2 6 0 4;
+}
+
+buckle_preview {
+  background: image "ui/hideout/buckle_frame.png" centerxy;
+}
+buckle_preview_label {
+  font: "Dom Casual" plain 14;
+  color: #442801;
+  text-align: center;
+}
+
+buckle_palette_icon {
+  parent: "palette_icon";
+  padding: 0 0;
+}
+buckle_palette_icon:selected {
+  parent: "palette_icon:selected";
+}
+
+// Gang outfit dialog styles
+
+outfit_dialog {
+  background: image "ui/window/border_wood.png" framexy;
+  padding: 30 22 15 22;
+}
+
+outfit_articles {
+  background: image "ui/window/border_ornate_darker.png" framexy;
+  padding: 8;
+}
+
+outfit_scroll {
+  font: "Dom Casual" plain 14;
+  color: #442801;
+  background: image "ui/hideout/short_scroll.png" centerxy;
+  text-align: center;
+  vertical-align: top;
+}
+
+outfit_avatar_left {
+  padding: 0 5 0 0;
+}
+
+outfit_tabs_left {
+  background: image "ui/hideout/outfit_tabs_left_back.png" centerxy;
+}
+
+outfit_avatar_right {
+  padding: 0 0 0 5;
+}
+
+outfit_tabs_right {
+  background: image "ui/hideout/outfit_tabs_right_back.png" centerxy;
+}
+
+outfit_item {
+  background: image "ui/hideout/outfit_article_background.png" centerxy;
+  text-align: center;
+}
+
+outfit_tip {
+  font: "Helvetica" plain 14;
+  color: #4C2602;
+  vertical-align: top;
+}
+
+outfit_tip_steps {
+  padding: 0 60 0 20;
+}
+
+outfit_controls {
+  padding: 30 5 5 20;
+}
+
+outfit_total_price {
+  font: "Old Town" bold 27;
+  text-align: center;
+  text-effect: outline;
+  color: #FFFFFF;
+  effect-color: #6C5237;
+}
+
+// Gang inventory dialog styles
+
+gang_inventory_tabs {
+  background: image "ui/hideout/inventory_tabs.png" centerxy;
+}
+
+// Gang store dialog styles
+
+gang_store_dialog {
+  background: image "ui/window/border_wood.png" framexy;
+  padding: 30 22 30 22;
+}
+
+gang_store_goods {
+  background: image "ui/window/border_ornate_darker.png" framexy;
+  padding: 8;
+}
+
+gang_store_icon_left {
+  padding: 5 10 4 5;
+}
+
+gang_store_scroll {
+  font: "Dom Casual" plain 14;
+  color: #442801;
+  background: image "ui/hideout/short_scroll.png" centerxy;
+  text-align: center;
+  vertical-align: top;
+}
+
+gang_store_tabs_left {
+  background: image "ui/hideout/store_tabs_left_back.png" centerxy;
+}
+
+gang_store_icon_right {
+  padding: 16 5 4 10;
+}
+
+gang_store_tabs_right {
+  background: image "ui/hideout/store_tabs_right_back.png" centerxy;
+}
+
+gang_store_good {
+  background: image "ui/hideout/outfit_article_background.png" centerxy;
+  text-align: center;
+}
+
+gang_store_controls {
+   padding: 30 5 10 50;
+}
+
+// Gang info dialog styles
+
+gang_info_dialog {
+  parent: "popupwindow";
+  padding: 10 5;
+}
+
+gang_info_view {
+  background: image "ui/ganginfo/background.png" centerxy;
+  padding: 12 20;
+}
+
+gang_info_title {
+  font: "Old Town" bold 48;
+  color: #4C2602;
+}
+
+gang_info_founded {
+  font: "Dom Casual" plain 16;
+  color: #4C2602;
+}
+
+gang_info_notoriety {
+  font: "Dom Casual" plain 22;
+  color: #4C2602;
+  text-align: center;
+}
+
+gang_info_statement {
+  font: "Helvetica" plain 12;
+  color: #4C2602;
+  size: 270 -1;
+  text-effect: plain;
+}
+
+gang_info_leader_view {
+  parent: "leader_view";
+  padding: 17 0 0 0;
+}
+
+//
+// Sheriff's Office styles
+
+bounty_list_tipbox {
+  padding: 5 5 0 138;
+  size: 1 49; // only height is used
+}
+
+bounty_list_tip {
+  parent: "label";
+  font: "Helvetica" plain 15;
+  text-align: center;
+}
+
+bounty_list_entry {
+  font: "Old Town Medium" plain 28;
+}
+bounty_list_entry:selected {
+  color: #FFFFFF;
+  background: image "ui/popupmenu/highlight.png" framexy;
+}
+
+bounty_list_details {
+  font: "Dom Casual" plain 16;
+  color: #6C421B;
+}
+
+bounty_detail_reward {
+  font: "Old Town Medium" plain 56;
+  color: #652708;
+  vertical-align: top;
+}
+
+bounty_detail_title {
+  font: "Old Town" plain 36;
+  color: #4C2602;
+}
+
+bounty_detail_descrip {
+  font: "Dom Casual Thin" plain 16;
+  color: #6c421b;
+  vertical-align: top;
+}
+
+bge_table_tdata {
+  parent: "label";
+  vertical-align: "top";
+  font: "Dom Casual" plain 14;
+}
+
+bge_table_rdata {
+  parent: "label";
+  text-align: right;
+}
+
+bounty_recent {
+  font: "Dom Casual" plain 14;
+  cursor: "hand";
+}
+
+//
+// Post-game stats display
+
+endgame_border {
+  background: image "ui/window/border_ornate.png" framexy;
+  padding: 16 32;
+}
+
+endgame_item_border {
+  parent: "endgame_border";
+  padding: 16;
+}
+
+endgame_player_big {
+  font: "Dom Casual" plain 24;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+endgame_player_big_hand {
+  parent: "endgame_player_big";
+  cursor: "hand";
+}
+
+endgame_player_small {
+  font: "Dom Casual" plain 14;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+endgame_player_small_hand {
+  parent: "endgame_player_small";
+  cursor: "hand";
+}
+
+endgame_wave_header {
+  font: "Dom Casual" plain 14;
+  text-align: center;
+  color: #7D4924;
+}
+
+endgame_round {
+  font: "Old Town Wide" plain 18;
+  text-align: left;
+  color: #7D4924;
+}
+
+endgame_desc {
+  font: "Dom Casual" plain 16;
+  text-align: left;
+  color: #4C2602;
+}
+
+endgame_title {
+  font: "Old Town Wide" plain 24;
+  text-align: center;
+  color: #4C2602;
+}
+
+endgame_text {
+  font: "Dom Casual" plain 18;
+  text-align: center;
+  color: #4C2602;
+}
+
+endgame_header {
+  font: "Dom Casual" plain 18;
+  text-align: center;
+  color: #7D4924;
+}
+
+endgame_smallheader {
+  font: "Dom Casual" plain 15;
+  text-align: center;
+  color: #7D4924;
+}
+
+endgame_cash {
+  font: "Dom Casual" plain 30;
+  text-align: center;
+  text-effect: shadow;
+  effect-color: #000000;
+}
+
+endgame_smallcash {
+  parent: "endgame_cash";
+  font: "Dom Casual" plain 24;
+}
+
+endgame_reward {
+  font: "Helvetica" plain 12;
+  text-align: center;
+  color: #442801;
+}
+
+endgame_total {
+  font: "Dom Casual" plain 30;
+  text-align: left;
+  text-effect: shadow;
+  effect-color: #000000;
+}
+
+endgame_smalltotal {
+  parent: "endgame_total";
+  font: "Dom Casual" plain 24;
+}
+
+endgame_stattotal {
+  parent: "endgame_smalltotal";
+  text-align: center;
+}
+
+endgame_stattotalhigh {
+  parent: "endgame_stattotal";
+  color: #FFFF66;
+}
+
+endgame_player {
+  parent: "avatar_view_unframed_8";
+  color: #FFFFFF;
+}
+
+endgame_folks_help {
+  parent: "menuitem";
+  font: "Dom Casual" plain 18;
+  color: #766300;
+}
+
+//
+// Bounty styles
+
+bounty_title {
+  parent: "label";
+  font: "Old Town Medium" bold 22;
+}
+
+bounty_quote {
+  parent: "label";
+  color: #6C421B;
+}
+
+// Pre-game view
+
+bounty_pregame {
+  padding: 15;
+}
+
+bounty_pregame_crit {
+  parent: "label";
+  color: #FFFFFF;
+  text-align: left;
+}
+
+bigshot_portrait {
+  padding: 5 10 5 10;
+  background: image "ui/frames/small_background.png" centerxy;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+// Post-game view
+
+bover_contents {
+  padding: 0 30 15 30;
+}
+
+bover_header {
+  parent: "endgame_smallheader";
+  font: "Dom Casual" plain 18;
+}
+
+bover_smallheader {
+  parent: "endgame_smallheader";
+}
+
+bover_crit {
+  font: "Dom Casual" plain 18;
+  color: #FFFFFF;
+  text-effect: shadow;
+  effect-color: #715634;
+}
+
+bover_rcrit {
+  parent: "bover_crit";
+  text-align: center;
+}
+
+bover_game {
+  font: "Dom Casual" plain 18;
+  color: #652708;
+}
+
+bover_result {
+  font: "Dom Casual" plain 24;
+  color: #FFFFFF;
+  text-effect: shadow;
+  effect-color: #715634;
+}
+
+bover_failed_result {
+  parent: "bover_result";
+  color: #9D0A0E;
+}
+
+bover_overall {
+  parent: "bover_result";
+  font: "Dom Casual" plain 42;
+  text-align: center;
+}

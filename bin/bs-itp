@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Command line launcher for the Bang! development server
+
+BANG_HOME=`dirname $0`/..
+HOSTNAME=`hostname`
+JARGS=""
+NODE="indian_post"
+
+SERVER_MEMORY=384M
+if [ -f $BANG_HOME/etc/test/server.conf ]; then
+    . $BANG_HOME/etc/test/server.conf
+else
+    echo "Missing $BANG_HOME/etc/test/server.conf; can't run server."
+    exit 255
+fi
+
+# parse our arguments
+while [ ! -z "$1" ]; do
+    case "$1" in
+        -D*)
+            JARGS="$JARGS $1"
+            ;;
+
+        *)
+            NODE="$1"
+            ;;
+    esac
+    shift
+done
+
+CLASS=com.threerings.bang.server.BangServer
+exec $BANG_HOME/bin/bangjava -server -Djava.awt.headless=true -mx$SERVER_MEMORY \
+  -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true $JARGS $CLASS

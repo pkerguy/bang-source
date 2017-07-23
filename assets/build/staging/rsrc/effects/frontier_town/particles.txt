@@ -1,0 +1,16 @@
+frontier_town/dust
+frontier_town/dust_small
+frontier_town/explosion
+frontier_town/fire
+frontier_town/get_bonus
+frontier_town/hit_flash
+frontier_town/joker
+frontier_town/lasso
+frontier_town/lucky
+frontier_town/mushroom_cloud
+frontier_town/nugget/pickedup
+frontier_town/nugget/sparkle
+frontier_town/resurrection
+frontier_town/sea_spray
+frontier_town/shotgunner_shells
+frontier_town/staredown

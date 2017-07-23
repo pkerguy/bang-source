@@ -1,0 +1,9 @@
+frontier_town/artillery
+frontier_town/cavalry
+frontier_town/codger
+frontier_town/dirigible
+frontier_town/gunslinger
+frontier_town/sharpshooter
+frontier_town/shotgunner
+frontier_town/steamgunman
+frontier_town/tactician

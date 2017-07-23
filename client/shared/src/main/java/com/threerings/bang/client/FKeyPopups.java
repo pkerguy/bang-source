@@ -113,7 +113,7 @@ public class FKeyPopups
     {
         _ctx = ctx;
         for (Type type : Type.values()) {
-            _ctx.getKeyManager().registerCommand(type.control(), type.keyCode(), this);
+            _ctx.getKeyManager().registerCommand(type.keyCode(), this);
         }
         _msgs = _ctx.getMessageManager().getBundle(BangCodes.BANG_MSGS);
         _cmsgs = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);

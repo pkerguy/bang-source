@@ -1196,7 +1196,7 @@ public class BangClient extends BasicClient
 
             // also re-wire up our options view whenever the main view changes as the BangView
             // overrides the escape mapping during the game
-            _ctx.getKeyManager().registerCommand(false, Keys.ESCAPE, _clearPopup);
+            _ctx.getKeyManager().registerCommand(Keys.ESCAPE, _clearPopup);
         }
 
         // don't fade in the game or town views, they'll handle that themselves when they're ready

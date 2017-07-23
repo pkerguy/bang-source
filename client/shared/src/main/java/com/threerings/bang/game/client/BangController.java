@@ -74,9 +74,9 @@ public class BangController extends GameController
      * key is pressed (assuming no key-listening component has focus like the
      * chat box).
      */
-    public void mapCommand (int keyCode, String command)
+    public void mapCommand (boolean control, int keyCode, String command)
     {
-        mapCommand(keyCode, new ActionEvent(BangController.this, 0, command));
+        mapCommand(control, keyCode, new ActionEvent(BangController.this, 0, command));
     }
 
     /**
@@ -84,9 +84,9 @@ public class BangController extends GameController
      * key is pressed (assuming no key-listening component has focus like the
      * chat box).
      */
-    public void mapCommand (int keyCode, String command, Object argument)
+    public void mapCommand (boolean control, int keyCode, String command, Object argument)
     {
-        mapCommand(keyCode, new CommandEvent(
+        mapCommand(control, keyCode, new CommandEvent(
                     BangController.this, command, argument));
     }
 
@@ -95,10 +95,10 @@ public class BangController extends GameController
      * key is pressed (assuming no key-listening component has focus like the
      * chat box).
      */
-    public void mapCommand (int keyCode, final ActionEvent event)
+    public void mapCommand (boolean control, int keyCode, final ActionEvent event)
     {
         _ctx.getKeyManager().registerCommand(
-            keyCode, new GlobalKeyManager.Command() {
+            control, keyCode, new GlobalKeyManager.Command() {
             public void invoke (int keyCode, int modifiers) {
                 handleAction(event);
             }
@@ -173,18 +173,18 @@ public class BangController extends GameController
             }
         }, 3);
 
-        mapCommand(Keys.SPACE, "StartChat");
-        mapCommand(Keys.ENTER, "StartChat");
-        mapCommand(Keys.ESCAPE, "ShowOptions");
-        mapCommand(Keys.F1, "ShowOptions");
-        mapCommand(Keys.TAB, "SelectNextUnit");
-        mapCommand(Keys.C, "AdjustZoom");
-        mapCommand(Keys.Q, "SwingCameraLeft");
-        mapCommand(Keys.E, "SwingCameraRight");
-        //mapCommand(Keys.G, "ToggleGrid");
-        mapCommand(Keys.NUM_1, PLACE_CARD, new Integer(0));
-        mapCommand(Keys.NUM_2, PLACE_CARD, new Integer(1));
-        mapCommand(Keys.NUM_3, PLACE_CARD, new Integer(2));
+        mapCommand(true, Keys.SPACE, "StartChat");
+        mapCommand(true, Keys.ENTER, "StartChat");
+        mapCommand(false, Keys.ESCAPE, "ShowOptions");
+        mapCommand(false, Keys.F1, "ShowOptions");
+        mapCommand(false, Keys.TAB, "SelectNextUnit");
+        mapCommand(true, Keys.C, "AdjustZoom");
+        mapCommand(true, Keys.Q, "SwingCameraLeft");
+        mapCommand(true, Keys.E, "SwingCameraRight");
+        //mapCommand(true, Keys.G, "ToggleGrid");
+        mapCommand(false, Keys.NUM_1, PLACE_CARD, new Integer(0));
+        mapCommand(false, Keys.NUM_2, PLACE_CARD, new Integer(1));
+        mapCommand(false, Keys.NUM_3, PLACE_CARD, new Integer(2));
     }
 
     @Override // documentation inherited

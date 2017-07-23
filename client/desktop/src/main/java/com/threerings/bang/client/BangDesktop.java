@@ -14,8 +14,10 @@ public class BangDesktop
         System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy";
-        cfg.width = 1024;
-        cfg.height = 768;
+        cfg.width = BangPrefs.getDisplayWidth();
+        cfg.height = BangPrefs.getDisplayHeight();
+        cfg.depth = BangPrefs.getDisplayBPP();
+        cfg.fullscreen = BangPrefs.isFullscreenSet();
         cfg.resizable = false; // This glitches the game when resized if not set.
         // TODO: cfg.setFromDisplayMode when in fullscreen mode
         new LwjglApplication(new BangApp(), cfg);

@@ -47,7 +47,7 @@ public class BangPrefs
      * @throws JmeException if a valid displaymode cannot be found
      */
     public static void configureDisplayMode (PropertiesIO props, boolean safeMode)
-        throws JmeException
+            throws JmeException
     {
         // first look up our "preferred" mode
         int width = safeMode ? BangUI.MIN_WIDTH :
@@ -65,12 +65,12 @@ public class BangPrefs
             // first time then force fullscreen when the display mode is the minimum)
             if (mode.getWidth() < BangUI.MIN_WIDTH || mode.getHeight() < BangUI.MIN_HEIGHT ||
                     mode.getBitsPerPixel() < BangUI.MIN_BPP || (!fullscreenSet &&
-                        (mode.getWidth() <= BangUI.MIN_WIDTH ||
-                         mode.getHeight() <= BangUI.MIN_HEIGHT))) {
+                    (mode.getWidth() <= BangUI.MIN_WIDTH ||
+                            mode.getHeight() <= BangUI.MIN_HEIGHT))) {
                 fullscreen = true;
                 updateFullscreen(true);
 
-            // otherwise we just need to sanitize the depth and frequency
+                // otherwise we just need to sanitize the depth and frequency
             } else {
                 bpp = mode.getBitsPerPixel();
                 freq = mode.getFrequency();
@@ -103,9 +103,22 @@ public class BangPrefs
         props.set("RENDERER", "LWJGL");
 
         log.info("Display " + (safeMode ? "in safe mode: " : "mode: ") +
-                 props.getWidth() + "x" + props.getHeight() +
-                 "x" + props.getDepth() + " " + props.getFreq() + "Hz " +
-                 "(current: " + Display.getDisplayMode() + ").");
+                props.getWidth() + "x" + props.getHeight() +
+                "x" + props.getDepth() + " " + props.getFreq() + "Hz " +
+                "(current: " + Display.getDisplayMode() + ").");
+    }
+
+    public static int getDisplayWidth () {
+        return config.getValue("display_width", BangUI.MIN_WIDTH);
+    }
+    public static int getDisplayHeight () {
+        return config.getValue("display_height", BangUI.MIN_HEIGHT);
+    }
+    public static int getDisplayBPP () {
+        return config.getValue("display_bpp", 32);
+    }
+    public static int getDisplayFreq () {
+        return config.getValue("display_freq", 60);
     }
 
     /**
@@ -150,7 +163,7 @@ public class BangPrefs
     public static DetailLevel getDetailLevel ()
     {
         return Enum.valueOf(DetailLevel.class,
-            config.getValue("detail_level", "HIGH"));
+                config.getValue("detail_level", "HIGH"));
     }
 
     /**

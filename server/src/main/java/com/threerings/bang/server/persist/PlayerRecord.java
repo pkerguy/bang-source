@@ -3,12 +3,10 @@
 
 package com.threerings.bang.server.persist;
 
-import java.sql.Timestamp;
+import com.samskivert.util.*;
+import com.threerings.bang.data.*;
 
-import com.samskivert.util.StringUtil;
-
-import com.threerings.bang.data.BangCodes;
-import com.threerings.bang.data.Handle;
+import java.sql.*;
 
 /**
  * A record containing persistent information maintained about a Bang!

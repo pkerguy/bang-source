@@ -615,7 +615,7 @@ public class Badge extends Item
         },
         BETA_TESTER {
             public boolean qualifies (PlayerObject user) {
-                return user.playerId <= BangCodes.BETA_PLAYER_CUTOFF;
+                return user.getTokens().holdsToken(BangTokenRing.INSIDER);
             }
         },
         NIGHT_OWL {

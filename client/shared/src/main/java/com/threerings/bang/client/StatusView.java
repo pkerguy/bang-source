@@ -79,7 +79,7 @@ public class StatusView extends BWindow
         };
 
         for (int ii = 0; ii < STATUS_KEYMAP.length; ii += 2) {
-            ctx.getKeyManager().registerCommand(STATUS_KEYMAP[ii], showStatus);
+            ctx.getKeyManager().registerCommand(true, STATUS_KEYMAP[ii], showStatus);
         }
     }
 

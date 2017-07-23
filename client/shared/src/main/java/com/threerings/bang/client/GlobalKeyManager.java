@@ -36,7 +36,7 @@ public class GlobalKeyManager
         ctx.getRootNode().pushDefaultEventTarget(new BComponent() {
             public boolean dispatchEvent (BEvent event) {
                 KeyEvent kev = (event instanceof KeyEvent) ?
-                    (KeyEvent)event : null;
+                        (KeyEvent)event : null;
                 if (kev != null && kev.getType() == KeyEvent.KEY_PRESSED) {
                     int keyCode = kev.getKeyCode();
                     Command command = _commap.get(keyCode);

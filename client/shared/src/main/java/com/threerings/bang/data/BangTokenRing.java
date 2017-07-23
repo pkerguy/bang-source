@@ -25,6 +25,7 @@ public class BangTokenRing extends TokenRing
     /** Indicatest that the user is over 13. */
     public static final int OVER_13 = (1 << 5);
 
+
     /**
      * Constructs a token ring with the supplied set of tokens.
      */

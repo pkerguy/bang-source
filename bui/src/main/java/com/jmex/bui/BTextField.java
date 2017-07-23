@@ -28,7 +28,7 @@ import com.jmex.bui.util.Rectangle;
  * Displays and allows for the editing of a single line of text.
  */
 public class BTextField extends BTextComponent
-    implements Document.Listener
+        implements Document.Listener
 {
     /**
      * Creates a blank text field.
@@ -173,83 +173,92 @@ public class BTextField extends BTextComponent
             KeyEvent kev = (KeyEvent)event;
             int modifiers = kev.getModifiers();
             switch (kev.getType()) {
-            case KeyEvent.KEY_PRESSED:
-                int keyCode = kev.getKeyCode();
-                switch (_keymap.lookupMapping(modifiers, keyCode)) {
-                case BACKSPACE:
-                    if (_cursp > 0 && _text.getLength() > 0) {
-                        int pos = _cursp-1;
-                        if (_text.remove(pos, 1)) { // might change _cursp
-                            setCursorPos(pos);
+                case KeyEvent.KEY_PRESSED:
+                    int keyCode = kev.getKeyCode();
+                    switch (_keymap.lookupMapping(modifiers, keyCode)) {
+                        case BACKSPACE:
+                            if (_cursp > 0 && _text.getLength() > 0) {
+                                int pos = _cursp-1;
+                                if (_text.remove(pos, 1)) { // might change _cursp
+                                    setCursorPos(pos);
+                                }
+                            }
+                            break;
+
+                        case DELETE:
+                            if (_cursp < _text.getLength()) {
+                                _text.remove(_cursp, 1);
+                            }
+                            break;
+
+                        case CURSOR_LEFT:
+                            setCursorPos(Math.max(0, _cursp-1));
+                            break;
+
+                        case CURSOR_RIGHT:
+                            setCursorPos(Math.min(_text.getLength(), _cursp+1));
+                            break;
+
+                        case START_OF_LINE:
+                            setCursorPos(0);
+                            break;
+
+                        case END_OF_LINE:
+                            setCursorPos(_text.getLength());
+                            break;
+
+                        case ACTION:
+                            emitEvent(new ActionEvent(this, kev.getWhen(), kev.getModifiers(), ""));
+                            break;
+
+                        case RELEASE_FOCUS: {
+                            BWindow window = getWindow();
+                            if (window != null) {
+                                getWindow().requestFocus(null);
+                            }
+                            break;
                         }
+
+                        case CLEAR:
+                            _text.setText("");
+                            break;
+
+                        default:
+                            super.dispatchEvent(event);
+                            // NOTE: we claim to handle all key_pressed events because otherwise they might
+                            // get dispatched to a default event handler; this is not desirable because we
+                            // are effectively handling all key events, we just handle many of them on
+                            // key_typed not key_pressed
+                            return true;
                     }
-                    break;
 
-                case DELETE:
-                    if (_cursp < _text.getLength()) {
-                        _text.remove(_cursp, 1);
+                    return true; // we've consumed these events
+
+                case KeyEvent.KEY_TYPED:
+                    // insert printable and shifted printable characters
+                    char c = kev.getKeyChar();
+                    if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 && !Character.isISOControl(c) &&
+                    /* GDX generates weird key chars; ignore them */ c < Short.MAX_VALUE) {
+                        String text = String.valueOf(kev.getKeyChar());
+                        if (_text.insert(_cursp, text)) {
+                            setCursorPos(_cursp + 1);
+                        }
+                        return true;
                     }
-                    break;
-
-                case CURSOR_LEFT:
-                    setCursorPos(Math.max(0, _cursp-1));
-                    break;
-
-                case CURSOR_RIGHT:
-                    setCursorPos(Math.min(_text.getLength(), _cursp+1));
-                    break;
-
-                case START_OF_LINE:
-                    setCursorPos(0);
-                    break;
-
-                case END_OF_LINE:
-                    setCursorPos(_text.getLength());
-                    break;
-
-                case ACTION:
-                    emitEvent(new ActionEvent(this, kev.getWhen(), kev.getModifiers(), ""));
-                    break;
-
-                case RELEASE_FOCUS:
-                    getWindow().requestFocus(null);
-                    break;
-
-                case CLEAR:
-                    _text.setText("");
                     break;
 
                 default:
-                    return super.dispatchEvent(event);
-                }
-
-                return true; // we've consumed these events
-
-            case KeyEvent.KEY_TYPED:
-                // insert printable and shifted printable characters
-                char c = kev.getKeyChar();
-                if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 && !Character.isISOControl(c) &&
-                    /* GDX generates weird key chars; ignore them */ c < Short.MAX_VALUE) {
-                    String text = String.valueOf(kev.getKeyChar());
-                    if (_text.insert(_cursp, text)) {
-                        setCursorPos(_cursp + 1);
-                    }
-                    return true;
-                }
-                break;
-
-            default:
-                break;
+                    break;
             }
 
         } else if (event instanceof MouseEvent) {
             MouseEvent mev = (MouseEvent)event;
             if (mev.getType() == MouseEvent.MOUSE_PRESSED &&
-                // don't adjust the cursor if we have no text
-                _text.getLength() > 0) {
+                    // don't adjust the cursor if we have no text
+                    _text.getLength() > 0) {
                 Insets insets = getInsets();
                 int mx = mev.getX() - getAbsoluteX() - insets.left + _txoff,
-                    my = mev.getY() - getAbsoluteY() - insets.bottom;
+                        my = mev.getY() - getAbsoluteY() - insets.bottom;
                 setCursorPos(_glyphs.getHitPos(mx, my));
                 return true;
             }
@@ -257,12 +266,12 @@ public class BTextField extends BTextComponent
         } else if (event instanceof FocusEvent) {
             FocusEvent fev = (FocusEvent)event;
             switch (fev.getType()) {
-            case FocusEvent.FOCUS_GAINED:
-                gainedFocus();
-                break;
-            case FocusEvent.FOCUS_LOST:
-                lostFocus();
-                break;
+                case FocusEvent.FOCUS_GAINED:
+                    gainedFocus();
+                    break;
+                case FocusEvent.FOCUS_LOST:
+                    lostFocus();
+                    break;
             }
             return true;
         }
@@ -332,13 +341,13 @@ public class BTextField extends BTextComponent
         if (_glyphs != null) {
             // clip the text to our visible text region
             boolean scissored = intersectScissorBox(_srect,
-                getAbsoluteX() + insets.left,
-                getAbsoluteY() + insets.bottom,
-                _width - insets.getHorizontal(),
-                _height - insets.getVertical());
+                    getAbsoluteX() + insets.left,
+                    getAbsoluteY() + insets.bottom,
+                    _width - insets.getHorizontal(),
+                    _height - insets.getVertical());
             try {
                 _glyphs.render(renderer, insets.left - _txoff,
-                               insets.bottom, _alpha);
+                        insets.bottom, _alpha);
             } finally {
                 restoreScissorState(scissored, _srect);
             }
@@ -362,8 +371,8 @@ public class BTextField extends BTextComponent
     protected Dimension computePreferredSize (int whint, int hhint)
     {
         Dimension d = (_glyphs == null) ?
-            new Dimension(0, getTextFactory().getHeight()) :
-            new Dimension(_glyphs.getSize());
+                new Dimension(0, getTextFactory().getHeight()) :
+                new Dimension(_glyphs.getSize());
         if (_prefWidth != -1) {
             d.width = _prefWidth;
         }
@@ -402,8 +411,8 @@ public class BTextField extends BTextComponent
 
         // format our text and determine how much of it we can display
         _glyphs = getTextFactory().createText(
-            getDisplayText(), getColor(), BConstants.PLAIN,
-            BConstants.DEFAULT_SIZE, null, true);
+                getDisplayText(), getColor(), BConstants.PLAIN,
+                BConstants.DEFAULT_SIZE, null, true);
         if (isAdded()) {
             _glyphs.wasAdded();
         }

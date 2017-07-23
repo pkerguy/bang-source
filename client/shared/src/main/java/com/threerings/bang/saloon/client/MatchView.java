@@ -69,9 +69,9 @@ public abstract class MatchView extends BContainer
         BContainer row = GroupLayout.makeHBox(GroupLayout.CENTER);
         row.add(_bye = new BButton(_msgs.get("m.leave"), new ActionListener() {
             public void actionPerformed (ActionEvent event) {
-                _bye.setEnabled(false);
                 // make sure we've not already left the place
                 if (_mobj != null) {
+                    _bye.setEnabled(false);
                     leaveMatch(_mobj.getOid());
                 }
             }

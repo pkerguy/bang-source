@@ -3,39 +3,19 @@
 
 package com.threerings.bang.tourney.client;
 
-import com.jmex.bui.util.Dimension;
-
-import com.jmex.bui.BButton;
-import com.jmex.bui.BComponent;
-import com.jmex.bui.BContainer;
-import com.jmex.bui.BDecoratedWindow;
-import com.jmex.bui.BLabel;
-import com.jmex.bui.BScrollingList;
-
-import com.jmex.bui.event.ActionEvent;
-import com.jmex.bui.event.ActionListener;
-
-import com.jmex.bui.layout.GroupLayout;
-
-import com.threerings.util.MessageBundle;
-
-import com.threerings.bang.data.BangBootstrapData;
-import com.threerings.bang.data.BangCodes;
-
-import com.threerings.bang.util.BangContext;
-
-import com.threerings.bang.tourney.data.TourneyListingEntry;
-import com.threerings.bang.tourney.data.TourniesObject;
-
-import com.threerings.presents.util.SafeSubscriber;
-
-import com.threerings.presents.dobj.ObjectAccessException;
-import com.threerings.presents.dobj.Subscriber;
-
-import static com.threerings.bang.Log.log;
-import com.threerings.presents.dobj.DEvent;
+import com.jmex.bui.*;
+import com.jmex.bui.event.*;
+import com.jmex.bui.layout.*;
+import com.jmex.bui.util.*;
+import com.threerings.bang.data.*;
+import com.threerings.bang.tourney.data.*;
+import com.threerings.bang.util.*;
+import com.threerings.presents.dobj.*;
 import com.threerings.presents.dobj.EventListener;
-import com.threerings.presents.dobj.NamedEvent;
+import com.threerings.presents.util.*;
+import com.threerings.util.*;
+
+import static com.threerings.bang.Log.*;
 
 /**
  * Shows all currently available tournies.
@@ -45,19 +25,17 @@ public class TourneyListView extends BDecoratedWindow
 {
     public TourneyListView (BangContext ctx)
     {
-        super(ctx.getStyleSheet(), ctx.xlate(BangCodes.TOURNEY_MSGS, "m.list_title"));
+        super(ctx.getStyleSheet(), "Tournament Administration");
 
         setModal(true);
 
         _ctx = ctx;
-        _msgs = ctx.getMessageManager().getBundle(BangCodes.TOURNEY_MSGS);
-
         _scrollList = new TourneyScrollList(new Dimension(450, 300));
         add(_scrollList);
 
         BContainer cont = GroupLayout.makeHBox(GroupLayout.CENTER);
-        cont.add(new BButton(_msgs.get("m.new_tourney"), this, "new_tourney"));
-        cont.add(new BButton(_msgs.get("m.dismiss"), this, "dismiss"));
+        cont.add(new BButton("New", this, "new_tourney"));
+        cont.add(new BButton("Dismiss", this, "dismiss"));
         add(cont, GroupLayout.FIXED);
 
         _safesub = new SafeSubscriber<TourniesObject>(
@@ -159,7 +137,7 @@ public class TourneyListView extends BDecoratedWindow
 
             BContainer cont = GroupLayout.makeHBox(GroupLayout.CENTER);
             cont.add(new BLabel(_entry.desc, "left_label"));
-            cont.add(new BButton(_msgs.get("m.details", TourneyListView.this, "details")));
+            cont.add(new BButton("Details", TourneyListView.this, "details"));
 
             return cont;
         }
@@ -186,7 +164,6 @@ public class TourneyListView extends BDecoratedWindow
 
     protected TourneyScrollList _scrollList;
     protected BangContext _ctx;
-    protected MessageBundle _msgs;
     protected SafeSubscriber<TourniesObject> _safesub;
     protected TourniesObject _tobj;
 }

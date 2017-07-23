@@ -58,17 +58,21 @@ public class FKeyPopups
 {
     /** Enumerates the various types of popups we know about. */
     public static enum Type {
-        HELP(Keys.F1, 0, 0, true),
-        TUTORIALS(Keys.T, 0, 0, true),
-        WHERETO(Keys.W, 0, 0, true),
+        HELP(false, Keys.F1, 0, 0, true),
+        TUTORIALS(true, Keys.T, 0, 0, true),
+        WHERETO(true, Keys.W, 0, 0, true),
         // REPORT_BUG(Keys.F2, 0, 0, false),
-        CLIENT_LOG(Keys.F3, InputEvent.SHIFT_DOWN_MASK, 0, false),
-        CHAT_HISTORY(Keys.F3, 0, 0, false),
-        SERVER_STATUS(Keys.F4, 0, BangTokenRing.SUPPORT, false),
-        SERVER_CONFIG(Keys.F5, 0, BangTokenRing.ADMIN, false),
-        CLIENT_CONFIG(Keys.F6, CTRL_SHIFT, 0, false),
-        AVATAR_SHOT(Keys.F11, CTRL_SHIFT, BangTokenRing.ADMIN, false),
-        SCREEN_SHOT(Keys.F12, 0, 0, false);
+        CLIENT_LOG(false, Keys.F3, InputEvent.SHIFT_DOWN_MASK, 0, false),
+        CHAT_HISTORY(false, Keys.F3, 0, 0, false),
+        SERVER_STATUS(false, Keys.F4, 0, BangTokenRing.SUPPORT, false),
+        SERVER_CONFIG(false, Keys.F5, 0, BangTokenRing.ADMIN, false),
+        CLIENT_CONFIG(false, Keys.F6, CTRL_SHIFT, 0, false),
+        AVATAR_SHOT(false, Keys.F11, CTRL_SHIFT, BangTokenRing.ADMIN, false),
+        SCREEN_SHOT(false, Keys.F12, 0, 0, false);
+
+        public boolean control() {
+            return _control;
+        }
 
         public int keyCode () {
             return _keyCode;
@@ -86,15 +90,19 @@ public class FKeyPopups
             return _checkCanDisplay;
         }
 
-        Type (int keyCode, int modifiers, int requiredToken,
+        Type (boolean control, int keyCode, int modifiers, int requiredToken,
               boolean checkCanDisplay) {
+            _control = control;
             _keyCode = keyCode;
             _modifiers = modifiers;
             _requiredToken = requiredToken;
             _checkCanDisplay = checkCanDisplay;
         }
 
-        protected int _keyCode, _modifiers, _requiredToken;
+        protected boolean _control;
+        protected int _keyCode;
+        protected int _modifiers;
+        protected int _requiredToken;
         protected boolean _checkCanDisplay;
     };
 
@@ -105,7 +113,7 @@ public class FKeyPopups
     {
         _ctx = ctx;
         for (Type type : Type.values()) {
-            _ctx.getKeyManager().registerCommand(type.keyCode(), this);
+            _ctx.getKeyManager().registerCommand(type.control(), type.keyCode(), this);
         }
         _msgs = _ctx.getMessageManager().getBundle(BangCodes.BANG_MSGS);
         _cmsgs = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);

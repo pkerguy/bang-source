@@ -28,7 +28,7 @@ public class DeploymentConfig
      */
     public static long getVersion ()
     {
-        return build.getValue("version", 0L);
+        return 300; // Change upon each release version
     }
 
     /**
@@ -132,16 +132,16 @@ public class DeploymentConfig
      */
     public static boolean usesCoins ()
     {
-        return getPaymentType() == PaymentType.COINS;
-    }
+        return false;
+    } // TODO: MAKE OUR OWN COIN SYSTEM
 
     /**
      * Returns true if this deployment uses a one-time payment, false if not.
      */
     public static boolean usesOneTime ()
     {
-        return getPaymentType() == PaymentType.ONETIME;
-    }
+        return true;
+    } // TODO: MAKE OUR OWN COIN SYSTEM
 
     /** Helper function for getting URL properties. */
     protected static URL getURL (String key, String args)

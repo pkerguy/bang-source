@@ -641,6 +641,7 @@ public class Badge extends Item
         BOUNTY_CALAVERA,
         BOUNTY_MUSTACHE,
         BOUNTY_SHARK,
+        BOUNTY_BILLY,
         BOUNTY_ALL_FT_TOWN {
             public boolean qualifies (PlayerObject user) {
                 return hasCompletedBounties(
@@ -907,7 +908,7 @@ public class Badge extends Item
         // frontier town bounty badges
         Type.BOUNTY_DYNAMITE, Type.BOUNTY_SANCHO, null, null, Type.BOUNTY_ALL_FT_TOWN,
         Type.BOUNTY_MAUDE, Type.BOUNTY_CALAVERA, Type.BOUNTY_MUSTACHE, Type.BOUNTY_SHARK,
-        Type.BOUNTY_ALL_FT,
+        Type.BOUNTY_BILLY,Type.BOUNTY_ALL_FT,
 
         // indian post bounty badges
         Type.BOUNTY_LETRAPPE, Type.BOUNTY_CLOUD, null, null, Type.BOUNTY_ALL_ITP_TOWN,
@@ -945,7 +946,6 @@ public class Badge extends Item
             for (Type type : Type.values()) {
                 System.out.println(type + " = " + type.code());
             }
-
         } else if (args.length > 0 && "xlate".indexOf(args[0]) != -1) {
             for (Type type : Type.values()) {
                 System.out.println(type.key() + " = " + type);

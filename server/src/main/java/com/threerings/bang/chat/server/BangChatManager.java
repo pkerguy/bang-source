@@ -164,8 +164,9 @@ public class BangChatManager
             if(oooUser.getTokens().isAdmin()) isAdmin = true;
         } catch (PersistenceException e) {
         }
-        if (message.startsWith("@") && isSupport || isAdmin) {
-
+        if (message.startsWith("@")) {
+            if(!isSupport) return false;
+            if(!isAdmin) return false;
             message = message.replaceFirst("@", ""); // Remove the command prefix
             String[] args = {};
             try { // Use a try catch so we can make absolutely sure args cannot throw an exception and bug the entire server
@@ -188,6 +189,10 @@ public class BangChatManager
                     }
                     try {
                         _adminmgr.scheduleReboot(Integer.parseInt(args[0]), speaker.username.getNormal());
+                        SpeakUtil.sendInfo(
+                                speaker, BangCodes.CHAT_MSGS,
+                                "Reboot has been scheduled!");
+                        break;
                     } catch(NumberFormatException ex)
                     {
                         SpeakUtil.sendInfo(

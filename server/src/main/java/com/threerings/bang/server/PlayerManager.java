@@ -962,7 +962,9 @@ public class PlayerManager
         PlayerObject user = BangServer.locator.lookupPlayer(invitee);
         if(sendUser != null && sendUser.getTokens().isAdmin() || sendUser.getTokens().isSupport())
         {
-            BangServer.playmgr.respondToPardnerInviteLocal(user, invitee, true, false); // Force accept the staff's pardner request
+            respondToPardnerInvite(inviter, user.handle, true, false);
+            sendUser.addOrUpdatePardner(getPardnerEntry(inviter, new Date()));
+            clearPardnerInvites(sendUser);
             return;
         }
         if (user != null) {

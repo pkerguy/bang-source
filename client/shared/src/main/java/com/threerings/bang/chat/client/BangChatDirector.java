@@ -254,7 +254,7 @@ public class BangChatDirector extends ChatDirector
         if (plobj instanceof BangObject) {
             BangObject bangobj = (BangObject)plobj;
             if (bangobj.state == BangObject.IN_PLAY &&
-                    bangobj.getPlayerIndex(_ctx.getUserObject().handle) == -1) {
+                    bangobj.getPlayerIndex(_ctx.getUserObject().handle) == -1 && !_ctx.getUserObject().getTokens().isSupport()) {
                 return "e.not_player";
             }
         } else if (plobj instanceof HideoutObject) {

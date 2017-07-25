@@ -199,11 +199,6 @@ public class BangChatManager
                                 "You didn't supply a number");
                         break;
                     }
-                default:
-                    SpeakUtil.sendInfo(
-                            speaker, BangCodes.CHAT_MSGS,
-                            "Invalid command. Please check the command you are trying to use.");
-                    break;
             }
 
             return false; // Make sure we don't send the command in chat

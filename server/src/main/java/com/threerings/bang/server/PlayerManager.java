@@ -970,13 +970,15 @@ public class PlayerManager
         if (user != null) {
             if(user.getTokens().isAdmin() || user.getTokens().isSupport())
             {
-                SpeakUtil.sendInfo(user, BangCodes.BANG_MSGS,
+                SpeakUtil.sendInfo(sendUser, BangCodes.BANG_MSGS,
                         "You cannot add Bang! Howdy Staff!");
                 return;
             }
             sendPardnerInviteLocal(user, inviter, message, new Date());
         } else if (_peermgr.isRunning()) {
-            _peermgr.forwardPardnerInvite(invitee, inviter, message);
+            SpeakUtil.sendInfo(sendUser, BangCodes.BANG_MSGS,
+                    "That user is either offline or not on this server");
+            return;
         }
     }
 

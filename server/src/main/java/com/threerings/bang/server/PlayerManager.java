@@ -1203,19 +1203,18 @@ public class PlayerManager
      */
     protected PardnerEntry getPardnerEntry (Handle handle, Date lastSession)
     {
+        PlayerObject player = BangServer.locator.lookupPlayer(handle);
+        if (player != null) {
+            if (player.getTokens().isAdmin() || player.getTokens().isSupport()) {
+                return new PardnerEntry(handle, lastSession); // Show them as Offline at all times
+            }
+        }
         // see if we've already got an updater for this player
         PardnerEntryUpdater updater = _updaters.get(handle);
         if (updater != null) {
             return updater.entry;
         }
-
-        // check whether the player is online on this server
-        PlayerObject player = BangServer.locator.lookupPlayer(handle);
         if (player != null) {
-            if(player.getTokens().isAdmin() || player.getTokens().isSupport())
-            {
-                return new PardnerEntry(handle, lastSession); // Show them as Offline at all times
-            }
             _updaters.put(handle, updater = new PardnerEntryUpdater(player));
             return updater.entry;
         }

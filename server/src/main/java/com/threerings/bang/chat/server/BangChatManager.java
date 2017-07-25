@@ -167,20 +167,19 @@ public class BangChatManager
         if (message.startsWith("@")) {
             if(!isSupport) return false;
             if(!isAdmin) return false;
-            message = message.replaceFirst("@", ""); // Remove the command prefix
             String[] args = {};
             try { // Use a try catch so we can make absolutely sure args cannot throw an exception and bug the entire server
                 args = message.split("|"); // Split arguments with the | rather than space so we can have spaces in arguments
             } catch (IndexOutOfBoundsException exception){}
             switch(message){
-                case "reboot":
+                case "@reboot":
                     if(!isAdmin){
                         SpeakUtil.sendInfo(
                                 speaker, BangCodes.CHAT_MSGS,
                                 "Insufficient privileges");
                         break;
                     }
-                    if(args.length != 1)
+                    if(args.length != 2)
                     {
                         SpeakUtil.sendInfo(
                                 speaker, BangCodes.CHAT_MSGS,
@@ -188,7 +187,7 @@ public class BangChatManager
                         break;
                     }
                     try {
-                        _adminmgr.scheduleReboot(Integer.parseInt(args[0]), speaker.username.getNormal());
+                        _adminmgr.scheduleReboot(Integer.parseInt(args[1]), speaker.username.getNormal());
                         SpeakUtil.sendInfo(
                                 speaker, BangCodes.CHAT_MSGS,
                                 "Reboot has been scheduled!");

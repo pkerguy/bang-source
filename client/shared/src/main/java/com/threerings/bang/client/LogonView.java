@@ -219,6 +219,12 @@ public class LogonView extends BWindow
                 String username = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
                 String password = _password.getText();
 
+                if(password == "" || password == null)
+                {
+                    log.warning("You didn't enter any password in");
+                    return;
+                }
+
                 // try to connect to the town lobby server that this player last accessed
                 String townId = BangPrefs.getLastTownId(username);
                 // but make sure this town has been activated on this client
@@ -298,7 +304,6 @@ public class LogonView extends BWindow
             _status.setStatus(_msgs.get("m.init_progress", ""+percent), false);
         } else {
             _status.setStatus(_msgs.get("m.init_complete"), false);
-            _logon.setEnabled(true);
             _initialized = true;
         }
     }

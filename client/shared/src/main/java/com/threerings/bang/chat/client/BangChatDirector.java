@@ -75,11 +75,12 @@ public class BangChatDirector extends ChatDirector
         });
 
         // override our tell handler
-        registerCommandHandler(msg, "tell", new TellHandler() {
+        registerCommandHandler(msg,"tell", new TellHandler() {
             protected Name normalizeAsName (String handle) {
                 return new Handle(handle);
             }
         });
+
     }
 
     @Override // from ChatDirector

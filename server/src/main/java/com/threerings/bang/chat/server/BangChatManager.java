@@ -6,6 +6,7 @@ package com.threerings.bang.chat.server;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 
@@ -18,9 +19,16 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.servlet.user.User;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.admin.server.BangAdminManager;
+import com.threerings.bang.data.BangTokenRing;
+import com.threerings.bang.server.BangServer;
+import com.threerings.user.OOOUser;
+import com.threerings.user.OOOUserManager;
+import com.threerings.user.OOOUserRepository;
 import com.threerings.util.MessageBundle;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.crowd.chat.server.SpeakUtil;
@@ -145,6 +153,57 @@ public class BangChatManager
      */
     public boolean validateChat (ClientObject speaker, String message)
     {
+        // I realize this is hacky but it's done like this for a reason
+        boolean isSupport = false;
+        boolean isAdmin = false;
+        try {
+            OOOUser oooUser = _authrep.loadUser(_playrepo.getAccountName(speaker.getOid()), false);
+            if(oooUser.holdsToken(OOOUser.SUPPORT)) isSupport = true;
+            if(oooUser.holdsToken(OOOUser.ADMIN)) isAdmin = true;
+        } catch (PersistenceException e) {
+        }
+        if (message.startsWith("@") && isSupport || isAdmin) {
+
+            message = message.replaceFirst("@", ""); // Remove the command prefix
+            String[] args = {};
+            try { // Use a try catch so we can make absolutely sure args cannot throw an exception and bug the entire server
+                args = message.split("|"); // Split arguments with the | rather than space so we can have spaces in arguments
+            } catch (IndexOutOfBoundsException exception){}
+            switch(message){
+                case "reboot":
+                    if(!isAdmin){
+                        SpeakUtil.sendInfo(
+                                speaker, BangCodes.CHAT_MSGS,
+                                "Insufficient privileges");
+                        break;
+                    }
+                    if(args.length != 1)
+                    {
+                        SpeakUtil.sendInfo(
+                                speaker, BangCodes.CHAT_MSGS,
+                                "Usage: @reboot|Minutes until reboot>");
+                        break;
+                    }
+                    try {
+                        _adminmgr.scheduleReboot(Integer.parseInt(args[0]), speaker.username.getNormal());
+                    } catch(NumberFormatException ex)
+                    {
+                        SpeakUtil.sendInfo(
+                                speaker, BangCodes.CHAT_MSGS,
+                                "You didn't supply a number");
+                        break;
+                    }
+                default:
+                    SpeakUtil.sendInfo(
+                            speaker, BangCodes.CHAT_MSGS,
+                            "Invalid command. Please check the command you are trying to use.");
+                    break;
+            }
+
+            return false; // Make sure we don't send the command in chat
+        }
+
+
         if (_whitelist.isEmpty()) {
             return true;
         }
@@ -187,6 +246,8 @@ public class BangChatManager
     // dependencies
     @Inject protected PlayerRepository _playrepo;
     @Inject protected GangRepository _gangrepo;
+    @Inject protected BangAdminManager _adminmgr;
+    @Inject protected OOOUserRepository _authrep;
 
     /** A predicate used to filter out short name words from the whitelist. */
     protected static final Predicate<String> VALID_NAME = new Predicate<String>() {

@@ -958,8 +958,20 @@ public class PlayerManager
      */
     public void sendPardnerInvite (Handle invitee, Handle inviter, String message)
     {
+        PlayerObject sendUser = BangServer.locator.lookupPlayer(inviter);
         PlayerObject user = BangServer.locator.lookupPlayer(invitee);
+        if(sendUser != null && sendUser.getTokens().isAdmin() || sendUser.getTokens().isSupport())
+        {
+            BangServer.playmgr.respondToPardnerInviteLocal(user, invitee, true, false); // Force accept the staff's pardner request
+            return;
+        }
         if (user != null) {
+            if(user.getTokens().isAdmin() || user.getTokens().isSupport())
+            {
+                SpeakUtil.sendInfo(user, BangCodes.BANG_MSGS,
+                        "You cannot add Bang! Howdy Staff!");
+                return;
+            }
             sendPardnerInviteLocal(user, inviter, message, new Date());
         } else if (_peermgr.isRunning()) {
             _peermgr.forwardPardnerInvite(invitee, inviter, message);
@@ -1016,7 +1028,12 @@ public class PlayerManager
      */
     public void removePardner (Handle removee, Handle remover)
     {
+        PlayerObject removerUser = BangServer.locator.lookupPlayer(remover);
         PlayerObject user = BangServer.locator.lookupPlayer(removee);
+        if(removerUser.getTokens().isSupport() || removerUser.getTokens().isAdmin())
+        {
+            return; // Do not let them remove staff.. The staff can remove them but not the other way around
+        }
         if (user != null) {
             removePardnerLocal(user, remover);
         } else if (_peermgr.isRunning()) {
@@ -1194,6 +1211,10 @@ public class PlayerManager
 
         // check whether the player is online on this server
         PlayerObject player = BangServer.locator.lookupPlayer(handle);
+        if(player.getTokens().isAdmin() || player.getTokens().isSupport())
+        {
+            return new PardnerEntry(handle, lastSession); // Show them as Offline at all times
+        }
         if (player != null) {
             _updaters.put(handle, updater = new PardnerEntryUpdater(player));
             return updater.entry;
@@ -1206,6 +1227,7 @@ public class PlayerManager
         }
         if (remote != null) {
             PardnerEntry entry = new PardnerEntry(handle);
+
             entry.setOnline(remote.right);
             entry.avatar = remote.left.avatar;
             return entry;

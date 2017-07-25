@@ -26,6 +26,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.bang.admin.server.BangAdminManager;
 import com.threerings.bang.data.BangTokenRing;
 import com.threerings.bang.server.BangServer;
+import com.threerings.bang.server.persist.PlayerRecord;
 import com.threerings.user.OOOUser;
 import com.threerings.user.OOOUserManager;
 import com.threerings.user.OOOUserRepository;
@@ -157,9 +158,10 @@ public class BangChatManager
         boolean isSupport = false;
         boolean isAdmin = false;
         try {
-            OOOUser oooUser = _authrep.loadUser(_playrepo.getAccountName(speaker.getOid()), false);
-            if(oooUser.holdsToken(OOOUser.SUPPORT)) isSupport = true;
-            if(oooUser.holdsToken(OOOUser.ADMIN)) isAdmin = true;
+            PlayerRecord pr = _playrepo.loadPlayer(speaker.username.getNormal());
+            PlayerObject oooUser = BangServer.locator.lookupPlayer(pr.getHandle());
+            if(oooUser.getTokens().isSupport()) isSupport = true;
+            if(oooUser.getTokens().isAdmin()) isAdmin = true;
         } catch (PersistenceException e) {
         }
         if (message.startsWith("@") && isSupport || isAdmin) {
@@ -247,7 +249,6 @@ public class BangChatManager
     @Inject protected PlayerRepository _playrepo;
     @Inject protected GangRepository _gangrepo;
     @Inject protected BangAdminManager _adminmgr;
-    @Inject protected OOOUserRepository _authrep;
 
     /** A predicate used to filter out short name words from the whitelist. */
     protected static final Predicate<String> VALID_NAME = new Predicate<String>() {

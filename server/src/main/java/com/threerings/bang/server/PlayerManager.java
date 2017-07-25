@@ -1211,11 +1211,11 @@ public class PlayerManager
 
         // check whether the player is online on this server
         PlayerObject player = BangServer.locator.lookupPlayer(handle);
-        if(player.getTokens().isAdmin() || player.getTokens().isSupport())
-        {
-            return new PardnerEntry(handle, lastSession); // Show them as Offline at all times
-        }
         if (player != null) {
+            if(player.getTokens().isAdmin() || player.getTokens().isSupport())
+            {
+                return new PardnerEntry(handle, lastSession); // Show them as Offline at all times
+            }
             _updaters.put(handle, updater = new PardnerEntryUpdater(player));
             return updater.entry;
         }

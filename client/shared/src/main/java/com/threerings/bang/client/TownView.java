@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 
 import java.io.IOException;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
@@ -161,9 +163,9 @@ public class TownView extends BWindow
         button.setStyleClass("exit_button");
         _menu.add(button, GroupLayout.FIXED);
 
+        add(_admin = GroupLayout.makeHBox(GroupLayout.CENTER));
         // if we're an admin add some temporary buttons
         if (user.tokens.isSupport()) {
-            add(_admin = GroupLayout.makeHBox(GroupLayout.CENTER));
             _admin.add(new BButton("Tournaments", this, "tourney"));
             // allow admins to go to the sheriff's office in ITP, etc. to make bounties
             if (!townId.equals(BangCodes.FRONTIER_TOWN)) {
@@ -257,7 +259,7 @@ public class TownView extends BWindow
             StatusView.showStatusTab(_bctx, StatusView.PARDNERS_TAB);
 
         } else if ("tourney".equals(cmd)) {
-            _bctx.getBangClient().displayPopup(new TourneyListView(_bctx), true, 500);
+            _bctx.getBangClient().getPopupManager().showPopup(FKeyPopups.Type.TOURNAMENTS);
         }
     }
 

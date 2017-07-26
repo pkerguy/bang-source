@@ -28,6 +28,7 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.Dimension;
 
 import com.samskivert.util.ResultListener;
+import com.threerings.bang.tourney.client.TourneyListView;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.bang.avatar.client.AvatarView;
@@ -68,7 +69,9 @@ public class FKeyPopups
         SERVER_CONFIG(false, Keys.F5, 0, BangTokenRing.ADMIN, false),
         CLIENT_CONFIG(false, Keys.F6, CTRL_SHIFT, 0, false),
         AVATAR_SHOT(false, Keys.F11, CTRL_SHIFT, BangTokenRing.ADMIN, false),
-        SCREEN_SHOT(false, Keys.F12, 0, 0, false);
+        SCREEN_SHOT(false, Keys.F12, 0, 0, false),
+        TOURNAMENTS(false, Keys.F7, 0, BangTokenRing.SUPPORT, false);
+
 
         public boolean control() {
             return _control;
@@ -184,8 +187,11 @@ public class FKeyPopups
         case CLIENT_CONFIG:
             popup = new ConfigEditorView(_ctx);
             break;
+        case TOURNAMENTS:
+            popup = new TourneyListView(_ctx);
+            whint = 4000;
+            break;
         }
-
         if (popup != null) {
             clearPopup();
             _poppedType = type;

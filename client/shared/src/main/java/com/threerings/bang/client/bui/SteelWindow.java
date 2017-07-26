@@ -28,7 +28,6 @@ public class SteelWindow extends BDecoratedWindow
         add(_header = new BLabel(title, "window_title"), GroupLayout.FIXED);
         add(_contents = new BContainer());
         add(_buttons = GroupLayout.makeHBox(GroupLayout.CENTER), GroupLayout.FIXED);
-
         // load up our custom header image
         _headimg = new ImageBackground(
             ImageBackground.FRAME_X, ctx.loadImage("ui/window/header_steel.png"));

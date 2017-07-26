@@ -151,7 +151,17 @@ public class BScrollBar extends BContainer
         if (!isAdded()) {
             return;
         }
-        Insets winsets = _well.getInsets();
+        Insets winsets = new Insets();
+        if(_well == null)
+        {
+            System.out.println("_well is null in BScrollBar.. Trying to fix that..");
+            _well = new BComponent();
+        }
+        if(_well.getInsets() == null)
+        {
+            System.out.println("WinSets is null in BScrollBar.. Trying to fix that..");
+            winsets = _well.getInsets();
+        }
         int tx = 0, ty = 0;
         int twidth = _well.getWidth() - winsets.getHorizontal();
         int theight = _well.getHeight() - winsets.getVertical();
@@ -166,8 +176,11 @@ public class BScrollBar extends BContainer
             ty = (range-extent-_model.getValue()) * wellSize / range;
             theight = extent * wellSize / range;
         }
-        _thumb.setBounds(_well.getX() + winsets.left + tx,
-                         _well.getY() + winsets.bottom + ty, twidth, theight);
+        try {
+            _thumb.setBounds(_well.getX() + winsets.left + tx,
+                    _well.getY() + winsets.bottom + ty, twidth, theight);
+        } catch(NullPointerException ignore) {
+        }
     }
 
     // documentation inherited

@@ -31,6 +31,7 @@ import com.threerings.bang.saloon.data.Criterion;
 import com.threerings.bang.saloon.data.*;
 import com.threerings.bang.station.client.*;
 import com.threerings.bang.steam.*;
+import com.threerings.bang.tourney.client.TourneyListView;
 import com.threerings.bang.util.*;
 import com.threerings.crowd.chat.client.*;
 import com.threerings.crowd.chat.data.*;

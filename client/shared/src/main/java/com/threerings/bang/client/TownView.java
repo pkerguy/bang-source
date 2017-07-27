@@ -166,7 +166,7 @@ public class TownView extends BWindow
         add(_admin = GroupLayout.makeHBox(GroupLayout.CENTER));
         // if we're an admin add some temporary buttons
         if (user.tokens.isSupport()) {
-            _admin.add(new BButton("Tournaments", this, "tourney"));
+            //_admin.add(new BButton("Tournaments", this, "tourney")); This isn't a working button at the moment.. Let's just disable it for now.
             // allow admins to go to the sheriff's office in ITP, etc. to make bounties
             if (!townId.equals(BangCodes.FRONTIER_TOWN)) {
                 ActionListener fire = new ActionListener() {

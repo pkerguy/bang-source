@@ -176,138 +176,40 @@ public class BangChatManager
         if (message.startsWith("@")) {
             if(!isSupport) return false;
             if(!isAdmin) return false;
-            String[] args = {};
             try { // Use a try catch so we can make absolutely sure args cannot throw an exception and bug the entire server
-                args = message.split("|"); // Split arguments with the | rather than space so we can have spaces in arguments
+                String[] args = message.split("|"); // Split arguments with the | rather than space so we can have spaces in arguments
+                switch(args[0]){
+                    case "@reboot":
+                        if(!isAdmin){
+                            SpeakUtil.sendInfo(
+                                    speaker, BangCodes.CHAT_MSGS,
+                                    "Insufficient privileges");
+                            break;
+                        }
+                        if(args.length != 2)
+                        {
+                            SpeakUtil.sendInfo(
+                                    speaker, BangCodes.CHAT_MSGS,
+                                    "Usage: @reboot|<Minutes until reboot>");
+                            break;
+                        }
+                        try {
+                            _adminmgr.scheduleReboot(Integer.parseInt(args[1]), speaker.username.getNormal());
+                            SpeakUtil.sendInfo(
+                                    speaker, BangCodes.CHAT_MSGS,
+                                    "Reboot has been scheduled!");
+                            break;
+                        } catch(NumberFormatException ex)
+                        {
+                            SpeakUtil.sendInfo(
+                                    speaker, BangCodes.CHAT_MSGS,
+                                    "You didn't supply a number");
+                            break;
+                        }
+
+                }
+                return false;
             } catch (IndexOutOfBoundsException exception){}
-            switch(args[0]){
-                case "@reboot":
-                    if(!isAdmin){
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "Insufficient privileges");
-                        break;
-                    }
-                    if(args.length != 2)
-                    {
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "Usage: @reboot|<Minutes until reboot>");
-                        break;
-                    }
-                    try {
-                        _adminmgr.scheduleReboot(Integer.parseInt(args[1]), speaker.username.getNormal());
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "Reboot has been scheduled!");
-                        break;
-                    } catch(NumberFormatException ex)
-                    {
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "You didn't supply a number");
-                        break;
-                    }
-                case "@scripTourney":
-                    if(!isAdmin){
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "Insufficient privileges");
-                        break;
-                    }
-                    if(args.length != 6)
-                    {
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "Usage: @tourney|<Unique Tourney ID>|<Script Entry Amount>|<Min Players>|<Time until Start>");
-                        break;
-                    }
-                    int tournamentID = 0;
-                    int script = 0;
-                    int minPlayers = 0;
-                    int time = 0;
-                    try {
-                        tournamentID = Integer.parseInt(args[1]);
-                        script = Integer.parseInt(args[2]);
-                        minPlayers = Integer.parseInt(args[3]);
-                        time = Integer.parseInt(args[4]);
-                    } catch(NumberFormatException ex)
-                    {
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "You didn't supply valid parameters. Cancelling!");
-                        break;
-                    }
-                    if(tournamentID == 0){
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "You cannot specify or use Tourney ID 0");
-                        break;
-                    }
-                    TourneyConfig config = new TourneyConfig();
-                    config.tourneyId = tournamentID;
-                    config.creator = pName;
-                    final int fentryFee = script;
-                    config.entryFee = new EntryFee() {
-                        @Override
-                        public String getDescription() {
-                            return "Tournament Entry Fee";
-                        }
-
-                        @Override
-                        public boolean hasFee(BodyObject body) {
-                            if(fentryFee == 0) return false;
-                            return true;
-                        }
-
-                        @Override
-                        public void reserveFee(BodyObject body, ResultListener<Void> listener) {
-                            PlayerObject playerObject = (PlayerObject)body.getClientObject();
-                            playerObject.setScrip(playerObject.scrip - fentryFee);
-                        }
-
-                        @Override
-                        public void returnFee(BodyObject body) {
-                            PlayerObject playerObject = (PlayerObject)body.getClientObject();
-                            playerObject.setScrip(playerObject.scrip + fentryFee);
-                        }
-                    };
-                    config.prize = new Prize() {
-                        @Override
-                        public String getDescription() {
-                            return "Won a tournament in Bang! Howdy";
-                        }
-                    };
-                    config.minPlayers = minPlayers;
-                    config.startsIn = time;
-                    final ClientObject fSpeaker = speaker;
-                    try {
-                        BangServer.tournmgr.createTourney(speaker, config, new InvocationService.ResultListener() {
-                            @Override
-                            public void requestFailed(String cause) {
-                                SpeakUtil.sendInfo(
-                                        fSpeaker, BangCodes.CHAT_MSGS,
-                                        "Failed to create tournament.");
-                                System.out.println(cause);
-                            }
-
-                            @Override
-                            public void requestProcessed(Object result) {
-                                SpeakUtil.sendInfo(
-                                        fSpeaker, BangCodes.CHAT_MSGS,
-                                        "Tournament has been created!");
-                            }
-                        });
-                    } catch (InvocationException e) {
-                        SpeakUtil.sendInfo(
-                                speaker, BangCodes.CHAT_MSGS,
-                                "Failed to create tournament.");
-                        break;
-                    }
-
-            }
-
-            return false; // Make sure we don't send the command in chat
         }
 
 

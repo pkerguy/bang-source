@@ -348,6 +348,15 @@ public class PlayerManager
                                final PlayerService.ConfirmListener listener)
         throws InvocationException
     {
+        PlayerObject user = BangServer.locator.lookupPlayer(handle);
+
+        if(inviter.tokens.isSupport() || inviter.getTokens().isAdmin())
+        {
+            if(user.getTokens().isSupport() || user.getTokens().isAdmin())
+            {
+                throw new InvocationException("You cannot add Bang! Howdy Staff!");
+            }
+        }
         // make sure we're not anonymous (the client should prevent this)
         if (inviter.tokens.isAnonymous() || !inviter.hasCharacter()) {
             throw new InvocationException(INTERNAL_ERROR);

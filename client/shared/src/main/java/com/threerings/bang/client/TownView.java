@@ -164,6 +164,9 @@ public class TownView extends BWindow
         _menu.add(button, GroupLayout.FIXED);
 
         add(_admin = GroupLayout.makeHBox(GroupLayout.CENTER));
+
+        _admin.add(new BButton("Howdypedia", this, "howdypedia")); // Link resource in game
+
         // if we're an admin add some temporary buttons
         if (user.tokens.isSupport()) {
             //_admin.add(new BButton("Tournaments", this, "tourney")); This isn't a working button at the moment.. Let's just disable it for now.
@@ -260,6 +263,10 @@ public class TownView extends BWindow
 
         } else if ("tourney".equals(cmd)) {
             _bctx.getBangClient().getPopupManager().showPopup(FKeyPopups.Type.TOURNAMENTS);
+        } else if ("howdypedia".equals(cmd)) {
+            try {
+                _bctx.showURL(new URL("http://www.howdypedia.com"));
+            } catch (MalformedURLException e) {}
         }
     }
 

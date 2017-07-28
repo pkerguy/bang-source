@@ -1500,7 +1500,7 @@ public class BangClient extends BasicClient
     protected static final StatType INIT_STATS = StatType.UNUSED;
 
     /** The time in milliseconds after which we log off an idle user. */
-    protected static final long LOGOFF_DELAY = 60000; //8L * 60L * 1000L;
+    protected static final long LOGOFF_DELAY = 5 * 60000; //8L * 60L * 1000L;
 
     /** The default logoff message. */
     protected static final String DEFAULT_LOGOFF_MESSAGE = "logoff";

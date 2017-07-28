@@ -161,57 +161,6 @@ public class BangChatManager
      */
     public boolean validateChat (ClientObject speaker, String message)
     {
-        // I realize this is hacky but it's done like this for a reason
-        boolean isSupport = false;
-        boolean isAdmin = false;
-        Handle pName = new Handle("");
-        try {
-            PlayerRecord pr = _playrepo.loadPlayer(speaker.username.getNormal());
-            PlayerObject oooUser = BangServer.locator.lookupPlayer(pr.getHandle());
-            pName = pr.getHandle();
-            if(oooUser.getTokens().isSupport()) isSupport = true;
-            if(oooUser.getTokens().isAdmin()) isAdmin = true;
-        } catch (PersistenceException e) {
-        }
-        if (message.startsWith("@")) {
-            if(!isSupport) return false;
-            if(!isAdmin) return false;
-            try { // Use a try catch so we can make absolutely sure args cannot throw an exception and bug the entire server
-                String[] args = message.split("|"); // Split arguments with the | rather than space so we can have spaces in arguments
-                switch(args[0]){
-                    case "@reboot":
-                        if(!isAdmin){
-                            SpeakUtil.sendInfo(
-                                    speaker, BangCodes.CHAT_MSGS,
-                                    "Insufficient privileges");
-                            break;
-                        }
-                        if(args.length != 2)
-                        {
-                            SpeakUtil.sendInfo(
-                                    speaker, BangCodes.CHAT_MSGS,
-                                    "Usage: @reboot|<Minutes until reboot>");
-                            break;
-                        }
-                        try {
-                            _adminmgr.scheduleReboot(Integer.parseInt(args[1]), speaker.username.getNormal());
-                            SpeakUtil.sendInfo(
-                                    speaker, BangCodes.CHAT_MSGS,
-                                    "Reboot has been scheduled!");
-                            break;
-                        } catch(NumberFormatException ex)
-                        {
-                            SpeakUtil.sendInfo(
-                                    speaker, BangCodes.CHAT_MSGS,
-                                    "You didn't supply a number");
-                            break;
-                        }
-
-                }
-                return false;
-            } catch (IndexOutOfBoundsException exception){}
-        }
-
 
         if (_whitelist.isEmpty()) {
             return true;

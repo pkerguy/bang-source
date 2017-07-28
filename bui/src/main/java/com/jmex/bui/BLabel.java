@@ -164,10 +164,6 @@ public class BLabel extends BTextComponent
     protected void layout ()
     {
         super.layout();
-        if(_label == null) {
-            System.out.println("Man you didnt' check yo labels! It returned a null value!");
-            return;
-        }
         _label.layout(getInsets(), getWidth(), getHeight());
     }
 

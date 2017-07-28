@@ -386,11 +386,6 @@ public class Label
             return config;
         }
         Text text = new Text();
-        if(tfact.wrapText(
-                _value, config.color, config.effect, config.effectSize, config.effectColor, twidth) == null)
-        {
-            return config;
-        }
         text.lines = tfact.wrapText(
             _value, config.color, config.effect, config.effectSize, config.effectColor, twidth);
         for (int ii = 0; ii < text.lines.length; ii++) {

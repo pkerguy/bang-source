@@ -1,4 +1,4 @@
-Time to lower it to 30seconds allprojects {
+allprojects {
   group = "com.threerings"
   version = "1.1-SNAPSHOT"
 

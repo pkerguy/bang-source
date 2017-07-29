@@ -83,7 +83,7 @@ public class ServerConfigObject extends ConfigObject
     public boolean barberEnabled = true;
 
     /** Controls activation of Hideout services. */
-    public boolean hideoutEnabled = false;
+    public boolean hideoutEnabled = true;
 
     /** Controls activation of Sheriff's Office services. */
     public boolean officeEnabled = true;

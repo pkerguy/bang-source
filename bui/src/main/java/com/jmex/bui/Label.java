@@ -164,10 +164,6 @@ public class Label
      */
     public Dimension computePreferredSize (int whint, int hhint)
     {
-        if(layoutConfig(_prefconfig, whint > 0 ? whint : Short.MAX_VALUE-1) == null)
-        {
-            return new Dimension(whint, hhint); // No more null pointers please
-        }
         // if our cached preferred size is not valid, recompute it
         Config prefconfig = layoutConfig(_prefconfig, whint > 0 ? whint : Short.MAX_VALUE-1);
         _prefsize = computeSize(_prefconfig = prefconfig);
@@ -380,11 +376,7 @@ public class Label
         }
 
         // render up some new text
-        BTextFactory tfact = _container.getTextFactory();
-        if(tfact == null)
-        {
-            return config;
-        }
+        BTextFactory tfact = _container.getTextFactory(this);
         Text text = new Text();
         text.lines = tfact.wrapText(
             _value, config.color, config.effect, config.effectSize, config.effectColor, twidth);

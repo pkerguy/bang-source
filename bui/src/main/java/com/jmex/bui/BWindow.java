@@ -48,13 +48,7 @@ public class BWindow extends BContainer
      */
     public void pack (int whint, int hhint)
     {
-        Dimension ps = getPreferredSize(-1, hhint);
-        if(ps == null)
-        {
-            System.out.println("Null happened where I thought it would happen! Recovering...");
-            setBounds(_x, _y, 800, 600);
-            return;
-        }
+        Dimension ps = getPreferredSize(whint, hhint);
         setBounds(_x, _y, ps.width, ps.height);
     }
 

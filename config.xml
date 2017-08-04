@@ -1,0 +1,49 @@
+<config>
+    <input>
+        <jar in="build/client/aopalliance-1.0.jar" out="obj/aopalliance-1.0.jar"/>
+        <jar in="build/client/app-1.1-SNAPSHOT.jar" out="obj/app-1.1-SNAPSHOT.jar"/>
+		<jar in="build/client/asm-3.1.jar" out="obj/asm-3.1.jar"/>
+		<jar in="build/client/bui-1.1-SNAPSHOT.jar" out="obj/bui-1.1-SNAPSHOT.jar"/>
+		<jar in="build/client/cglib-2.2.1-v20090111.jar" out="obj/cglib-2.2.1-v20090111.jar"/>
+		<jar in="build/client/commons-io-1.4.jar" out="obj/commons-io-1.4.jar"/>
+		<jar in="build/client/desktop-1.1-SNAPSHOT.jar" out="obj/desktop-1.1-SNAPSHOT.jar"/>
+		<jar in="build/client/gdx-1.5.4.jar" out="obj/gdx-1.5.4.jar"/>
+		<jar in="build/client/gdx-backend-lwjgl-1.5.4.jar" out="obj/gdx-backend-lwjgl-1.5.4.jar"/>
+		<jar in="build/client/gdx-platform-1.5.4-natives-desktop.jar" out="obj/gdx-platform-1.5.4-natives-desktop.jar"/>
+		<jar in="build/client/getdown-1.4.jar" out="obj/getdown-1.4.jar"/>
+		<jar in="build/client/guava-18.0.jar" out="obj/guava-18.0.jar"/>
+		<jar in="build/client/guice-3.0.jar" out="obj/guice-3.0.jar"/>
+		<jar in="build/client/javax.inject-1.jar" out="obj/javax.inject-1.jar"/>
+		<jar in="build/client/jinput-2.0.5.jar" out="obj/jinput-2.0.5.jar"/>
+		<jar in="build/client/jinput-platform-2.0.5-natives-linux.jar" out="obj/jinput-platform-2.0.5-natives-linux.jar"/>
+		<jar in="build/client/jinput-platform-2.0.5-natives-osx.jar" out="obj/jinput-platform-2.0.5-natives-osx.jar"/>
+		<jar in="build/client/jinput-platform-2.0.5-natives-windows.jar" out="obj/jinput-platform-2.0.5-natives-windows.jar"/>
+		<jar in="build/client/jlayer-1.0.1-gdx.jar" out="obj/jlayer-1.0.1-gdx.jar"/>
+		<jar in="build/client/jme-1.1-SNAPSHOT.jar" out="obj/jme-1.1-SNAPSHOT.jar"/>
+		<jar in="build/client/jorbis-0.0.17.jar" out="obj/jorbis-0.0.17.jar"/>
+		<jar in="build/client/jsr250-api-1.0.jar" out="obj/jsr250-api-1.0.jar"/>
+		<jar in="build/client/jutils-1.0.0.jar" out="obj/jutils-1.0.0.jar"/>
+		<jar in="build/client/lwjgl_util-2.9.2.jar" out="obj/lwjgl_util-2.9.2.jar"/>
+		<jar in="build/client/lwjgl-2.9.2.jar" out="obj/lwjgl-2.9.2.jar"/>
+		<jar in="build/client/lwjgl-platform-2.9.2-natives-linux.jar" out="obj/lwjgl-platform-2.9.2-natives-linux.jar"/>
+		<jar in="build/client/lwjgl-platform-2.9.2-natives-osx.jar" out="obj/lwjgl-platform-2.9.2-natives-osx.jar"/>
+		<jar in="build/client/lwjgl-platform-2.9.2-natives-windows.jar" out="obj/lwjgl-platform-2.9.2-natives-windows.jar"/>
+		<jar in="build/client/narya-1.15.jar" out="obj/narya-1.15.jar"/>
+		<jar in="build/client/nenya-1.7.jar" out="obj/nenya-1.7.jar"/>
+		<jar in="build/client/nenya-tools-1.7.jar" out="obj/nenya-tools-1.7.jar"/>
+		<jar in="build/client/ooo-util-1.4.1.jar" out="obj/ooo-util-1.4.1.jar"/>
+		<jar in="build/client/samskivert-1.9.jar" out="obj/samskivert-1.9.jar"/>
+		<jar in="build/client/shared-1.1-SNAPSHOT.jar" out="obj/shared-1.1-SNAPSHOT.jar"/>
+		
+
+    </input>
+
+    <keep-names>
+        <class access="protected+">
+            <field access="protected+"/>
+            <method access="protected+"/>
+        </class>
+    </keep-names>
+
+    <property name="log-file" value="log.xml"/>
+</config>

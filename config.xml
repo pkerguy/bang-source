@@ -1,6 +1,7 @@
 <config>
     <input>
-		<jar in="build/client/*.jar" out="final/*.jar"/>
+		<jar in="build/client/desktop-1.1-SNAPSHOT.jar" out="final/desktop.jar"/>
+        <jar in="build/client/shared-1.1-SNAPSHOT.jar" out="final/shared.jar"/>
 
     </input>
 	<classpath>

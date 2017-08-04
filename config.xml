@@ -17,6 +17,7 @@
         <class template="class com.threerings.bang.client.Config"/>
         <class template="class com.threerings.bang.client.BangClient"/>
         <class template="class com.threerings.bang.editor.EditorManager"/>
+        <class template="class com.threerings.bang.avatar.util.BucklePartCatalog"/>
         <class template="public interface com.threerings.stats.data.StatSet$Container"/>
         <class template="public interface com.threerings.media.util.AStarPathUtil$ExtendedTraversalPred"/>
         <class template="class com.threerings.bang.data.Badge">

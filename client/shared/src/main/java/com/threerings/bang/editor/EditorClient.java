@@ -6,11 +6,8 @@ package com.threerings.bang.editor;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import java.lang.reflect.Field;
+import javax.swing.*;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,6 +16,10 @@ import com.samskivert.swing.GroupLayout;
 import com.samskivert.util.Config;
 import com.samskivert.util.RunQueue;
 
+import com.threerings.parlor.client.ParlorDirector;
+import com.threerings.parlor.client.ParlorService;
+import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.Client;
@@ -68,11 +69,11 @@ public class EditorClient extends BasicClient
         statusPanel.add(_coords = new JLabel("x:  , y:  "), GroupLayout.FIXED);
         _frame.getContentPane().add(statusPanel, BorderLayout.SOUTH);
 
+        initClient(_ctx, app, RunQueue.AWT);
+
         // we can't use lightweight popups because our OpenGL display is a
         // heavyweight component
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-
-        initClient(_ctx, app, RunQueue.AWT);
 
         // listen for logon/logoff
         _ctx.getClient().addClientObserver(this);
@@ -105,14 +106,14 @@ public class EditorClient extends BasicClient
     {
         EditorConfig config = new EditorConfig();
         _ctx.getParlorDirector().startSolitaire(
-            config, new InvocationService.ConfirmListener() {
-                public void requestProcessed () {
-                    // yay! nothing to do here
-                }
-                public void requestFailed (String cause) {
-                    log.warning("Failed to create editor: " + cause);
-                }
-            });
+                config, new InvocationService.ConfirmListener() {
+                    public void requestProcessed () {
+                        System.out.println("Request processed!");
+                    }
+                    public void requestFailed (String cause) {
+                        log.warning("Failed to create editor: " + cause);
+                    }
+                });
     }
 
     // documentation inherited from interface SessionObserver

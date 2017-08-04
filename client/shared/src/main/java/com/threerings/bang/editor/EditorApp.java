@@ -43,11 +43,11 @@ public class EditorApp extends JmeApp // TODO: use GDX's canvas stuffs
 
         // // queue an update to make sure that the context is current before the client's event
         // // handlers start firing.  somehow calling repaint() doesn't have the same effect.
-        // postRunnable(new Runnable() {
-        //     public void run () {
-        //         _canvas.update(_canvas.getGraphics());
-        //     }
-        // });
+//        postRunnable(new Runnable() {
+//             public void run () {
+//                 canvas.update(canvas.getGraphics());
+//             }
+//        });
 
         // initialize and start our client instance
         _client.init(this, frame);

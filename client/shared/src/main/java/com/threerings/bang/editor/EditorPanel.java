@@ -11,14 +11,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 import com.jme.system.DisplaySystem;
 import com.jmex.bui.BWindow;
@@ -66,6 +59,9 @@ public class EditorPanel extends JPanel
     {
         _ctx = ctx;
         _ctrl = ctrl;
+
+        System.out.println("Swing thread #1? " + SwingUtilities.isEventDispatchThread());
+
 
         // give ourselves a wee bit of a border
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

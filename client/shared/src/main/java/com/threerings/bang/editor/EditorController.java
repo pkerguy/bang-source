@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import com.samskivert.util.IntListUtil;
@@ -616,10 +616,13 @@ public class EditorController extends GameController
     // documentation inherited
     public void init (CrowdContext ctx, PlaceConfig config)
     {
+        System.out.println("Swing thread #3? " + SwingUtilities.isEventDispatchThread());
         super.init(ctx, config);
         _ctx = (EditorContext)ctx;
         _config = (EditorConfig)config;
         _msgs = _ctx.getMessageManager().getBundle("editor");
+        System.out.println("Swing thread #2? " + SwingUtilities.isEventDispatchThread());
+
     }
 
     // documentation inherited

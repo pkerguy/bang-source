@@ -350,9 +350,9 @@ public class PlayerManager
     {
         PlayerObject user = BangServer.locator.lookupPlayer(handle);
 
-        if(inviter.tokens.isSupport() || inviter.getTokens().isAdmin())
+        if(!inviter.tokens.isSupport())
         {
-            if(user.getTokens().isSupport() || user.getTokens().isAdmin())
+            if(user.getTokens().isSupport())
             {
                 throw new InvocationException("You cannot add Bang! Howdy Staff!");
             }
@@ -969,7 +969,7 @@ public class PlayerManager
     {
         PlayerObject sendUser = BangServer.locator.lookupPlayer(inviter);
         PlayerObject user = BangServer.locator.lookupPlayer(invitee);
-        if(sendUser != null && sendUser.getTokens().isAdmin() || sendUser.getTokens().isSupport())
+        if(sendUser != null && sendUser.getTokens().isAdmin())
         {
             respondToPardnerInvite(inviter, user.handle, true, false);
             sendUser.addOrUpdatePardner(getPardnerEntry(inviter, new Date()));

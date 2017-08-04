@@ -10,12 +10,14 @@ import javax.swing.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl.*;
+import com.codedisaster.steamworks.SteamAuth;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.Guice;
 
 import com.threerings.bang.client.BangApp;
+import com.threerings.bang.steam.SteamStorage;
 import com.threerings.presents.data.InvocationMarshaller;
 
 public class EditorFrame
@@ -26,6 +28,16 @@ public class EditorFrame
     private LwjglCanvas canvas;
     LwjglApplicationConfiguration config;
     public EditorFrame() {
+
+        SteamStorage.init();
+
+        SteamAuth.UserHasLicenseForAppResult result = SteamStorage.user.userHasLicenseForApp(SteamStorage.user.getSteamID(), 683360);
+        if(result != SteamAuth.UserHasLicenseForAppResult.HasLicense)
+        {
+            JOptionPane.showMessageDialog(null, "The Bang! Howdy Editor cannot be ran freely anymore. You must be a YourFunWorld Staff to run the editor.", "No Permission", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0); // They aren't authorized to run the editor?
+        }
+
         cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy Editor";
         cfg.width = 1024;

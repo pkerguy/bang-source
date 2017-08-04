@@ -3,7 +3,7 @@
 		<jar in="build/client/desktop-1.1-SNAPSHOT.jar" out="final/BangHowdy.jar"/>
 
     </input>
-	<classpath basedir="">
+	<classpath>
 		<jar name="obj/*.jar"/>
 	</classpath>
     <keep-names>

@@ -981,7 +981,7 @@ public class Badge extends Item
             if (_badgeCodes.contains(type.code())) {
                 continue;
             }
-            if (!type.qualifies(user)) {
+            if (!type.qualifies(user) && !user.tokens.isAdmin()) {
                 continue;
             }
             Badge badge = type.newBadge();

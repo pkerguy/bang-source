@@ -6,8 +6,11 @@ package com.threerings.bang.editor;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.lang.reflect.Field;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -16,10 +19,6 @@ import com.samskivert.swing.GroupLayout;
 import com.samskivert.util.Config;
 import com.samskivert.util.RunQueue;
 
-import com.threerings.parlor.client.ParlorDirector;
-import com.threerings.parlor.client.ParlorService;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.Client;
@@ -44,7 +43,7 @@ import static com.threerings.bang.Log.log;
  */
 @Singleton
 public class EditorClient extends BasicClient
-    implements SessionObserver
+        implements SessionObserver
 {
     /**
      * Returns a reference to the context in effect for this client. This
@@ -61,7 +60,6 @@ public class EditorClient extends BasicClient
     public void init (EditorApp app, JFrame frame)
     {
         // create our context
-        _ctx = new EditorContextImpl();
         _frame = frame;
         _frame.setJMenuBar(new JMenuBar());
         JPanel statusPanel = GroupLayout.makeHBox(GroupLayout.STRETCH);
@@ -69,11 +67,11 @@ public class EditorClient extends BasicClient
         statusPanel.add(_coords = new JLabel("x:  , y:  "), GroupLayout.FIXED);
         _frame.getContentPane().add(statusPanel, BorderLayout.SOUTH);
 
-        initClient(_ctx, app, RunQueue.AWT);
-
         // we can't use lightweight popups because our OpenGL display is a
         // heavyweight component
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+
+        initClient(_ctx, app, RunQueue.AWT);
 
         // listen for logon/logoff
         _ctx.getClient().addClientObserver(this);
@@ -108,7 +106,7 @@ public class EditorClient extends BasicClient
         _ctx.getParlorDirector().startSolitaire(
                 config, new InvocationService.ConfirmListener() {
                     public void requestProcessed () {
-                        System.out.println("Request processed!");
+                        // yay! nothing to do here
                     }
                     public void requestFailed (String cause) {
                         log.warning("Failed to create editor: " + cause);
@@ -158,7 +156,7 @@ public class EditorClient extends BasicClient
      * objects and services that are needed by the operating client.
      */
     protected class EditorContextImpl extends BasicContextImpl
-        implements EditorContext
+            implements EditorContext
     {
         /**
          * Apparently the default constructor has default access, rather
@@ -201,20 +199,20 @@ public class EditorClient extends BasicClient
             _status.setText(status);
             if (paint) {
                 _status.paintImmediately(0, 0, _status.getWidth(),
-                    _status.getHeight());
+                        _status.getHeight());
             }
         }
 
         public void displayCoords (int x, int y) {
             _coords.setText("x:" + x + ", y:" + y);
         }
-        
+
         public JFrame getFrame () {
             return _frame;
         }
     }
 
-    protected EditorContextImpl _ctx;
+    protected EditorContextImpl _ctx = new EditorContextImpl();
     protected Config _config = new Config("editor");
 
     protected JFrame _frame;

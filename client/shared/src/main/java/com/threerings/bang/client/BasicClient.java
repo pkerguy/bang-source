@@ -123,7 +123,7 @@ public class BasicClient
     protected void createContextServices (RunQueue rqueue)
     {
         // create the handles on our various services
-        _client = new Client(null, rqueue);
+        _client.setRunQueue(rqueue);
 
         // these manage local client resources
         _rsrcmgr = new ResourceManager("rsrc");
@@ -140,14 +140,14 @@ public class BasicClient
 
         // create our media managers
         _imgmgr = new ImageManager(
-            _rsrcmgr, new ImageManager.OptimalImageCreator() {
+                _rsrcmgr, new ImageManager.OptimalImageCreator() {
             public BufferedImage createImage (int w, int h, int t) {
                 // TODO: take screen depth into account
                 switch (t) {
-                case Transparency.OPAQUE:
-                    return new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-                default:
-                    return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+                    case Transparency.OPAQUE:
+                        return new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                    default:
+                        return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
                 }
             }
         });
@@ -191,7 +191,7 @@ public class BasicClient
         };
         try {
             _rsrcmgr.initBundles(
-                null, "config/resource/manager.properties", obs);
+                    null, "config/resource/manager.properties", obs);
         } catch (IOException ioe) {
             // TODO: report to the client
             log.warning("Failed to initialize rsrcmgr.", ioe);
@@ -206,10 +206,10 @@ public class BasicClient
     {
         try {
             _charmgr = new CharacterManager(
-                _imgmgr, new BundledComponentRepository(
+                    _imgmgr, new BundledComponentRepository(
                     _rsrcmgr, _imgmgr, AvatarCodes.AVATAR_RSRC_SET));
             _alogic = new AvatarLogic(
-                _rsrcmgr, _charmgr.getComponentRepository());
+                    _rsrcmgr, _charmgr.getComponentRepository());
 
         } catch (IOException ioe) {
             // TODO: report to the client
@@ -222,7 +222,7 @@ public class BasicClient
      * and services that are needed by the operating client.
      */
     protected abstract class BasicContextImpl
-        implements BasicContext, ParlorContext
+            implements BasicContext, ParlorContext
     {
         /** Apparently the default constructor has default access, rather
          * than protected access, even though this class is declared to be
@@ -349,7 +349,7 @@ public class BasicClient
         }
 
         public void loadModel (
-            String type, String name, ResultListener<Model> rl) {
+                String type, String name, ResultListener<Model> rl) {
             _mcache.getModel(type, name, rl);
         }
 
@@ -359,6 +359,17 @@ public class BasicClient
 
         public BImage loadImage (String rsrcPath) {
             return _icache.getBImage(rsrcPath);
+        }
+    }
+
+    // we need our client to be around at construction/injection time, but we don't have our
+    // runqueue until initialization time, so we have to do this hackery
+    protected static class HackedClient extends Client {
+        public HackedClient() {
+            super(null, null);
+        }
+        public void setRunQueue(RunQueue rqueue) {
+            _runQueue = rqueue;
         }
     }
 
@@ -380,7 +391,7 @@ public class BasicClient
     protected CharacterManager _charmgr;
     protected AvatarLogic _alogic;
 
-    protected Client _client;
+    protected HackedClient _client = new HackedClient();
     protected LocationDirector _locdir;
     protected OccupantDirector _occdir;
     protected ParlorDirector _pardir;

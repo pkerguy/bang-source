@@ -697,16 +697,9 @@ public class EditorController extends GameController
     {
         super.gameDidStart();
 
-        // load up any board specified on the command line
-        if (EditorApp.appArgs.length > 0 &&
-            !StringUtil.isBlank(EditorApp.appArgs[0])) {
-            loadBoard(new File(EditorApp.appArgs[0]), false);
-        } else {
-            _bangobj.board = new BangBoard(
+        _bangobj.board = new BangBoard(
                 BangBoard.DEFAULT_SIZE, BangBoard.DEFAULT_SIZE);
-            _bangobj.setPieces(new ModifiableDSet<Piece>());
-        }
-
+        _bangobj.setPieces(new ModifiableDSet<Piece>());
         // our panel needs to do some game starting business
         _panel.startEditing(_bangobj, _config);
     }

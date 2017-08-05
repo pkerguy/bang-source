@@ -134,7 +134,7 @@ public class BangPrefs
      */
     public static boolean isFullscreenSet ()
     {
-        return config.getValue("display_fullscreen", (String)null) != null;
+        return config.getValue("display_fullscreen",false);
     }
 
     /**

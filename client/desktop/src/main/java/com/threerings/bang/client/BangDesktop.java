@@ -3,73 +3,84 @@
 
 package com.threerings.bang.client;
 
-import com.badlogic.gdx.backends.lwjgl.*;
-import com.threerings.bang.editor.EditorFrame;
-import com.threerings.bang.steam.*;
+        import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+        import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+        import com.threerings.bang.editor.EditorFrame;
+        import com.threerings.bang.game.data.BangConfig;
+        import com.threerings.bang.steam.SteamStorage;
+        import javafx.application.Application;
+        import javafx.beans.binding.Bindings;
+        import javafx.beans.property.DoubleProperty;
+        import javafx.scene.Scene;
+        import javafx.scene.layout.StackPane;
+        import javafx.scene.media.Media;
+        import javafx.scene.media.MediaPlayer;
+        import javafx.scene.media.MediaView;
+        import javafx.stage.Stage;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+        import javax.swing.*;
+        import java.io.File;
+        import java.util.ArrayList;
+        import java.util.List;
 
-public class BangDesktop
-{
+public class BangDesktop extends Application {
     private static class Option {
         String flag, opt;
         public Option(String flag, String opt) { this.flag = flag; this.opt = opt; }
     }
-    public static void main (String[] args) {
-        List<String> argsList = new ArrayList<String>();
-        List<Option> optsList = new ArrayList<Option>();
-        List<String> doubleOptsList = new ArrayList<String>();
+    @Override
+    public void start(final Stage stage) {
+        final File f = new File("rsrc/media/yourfunworld-intro.mp4");
 
-        for (int i = 0; i < args.length; i++) {
-            switch (args[i].charAt(0)) {
-                case '-':
-                    if (args[i].length() < 2)
-                        throw new IllegalArgumentException("Not a valid argument: "+args[i]);
-                    if (args[i].charAt(1) == '-') {
-                        if (args[i].length() < 3)
-                            throw new IllegalArgumentException("Not a valid argument: "+args[i]);
-                        // --opt
-                        doubleOptsList.add(args[i].substring(2, args[i].length()));
-                    } else {
-                        if (args.length-1 == i)
-                            throw new IllegalArgumentException("Expected arg after: "+args[i]);
-                        // -opt
-                        optsList.add(new Option(args[i], args[i+1]));
-                        i++;
-                    }
-                    break;
-                default:
-                    // arg
-                    argsList.add(args[i]);
-                    break;
+        final Media m = new Media(f.toURI().toString());
+        final MediaPlayer mp = new MediaPlayer(m);
+        final MediaView mv = new MediaView(mp);
+
+        final DoubleProperty width = mv.fitWidthProperty();
+        final DoubleProperty height = mv.fitHeightProperty();
+
+        width.bind(Bindings.selectDouble(mv.sceneProperty(), "width"));
+        height.bind(Bindings.selectDouble(mv.sceneProperty(), "height"));
+
+        mv.setPreserveRatio(true);
+
+        StackPane root = new StackPane();
+        root.getChildren().add(mv);
+
+        final Scene scene = new Scene(root, 960, 540);
+        stage.setScene(scene);
+        stage.setTitle("Bang! Howdy");
+        stage.setFullScreen(true);
+        stage.show();
+
+        mp.setOnEndOfMedia(new Runnable() {
+            @Override public void run() {
+                stage.hide();
+                System.out.println("Running Bang! Howdy Steam");
+                SteamStorage.init();
+                System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+                LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+                cfg.title = "Bang! Howdy";
+                cfg.width = BangPrefs.getDisplayWidth();
+                cfg.height = BangPrefs.getDisplayHeight();
+                cfg.depth = BangPrefs.getDisplayBPP();
+                cfg.fullscreen = BangPrefs.isFullscreenSet();
+                if(new File("safemode.txt").exists())
+                {
+                    cfg.width = 800;
+                    cfg.height = 600;
+                    cfg.depth = BangPrefs.getDisplayBPP();
+                    cfg.fullscreen = false;
+                }
+                cfg.resizable = false; // This glitches the game when resized if not set.
+                // TODO: cfg.setFromDisplayMode when in fullscreen mode
+                new LwjglApplication(new BangApp(), cfg);
             }
-        }
-        if(doubleOptsList.contains("iamtheeditoroftheworld"))
-        {
-            new EditorFrame();
-            return;
-        }
-        // etc
-        System.out.println("Running Bang! Howdy Steam");
-        SteamStorage.init();
-        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
-        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        cfg.title = "Bang! Howdy";
-        cfg.width = BangPrefs.getDisplayWidth();
-        cfg.height = BangPrefs.getDisplayHeight();
-        cfg.depth = BangPrefs.getDisplayBPP();
-        cfg.fullscreen = BangPrefs.isFullscreenSet();
-        if(new File("safemode.txt").exists())
-        {
-            cfg.width = 800;
-            cfg.height = 600;
-            cfg.depth = BangPrefs.getDisplayBPP();
-            cfg.fullscreen = false;
-        }
-        cfg.resizable = false; // This glitches the game when resized if not set.
-        // TODO: cfg.setFromDisplayMode when in fullscreen mode
-        new LwjglApplication(new BangApp(), cfg);
+        });
+
+        mp.play();
+
     }
+
 }
+

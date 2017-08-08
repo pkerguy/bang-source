@@ -3,11 +3,15 @@
 
 package com.threerings.bang.client;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.jme.renderer.*;
+import com.jme.renderer.Renderer;
 import com.jmex.bui.*;
 import com.jmex.bui.event.*;
 import com.jmex.bui.icon.*;
 import com.jmex.bui.layout.*;
+import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.*;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.*;
@@ -18,6 +22,7 @@ import com.threerings.bang.util.*;
 import com.threerings.presents.client.*;
 import com.threerings.util.*;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
@@ -31,6 +36,10 @@ import static com.threerings.bang.Log.*;
 public class LogonView extends BWindow
         implements ActionListener, BasicClient.InitObserver
 {
+
+    private String serverIP;
+    private int[] serverPorts = {0,0};
+
     /**
      * Converts an arbitrary exception into a translatable error string (which should be looked up
      * in the {@link BangAuthCodes#AUTH_MSGS} bundle). If the exception indicates that the client
@@ -165,10 +174,50 @@ public class LogonView extends BWindow
         //grid.add(new BLabel(_msgs.get("m.username"), "logon_label"));
         //grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
         //_username.setPreferredWidth(150);
-        grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
-        grid.add(_password = new BPasswordField());
-        _password.setPreferredWidth(150);
-        _password.addListener(this);
+
+        List<String> availableServers = new ArrayList<String>();
+
+        try {
+            URL serverList = new URL("http://banghowdy.com/serverList.php?id=" + SteamStorage.user.getSteamID().toString() + "&version=" + DeploymentConfig.getVersion());
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    serverList.openStream()));
+            final String result = in.readLine();
+            if(result == "")
+            {
+                _status.setStatus("Your Steam ID is not authorized to run this version of Bang! Howdy. Please switch out of the Beta branch.", true);
+                return;
+            } if(result == "maintenance") {
+                _status.setStatus("The game is currently in maintenance. Please check the Steam announcements and try again later.", true);
+                return;
+            } else {
+                grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
+                grid.add(_password = new BPasswordField());
+                _password.setPreferredWidth(150);
+                _password.addListener(this);
+            }
+            if(!result.contains("&"))
+            {
+                availableServers.add(result);
+            } else {
+                String[] arrayData = result.split("&");
+                for(String serverdata : arrayData)
+                {
+                    availableServers.add(serverdata);
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            _status.setStatus("An error occurred while attempting to get available servers. Please restart the game.", true);
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            _status.setStatus("An error occurred while attempting to get available servers. Please restart the game.", true);
+        }
+
+        grid.add(new BLabel("Server Selection", "logon_label"));
+        grid.add(serverList = new BComboBox(availableServers.toArray()));
+        serverList.addListener(this);
+
         row.add(grid);
 
         BContainer col = GroupLayout.makeVBox(GroupLayout.CENTER);
@@ -209,6 +258,27 @@ public class LogonView extends BWindow
     // documentation inherited from interface ActionListener
     public void actionPerformed (ActionEvent event)
     {
+        if(event.getSource() == serverList)
+        {
+            try {
+                URL data = new URL("http://banghowdy.com/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+                final String result = in.readLine();
+                if(result.contains("&") && result.contains(","))
+                {
+
+                } else {
+                    _status.setStatus(result, false);
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                _status.setStatus("An error occurred while retrieving that server's info", true);
+            } catch (IOException e) {
+                e.printStackTrace();
+                _status.setStatus("An error occurred while retrieving that server's info", true);
+            }
+            return;
+        }
         switch (event.getSource() == _password ? "logon" : event.getAction()) {
             case "logon":
                 if (!_initialized) {
@@ -286,8 +356,16 @@ public class LogonView extends BWindow
         log.info("Set version to: " + DeploymentConfig.getVersion());
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
-        _ctx.getClient().setServer(DeploymentConfig.getServerHost(townId),
-                DeploymentConfig.getServerPorts(townId));
+        if(serverIP == null)
+        {
+            serverIP = DeploymentConfig.getServerHost(townId);
+        }
+        if(serverPorts[0] == 0)
+        {
+            serverPorts = DeploymentConfig.getServerPorts(townId);
+        }
+
+        _ctx.getClient().setServer(serverIP, serverPorts);
 
         // configure the client with the supplied credentials
         _ctx.getClient().setCredentials(
@@ -448,6 +526,7 @@ public class LogonView extends BWindow
     protected BTextField _username;
     protected BPasswordField _password;
     protected BButton _logon, _action, _account, _anon;
+    protected BComboBox serverList;
     protected BIcon _unitIcon;
 
     protected StatusLabel _status;

@@ -28,10 +28,12 @@ public class EnablingValidator
      */
     public EnablingValidator (BTextComponent source, BButton button)
     {
-        _source = source;
-        _source.addListener(this);
-        _button = button;
-        button.setEnabled(checkEnabled(source.getText()));
+        (_source = source).addListener(this);
+        (_button = button).setEnabled(checkEnabled(source.getText()));
+    }
+
+    public void invalidate() {
+        _button.setEnabled(checkEnabled(_source.getText()));
     }
 
     // documentation inherited from interface TextListener

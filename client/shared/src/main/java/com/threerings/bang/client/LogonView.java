@@ -232,7 +232,7 @@ public class LogonView extends BWindow
         add(row, new Rectangle(40, 200, 365, 80));
 
         // disable the logon button until a password is entered (and until we're initialized)
-        new EnablingValidator(_password, _logon) {
+        _validator = new EnablingValidator(_password, _logon) {
             protected boolean checkEnabled (String text) {
                 return super.checkEnabled(text) && _initialized && serverList.getSelectedIndex() != -1;
             }
@@ -290,6 +290,7 @@ public class LogonView extends BWindow
                 e.printStackTrace();
                 showDialog("An error occurred while retrieving that server's info");
             }
+            _validator.invalidate();
             return;
         }
         switch (event.getSource() == _password ? "logon" : event.getAction()) {
@@ -551,6 +552,7 @@ public class LogonView extends BWindow
     protected BButton _logon, _action, _account, _anon;
     protected BComboBox serverList;
     protected BIcon _unitIcon;
+    protected EnablingValidator _validator;
 
     protected StatusLabel _status;
     protected boolean _initialized;

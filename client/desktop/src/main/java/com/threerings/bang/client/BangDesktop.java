@@ -27,12 +27,77 @@ public class BangDesktop extends Application {
         public Option(String flag, String opt) { this.flag = flag; this.opt = opt; }
     }
 
+    private static String OS = System.getProperty("os.name").toLowerCase();
+
+
     public static void main(String[] args) {
         launch(BangDesktop.class, args);
     }
+    public static boolean isWindows() {
+        return (OS.indexOf("win") >= 0);
+    }
 
+    public static boolean isMac() {
+        return (OS.indexOf("mac") >= 0);
+    }
+
+    public static boolean isUnix() {
+        return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0 );
+    }
+
+    public static boolean isSolaris() {
+        return (OS.indexOf("sunos") >= 0);
+    }
+    public static String getOS(){
+        if (isWindows()) {
+            return "win";
+        } else if (isMac()) {
+            return "osx";
+        } else if (isUnix()) {
+            return "uni";
+        } else if (isSolaris()) {
+            return "sol";
+        } else {
+            return "err";
+        }
+    }
     @Override
     public void start(final Stage stage) {
+        if (isWindows()) {
+            System.out.println("This is Windows");
+        } else if (isMac()) {
+            System.out.println("This is Mac");
+            System.out.println("Your OS is not supported yet!");
+            System.exit(0);
+        } else if (isUnix()) {
+            System.out.println("This is Unix or Linux");
+            System.out.println("Running Bang! Howdy Steam");
+            SteamStorage.init();
+            System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+            LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+            cfg.title = "Bang! Howdy";
+            cfg.width = BangPrefs.getDisplayWidth();
+            cfg.height = BangPrefs.getDisplayHeight();
+            cfg.depth = BangPrefs.getDisplayBPP();
+            cfg.fullscreen = BangPrefs.isFullscreenSet();
+            if(new File("safemode.txt").exists())
+            {
+                cfg.width = 800;
+                cfg.height = 600;
+                cfg.depth = BangPrefs.getDisplayBPP();
+                cfg.fullscreen = false;
+            }
+            cfg.resizable = false; // This glitches the game when resized if not set.
+            // TODO: cfg.setFromDisplayMode when in fullscreen mode
+            new LwjglApplication(new BangApp(), cfg);
+            return;
+        } else if (isSolaris()) {
+            System.out.println("This is Solaris");
+        } else {
+            System.out.println("Your OS is not supported!!");
+            System.exit(0);
+        }
+
         final File f = new File("rsrc/media/yourfunworld-intro.mp4");
 
         final Media m = new Media(f.toURI().toString());

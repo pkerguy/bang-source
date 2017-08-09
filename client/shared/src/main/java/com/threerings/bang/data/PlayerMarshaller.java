@@ -35,6 +35,16 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         });
     }
 
+    public static final int WARN_PLAYER = 15;
+    @Override
+    public void warnPlayer(Handle handle, String message, ConfirmListener listener) {
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = listener;
+        sendRequest(WARN_PLAYER, new Object[] {
+                new Object[] { handle, message }, listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #createAccount} requests. */
     public static final int CREATE_ACCOUNT = 2;
 

@@ -26,6 +26,9 @@ public interface PlayerProvider extends InvocationProvider
     void bootPlayer (PlayerObject caller, Handle arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
+    void warnPlayer (PlayerObject caller, Handle arg1, String message, InvocationService.ConfirmListener arg2)
+            throws InvocationException;
+
     /**
      * Handles a {@link PlayerService#createAccount} request.
      */

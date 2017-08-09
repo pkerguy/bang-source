@@ -182,12 +182,13 @@ public class LogonView extends BWindow
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     serverList.openStream()));
             final String result = in.readLine();
-            if(result == "")
+            if("".equals(result))
             {
-                _status.setStatus("Your Steam ID is not authorized to run this version of Bang! Howdy. Please switch out of the Beta branch.", true);
+                showDialog("Your Steam ID is not authorized to run this version of Bang! Howdy. Please switch out of the Beta branch.");
                 return;
-            } if(result == "maintenance") {
-                _status.setStatus("The game is currently in maintenance. Please check the Steam announcements and try again later.", true);
+            }
+            if("maintenance".equals(result)) {
+                showDialog("The game is currently in maintenance. Please check the Steam announcements and try again later.");
                 return;
             } else {
                 grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
@@ -207,11 +208,11 @@ public class LogonView extends BWindow
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            _status.setStatus("An error occurred while attempting to get available servers. Please restart the game.", true);
+            showDialog("An error occurred while attempting to get available servers. Please restart the game.");
             return;
         } catch (IOException e) {
             e.printStackTrace();
-            _status.setStatus("An error occurred while attempting to get available servers. Please restart the game.", true);
+            showDialog("An error occurred while attempting to get available servers. Please restart the game.");
         }
 
         grid.add(new BLabel("Server Selection", "logon_label"));
@@ -233,7 +234,7 @@ public class LogonView extends BWindow
         // disable the logon button until a password is entered (and until we're initialized)
         new EnablingValidator(_password, _logon) {
             protected boolean checkEnabled (String text) {
-                return super.checkEnabled(text) && _initialized;
+                return super.checkEnabled(text) && _initialized && serverList.getSelectedIndex() != -1;
             }
         };
 
@@ -260,22 +261,34 @@ public class LogonView extends BWindow
     {
         if(event.getSource() == serverList)
         {
+            if(serverList.getSelectedIndex() == -1)
+            {
+                _logon.setEnabled(false);
+                return;
+            } else {
+                _logon.setEnabled(true);
+            }
             try {
                 URL data = new URL("http://banghowdy.com/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
                 if(result.contains("&") && result.contains(","))
                 {
+                    String[] info = result.split("&");
+                    serverIP = info[0];
+                    String[] portStr = info[1].split(",");
+                    serverPorts = new int[portStr.length];
+                    for (int i = 0, len = portStr.length; i < len; ) {
+                        serverPorts[i] = Integer.parseInt(portStr[i++]);
+                    }
 
                 } else {
-                    _status.setStatus(result, false);
+                    showDialog(result);
+                    serverList.selectItem(-1); // Un-select any item that was selected.
                 }
-            } catch (MalformedURLException e) {
+            } catch (IOException | NumberFormatException e) {
                 e.printStackTrace();
-                _status.setStatus("An error occurred while retrieving that server's info", true);
-            } catch (IOException e) {
-                e.printStackTrace();
-                _status.setStatus("An error occurred while retrieving that server's info", true);
+                showDialog("An error occurred while retrieving that server's info");
             }
             return;
         }
@@ -450,6 +463,16 @@ public class LogonView extends BWindow
                     }
                 });
     }
+
+    protected void showDialog(String message)
+    {
+        OptionDialog.showConfirmDialog(_ctx, BangAuthCodes.AUTH_MSGS, message,
+                new String[] {"m.ok"}, new OptionDialog.ResponseReceiver() {
+                    public void resultPosted (int button, Object result) {
+                    }
+                });
+    }
+
 
     protected void showBannedDialog (String reason)
     {

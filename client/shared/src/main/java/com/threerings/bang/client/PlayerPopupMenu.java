@@ -20,6 +20,7 @@ import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.layout.GroupLayout;
 
+import com.threerings.bang.admin.client.WarnPlayerDialog;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -168,14 +169,8 @@ public class PlayerPopupMenu extends BPopupMenu
         } else if ("view_poster".equals(event.getAction())) {
             WantedPosterView.displayWantedPoster(_ctx, _handle);
 
-        } else if ("view_account".equals(event.getAction())) {
-            try {
-                // the handle seems to get magically URL encoded; so we don't have to
-                _ctx.showURL(new URL(DeploymentConfig.getNewAccountURL(null),
-                                     "/office/player.xhtml?handle=" + _handle.toString()));
-            } catch (Exception e) {
-                log.warning("Failed to show account URL.", e);
-            }
+        } else if ("support_warn".equals(event.getAction())) {
+            new WarnPlayerDialog(_ctx, null, _handle);
         }
     }
 
@@ -196,11 +191,6 @@ public class PlayerPopupMenu extends BPopupMenu
 
         // add an item for viewing their wanted poster
         addMenuItem(new BMenuItem(msgs.get("m.pm_view_poster"), "view_poster"));
-
-        // if we're an admin/support, add a link to their admin account page
-        if (self.tokens.isSupport()) {
-            addMenuItem(new BMenuItem(msgs.get("m.pm_view_account"), "view_account"));
-        }
 
         // stop here if this is us or we're anonymous
         if (self.tokens.isAnonymous() || self.handle.equals(_handle)){
@@ -250,6 +240,7 @@ public class PlayerPopupMenu extends BPopupMenu
 
         if (self.tokens.isSupport()) {
             addMenuItem(new BMenuItem(msgs.get("m.pm_support_boot"), "support_boot"));
+            addMenuItem(new BMenuItem("Warn Player", "support_warn"));
         }
     }
 

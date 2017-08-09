@@ -176,15 +176,26 @@ public class OptionDialog extends BDecoratedWindow
         _receiver = receiver;
         _delay = delay;
 
-        add(new BLabel(_ctx.xlate(bundle, text)));
+        if(bundle == null)
+        {
+            add(new BLabel(text));
+        } else {
+            add(new BLabel(_ctx.xlate(bundle, text)));
+        }
 
         BContainer dpanel = new BContainer(GroupLayout.makeVert(GroupLayout.CENTER));
         BContainer bpanel = new BContainer(
             GroupLayout.makeHoriz(GroupLayout.CENTER));
         _buttons = new BButton[buttons.length];
         for (int ii = 0; ii < buttons.length; ii++) {
-            bpanel.add(_buttons[ii] =
-                new BButton(ctx.xlate(bundle, buttons[ii])));
+            if(bundle == null)
+            {
+                bpanel.add(_buttons[ii] =
+                        new BButton(buttons[ii]));
+            } else {
+                bpanel.add(_buttons[ii] =
+                        new BButton(ctx.xlate(bundle, buttons[ii])));
+            }
             _buttons[ii].addListener(this);
             if (delay > 0) {
                 _buttons[ii].setEnabled(false);

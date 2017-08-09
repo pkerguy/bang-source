@@ -3,25 +3,23 @@
 
 package com.threerings.bang.client;
 
-        import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-        import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-        import com.threerings.bang.editor.EditorFrame;
-        import com.threerings.bang.game.data.BangConfig;
-        import com.threerings.bang.steam.SteamStorage;
-        import javafx.application.Application;
-        import javafx.beans.binding.Bindings;
-        import javafx.beans.property.DoubleProperty;
-        import javafx.scene.Scene;
-        import javafx.scene.layout.StackPane;
-        import javafx.scene.media.Media;
-        import javafx.scene.media.MediaPlayer;
-        import javafx.scene.media.MediaView;
-        import javafx.stage.Stage;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.threerings.bang.steam.SteamStorage;
+import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.scene.Scene;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
-        import javax.swing.*;
-        import java.io.File;
-        import java.util.ArrayList;
-        import java.util.List;
+import java.io.File;
 
 public class BangDesktop extends Application {
     private static class Option {
@@ -46,6 +44,7 @@ public class BangDesktop extends Application {
 
         StackPane root = new StackPane();
         root.getChildren().add(mv);
+        root.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
 
         final Scene scene = new Scene(root, 960, 540);
         stage.setScene(scene);
@@ -77,7 +76,7 @@ public class BangDesktop extends Application {
                 new LwjglApplication(new BangApp(), cfg);
             }
         });
-
+        mp.setVolume(.1);
         mp.play();
 
     }

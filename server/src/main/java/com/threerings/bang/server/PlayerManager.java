@@ -933,6 +933,26 @@ public class PlayerManager
         listener.requestProcessed();
     }
 
+    // documentation inherited from PlayerProvider
+    public void warnPlayer (PlayerObject user, Handle handle, String message,
+                            PlayerService.ConfirmListener listener)
+            throws InvocationException
+    {
+        if (!user.tokens.isSupport()) {
+            log.warning("Attempting to warn player from non-support user", "who", user.who());
+            throw new InvocationException(ACCESS_DENIED);
+        }
+        PlayerObject player = BangServer.locator.lookupPlayer(handle);
+        try {
+            _playrepo.setWarning(player.username.getNormal(), message);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+            listener.requestFailed("Failed getting player. Persistence error.");
+            return;
+        }
+        listener.requestProcessed();
+    }
+
     /**
      * Delivers the specified item to its owner if he is online (on any server).  The item is
      * assumed to be in the database already; this method merely requests an update of the

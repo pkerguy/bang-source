@@ -96,4 +96,11 @@ public interface PlayerService extends InvocationService<PlayerObject>
      * Boots a player from the game.
      */
     public void bootPlayer (Handle handle, ConfirmListener listener);
+
+    /**
+     * Warns a player
+     */
+
+    public void warnPlayer (Handle handle, String message, ConfirmListener listener);
+
 }

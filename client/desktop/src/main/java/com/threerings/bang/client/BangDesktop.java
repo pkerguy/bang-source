@@ -26,6 +26,11 @@ public class BangDesktop extends Application {
         String flag, opt;
         public Option(String flag, String opt) { this.flag = flag; this.opt = opt; }
     }
+
+    public static void main(String[] args) {
+        launch(BangDesktop.class, args);
+    }
+
     @Override
     public void start(final Stage stage) {
         final File f = new File("rsrc/media/yourfunworld-intro.mp4");

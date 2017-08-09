@@ -274,9 +274,9 @@ public class LogonView extends BWindow
                 final String result = in.readLine();
                 if(result.contains("&") && result.contains(","))
                 {
-                    String[] info = result.split("&");
+                    String[] info = result.split("&"),
+                          portStr = info[1].split(",");
                     serverIP = info[0];
-                    String[] portStr = info[1].split(",");
                     serverPorts = new int[portStr.length];
                     for (int i = 0, len = portStr.length; i < len; ) {
                         serverPorts[i] = Integer.parseInt(portStr[i++]);

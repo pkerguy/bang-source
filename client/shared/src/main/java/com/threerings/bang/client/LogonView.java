@@ -371,11 +371,11 @@ public class LogonView extends BWindow
 
         if(serverIP == null)
         {
-            serverIP = DeploymentConfig.getServerHost(townId);
+            serverIP = DeploymentConfig.getServerHost("frontier_town");
         }
         if(serverPorts[0] == 0)
         {
-            serverPorts = DeploymentConfig.getServerPorts(townId);
+            serverPorts = DeploymentConfig.getServerPorts("frontier_town");
         }
 
         _ctx.getClient().setServer(serverIP, serverPorts);

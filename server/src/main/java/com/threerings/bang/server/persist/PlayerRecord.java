@@ -41,6 +41,9 @@ public class PlayerRecord
     /** The amount of scrip this player holds. */
     public int scrip;
 
+    /** The amount of coin this player holds. */
+    public int coins;
+
     /** The current avatar look selected by this player. */
     public String look;
 

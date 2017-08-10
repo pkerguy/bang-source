@@ -13,8 +13,8 @@ allprojects {
   }
 
   apply plugin: "java"
-  sourceCompatibility = "1.7"; // for example
-  targetCompatibility = "1.7"; // defaults to sourceCompatibility
+  sourceCompatibility = "1.8"; // for example
+  targetCompatibility = "1.8"; // defaults to sourceCompatibility
   compileJava {
     options.compilerArgs << '-Xlint:all' << '-Xlint:-serial' << '-Xlint:-path' << '-Xlint:-overrides'
   }

@@ -57,6 +57,11 @@ public class OOOAuthenticator extends BangAuthenticator
         _authrep.updateUserIsActive(username, OOOUser.IS_ACTIVE_BANG_PLAYER, isActive);
     }
 
+    @Override
+    public OOOUser getUser(String username, boolean loadIdents) throws PersistenceException {
+        return _authrep.loadUser(username, loadIdents);
+    }
+
     @Override // from abstract BangAuthenticator
     public String createAccount (String username, String password, String email, String affiliate,
             String machIdent, Date birthdate)
@@ -194,6 +199,7 @@ public class OOOAuthenticator extends BangAuthenticator
         // makes it through the gauntlet, we'll stash this away in a place that the client resolver
         // can get it so that we can avoid loading the record twice during authentication
         PlayerRecord prec = _playrepo.loadPlayer(username);
+
         String password = creds.getPassword();
 
         // TODO: FIX THIS STEAM STUFF
@@ -257,7 +263,7 @@ public class OOOAuthenticator extends BangAuthenticator
 
         // see if they're a coin buyer
         if (!anonymous && prec != null && !prec.isSet(PlayerRecord.IS_COIN_BUYER)) {
-            if (user.hasBoughtCoins() || user.isSupportPlus()) {
+            if (user.shunLeft > 0) { // shunLeft is now our Coins repository for now
                 _playrepo.markAsCoinBuyer(prec.playerId);
                 prec.flags = prec.flags | PlayerRecord.IS_COIN_BUYER;
             }
@@ -339,6 +345,10 @@ public class OOOAuthenticator extends BangAuthenticator
                 rdata.code = BANNED + (prec != null && prec.warning != null ? prec.warning : "");
                 return;
         }
+
+        PlayerObject buser = BangServer.locator.lookupPlayer(prec.getHandle());
+        buser.coins = user.shunLeft;
+
 
         if (prec != null && prec.banExpires != null &&
                 prec.banExpires.after(new Date(System.currentTimeMillis()))) {

@@ -3,14 +3,17 @@
 
 package com.threerings.bang.server.persist;
 
+import java.sql.Statement;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.util.Invoker;
 
+import com.threerings.bang.server.BangAuthenticator;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.InvocationException;
 
@@ -19,6 +22,8 @@ import com.threerings.bang.data.PlayerObject;
 import com.threerings.bang.server.BangInvoker;
 import com.threerings.bang.server.BangServer;
 import com.threerings.bang.util.DeploymentConfig;
+import com.threerings.user.OOOUser;
+import jdk.nashorn.internal.scripts.JD;
 
 import static com.threerings.bang.Log.log;
 
@@ -45,11 +50,7 @@ public abstract class FinancialAction extends Invoker.Unit
         try {
             if (DeploymentConfig.usesCoins() && _coinCost > 0) {
                 // _coinres = _coinmgr.getCoinRepository().reserveCoins(getCoinAccount(), _coinCost);
-                if (_coinres == -1) {
-                    log.warning("Failed to reserve coins " + this + ".");
-                    fail(BangCodes.E_INSUFFICIENT_COINS);
-                    return true;
-                }
+                _coinres = _coinCost;
             }
 
             if (shouldSpendCash()) {
@@ -342,8 +343,14 @@ public abstract class FinancialAction extends Invoker.Unit
     protected boolean spendCoins (int resId)
         throws PersistenceException
     {
-        // return _coinmgr.getCoinRepository().spendCoins(resId, getCoinType(), getCoinDescrip());
-        return false;
+        //return _coinmgr.getCoinRepository().spendCoins(resId, getCoinType(), getCoinDescrip());
+        if(_user.coins < resId)
+        {
+            return false; // They don't have the money
+        }
+        _user.setCoins(_user.coins - resId);
+
+        return true;
     }
 
     /**

@@ -166,6 +166,7 @@ public class TownView extends BWindow
         add(_admin = GroupLayout.makeHBox(GroupLayout.CENTER));
 
         _admin.add(new BButton("Howdypedia", this, "howdypedia")); // Link resource in game
+        //_admin.add(new BButton("Buy Coins", this, "buycoins")); // Ability to buy coins
 
         // if we're an admin add some temporary buttons
         if (user.tokens.isSupport()) {
@@ -267,6 +268,9 @@ public class TownView extends BWindow
             try {
                 _bctx.showURL(new URL("http://www.howdypedia.com"));
             } catch (MalformedURLException e) {}
+        } else if ("buycoins".equals(cmd)) {
+            // BUY COINS DIALOG HERE
+
         }
     }
 

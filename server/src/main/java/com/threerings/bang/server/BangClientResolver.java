@@ -99,6 +99,7 @@ public class BangClientResolver extends CrowdClientResolver
         return new PlayerObject();
     }
 
+
     // documentation inherited
     protected void resolveClientData (ClientObject clobj)
         throws Exception
@@ -149,7 +150,6 @@ public class BangClientResolver extends CrowdClientResolver
         buser.tokens.setToken(BangTokenRing.OVER_13, player.isOver13);
         buser.tokens.setToken(BangTokenRing.DEMO, player.isSet(PlayerRecord.IS_DEMO_ACCOUNT));
         buser.scrip = player.scrip;
-        // buser.coins = _coinmgr.getCoinRepository().getCoinCount(player.accountName);
 
         // load up this player's gang information
         _grecord = _gangrepo.loadMember(player.playerId);

@@ -9,6 +9,7 @@ import java.util.List;
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.presents.server.Authenticator;
+import com.threerings.user.OOOUser;
 
 /**
  * Extends the standard authenticator with some extra bits.
@@ -26,6 +27,12 @@ public abstract class BangAuthenticator extends Authenticator
      */
     public abstract void setAccountIsActive (String username, boolean isActive)
         throws PersistenceException;
+
+    /**
+     * Set the coint amount in the database
+     */
+    public abstract OOOUser getUser (String username, boolean loadIdents)
+            throws PersistenceException;
 
     /**
      * Creates an account in this authenticator's user database.

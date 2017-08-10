@@ -27,13 +27,6 @@ public abstract class BangAuthenticator extends Authenticator
      */
     public abstract void setAccountIsActive (String username, boolean isActive)
         throws PersistenceException;
-
-    /**
-     * Set the coint amount in the database
-     */
-    public abstract OOOUser getUser (String username, boolean loadIdents)
-            throws PersistenceException;
-
     /**
      * Creates an account in this authenticator's user database.
      */

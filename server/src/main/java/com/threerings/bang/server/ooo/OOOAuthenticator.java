@@ -57,11 +57,6 @@ public class OOOAuthenticator extends BangAuthenticator
         _authrep.updateUserIsActive(username, OOOUser.IS_ACTIVE_BANG_PLAYER, isActive);
     }
 
-    @Override
-    public OOOUser getUser(String username, boolean loadIdents) throws PersistenceException {
-        return _authrep.loadUser(username, loadIdents);
-    }
-
     @Override // from abstract BangAuthenticator
     public String createAccount (String username, String password, String email, String affiliate,
             String machIdent, Date birthdate)
@@ -262,12 +257,12 @@ public class OOOAuthenticator extends BangAuthenticator
         }
 
         // see if they're a coin buyer
-        if (!anonymous && prec != null && !prec.isSet(PlayerRecord.IS_COIN_BUYER)) {
-            if (user.shunLeft > 0) { // shunLeft is now our Coins repository for now
-                _playrepo.markAsCoinBuyer(prec.playerId);
-                prec.flags = prec.flags | PlayerRecord.IS_COIN_BUYER;
-            }
-        }
+//        if (!anonymous && prec != null && !prec.isSet(PlayerRecord.IS_COIN_BUYER)) {
+//            if (user.shunLeft > 0) { // shunLeft is now our Coins repository for now
+//                _playrepo.markAsCoinBuyer(prec.playerId);
+//                prec.flags = prec.flags | PlayerRecord.IS_COIN_BUYER;
+//            }
+//        }
 
         // make sure this player has access to this server's town
         int serverTownIdx = ServerConfig.townIndex;

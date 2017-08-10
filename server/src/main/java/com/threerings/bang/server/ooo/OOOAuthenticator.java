@@ -341,9 +341,6 @@ public class OOOAuthenticator extends BangAuthenticator
                 return;
         }
 
-        PlayerObject buser = BangServer.locator.lookupPlayer(prec.getHandle());
-        buser.coins = user.shunLeft;
-
 
         if (prec != null && prec.banExpires != null &&
                 prec.banExpires.after(new Date(System.currentTimeMillis()))) {

@@ -8,7 +8,6 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.threerings.bang.steam.SteamStorage;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.Scene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -48,6 +47,7 @@ public class BangDesktop extends Application {
     public static boolean isSolaris() {
         return (OS.indexOf("sunos") >= 0);
     }
+
     public static String getOS(){
         if (isWindows()) {
             return "win";
@@ -61,6 +61,7 @@ public class BangDesktop extends Application {
             return "err";
         }
     }
+
     @Override
     public void start(final Stage stage) {
         if (isWindows()) {
@@ -71,25 +72,7 @@ public class BangDesktop extends Application {
             System.exit(0);
         } else if (isUnix()) {
             System.out.println("This is Unix or Linux");
-            System.out.println("Running Bang! Howdy Steam");
-            SteamStorage.init();
-            System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
-            LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-            cfg.title = "Bang! Howdy";
-            cfg.width = BangPrefs.getDisplayWidth();
-            cfg.height = BangPrefs.getDisplayHeight();
-            cfg.depth = BangPrefs.getDisplayBPP();
-            cfg.fullscreen = BangPrefs.isFullscreenSet();
-            if(new File("safemode.txt").exists())
-            {
-                cfg.width = 800;
-                cfg.height = 600;
-                cfg.depth = BangPrefs.getDisplayBPP();
-                cfg.fullscreen = false;
-            }
-            cfg.resizable = false; // This glitches the game when resized if not set.
-            // TODO: cfg.setFromDisplayMode when in fullscreen mode
-            new LwjglApplication(new BangApp(), cfg);
+            startGame();
             return;
         } else if (isSolaris()) {
             System.out.println("This is Solaris");
@@ -104,11 +87,8 @@ public class BangDesktop extends Application {
         final MediaPlayer mp = new MediaPlayer(m);
         final MediaView mv = new MediaView(mp);
 
-        final DoubleProperty width = mv.fitWidthProperty();
-        final DoubleProperty height = mv.fitHeightProperty();
-
-        width.bind(Bindings.selectDouble(mv.sceneProperty(), "width"));
-        height.bind(Bindings.selectDouble(mv.sceneProperty(), "height"));
+        mv.fitWidthProperty().bind(Bindings.selectDouble(mv.sceneProperty(), "width"));
+        mv.fitHeightProperty().bind(Bindings.selectDouble(mv.sceneProperty(), "height"));
 
         mv.setPreserveRatio(true);
 
@@ -125,30 +105,33 @@ public class BangDesktop extends Application {
         mp.setOnEndOfMedia(new Runnable() {
             @Override public void run() {
                 stage.hide();
-                System.out.println("Running Bang! Howdy Steam");
-                SteamStorage.init();
-                System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
-                LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-                cfg.title = "Bang! Howdy";
-                cfg.width = BangPrefs.getDisplayWidth();
-                cfg.height = BangPrefs.getDisplayHeight();
-                cfg.depth = BangPrefs.getDisplayBPP();
-                cfg.fullscreen = BangPrefs.isFullscreenSet();
-                if(new File("safemode.txt").exists())
-                {
-                    cfg.width = 800;
-                    cfg.height = 600;
-                    cfg.depth = BangPrefs.getDisplayBPP();
-                    cfg.fullscreen = false;
-                }
-                cfg.resizable = false; // This glitches the game when resized if not set.
-                // TODO: cfg.setFromDisplayMode when in fullscreen mode
-                new LwjglApplication(new BangApp(), cfg);
+                startGame();
             }
         });
         mp.setVolume(.1);
         mp.play();
 
+    }
+
+    private void startGame() {
+        System.out.println("Running Bang! Howdy Steam");
+        SteamStorage.init();
+        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        cfg.title = "Bang! Howdy";
+        cfg.depth = BangPrefs.getDisplayBPP();
+        if(new File("safemode.txt").exists()) {
+            cfg.width = 800;
+            cfg.height = 600;
+            cfg.fullscreen = false;
+        } else {
+            cfg.width = BangPrefs.getDisplayWidth();
+            cfg.height = BangPrefs.getDisplayHeight();
+            cfg.fullscreen = BangPrefs.isFullscreenSet();
+        }
+        cfg.resizable = false; // This glitches the game when resized if not set.
+        // TODO: cfg.setFromDisplayMode when in fullscreen mode
+        new LwjglApplication(new BangApp(), cfg);
     }
 
 }

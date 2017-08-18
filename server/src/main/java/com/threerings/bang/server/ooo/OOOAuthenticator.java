@@ -87,7 +87,7 @@ public class OOOAuthenticator extends BangAuthenticator
             }
 
             Username uname = new Username(username);
-            Password pass = Password.makeFromClear(password);
+            Password pass = Password.makeFromClear(password).getCleartext();
 
             // create the account
             _authrep.createUser(uname, pass, email, siteId, 0, birthdate, (byte)-1, null);

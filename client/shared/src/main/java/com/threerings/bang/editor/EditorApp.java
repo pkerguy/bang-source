@@ -8,6 +8,7 @@ import java.awt.Canvas;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 
+import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -31,6 +32,15 @@ public class EditorApp extends JmeApp // TODO: use GDX's canvas stuffs
 
     public Canvas getCanvas () {
         return canvas;
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        // Refresh window information. Need to do this or Pat will get mad cause cursor is positioned improperly
+        boolean fullscreen = false; // TODO
+        _display.recreateWindow(width, height, Gdx.graphics.getBufferFormat().depth, 60, fullscreen);
+        _camera.resize(width, height);
     }
 
     @Override // documentation inherited

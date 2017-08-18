@@ -829,7 +829,12 @@ public class TerrainNode extends Node
      */
     public Cursor createCursor ()
     {
-        return new Cursor();
+        if(cursor == null)
+        {
+            cursor = new Cursor();
+            return cursor;
+        }
+        return cursor;
     }
 
     /**
@@ -2117,6 +2122,8 @@ public class TerrainNode extends Node
         /** The current terrain code. */
         protected byte _tcode = -1;
     }
+
+    protected Cursor cursor;
 
     /** The application context. */
     protected BasicContext _ctx;

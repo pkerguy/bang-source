@@ -7,9 +7,26 @@ dependencies {
   compile "com.threerings:ooo-util:1.4.1"
   compile "commons-io:commons-io:1.4"
   compile "org.jcraft:jorbis:0.0.17"
+  compile "com.badlogicgames.gdx:gdx-backend-lwjgl:${gdxVersion}"
+  compile group: "com.badlogicgames.gdx", name: "gdx-platform", version: gdxVersion,
+          classifier: "natives-desktop"
 
   testCompile "junit:junit:4.8.1"
 }
+
+task copyConfig (type: Copy) {
+  from "../../etc/${deployment}"
+  into sourceSets.main.output.classesDir
+  include "deployment.properties"
+}
+processResources.dependsOn "copyConfig"
+
+task deploy (type: Sync) {
+  from jar
+  from configurations.runtime
+  into project.file("../../build/client")
+}
+
 
 task genService << {
   ant.taskdef(classpath: configurations.tools.asPath,

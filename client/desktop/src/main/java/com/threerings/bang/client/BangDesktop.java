@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class BangDesktop extends Application {
+
     private static class Option {
         String flag, opt;
         public Option(String flag, String opt) { this.flag = flag; this.opt = opt; }
@@ -28,10 +29,10 @@ public class BangDesktop extends Application {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
 
-
     public static void main(String[] args) {
         launch(BangDesktop.class, args);
     }
+
     public static boolean isWindows() {
         return (OS.indexOf("win") >= 0);
     }

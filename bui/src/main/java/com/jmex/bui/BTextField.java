@@ -5,17 +5,9 @@
 
 package com.jmex.bui;
 
-import org.lwjgl.opengl.GL11;
-
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
-
-import com.jmex.bui.event.ActionEvent;
-import com.jmex.bui.event.BEvent;
-import com.jmex.bui.event.FocusEvent;
-import com.jmex.bui.event.KeyEvent;
-import com.jmex.bui.event.MouseEvent;
-import com.jmex.bui.event.TextEvent;
+import com.jmex.bui.event.*;
 import com.jmex.bui.text.BKeyMap;
 import com.jmex.bui.text.BText;
 import com.jmex.bui.text.Document;
@@ -23,6 +15,7 @@ import com.jmex.bui.text.LengthLimitedDocument;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 import com.jmex.bui.util.Rectangle;
+import org.lwjgl.opengl.GL11;
 
 /**
  * Displays and allows for the editing of a single line of text.
@@ -236,14 +229,30 @@ public class BTextField extends BTextComponent
 
             case KeyEvent.KEY_TYPED:
                 // insert printable and shifted printable characters
-                char c = kev.getKeyChar();
-                if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 && !Character.isISOControl(c) &&
-                    /* GDX generates weird key chars; ignore them */ c < Short.MAX_VALUE) {
-                    String text = String.valueOf(kev.getKeyChar());
-                    if (_text.insert(_cursp, text)) {
-                        setCursorPos(_cursp + 1);
-                    }
-                    return true;
+                switch (_keymap.lookupMapping(modifiers, kev.getKeyCode())) {
+                    case BACKSPACE:
+                        if (_cursp > 0 && _text.getLength() > 0) {
+                            int pos = _cursp-1;
+                            if (_text.remove(pos, 1)) { // might change _cursp
+                                setCursorPos(pos);
+                            }
+                        }
+                        break;
+                    case DELETE:
+                        if (_cursp < _text.getLength()) {
+                            _text.remove(_cursp, 1);
+                        }
+                        break;
+                    default:
+                        char c = kev.getKeyChar();
+                        if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 && !Character.isISOControl(c) &&
+                            /* GDX generates weird key chars; ignore them */ c < Short.MAX_VALUE) {
+                            String text = String.valueOf(kev.getKeyChar());
+                            if (_text.insert(_cursp, text)) {
+                                setCursorPos(_cursp + 1);
+                            }
+                            return true;
+                        }
                 }
                 break;
 

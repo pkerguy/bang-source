@@ -27,6 +27,9 @@ import com.threerings.presents.data.InvocationMarshaller;
 
 public class EditorFrame
 {
+    public static void main(String[] args) {
+        new EditorFrame();
+    }
     private EditorApp app;
     private LwjglApplicationConfiguration cfg;
     private JFrame frame;
@@ -36,23 +39,23 @@ public class EditorFrame
 
         SteamStorage.init();
 
-        try {
-            URL license = new URL("http://banghowdy.com/editor.php");
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    license.openStream()));
-            final String result = in.readLine();
-            if(!result.equalsIgnoreCase("AUTH-ACCEPTED"))
-            {
-                JOptionPane.showMessageDialog(null, result, "Error launching Bang! Howdy Editor.", JOptionPane.INFORMATION_MESSAGE);
-                System.exit(0);
-            }
-        } catch (MalformedURLException e) {
-            JOptionPane.showMessageDialog(null, "The Bang! Howdy Editor cannot be ran freely anymore. You must be a YourFunWorld Staff to run the editor.", "Exception!", JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "The Bang! Howdy Editor cannot be ran freely anymore. You must be a YourFunWorld Staff to run the editor.", "IOException!", JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0);
-        }
+//        try {
+//            URL license = new URL("http://banghowdy.com/editor.php");
+//            BufferedReader in = new BufferedReader(new InputStreamReader(
+//                    license.openStream()));
+//            final String result = in.readLine();
+//            if(!result.equalsIgnoreCase("AUTH-ACCEPTED"))
+//            {
+//                JOptionPane.showMessageDialog(null, result, "Error launching Bang! Howdy Editor.", JOptionPane.INFORMATION_MESSAGE);
+//                System.exit(0);
+//            }
+//        } catch (MalformedURLException e) {
+//            JOptionPane.showMessageDialog(null, "The Bang! Howdy Editor cannot be ran freely anymore. You must be a YourFunWorld Staff to run the editor.", "Exception!", JOptionPane.INFORMATION_MESSAGE);
+//            System.exit(0);
+//        } catch (IOException e) {
+//            JOptionPane.showMessageDialog(null, "The Bang! Howdy Editor cannot be ran freely anymore. You must be a YourFunWorld Staff to run the editor.", "IOException!", JOptionPane.INFORMATION_MESSAGE);
+//            System.exit(0);
+//        }
 
         cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy Editor";

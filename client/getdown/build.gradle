@@ -1,5 +1,5 @@
 dependencies {
-  compile project(":client/desktop")
+  compile project(":client/shared")
   compile project(":assets")
 }
 

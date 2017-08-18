@@ -72,7 +72,7 @@ public class HeightfieldBrush extends EditorTool
     public void mousePressed (MouseEvent e)
     {
         _lastPressed = e.getButton();
-        byte value = ((Byte)_hbopts.value.getValue()).byteValue();
+        byte value = (Byte) _hbopts.value.getValue();
         _panel.view.paintHeightfield(_cursor.x, _cursor.y, _cursor.radius,
             _lastPressed == MouseEvent.BUTTON2 ? -value : +value,
             _hbopts.mode.getSelectedIndex() == ADD_VALUE);
@@ -95,7 +95,7 @@ public class HeightfieldBrush extends EditorTool
     public void mouseDragged (MouseEvent e)
     {
         mouseMoved(e);
-        byte value = ((Byte)_hbopts.value.getValue()).byteValue();
+        byte value = (Byte) _hbopts.value.getValue();
         _panel.view.paintHeightfield(_cursor.x, _cursor.y, _cursor.radius,
             _lastPressed == MouseEvent.BUTTON2 ? -value : +value,
             _hbopts.mode.getSelectedIndex() == ADD_VALUE);

@@ -778,7 +778,7 @@ public class BangClient extends BasicClient
     public BangCredentials createCredentials (Name username, String password)
     {
         BangCredentials creds = new BangCredentials(
-            username, Password.makeFromClear(password).getEncrypted());
+            username, Password.makeFromClear(password).getCleartext());
         creds.ident = SteamStorage.user.getSteamID().toString();
         // if we got a real ident from the client, mark it as such
         if (creds.anonymous) {

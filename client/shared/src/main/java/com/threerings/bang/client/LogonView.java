@@ -185,7 +185,7 @@ public class LogonView extends BWindow
         add(row, new Rectangle(40, 200, 365, 80));
 
         showStatus();
-        logon(BangDesktop.username, BangDesktop.password);
+        //logon(BangDesktop.username, BangDesktop.password);
     }
 
     protected void showStatus ()
@@ -238,7 +238,6 @@ public class LogonView extends BWindow
 
     public void logon (String username, String password)
     {
-        _status.setStatus(_msgs.get("m.logging_on"), false);
 
         log.info("Set version to: " + DeploymentConfig.getVersion());
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
@@ -282,8 +281,8 @@ public class LogonView extends BWindow
         if (percent < 100) {
             _status.setStatus(_msgs.get("m.init_progress", ""+percent), false);
         } else {
-            _status.setStatus(_msgs.get("m.init_complete"), false);
             _initialized = true;
+            logon(BangDesktop.username, BangDesktop.password);
         }
     }
 
@@ -426,10 +425,9 @@ public class LogonView extends BWindow
     protected MessageBundle _msgs;
 
     protected BTextField _username;
-    protected BButton _logon, _action, _account, _anon;
+    protected BButton _action, _account, _anon;
     protected BComboBox serverList;
     protected BIcon _unitIcon;
-    protected EnablingValidator _validator;
 
     protected StatusLabel _status;
     protected boolean _initialized;

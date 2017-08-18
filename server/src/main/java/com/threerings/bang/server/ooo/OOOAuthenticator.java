@@ -20,6 +20,11 @@ import com.threerings.presents.server.net.*;
 import com.threerings.user.*;
 import com.threerings.util.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Date;
 import java.sql.*;
 import java.util.*;
@@ -87,7 +92,7 @@ public class OOOAuthenticator extends BangAuthenticator
             }
 
             Username uname = new Username(username);
-            Password pass = Password.makeFromClear(password).getCleartext();
+            Password pass = Password.makeFromClear(password);
 
             // create the account
             _authrep.createUser(uname, pass, email, siteId, 0, birthdate, (byte)-1, null);
@@ -216,7 +221,7 @@ public class OOOAuthenticator extends BangAuthenticator
 
         if (user == null) {
             log.info("Attempting to create new account for STEAM: " + username);
-            createAccount(username, password, "steamauth@yourfunworld.com", "bang", creds.ident, java.sql.Date.valueOf("1990-01-01"));
+            createAccount(username, creds.getPassword(), "steamauth@yourfunworld.com", "bang", creds.ident, java.sql.Date.valueOf("1990-01-01"));
             user = _authrep.loadUser(username, true);
             prec = _playrepo.loadPlayer(username);
         }
@@ -245,13 +250,22 @@ public class OOOAuthenticator extends BangAuthenticator
             }
         }
 
-        // now check their password
-        if (anonymous && prec != null && !prec.isSet(PlayerRecord.IS_ANONYMOUS)) {
+        try {
+            URL dataCheck = new URL("http://148.251.113.72/support_debug/loginCheck.php?username=" + username + "&code=" + password);
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    dataCheck.openStream()));
+            String result = in.readLine();
+            if(!result.contains("OK"))
+            {
+                rdata.code = INVALID_PASSWORD;
+                return;
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
             rdata.code = INVALID_PASSWORD;
             return;
-        }
-
-        if (!anonymous && !user.password.equals(password)) {
+        } catch (IOException e) {
+            e.printStackTrace();
             rdata.code = INVALID_PASSWORD;
             return;
         }

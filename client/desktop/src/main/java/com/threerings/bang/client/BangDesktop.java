@@ -117,7 +117,6 @@ public class BangDesktop extends Application {
     private void startGame() {
         System.out.println("Running Bang! Howdy Steam");
         SteamStorage.init();
-        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy";
         cfg.depth = BangPrefs.getDisplayBPP();

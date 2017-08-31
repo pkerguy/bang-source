@@ -63,12 +63,11 @@ public class BangDesktop {
         }
         for(Option options : optsList)
         {
-            if(options.flag.equalsIgnoreCase("-editor"))
-            {
+            if(options.flag.equalsIgnoreCase("-editor")) {
                 new EditorFrame();
-                return;a
-        }
-        if(options.flag.equalsIgnoreCse("-username"))
+                return;
+            }
+            if(options.flag.equalsIgnoreCase("-username"))
             {
                 username = options.opt;
             }

@@ -20,6 +20,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
+import com.threerings.bang.data.*;
 import com.threerings.crowd.server.CrowdClientResolver;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
@@ -39,19 +40,6 @@ import com.threerings.bang.avatar.util.AvatarLogic;
 import com.threerings.bang.saloon.data.TopRankedList;
 import com.threerings.bang.saloon.data.TopRankObject;
 
-import com.threerings.bang.data.BangCodes;
-import com.threerings.bang.data.BangCredentials;
-import com.threerings.bang.data.BangTokenRing;
-import com.threerings.bang.data.BigShotItem;
-import com.threerings.bang.data.FreeTicket;
-import com.threerings.bang.data.GuestHandle;
-import com.threerings.bang.data.Handle;
-import com.threerings.bang.data.Item;
-import com.threerings.bang.data.Notification;
-import com.threerings.bang.data.PlayerObject;
-import com.threerings.bang.data.Rating;
-import com.threerings.bang.data.StatType;
-import com.threerings.bang.data.TrainTicket;
 import com.threerings.bang.util.BangUtil;
 import com.threerings.bang.util.DeploymentConfig;
 
@@ -268,6 +256,8 @@ public class BangClientResolver extends CrowdClientResolver
                 _playrepo.clearTempBan(player.playerId);
             }
         }
+
+        Badge.checkQualifies(buser); // Let's do this on logon now!
 
         // load up this player's pardners
         _precords = BangServer.playmgr.getPardnerRepository().getPardnerRecords(player.playerId);

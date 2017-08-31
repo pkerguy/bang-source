@@ -243,6 +243,22 @@ public class BTextField extends BTextComponent
                             _text.remove(_cursp, 1);
                         }
                         break;
+                    case CURSOR_LEFT:
+                        setCursorPos(Math.max(0, _cursp-1));
+                        break;
+
+                    case CURSOR_RIGHT:
+                        setCursorPos(Math.min(_text.getLength(), _cursp+1));
+                        break;
+
+                    case START_OF_LINE:
+                        setCursorPos(0);
+                        break;
+
+                    case END_OF_LINE:
+                        setCursorPos(_text.getLength());
+                        break;
+
                     default:
                         char c = kev.getKeyChar();
                         if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 && !Character.isISOControl(c) &&

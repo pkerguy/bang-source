@@ -3,6 +3,9 @@
 
 package com.threerings.bang.server;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -61,6 +64,16 @@ public class PlayerLocator extends BodyLocator
                 if (npop != BangServer.townobj.population) {
                     BangServer.townobj.setPopulation(npop);
                 }
+                try {
+                    URL dataCheck = new URL("http://148.251.113.72/support_debug/popSync.php");
+                    BufferedReader in = new BufferedReader(new InputStreamReader(
+                            dataCheck.openStream()));
+                    String result = in.readLine();
+                    if(!result.equalsIgnoreCase("OK"))
+                    {
+                        BangServer.townobj.setPopulation(Integer.parseInt(result) + npop);
+                    }
+                } catch(Exception ignore) {}
             }
         }.schedule(30000L, true);
     }

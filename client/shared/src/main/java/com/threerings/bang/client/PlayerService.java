@@ -98,9 +98,12 @@ public interface PlayerService extends InvocationService<PlayerObject>
     public void bootPlayer (Handle handle, ConfirmListener listener);
 
     /**
-     * Warns a player
+     * Performs an admin action
      */
+    public void adminAction (Handle handle, int action, String value, ConfirmListener listener);
 
-    public void warnPlayer (Handle handle, String message, ConfirmListener listener);
-
+    /**
+     * Performs a game master action
+     */
+    public void gameMasterAction(Handle handle, int action, String reason, long duration, ConfirmListener listener);
 }

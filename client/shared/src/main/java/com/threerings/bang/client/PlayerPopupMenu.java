@@ -3,44 +3,27 @@
 
 package com.threerings.bang.client;
 
-import java.net.URL;
-
-import com.jmex.bui.BButton;
-import com.jmex.bui.BComponent;
-import com.jmex.bui.BContainer;
-import com.jmex.bui.BDecoratedWindow;
-import com.jmex.bui.BLabel;
-import com.jmex.bui.BMenuItem;
-import com.jmex.bui.BPopupMenu;
-import com.jmex.bui.BTextField;
-import com.jmex.bui.BWindow;
+import com.jmex.bui.*;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
-import com.jmex.bui.layout.GroupLayout;
 
-import com.threerings.bang.admin.client.WarnPlayerDialog;
+import com.threerings.bang.admin.client.AdminDialog;
+import com.threerings.bang.admin.client.GameMasterDialog;
+import com.threerings.bang.data.*;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.bang.client.bui.EnablingValidator;
 import com.threerings.bang.client.bui.OptionDialog;
 import com.threerings.bang.chat.client.PardnerChatView;
 import com.threerings.bang.game.data.BangObject;
 import com.threerings.bang.gang.client.InviteMemberDialog;
 import com.threerings.bang.saloon.data.ParlorObject;
 
-import com.threerings.bang.data.BangCodes;
-import com.threerings.bang.data.BangOccupantInfo;
-import com.threerings.bang.data.Handle;
-import com.threerings.bang.data.PardnerEntry;
-import com.threerings.bang.data.PlayerObject;
 import com.threerings.bang.util.BangContext;
-import com.threerings.bang.util.DeploymentConfig;
-
-import static com.threerings.bang.Log.log;
 
 /**
  * A popup menu that can (and should) be displayed any time a player right clicks on another
@@ -108,69 +91,152 @@ public class PlayerPopupMenu extends BPopupMenu
     // from interface ActionListener
     public void actionPerformed (ActionEvent event)
     {
-        if ("mute".equals(event.getAction())) {
-            _ctx.getMuteDirector().setMuted(_handle, true);
+        switch (event.getAction()) {
+            case "mute":
+                _ctx.getMuteDirector().setMuted(_handle, true);
 
-        } else if ("unmute".equals(event.getAction())) {
-            _ctx.getMuteDirector().setMuted(_handle, false);
+                break;
+            case "unmute":
+                _ctx.getMuteDirector().setMuted(_handle, false);
 
-        } else if ("boot".equals(event.getAction())) {
-            PlaceObject pobj = _ctx.getLocationDirector().getPlaceObject();
-            if (pobj instanceof ParlorObject) {
-                ParlorObject parlor = (ParlorObject)pobj;
-                BangOccupantInfo boi = (BangOccupantInfo)parlor.getOccupantInfo(_handle);
-                if (boi != null) {
-                    parlor.service.bootPlayer(boi.getBodyOid());
-                }
-            }
-
-        } else if ("support_boot".equals(event.getAction())) {
-            String msg = MessageBundle.tcompose("m.confirm_boot", _handle);
-            OptionDialog.showConfirmDialog(
-                _ctx, BangCodes.BANG_MSGS, msg, new OptionDialog.ResponseReceiver() {
-                public void resultPosted (int button, Object result) {
-                    if (button == OptionDialog.OK_BUTTON) {
-                        bootPlayer();
+                break;
+            case "boot":
+                PlaceObject pobj = _ctx.getLocationDirector().getPlaceObject();
+                if (pobj instanceof ParlorObject) {
+                    ParlorObject parlor = (ParlorObject) pobj;
+                    BangOccupantInfo boi = (BangOccupantInfo) parlor.getOccupantInfo(_handle);
+                    if (boi != null) {
+                        parlor.service.bootPlayer(boi.getBodyOid());
                     }
                 }
-            });
 
-        } else if ("chat_pardner".equals(event.getAction())) {
-            PardnerChatView pchat = _ctx.getBangClient().getPardnerChatView();
-            if (pchat.display(_handle, true) && !pchat.isAdded()) {
-                _ctx.getBangClient().clearPopup(_parentWindow, true);
-            }
-
-        } else if ("watch_pardner".equals(event.getAction())) {
-            PardnerEntry entry = _ctx.getUserObject().pardners.get(_handle);
-            if (entry != null && entry.gameOid > 0) {
-                _ctx.getLocationDirector().moveTo(entry.gameOid);
-            }
-
-        } else if ("remove_pardner".equals(event.getAction())) {
-            String msg = MessageBundle.tcompose("m.confirm_remove", _handle);
-            OptionDialog.showConfirmDialog(
-                _ctx, BangCodes.BANG_MSGS, msg, new OptionDialog.ResponseReceiver() {
-                public void resultPosted (int button, Object result) {
-                    if (button == OptionDialog.OK_BUTTON) {
-                        removePardner();
-                    }
+                break;
+            case "chat_pardner":
+                PardnerChatView pchat = _ctx.getBangClient().getPardnerChatView();
+                if (pchat.display(_handle, true) && !pchat.isAdded()) {
+                    _ctx.getBangClient().clearPopup(_parentWindow, true);
                 }
-            });
 
-        } else if ("invite_pardner".equals(event.getAction())) {
-            _ctx.getBangClient().displayPopup(
-                new InvitePardnerDialog(_ctx, null, _handle), true, 400, true);
+                break;
+            case "watch_pardner":
+                PardnerEntry entry = _ctx.getUserObject().pardners.get(_handle);
+                if (entry != null && entry.gameOid > 0) {
+                    _ctx.getLocationDirector().moveTo(entry.gameOid);
+                }
 
-        } else if ("invite_member".equals(event.getAction())) {
-            _ctx.getBangClient().displayPopup(
-                new InviteMemberDialog(_ctx, null, _handle), true, 400, true);
+                break;
+            case "remove_pardner": {
+                String msg = MessageBundle.tcompose("m.confirm_remove", _handle);
+                OptionDialog.showConfirmDialog(
+                        _ctx, BangCodes.BANG_MSGS, msg, new OptionDialog.ResponseReceiver() {
+                            public void resultPosted(int button, Object result) {
+                                if (button == OptionDialog.OK_BUTTON) {
+                                    removePardner();
+                                }
+                            }
+                        });
 
-        } else if ("view_poster".equals(event.getAction())) {
-            WantedPosterView.displayWantedPoster(_ctx, _handle);
+                break;
+            }
+            case "invite_pardner":
+                _ctx.getBangClient().displayPopup(
+                        new InvitePardnerDialog(_ctx, null, _handle), true, 400, true);
 
-        } else if ("support_warn".equals(event.getAction())) {
-            new WarnPlayerDialog(_ctx, null, _handle);
+                break;
+            case "invite_member":
+                _ctx.getBangClient().displayPopup(
+                        new InviteMemberDialog(_ctx, null, _handle), true, 400, true);
+
+                break;
+            case "view_poster":
+                WantedPosterView.displayWantedPoster(_ctx, _handle);
+
+                break;
+            case "support_warn":
+                _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Warn Player", GameMasterDialog.WARN), true, 500);
+                break;
+            case "support_boot":
+                _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Boot Player", GameMasterDialog.KICK), true, 500);
+                break;
+            case "support_tempban":
+                _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Tempban Player", GameMasterDialog.TEMP_BAN), true, 500);
+                break;
+            case "support_ban":
+                _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Permban Player", GameMasterDialog.PERMA_BAN), true, 500);
+                break;
+            case "admin_scrip":
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Grant Scrip", "Scrip:", AdminDialog.GRANT_SCRIP), true, 500);
+                break;
+            case "admin_removescrip":
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Remove Scrip", "Scrip:", AdminDialog.REMOVE_SCRIP), true, 500);
+                break;
+            case "admin_resetscrip":
+                OptionDialog.showConfirmDialog(
+                        _ctx, null, "This will set their scrip to 0!", new String[]{"m.ok", "m.cancel"}, (button, result) -> {
+                            if (button == 0) {
+                                _ctx.getClient().requireService(PlayerService.class).adminAction(
+                                        _handle, AdminDialog.RESET_SCRIP, "",
+                                        new InvocationService.ConfirmListener() {
+                                            @Override
+                                            public void requestProcessed() {
+                                                OptionDialog.showConfirmDialog(
+                                                        _ctx, null, "Success!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                            public void resultPosted(int button, Object result) {
+                                                                // Automatically dismisses the dialog so nothing needed to be done here
+                                                            }
+                                                        });
+                                            }
+
+                                            @Override
+                                            public void requestFailed(String cause) {
+                                                OptionDialog.showConfirmDialog(
+                                                        _ctx, null, "Failed!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                            public void resultPosted(int button, Object result) {
+                                                                // Automatically dismisses the dialog so nothing needed to be done here
+                                                            }
+                                                        });
+                                            }
+                                        });
+                            }
+                        });
+                break;
+            case "admin_grantbadge":
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Grant Badge", "Badge:", AdminDialog.GRANT_BADGE), true, 500);
+                break;
+            case "admin_removebadge":
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Remove Badge", "Badge:", AdminDialog.REMOVE_BADGE), true, 500);
+                break;
+            case "admin_resetbadge":
+
+                OptionDialog.showConfirmDialog(
+                        _ctx, null, "This will remove all of their badges!", new String[]{"m.ok", "m.cancel"}, (button, result) -> {
+                            if (button == 0) {
+                                _ctx.getClient().requireService(PlayerService.class).adminAction(
+                                        _handle, AdminDialog.RESET_BADGE, "",
+                                        new InvocationService.ConfirmListener() {
+                                            @Override
+                                            public void requestProcessed() {
+                                                OptionDialog.showConfirmDialog(
+                                                        _ctx, null, "Success!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                            public void resultPosted(int button, Object result) {
+                                                                // Automatically dismisses the dialog so nothing needed to be done here
+                                                            }
+                                                        });
+                                            }
+
+                                            @Override
+                                            public void requestFailed(String cause) {
+                                                OptionDialog.showConfirmDialog(
+                                                        _ctx, null, "Failed!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                            public void resultPosted(int button, Object result) {
+                                                                // Automatically dismisses the dialog so nothing needed to be done here
+                                                            }
+                                                        });
+                                            }
+                                        });
+                            }
+                        });
+                break;
         }
     }
 
@@ -239,8 +305,19 @@ public class PlayerPopupMenu extends BPopupMenu
         }
 
         if (self.tokens.isSupport()) {
-            addMenuItem(new BMenuItem(msgs.get("m.pm_support_boot"), "support_boot"));
             addMenuItem(new BMenuItem("Warn Player", "support_warn"));
+            addMenuItem(new BMenuItem("Kick Player", "support_boot"));
+            addMenuItem(new BMenuItem("Temporary Ban Player", "support_tempban"));
+            addMenuItem(new BMenuItem("Ban Player", "support_ban"));
+        }
+        if (self.tokens.isAdmin()) {
+            addMenuItem(new BMenuItem("Grant Scrip", "admin_scrip"));
+            addMenuItem(new BMenuItem("Remove Scrip", "admin_removescrip"));
+            addMenuItem(new BMenuItem("RESET Scrip", "admin_resetscrip"));
+            addMenuItem(new BMenuItem("Grant Badge", "admin_grantbadge"));
+            addMenuItem(new BMenuItem("Remove Badge", "admin_removebadge"));
+            addMenuItem(new BMenuItem("RESET Badge", "admin_resetbadge"));
+
         }
     }
 

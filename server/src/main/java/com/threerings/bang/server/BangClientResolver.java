@@ -257,7 +257,7 @@ public class BangClientResolver extends CrowdClientResolver
             }
         }
 
-        Badge.checkQualifies(buser); // Let's do this on logon now!
+        Badge.logonBadgeCheck(buser); // Check for player's badges on logon
 
         // load up this player's pardners
         _precords = BangServer.playmgr.getPardnerRepository().getPardnerRecords(player.playerId);

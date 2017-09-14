@@ -67,7 +67,7 @@ public class BangDesktop {
                 new EditorFrame();
                 return;
             }
-            if(options.flag.equalsIgnoreCase("-username"))
+        if(options.flag.equalsIgnoreCase("-username"))
             {
                 username = options.opt;
             }

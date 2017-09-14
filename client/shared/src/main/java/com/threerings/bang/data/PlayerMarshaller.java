@@ -18,9 +18,9 @@ import com.threerings.bang.client.PlayerService;
  * to the requesting client.
  */
 @Generated(value={"com.threerings.presents.tools.GenServiceTask"},
-           comments="Derived from PlayerService.java.")
+        comments="Derived from PlayerService.java.")
 public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
-    implements PlayerService
+        implements PlayerService
 {
     /** The method id used to dispatch {@link #bootPlayer} requests. */
     public static final int BOOT_PLAYER = 1;
@@ -31,17 +31,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
         listener2.listener = arg2;
         sendRequest(BOOT_PLAYER, new Object[] {
-            arg1, listener2
-        });
-    }
-
-    public static final int WARN_PLAYER = 15;
-    @Override
-    public void warnPlayer(Handle handle, String message, ConfirmListener listener) {
-        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
-        listener2.listener = listener;
-        sendRequest(WARN_PLAYER, new Object[] {
-                new Object[] { handle, message }, listener2
+                arg1, listener2
         });
     }
 
@@ -54,7 +44,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener6 = new InvocationMarshaller.ConfirmMarshaller();
         listener6.listener = arg6;
         sendRequest(CREATE_ACCOUNT, new Object[] {
-            arg1, arg2, arg3, arg4, Long.valueOf(arg5), listener6
+                arg1, arg2, arg3, arg4, Long.valueOf(arg5), listener6
         });
     }
 
@@ -67,7 +57,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
         listener2.listener = arg2;
         sendRequest(DESTROY_ITEM, new Object[] {
-            Integer.valueOf(arg1), listener2
+                Integer.valueOf(arg1), listener2
         });
     }
 
@@ -80,7 +70,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
         listener2.listener = arg2;
         sendRequest(GET_POSTER_INFO, new Object[] {
-            arg1, listener2
+                arg1, listener2
         });
     }
 
@@ -93,7 +83,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(INVITE_PARDNER, new Object[] {
-            arg1, arg2, listener3
+                arg1, arg2, listener3
         });
     }
 
@@ -106,7 +96,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(NOTE_FOLK, new Object[] {
-            Integer.valueOf(arg1), Integer.valueOf(arg2), listener3
+                Integer.valueOf(arg1), Integer.valueOf(arg2), listener3
         });
     }
 
@@ -119,7 +109,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         ListenerMarshaller listener3 = new ListenerMarshaller();
         listener3.listener = arg3;
         sendRequest(PLAY_BOUNTY_GAME, new Object[] {
-            arg1, arg2, listener3
+                arg1, arg2, listener3
         });
     }
 
@@ -132,7 +122,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         ListenerMarshaller listener5 = new ListenerMarshaller();
         listener5.listener = arg5;
         sendRequest(PLAY_COMPUTER, new Object[] {
-            Integer.valueOf(arg1), arg2, arg3, Boolean.valueOf(arg4), listener5
+                Integer.valueOf(arg1), arg2, arg3, Boolean.valueOf(arg4), listener5
         });
     }
 
@@ -145,7 +135,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         ListenerMarshaller listener2 = new ListenerMarshaller();
         listener2.listener = arg2;
         sendRequest(PLAY_PRACTICE, new Object[] {
-            arg1, listener2
+                arg1, listener2
         });
     }
 
@@ -158,7 +148,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         ListenerMarshaller listener2 = new ListenerMarshaller();
         listener2.listener = arg2;
         sendRequest(PLAY_TUTORIAL, new Object[] {
-            arg1, listener2
+                arg1, listener2
         });
     }
 
@@ -171,7 +161,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
         listener2.listener = arg2;
         sendRequest(PREP_SONG_FOR_DOWNLOAD, new Object[] {
-            arg1, listener2
+                arg1, listener2
         });
     }
 
@@ -184,7 +174,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
         listener2.listener = arg2;
         sendRequest(REMOVE_PARDNER, new Object[] {
-            arg1, listener2
+                arg1, listener2
         });
     }
 
@@ -197,7 +187,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(RESPOND_TO_NOTIFICATION, new Object[] {
-            arg1, Integer.valueOf(arg2), listener3
+                arg1, Integer.valueOf(arg2), listener3
         });
     }
 
@@ -210,7 +200,29 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
         InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(UPDATE_POSTER_INFO, new Object[] {
-            Integer.valueOf(arg1), arg2, arg3, listener4
+                Integer.valueOf(arg1), arg2, arg3, listener4
+        });
+    }
+
+    public static final int ADMIN_ACTION = 15;
+
+    // from interface PlayerService
+    public void adminAction(Handle handle, int action, String value, ConfirmListener listener) {
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = listener;
+        sendRequest(ADMIN_ACTION, new Object[] {
+                handle, action, value, listener2
+        });
+    }
+
+    public static final int GAME_MASTER_ACTION = 16;
+
+    // from interface PlayerService
+    public void gameMasterAction(Handle handle, int action, String reason, long duration, ConfirmListener listener) {
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = listener;
+        sendRequest(ADMIN_ACTION, new Object[] {
+                handle, action, reason, duration, listener2
         });
     }
 }

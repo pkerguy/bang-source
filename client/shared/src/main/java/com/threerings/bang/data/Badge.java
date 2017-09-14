@@ -6,12 +6,14 @@ package com.threerings.bang.data;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.stream.Stream;
 
 import com.jmex.bui.BImage;
 import com.jmex.bui.icon.ImageIcon;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.threerings.bang.game.data.Award;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.stats.data.StatSet;
@@ -782,6 +784,30 @@ public class Badge extends Item
             }
         },
 
+        BACKER_TIER1 {
+            public boolean qualifies (PlayerObject user) {
+                return false;
+            }
+        },
+
+        BACKER_TIER2 {
+            public boolean qualifies (PlayerObject user) {
+                return false;
+            }
+        },
+
+        BACKER_TIER3 {
+            public boolean qualifies (PlayerObject user) {
+                return false;
+            }
+        },
+
+        BACKER_TIER4 {
+            public boolean qualifies (PlayerObject user) {
+                return false;
+            }
+        },
+
         UNUSED;
 
         /** Returns a new blank stat instance of the specified type. */
@@ -825,106 +851,115 @@ public class Badge extends Item
         protected int _code;
     };
 
-    /** Defines the layout of the badge table. */
+    /**
+     * Defines the layout of the badge table.
+     */
     public static Type[] LAYOUT =
-    {
-        // general series badges
-        Type.GAMES_PLAYED_1, Type.GAMES_PLAYED_2, Type.GAMES_PLAYED_3,
-        Type.GAMES_PLAYED_4, Type.GAMES_PLAYED_5,
+            {
+                    // general series badges
+                    Type.GAMES_PLAYED_1, Type.GAMES_PLAYED_2, Type.GAMES_PLAYED_3,
+                    Type.GAMES_PLAYED_4, Type.GAMES_PLAYED_5,
 
-        Type.UNITS_KILLED_1, Type.UNITS_KILLED_2, Type.UNITS_KILLED_3,
-        Type.UNITS_KILLED_4, Type.UNITS_KILLED_5,
+                    Type.UNITS_KILLED_1, Type.UNITS_KILLED_2, Type.UNITS_KILLED_3,
+                    Type.UNITS_KILLED_4, Type.UNITS_KILLED_5,
 
-        Type.HIGHEST_POINTS_1, Type.HIGHEST_POINTS_2,
-        Type.CONSEC_KILLS_1, Type.CONSEC_KILLS_2, Type.CONSEC_KILLS_3,
+                    Type.HIGHEST_POINTS_1, Type.HIGHEST_POINTS_2,
+                    Type.CONSEC_KILLS_1, Type.CONSEC_KILLS_2, Type.CONSEC_KILLS_3,
 
-        Type.CONSEC_WINS_1, Type.CONSEC_WINS_2, Type.CONSEC_WINS_3,
-        Type.CONSEC_WINS_4, Type.CONSEC_WINS_5,
+                    Type.CONSEC_WINS_1, Type.CONSEC_WINS_2, Type.CONSEC_WINS_3,
+                    Type.CONSEC_WINS_4, Type.CONSEC_WINS_5,
 
-        Type.SHOTS_FIRED_1, Type.SHOTS_FIRED_2,
-        Type.DISTANCE_MOVED_1, Type.DISTANCE_MOVED_2, Type.DISTANCE_MOVED_3,
+                    Type.SHOTS_FIRED_1, Type.SHOTS_FIRED_2,
+                    Type.DISTANCE_MOVED_1, Type.DISTANCE_MOVED_2, Type.DISTANCE_MOVED_3,
 
-        Type.CARDS_PLAYED_1, Type.CARDS_PLAYED_2, Type.CARDS_PLAYED_3,
-        Type.CARDS_PLAYED_4, Type.CARDS_PLAYED_5,
+                    Type.CARDS_PLAYED_1, Type.CARDS_PLAYED_2, Type.CARDS_PLAYED_3,
+                    Type.CARDS_PLAYED_4, Type.CARDS_PLAYED_5,
 
-        Type.BONUSES_COLLECTED_1, Type.BONUSES_COLLECTED_2, Type.BONUSES_COLLECTED_3,
-        Type.BONUSES_COLLECTED_4, Type.BONUSES_COLLECTED_5,
+                    Type.BONUSES_COLLECTED_1, Type.BONUSES_COLLECTED_2, Type.BONUSES_COLLECTED_3,
+                    Type.BONUSES_COLLECTED_4, Type.BONUSES_COLLECTED_5,
 
-        Type.CASH_EARNED_1, Type.CASH_EARNED_2, Type.CASH_EARNED_3,
-        Type.GAMES_HOSTED_1, Type.GAMES_HOSTED_2,
+                    Type.CASH_EARNED_1, Type.CASH_EARNED_2, Type.CASH_EARNED_3,
+                    Type.GAMES_HOSTED_1, Type.GAMES_HOSTED_2,
 
-        Type.CHAT_SENT_1, Type.CHAT_SENT_2, Type.CHAT_SENT_3,
-        Type.CHAT_RECEIVED_1, Type.CHAT_RECEIVED_2,
+                    Type.CHAT_SENT_1, Type.CHAT_SENT_2, Type.CHAT_SENT_3,
+                    Type.CHAT_RECEIVED_1, Type.CHAT_RECEIVED_2,
 
-        Type.LOOKS_BOUGHT_1, Type.LOOKS_BOUGHT_2,
-        Type.DUDS_BOUGHT_1, Type.DUDS_BOUGHT_2, Type.DUDS_BOUGHT_3,
+                    Type.LOOKS_BOUGHT_1, Type.LOOKS_BOUGHT_2,
+                    Type.DUDS_BOUGHT_1, Type.DUDS_BOUGHT_2, Type.DUDS_BOUGHT_3,
 
-//         DAILY_HIGH_SCORER, WEEKLY_HIGH_SCORER, MONTHLY_HIGH_SCORER,
+                    //         DAILY_HIGH_SCORER, WEEKLY_HIGH_SCORER, MONTHLY_HIGH_SCORER,
 
-        // frontier town badges
-        Type.NUGGETS_CLAIMED_1, Type.NUGGETS_CLAIMED_2, Type.NUGGETS_CLAIMED_3,
-        Type.NUGGETS_CLAIMED_4, Type.NUGGETS_CLAIMED_5,
+                    // frontier town badges
+                    Type.NUGGETS_CLAIMED_1, Type.NUGGETS_CLAIMED_2, Type.NUGGETS_CLAIMED_3,
+                    Type.NUGGETS_CLAIMED_4, Type.NUGGETS_CLAIMED_5,
 
-        Type.CATTLE_RUSTLED_1, Type.CATTLE_RUSTLED_2, Type.CATTLE_RUSTLED_3,
-        Type.CATTLE_RUSTLED_4, Type.CATTLE_RUSTLED_5,
+                    Type.CATTLE_RUSTLED_1, Type.CATTLE_RUSTLED_2, Type.CATTLE_RUSTLED_3,
+                    Type.CATTLE_RUSTLED_4, Type.CATTLE_RUSTLED_5,
 
-        Type.STEADS_CLAIMED_1, Type.STEADS_CLAIMED_2,
-        Type.STEADS_DESTROYED_1, Type.STEADS_DESTROYED_2, Type.STEADS_CLAIMED_3,
+                    Type.STEADS_CLAIMED_1, Type.STEADS_CLAIMED_2,
+                    Type.STEADS_DESTROYED_1, Type.STEADS_DESTROYED_2, Type.STEADS_CLAIMED_3,
 
-        Type.CAVALRY_USER, Type.TACTICIAN_USER, Type.CODGER_USER,
-        Type.FT_BIGSHOT_USER, Type.FT_ALLUNIT_USER,
+                    Type.CAVALRY_USER, Type.TACTICIAN_USER, Type.CODGER_USER,
+                    Type.FT_BIGSHOT_USER, Type.FT_ALLUNIT_USER,
 
-        Type.WEEKLY_TOP10_GR, Type.WEEKLY_TOP10_CR, Type.WEEKLY_TOP10_CJ,
-        Type.WEEKLY_TOP10_LG, Type.WEEKLY_TOP10_OA,
+                    Type.WEEKLY_TOP10_GR, Type.WEEKLY_TOP10_CR, Type.WEEKLY_TOP10_CJ,
+                    Type.WEEKLY_TOP10_LG, Type.WEEKLY_TOP10_OA,
 
-        Type.WEEKLY_WINNER_GR, Type.WEEKLY_WINNER_CR, Type.WEEKLY_WINNER_CJ,
-        Type.WEEKLY_WINNER_LG, Type.WEEKLY_WINNER_OA,
+                    Type.WEEKLY_WINNER_GR, Type.WEEKLY_WINNER_CR, Type.WEEKLY_WINNER_CJ,
+                    Type.WEEKLY_WINNER_LG, Type.WEEKLY_WINNER_OA,
 
-        // indian trading post badges
-        Type.TOTEMS_STACKED_1, Type.TOTEMS_STACKED_2, Type.TOTEMS_STACKED_3,
-        Type.TOTEMS_STACKED_4, Type.TOTEMS_STACKED_5,
+                    // indian trading post badges
+                    Type.TOTEMS_STACKED_1, Type.TOTEMS_STACKED_2, Type.TOTEMS_STACKED_3,
+                    Type.TOTEMS_STACKED_4, Type.TOTEMS_STACKED_5,
 
-        Type.TREES_SAVED_1, Type.TREES_SAVED_2, Type.TREES_SAVED_3,
-        Type.TREES_SAVED_4, Type.TREES_SAVED_5,
+                    Type.TREES_SAVED_1, Type.TREES_SAVED_2, Type.TREES_SAVED_3,
+                    Type.TREES_SAVED_4, Type.TREES_SAVED_5,
 
-        Type.WENDIGO_SURVIVALS_1, Type.WENDIGO_SURVIVALS_2, Type.WENDIGO_SURVIVALS_3,
-        Type.WENDIGO_SURVIVALS_4, Type.WENDIGO_SURVIVALS_5,
+                    Type.WENDIGO_SURVIVALS_1, Type.WENDIGO_SURVIVALS_2, Type.WENDIGO_SURVIVALS_3,
+                    Type.WENDIGO_SURVIVALS_4, Type.WENDIGO_SURVIVALS_5,
 
-        Type.HERO_LEVELS_1, Type.HERO_LEVELS_2, Type.HERO_LEVELS_3,
-        Type.HERO_KILLS, Type.HERO_LEVELS_4,
+                    Type.HERO_LEVELS_1, Type.HERO_LEVELS_2, Type.HERO_LEVELS_3,
+                    Type.HERO_KILLS, Type.HERO_LEVELS_4,
 
-        Type.STORM_CALLER_USER, Type.TRICKSTER_RAVEN_USER,
-        Type.REVOLUTIONARY_USER, Type.ITP_BIGSHOT_USER, Type.ITP_ALLUNIT_USER,
+                    Type.STORM_CALLER_USER, Type.TRICKSTER_RAVEN_USER,
+                    Type.REVOLUTIONARY_USER, Type.ITP_BIGSHOT_USER, Type.ITP_ALLUNIT_USER,
 
-        Type.WEEKLY_TOP10_TB, Type.WEEKLY_TOP10_WA, Type.WEEKLY_TOP10_FG,
-        Type.WEEKLY_TOP10_HB, null,
+                    Type.WEEKLY_TOP10_TB, Type.WEEKLY_TOP10_WA, Type.WEEKLY_TOP10_FG,
+                    Type.WEEKLY_TOP10_HB, null,
 
-        Type.WEEKLY_WINNER_TB, Type.WEEKLY_WINNER_WA, Type.WEEKLY_WINNER_FG,
-        Type.WEEKLY_WINNER_HB, null,
+                    Type.WEEKLY_WINNER_TB, Type.WEEKLY_WINNER_WA, Type.WEEKLY_WINNER_FG,
+                    Type.WEEKLY_WINNER_HB, null,
 
-        // you suck badges
-        Type.UNITS_LOST_1, Type.UNITS_LOST_2, null, Type.CONSEC_LOSSES_1, Type.CONSEC_LOSSES_2,
+                    // you suck badges
+                    Type.UNITS_LOST_1, Type.UNITS_LOST_2, null, Type.CONSEC_LOSSES_1, Type.CONSEC_LOSSES_2,
 
-        // frontier town bounty badges
-        Type.BOUNTY_DYNAMITE, Type.BOUNTY_SANCHO, null, null, Type.BOUNTY_ALL_FT_TOWN,
-        Type.BOUNTY_MAUDE, Type.BOUNTY_CALAVERA, Type.BOUNTY_MUSTACHE, Type.BOUNTY_SHARK,
-        Type.BOUNTY_BILLY,Type.BOUNTY_ALL_FT,
+                    // frontier town bounty badges
+                    Type.BOUNTY_DYNAMITE, Type.BOUNTY_SANCHO, null, null, Type.BOUNTY_ALL_FT_TOWN,
+                    Type.BOUNTY_MAUDE, Type.BOUNTY_CALAVERA, Type.BOUNTY_MUSTACHE, Type.BOUNTY_SHARK,
+                    Type.BOUNTY_BILLY, Type.BOUNTY_ALL_FT,
 
-        // indian post bounty badges
-        Type.BOUNTY_LETRAPPE, Type.BOUNTY_CLOUD, null, null, Type.BOUNTY_ALL_ITP_TOWN,
-        Type.BOUNTY_BAXTER, Type.BOUNTY_ZERO3, Type.BOUNTY_MCGRAW, Type.BOUNTY_JEDIDIAH,
-        Type.BOUNTY_ALL_ITP,
+                    // indian post bounty badges
+                    Type.BOUNTY_LETRAPPE, Type.BOUNTY_CLOUD, null, null, Type.BOUNTY_ALL_ITP_TOWN,
+                    Type.BOUNTY_BAXTER, Type.BOUNTY_ZERO3, Type.BOUNTY_MCGRAW, Type.BOUNTY_JEDIDIAH,
+                    Type.BOUNTY_ALL_ITP,
 
-        // tutorial badges
-        Type.TUTORIAL_ALL_FT, Type.TUTORIAL_ALL_ITP, null, null, null,
+                    // tutorial badges
+                    Type.TUTORIAL_ALL_FT, Type.TUTORIAL_ALL_ITP, null, null, null,
 
-        // general non-series (wacky) badges
-        Type.IRON_HORSE, Type.SAINT_NICK,
-        Type.NIGHT_OWL, Type.HIGH_NOON, Type.NEW_SHERRIF_IN_TOWN,
+                    // general non-series (wacky) badges
+                    Type.IRON_HORSE, Type.SAINT_NICK,
+                    Type.NIGHT_OWL, Type.HIGH_NOON, Type.NEW_SHERRIF_IN_TOWN,
 
-        // more wacky badges
-        Type.BETA_TESTER, null, null, null, null,
-    };
+                    // more wacky badges
+                    Type.BETA_TESTER, null, null, null, null,
+                    Type.BACKER_TIER1, null, null, null, null,
+                    Type.BACKER_TIER2, null, null, null, null,
+                    Type.BACKER_TIER3, null, null, null, null,
+                    Type.BACKER_TIER4, null, null, null, null,
+
+
+            };
+
 
     /**
      * Used to check certain badge bits.
@@ -990,6 +1025,49 @@ public class Badge extends Item
         }
 
         return null;
+    }
+
+    /**
+     * Return ALL Available Badges
+     */
+    public static Badge[] getAll()
+    {
+        return Stream.of(Badge.Type.values()).map(Badge.Type::newBadge).toArray(Badge[]::new);
+    }
+
+
+    /**
+     * Determines whether this player qualifies for badges on-logon
+     */
+    public static void logonBadgeCheck (PlayerObject user)
+    {
+        // first enumerate the badges they already hold
+        _badgeCodes.clear();
+        for (Item item : user.inventory) {
+            if (item instanceof Badge) {
+                _badgeCodes.add(((Badge)item).getCode());
+            }
+        }
+
+        // now check each type in turn for qualification
+        for (Type type : Type.values()) {
+            if (_badgeCodes.contains(type.code())) {
+                continue;
+            }
+            if (!type.qualifies(user) && !user.tokens.isAdmin()) {
+                continue;
+            }
+            Badge badge = type.newBadge();
+            badge.setOwnerId(user.playerId);
+            Award giveAward = new Award();
+            giveAward.pidx = badge.getCode();
+            giveAward.item = badge;
+            if (user.inventory.contains(giveAward.item)) {
+                user.updateInventory(giveAward.item);
+            } else {
+                user.addToInventory(giveAward.item);
+            }
+        }
     }
 
     /** Creates a blank instance for serialization. */

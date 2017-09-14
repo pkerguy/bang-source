@@ -3,40 +3,42 @@
 
 package com.threerings.bang.server;
 
-import java.io.File;
-import java.lang.ref.SoftReference;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.IntIntMap;
-import com.samskivert.util.Interator;
-import com.samskivert.util.Interval;
-import com.samskivert.util.Invoker;
-import com.samskivert.util.ListUtil;
-import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
-
-import org.apache.commons.io.IOUtils;
-
+import com.samskivert.util.*;
+import com.threerings.bang.admin.client.AdminDialog;
+import com.threerings.bang.admin.client.GameMasterDialog;
+import com.threerings.bang.admin.server.RuntimeConfig;
+import com.threerings.bang.avatar.data.Look;
+import com.threerings.bang.avatar.server.persist.LookRepository;
+import com.threerings.bang.client.PlayerService;
+import com.threerings.bang.data.*;
+import com.threerings.bang.game.data.*;
+import com.threerings.bang.game.data.scenario.PracticeInfo;
+import com.threerings.bang.game.data.scenario.ScenarioInfo;
+import com.threerings.bang.game.server.BangManager;
+import com.threerings.bang.game.util.TutorialUtil;
+import com.threerings.bang.gang.server.persist.GangMemberRecord;
+import com.threerings.bang.gang.server.persist.GangRepository;
+import com.threerings.bang.saloon.data.SaloonCodes;
+import com.threerings.bang.saloon.server.Match;
+import com.threerings.bang.server.persist.*;
+import com.threerings.bang.store.data.CardPackGood;
+import com.threerings.bang.store.server.GoodsCatalog;
+import com.threerings.bang.store.server.Provider;
+import com.threerings.bang.util.BangUtil;
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.SpeakObject;
+import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.server.ChatHistory;
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.io.Streamable;
-import com.threerings.resource.ResourceManager;
-
+import com.threerings.parlor.server.ParlorSender;
 import com.threerings.presents.annotation.AuthInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.dobj.DObject;
@@ -47,73 +49,16 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.util.PersistingUnit;
-
-import com.threerings.crowd.chat.data.ChatCodes;
-import com.threerings.crowd.chat.data.ChatMessage;
-import com.threerings.crowd.chat.data.SpeakObject;
-import com.threerings.crowd.chat.data.UserMessage;
-import com.threerings.crowd.chat.server.ChatHistory;
-import com.threerings.crowd.chat.server.SpeakUtil;
-import com.threerings.parlor.server.ParlorSender;
-
+import com.threerings.resource.ResourceManager;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.StreamableHashMap;
+import org.apache.commons.io.IOUtils;
 
-import com.threerings.bang.admin.server.RuntimeConfig;
-import com.threerings.bang.avatar.data.Look;
-import com.threerings.bang.avatar.server.persist.LookRepository;
-import com.threerings.bang.data.PlayerMarshaller;
-import com.threerings.bang.gang.server.persist.GangMemberRecord;
-import com.threerings.bang.gang.server.persist.GangRepository;
-import com.threerings.bang.saloon.data.SaloonCodes;
-import com.threerings.bang.saloon.server.Match;
-import com.threerings.bang.store.data.CardPackGood;
-import com.threerings.bang.store.server.GoodsCatalog;
-import com.threerings.bang.store.server.Provider;
-
-import com.threerings.bang.game.data.BangAI;
-import com.threerings.bang.game.data.BangConfig;
-import com.threerings.bang.game.data.BangObject;
-import com.threerings.bang.game.data.GameCodes;
-import com.threerings.bang.game.data.TutorialCodes;
-import com.threerings.bang.game.data.TutorialConfig;
-import com.threerings.bang.game.data.scenario.ScenarioInfo;
-import com.threerings.bang.game.data.scenario.PracticeInfo;
-import com.threerings.bang.game.server.BangManager;
-import com.threerings.bang.game.util.TutorialUtil;
-
-import com.threerings.bang.client.PlayerService;
-import com.threerings.bang.data.BangClientInfo;
-import com.threerings.bang.data.BangCodes;
-import com.threerings.bang.data.BangCredentials;
-import com.threerings.bang.data.BigShotItem;
-import com.threerings.bang.data.EntryReplacedEvent;
-import com.threerings.bang.data.GoldPass;
-import com.threerings.bang.data.Handle;
-import com.threerings.bang.data.Item;
-import com.threerings.bang.data.Notification;
-import com.threerings.bang.data.PardnerEntry;
-import com.threerings.bang.data.PardnerInvite;
-import com.threerings.bang.data.PlayerObject;
-import com.threerings.bang.data.PosterInfo;
-import com.threerings.bang.data.Rating;
-import com.threerings.bang.data.Star;
-import com.threerings.bang.data.StatType;
-import com.threerings.bang.data.Warning;
-import com.threerings.bang.util.BangUtil;
-
-import com.threerings.bang.server.BangPeerManager;
-import com.threerings.bang.server.persist.BangStatRepository;
-import com.threerings.bang.server.persist.FolkRecord;
-import com.threerings.bang.server.persist.ItemRepository;
-import com.threerings.bang.server.persist.PardnerRecord;
-import com.threerings.bang.server.persist.PardnerRepository;
-import com.threerings.bang.server.persist.PlayerRecord;
-import com.threerings.bang.server.persist.PlayerRepository;
-import com.threerings.bang.server.persist.PosterRecord;
-import com.threerings.bang.server.persist.PosterRepository;
-import com.threerings.bang.server.persist.RatingRepository;
+import java.io.File;
+import java.lang.ref.SoftReference;
+import java.sql.Timestamp;
+import java.util.*;
 
 import static com.threerings.bang.Log.log;
 
@@ -122,7 +67,7 @@ import static com.threerings.bang.Log.log;
  */
 @Singleton
 public class PlayerManager
-    implements PlayerProvider, BangCodes
+        implements PlayerProvider, BangCodes
 {
     /** Add the receivedChatListener to any SpeakObjects where you want to record messages
      * sent and received in the players stats. */
@@ -154,7 +99,7 @@ public class PlayerManager
      * Initializes the player manager, and registers its invocation service.
      */
     public void init ()
-        throws PersistenceException
+            throws PersistenceException
     {
         // register ourselves as the provider of the (bootstrap) PlayerService
         BangServer.invmgr.registerProvider(this, PlayerMarshaller.class, GLOBAL_GROUP);
@@ -178,24 +123,24 @@ public class PlayerManager
         if (_peermgr.isRunning()) {
             _peermgr.addPlayerObserver(_pardwatcher);
             _peermgr.addStaleCacheObserver(POSTER_CACHE,
-                new PeerManager.StaleCacheObserver() {
-                    public void changedCacheData (Streamable data) {
-                        _posterCache.remove(data);
-                    }
-                });
+                    new PeerManager.StaleCacheObserver() {
+                        public void changedCacheData (Streamable data) {
+                            _posterCache.remove(data);
+                        }
+                    });
             // make sure we boot a local client if they login to a remote server
             _peermgr.addPlayerObserver(new BangPeerManager.RemotePlayerObserver() {
                 public void remotePlayerLoggedOn (int townIndex, BangClientInfo info) {
                     PresentsSession pclient = BangServer.clmgr.getClient(info.username);
                     if (pclient != null) {
                         log.info("Booting user who logged onto remote server",
-                                 "username", info.username, "townIndex", townIndex);
+                                "username", info.username, "townIndex", townIndex);
                         pclient.endSession();
                     }
                 }
                 public void remotePlayerLoggedOff (int townIndex, BangClientInfo info) { }
                 public void remotePlayerChangedHandle (
-                    int townIndex, Handle oldHandle, Handle newHandle) { }
+                        int townIndex, Handle oldHandle, Handle newHandle) { }
             });
         }
 
@@ -245,7 +190,7 @@ public class PlayerManager
             PardnerRecord record = iter.next();
             if (temp.contains(record.handle)) {
                 log.warning("Player has duplicate pardner record", "pid", player.playerId,
-                            "record", record);
+                        "record", record);
                 iter.remove();
             } else {
                 temp.add(record.handle);
@@ -290,7 +235,7 @@ public class PlayerManager
                 PardnerEntry newEntry = (PardnerEntry)oldEntry.clone();
                 newEntry.handle = newHandle;
                 BangServer.omgr.postEvent(new EntryReplacedEvent<PardnerEntry>(
-                    player, PlayerObject.PARDNERS, oldEntry.handle, newEntry));
+                        player, PlayerObject.PARDNERS, oldEntry.handle, newEntry));
             }
             public String toString () {
                 return player.who();
@@ -313,7 +258,7 @@ public class PlayerManager
                     // _coinmgr.grantRewardCoins(player, coins);
 
                 }  else if (data[1].equalsIgnoreCase("billing") &&
-                            data[2].equalsIgnoreCase("goldpass")) {
+                        data[2].equalsIgnoreCase("goldpass")) {
                     String townId = null;
                     for (String id : BangCodes.TOWN_IDS) {
                         if (id.equals(data[3])) {
@@ -326,11 +271,11 @@ public class PlayerManager
                     }
 
                     log.info("Granting Gold Pass reward", "account", player.username,
-                             "townId", townId);
+                            "townId", townId);
                     giveGoldPass(player, townId, false);
 
                 }  else if (data[1].equalsIgnoreCase("billing") &&
-                            data[2].equalsIgnoreCase("wrangler")) {
+                        data[2].equalsIgnoreCase("wrangler")) {
                     log.info("Granting Wrangler Pass reward", "account", player.username);
                     giveGoldPass(player, BangCodes.FRONTIER_TOWN, true);
                 }
@@ -338,7 +283,7 @@ public class PlayerManager
             } catch (Exception e) {
                 // sorry kid, not much we can do for you
                 log.warning("Failed to award reward to player", "who", player.who(),
-                            "reward", reward, e);
+                        "reward", reward, e);
             }
         }
     }
@@ -346,7 +291,7 @@ public class PlayerManager
     // documentation inherited from interface PlayerProvider
     public void invitePardner (final PlayerObject inviter, final Handle handle, final String message,
                                final PlayerService.ConfirmListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         PlayerObject user = BangServer.locator.lookupPlayer(handle);
 
@@ -361,18 +306,18 @@ public class PlayerManager
         if (inviter.tokens.isAnonymous() || !inviter.hasCharacter()) {
             throw new InvocationException(INTERNAL_ERROR);
 
-        // make sure it's not the player himself, that it's not already
-        // a pardner, and that the player is under the limit
+            // make sure it's not the player himself, that it's not already
+            // a pardner, and that the player is under the limit
         } else if (inviter.handle.equals(handle)) {
             throw new InvocationException("e.pardner_self");
 
         } else if (inviter.pardners.containsKey(handle)) {
             throw new InvocationException(MessageBundle.tcompose(
-                "e.already_pardner", handle));
+                    "e.already_pardner", handle));
 
         } else if (inviter.pardners.size() >= MAX_PARDNERS) {
             throw new InvocationException(MessageBundle.tcompose(
-                "e.too_many_pardners", String.valueOf(MAX_PARDNERS)));
+                    "e.too_many_pardners", String.valueOf(MAX_PARDNERS)));
         }
 
         // store the invite in the db and send it
@@ -390,7 +335,7 @@ public class PlayerManager
             }
             public String getFailureMessage () {
                 return "Failed to invite pardner [who=" + inviter.who() +
-                    ", handle=" + handle + "]";
+                        ", handle=" + handle + "]";
             }
             protected String _error;
         });
@@ -399,7 +344,7 @@ public class PlayerManager
     // documentation inherited from interface PlayerProvider
     public void respondToNotification (final PlayerObject player, final Comparable<?> key, int resp,
                                        final PlayerService.ConfirmListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         // make sure the notification exists
         Notification notification = player.notifications.get(key);
@@ -411,7 +356,7 @@ public class PlayerManager
         // make sure the response is valid
         if (resp >= notification.getResponses().length) {
             log.warning("Received invalid response for notification", "who", player.who(),
-                        "notification", notification, "response", resp);
+                    "notification", notification, "response", resp);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -434,7 +379,7 @@ public class PlayerManager
     // documentation inherited from interface PlayerProvider
     public void removePardner (final PlayerObject player, final Handle handle,
                                final PlayerService.ConfirmListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         // make sure the pardner entry is present
         PardnerEntry entry = player.pardners.get(handle);
@@ -454,7 +399,7 @@ public class PlayerManager
             }
             public String getFailureMessage () {
                 return "Failed to remove pardner [who=" + player.who() +
-                    ", pardner=" + handle + "]";
+                        ", pardner=" + handle + "]";
             }
         });
     }
@@ -462,7 +407,7 @@ public class PlayerManager
     // documentation inherited from interface PlayerProvider
     public void playTutorial (PlayerObject player, String tutId,
                               PlayerService.InvocationListener il)
-        throws InvocationException
+            throws InvocationException
     {
         // if we're not allowing new games, fail immediately
         if (!RuntimeConfig.server.allowNewGames) {
@@ -472,9 +417,9 @@ public class PlayerManager
         // make sure the tutorial is valid for this town
         int tutIdx = ListUtil.indexOf(TutorialCodes.NEW_TUTORIALS[ServerConfig.townIndex], tutId);
         if (!player.tokens.isAdmin() && // allow admin to play test tutorials
-            tutIdx == -1) {
+                tutIdx == -1) {
             log.warning("Player req'd invalid tutorial", "who", player.who(),
-                        "town", player.townId, "tutid", tutId);
+                    "town", player.townId, "tutid", tutId);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -521,7 +466,7 @@ public class PlayerManager
 
     // documentation inherited from interface PlayerProvider
     public void playPractice (PlayerObject player, String unit, PlayerService.InvocationListener il)
-        throws InvocationException
+            throws InvocationException
     {
         // if we're not allowing new games, fail immediately
         if (!RuntimeConfig.server.allowNewGames) {
@@ -542,7 +487,7 @@ public class PlayerManager
     // documentation inherited from interface PlayerProvider
     public void playComputer (PlayerObject player, int players, String[] scenarios, String board,
                               boolean autoplay, PlayerService.InvocationListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         // if we're not allowing new games, fail immediately
         if (!RuntimeConfig.server.allowNewGames) {
@@ -559,7 +504,7 @@ public class PlayerManager
             ScenarioInfo info = ScenarioInfo.getScenarioInfo(scenId);
             if (info == null || info.getTownIndex() > ServerConfig.townIndex) {
                 log.warning("Requested to play invalid scenario", "who", player.who(),
-                            "scid", scenId);
+                        "scid", scenId);
                 throw new InvocationException(INTERNAL_ERROR);
             }
         }
@@ -567,7 +512,7 @@ public class PlayerManager
         // make sure non-admins aren't creating autoplay games
         if (autoplay && !player.tokens.isAdmin()) {
             log.warning("Non-admin requested autoplay game", "who", player.who(), "pl", players,
-                        "scen", scenarios[0], "board", board);
+                    "scen", scenarios[0], "board", board);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -577,7 +522,7 @@ public class PlayerManager
     // from interface PlayerProvider
     public void playBountyGame (PlayerObject caller, String bountyId, String gameId,
                                 PlayerService.InvocationListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         // pass the buck to the office manager
         BangServer.officemgr.playBountyGame(caller, bountyId, gameId, listener);
@@ -586,7 +531,7 @@ public class PlayerManager
     // from interface PlayerProvider
     public void getPosterInfo (PlayerObject caller, final Handle handle,
                                final PlayerService.ResultListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         // check the cache for previously generated posters
         SoftReference<PosterInfo> infoRef = _posterCache.get(handle);
@@ -615,13 +560,13 @@ public class PlayerManager
 
             info.rankGroups.clear();
             info.rankGroups.add(new PosterInfo.RankGroup(
-                        0, buildRankings(posterPlayer.ratings.get(null))));
+                    0, buildRankings(posterPlayer.ratings.get(null))));
             for (int ii = 0; ii < SHOW_WEEKS; ii++) {
                 java.sql.Date week = Rating.getWeek(ii);
                 Map<String, Rating> map = posterPlayer.ratings.get(week);
                 if (map != null && !map.isEmpty()) {
                     info.rankGroups.add(new PosterInfo.RankGroup(
-                                week.getTime(), buildRankings(map)));
+                            week.getTime(), buildRankings(map)));
                 }
             }
         }
@@ -646,7 +591,7 @@ public class PlayerManager
                 if (poster != null) {
                     info.statement = poster.statement;
                     info.badgeIds = new int[] {
-                        poster.badge1, poster.badge2, poster.badge3, poster.badge4,
+                            poster.badge1, poster.badge2, poster.badge3, poster.badge4,
                     };
 
                 } else {
@@ -658,13 +603,13 @@ public class PlayerManager
                 if (posterPlayer == null) {
                     info.avatar = _lookrepo.loadSnapshot(_player.playerId);
                     info.rankGroups.add(new PosterInfo.RankGroup(
-                                0, buildRankings(_raterepo.loadRatings(_player.playerId, null))));
+                            0, buildRankings(_raterepo.loadRatings(_player.playerId, null))));
                     for (int ii = 0; ii < SHOW_WEEKS; ii++) {
                         java.sql.Date week = Rating.getWeek(ii);
                         Map<String, Rating> map = _raterepo.loadRatings(_player.playerId, week);
                         if (map != null && !map.isEmpty()) {
                             info.rankGroups.add(new PosterInfo.RankGroup(
-                                        week.getTime(), buildRankings(map)));
+                                    week.getTime(), buildRankings(map)));
                         }
                     }
                     BangServer.gangmgr.populatePosterInfo(info, _player);
@@ -674,7 +619,7 @@ public class PlayerManager
             public void handleSuccess() {
                 if (_player == null) {
                     listener.requestFailed(
-                        MessageBundle.tcompose(BangCodes.E_NO_SUCH_PLAYER, handle));
+                            MessageBundle.tcompose(BangCodes.E_NO_SUCH_PLAYER, handle));
                 } else {
                     // cache the result and return it
                     _posterCache.put(handle, new SoftReference<PosterInfo>(info));
@@ -693,7 +638,7 @@ public class PlayerManager
     // from interface PlayerProvider
     public void updatePosterInfo (final PlayerObject user, int playerId, String statement,
                                   int[] badgeIds, final PlayerService.ConfirmListener cl)
-        throws InvocationException
+            throws InvocationException
     {
         // create a poster record and populate it
         final PosterRecord poster = new PosterRecord(playerId);
@@ -718,6 +663,137 @@ public class PlayerManager
         });
     }
 
+    // from interface PlayerProvider
+    public void adminAction(PlayerObject caller, Handle handle, int action, String value, InvocationService.ConfirmListener listener) throws InvocationException {
+        if (!caller.getTokens().isAdmin()) {
+            listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
+        }
+        PlayerObject user = BangServer.locator.lookupPlayer(handle);
+        if (user == null) {
+            listener.requestFailed("Target player not online");
+        }
+        switch (action) {
+            case AdminDialog.GRANT_SCRIP:
+                int amount;
+                try {
+                    if ((amount = Integer.parseInt(value)) <= 0) {
+                        listener.requestFailed("Amount must be > 0");
+                    }
+                    user.setScrip(user.getScrip() + amount);
+                    listener.requestProcessed();
+                } catch (NumberFormatException ex) {
+                    listener.requestFailed("Invalid Amount");
+                }
+                break;
+            case AdminDialog.REMOVE_SCRIP:
+                try {
+                    if ((amount = Integer.parseInt(value)) <= 0) {
+                        listener.requestFailed("Amount must be > 0");
+                    }
+                    user.setScrip(Math.max(user.getScrip() - amount, 0));
+                    listener.requestProcessed();
+                } catch (NumberFormatException ex) {
+                    listener.requestFailed("Invalid Amount");
+                }
+                break;
+            case AdminDialog.RESET_SCRIP:
+                user.setScrip(0);
+                listener.requestProcessed();
+                break;
+            case AdminDialog.GRANT_BADGE: case AdminDialog.REMOVE_BADGE:
+                Badge.Type type;
+                try {
+                    type = Badge.Type.valueOf(value);
+                    if (action == AdminDialog.GRANT_BADGE) {
+                        Badge badge = type.newBadge();
+                        badge.setOwnerId(user.playerId);
+                        if (user.inventory.contains(badge)) {
+                            user.updateInventory(badge);
+                        } else {
+                            user.addToInventory(badge);
+                        }
+                    } else {
+                        user.removeFromInventory(type);
+                    }
+                    listener.requestProcessed();
+                } catch (IllegalArgumentException ex) {
+                    listener.requestFailed("Invalid badge type");
+                }
+
+                break;
+            case AdminDialog.RESET_BADGE:
+                List<Comparable<?>> toRemove = new ArrayList<>();
+                for (Item item : user.inventory) {
+                    if (item instanceof Badge) {
+                        toRemove.add(item.getKey());
+                    }
+                }
+                for (Comparable<?> key : toRemove) {
+                    user.removeFromInventory(key);
+                }
+                listener.requestProcessed();
+                break;
+        }
+    }
+
+    // from interface PlayerProvider
+    public void gameMasterAction(PlayerObject caller, Handle handle, int action, String reason, long duration, InvocationService.ConfirmListener listener) throws InvocationException {
+        if (!caller.getTokens().isSupport()) {
+            listener.requestFailed("You need to be a Bang! Howdy game master for this.");
+        }
+        switch (action) {
+            case GameMasterDialog.WARN:
+                warnPlayer(caller, handle, reason, new InvocationService.ConfirmListener() {
+
+                    @Override
+                    public void requestFailed(String s) {
+                        listener.requestFailed(s);
+                    }
+
+                    @Override
+                    public void requestProcessed() {
+                        listener.requestProcessed();
+                    }
+                });
+                break;
+            case GameMasterDialog.KICK:
+                bootPlayer(caller, handle, new InvocationService.ConfirmListener() {
+
+                    @Override
+                    public void requestFailed(String s) {
+                        listener.requestFailed(s);
+                    }
+
+                    @Override
+                    public void requestProcessed() {
+                        listener.requestProcessed();
+                    }
+                });
+                break;
+            case GameMasterDialog.TEMP_BAN:
+                try {
+                    PlayerObject player = BangServer.locator.lookupPlayer(handle);
+                    long banExpires = System.currentTimeMillis() + duration;
+                    _playrepo.setTempBan(player.username.getNormal(), new Timestamp(banExpires), reason);
+                    listener.requestProcessed();
+                } catch (PersistenceException e) {
+                    listener.requestFailed("Failed getting player. Persistence error.");
+                    return;
+                }
+                break;
+            case GameMasterDialog.PERMA_BAN:
+                try {
+                    PlayerObject player = BangServer.locator.lookupPlayer(handle);
+                    long banExpires = System.currentTimeMillis() + duration;
+                    _playrepo.setTempBan(player.username.getNormal(), new Timestamp(Long.MAX_VALUE), reason);
+                    listener.requestProcessed();
+                } catch (PersistenceException e) {
+                    listener.requestFailed("Failed getting player. Persistence error.");
+                    return;
+                }
+        }
+    }
+
     /**
      * Clears the player's poster info from the cache.
      */
@@ -732,7 +808,7 @@ public class PlayerManager
     // from interface PlayerProvider
     public void noteFolk (final PlayerObject user, final int folkId, int note,
                           PlayerService.ConfirmListener cl)
-        throws InvocationException
+            throws InvocationException
     {
         int ixFoe = Arrays.binarySearch(user.foes, folkId);
         int ixFriend = Arrays.binarySearch(user.friends, folkId);
@@ -750,7 +826,7 @@ public class PlayerManager
             nfoes = ArrayUtil.insert(user.foes, folkId, -1*(1+ixFoe));
 
         } else if (note == PlayerService.FOLK_NEUTRAL &&
-            (ixFoe >= 0 || ixFriend >= 0)) {
+                (ixFoe >= 0 || ixFriend >= 0)) {
             opinion = FolkRecord.NO_OPINION;
             nfriends = (ixFriend >= 0) ? ArrayUtil.splice(user.friends, ixFriend, 1) : user.friends;
             nfoes = (ixFoe >= 0) ? ArrayUtil.splice(user.foes, ixFoe, 1) : user.foes;
@@ -783,7 +859,7 @@ public class PlayerManager
     // from interface PlayerProvider
     public void prepSongForDownload (PlayerObject user, final String song,
                                      final PlayerService.ResultListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         // make sure the player owns this song
         if (!user.ownsSong(song)) {
@@ -809,21 +885,21 @@ public class PlayerManager
 
     // from interface PlayerProvider
     public void destroyItem (
-        final PlayerObject user, final int itemId, final PlayerService.ConfirmListener listener)
-        throws InvocationException
+            final PlayerObject user, final int itemId, final PlayerService.ConfirmListener listener)
+            throws InvocationException
     {
         // make sure the player is holding the item
         final Item item = user.inventory.get(itemId);
         if (item == null) {
             log.warning("User requested to destroy invalid item", "who", user.who(),
-                        "itemId", itemId);
+                    "itemId", itemId);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
         // and that it's destroyable
         if (!item.isDestroyable(user)) {
             log.warning("User tried to destroy indestructable item", "who", user.who(),
-                        "item", item);
+                    "item", item);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -831,7 +907,7 @@ public class PlayerManager
         user.removeFromInventory(item.getKey());
         BangServer.invoker.postUnit(new PersistingUnit("destroyItem", listener) {
             public void invokePersistent ()
-                throws PersistenceException {
+                    throws PersistenceException {
                 _itemrepo.deleteItem(item, "trashed");
             }
             public void handleSuccess () {
@@ -851,7 +927,7 @@ public class PlayerManager
     public void createAccount (final PlayerObject user, final String username, final String password,
                                final String email, final String affiliate, long birthdate,
                                final PlayerService.ConfirmListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         if (_creatingAccounts.contains(user.playerId)) {
             listener.requestFailed(E_IN_PROGRESS);
@@ -874,7 +950,7 @@ public class PlayerManager
         }
 
         final String machIdent = ((BangCredentials)((BangSession)BangServer.clmgr.getClient(
-                        user.username)).getCredentials()).ident;
+                user.username)).getCredentials()).ident;
 
         // prevent multiple requests from coming in
         _creatingAccounts.add(user.playerId);
@@ -883,7 +959,7 @@ public class PlayerManager
             public boolean invoke () {
                 try {
                     _errmsg = BangServer.author.createAccount(
-                        username, password, email, affiliate, machIdent, bdate);
+                            username, password, email, affiliate, machIdent, bdate);
                     if (_errmsg == null) {
                         BangServer.author.setAccountIsActive(username, true);
                         _playrepo.clearAnonymous(user.playerId, username);
@@ -910,7 +986,7 @@ public class PlayerManager
     // documentation inherited from PlayerProvider
     public void bootPlayer (PlayerObject user, Handle handle,
                             PlayerService.ConfirmListener listener)
-        throws InvocationException
+            throws InvocationException
     {
         if (!user.tokens.isSupport()) {
             log.warning("Attempting to boot player from non-support user", "who", user.who());
@@ -979,7 +1055,7 @@ public class PlayerManager
     {
         user.addToInventory(item);
         SpeakUtil.sendInfo(user, BangCodes.BANG_MSGS,
-            MessageBundle.compose("m.received_item", item.getName(), source));
+                MessageBundle.compose("m.received_item", item.getName(), source));
     }
 
     /**
@@ -1015,22 +1091,22 @@ public class PlayerManager
      * Sends a pardner invite to the specified player from the named inviter (on this server only).
      */
     public void sendPardnerInviteLocal (
-        final PlayerObject user, final Handle inviter, String message, final Date lastSession)
+            final PlayerObject user, final Handle inviter, String message, final Date lastSession)
     {
         user.addToNotifications(
-            new PardnerInvite(inviter, message, new PardnerInvite.ResponseHandler() {
-            public void handleResponse (int resp, InvocationService.ConfirmListener listener) {
-                handleInviteResponse(
-                    user, inviter, lastSession, (resp == PardnerInvite.ACCEPT), listener);
-            }
-        }));
+                new PardnerInvite(inviter, message, new PardnerInvite.ResponseHandler() {
+                    public void handleResponse (int resp, InvocationService.ConfirmListener listener) {
+                        handleInviteResponse(
+                                user, inviter, lastSession, (resp == PardnerInvite.ACCEPT), listener);
+                    }
+                }));
     }
 
     /**
      * Adds a pardner entry to the specified player if he is online (on any server).
      */
     public void respondToPardnerInvite (
-        Handle inviter, Handle invitee, boolean accept, boolean full)
+            Handle inviter, Handle invitee, boolean accept, boolean full)
     {
         PlayerObject user = BangServer.locator.lookupPlayer(inviter);
         if (user != null) {
@@ -1044,7 +1120,7 @@ public class PlayerManager
      * Adds a pardner entry to the specified player (on this server only).
      */
     public void respondToPardnerInviteLocal (
-        PlayerObject inviter, Handle invitee, boolean accept, boolean full)
+            PlayerObject inviter, Handle invitee, boolean accept, boolean full)
     {
         if (accept) {
             inviter.addOrUpdatePardner(getPardnerEntry(invitee, new Date()));
@@ -1088,15 +1164,15 @@ public class PlayerManager
      * Sends a warning message to the specified player.
      */
     public void sendWarningMessage (
-        final PlayerObject user, boolean tempBan, String message)
+            final PlayerObject user, boolean tempBan, String message)
     {
         user.addToNotifications(
-            new Warning(tempBan ? Warning.TEMP_BAN : Warning.WARNING, message,
-                new Warning.ResponseHandler() {
-            public void handleResponse (int resp, InvocationService.ConfirmListener listener) {
-                handleWarningResponse(user, listener);
-            }
-        }));
+                new Warning(tempBan ? Warning.TEMP_BAN : Warning.WARNING, message,
+                        new Warning.ResponseHandler() {
+                            public void handleResponse (int resp, InvocationService.ConfirmListener listener) {
+                                handleWarningResponse(user, listener);
+                            }
+                        }));
     }
 
     /**
@@ -1165,7 +1241,7 @@ public class PlayerManager
      */
     protected void playComputer (
             PlayerObject player, int players, String[] scenarios, String board, boolean autoplay)
-        throws InvocationException
+            throws InvocationException
     {
         // create a game configuration from that
         BangConfig config = new BangConfig();
@@ -1183,7 +1259,7 @@ public class PlayerManager
      * Helper function for playing games. Assumes all parameters have been checked for validity.
      */
     protected BangObject playComputer (PlayerObject player, BangConfig config, boolean autoplay)
-        throws InvocationException
+            throws InvocationException
     {
         HashSet<String> names = new HashSet<String>();
         names.add(player.getVisibleName().toString());
@@ -1281,16 +1357,16 @@ public class PlayerManager
      * Processes the response to a pardner invitation.
      */
     protected void handleInviteResponse (
-        final PlayerObject user, final Handle inviter, final Date lastSession,
-        final boolean accept, final InvocationService.ConfirmListener listener)
+            final PlayerObject user, final Handle inviter, final Date lastSession,
+            final boolean accept, final InvocationService.ConfirmListener listener)
     {
         // update the database
         BangServer.invoker.postUnit(new PersistingUnit("handleInviteResponse", listener) {
             public void invokePersistent ()
-                throws PersistenceException {
+                    throws PersistenceException {
                 if (accept) {
                     _error = _pardrepo.updatePardners(
-                        user.playerId, inviter, _full = new boolean[2]);
+                            user.playerId, inviter, _full = new boolean[2]);
                 } else {
                     _pardrepo.removePardners(user.playerId, inviter);
                 }
@@ -1304,7 +1380,7 @@ public class PlayerManager
             }
             public String getFailureMessage () {
                 return "Failed to respond to pardner invite [who=" + user.who() +
-                    ", inviter=" + inviter + ", accept=" + accept + "]";
+                        ", inviter=" + inviter + ", accept=" + accept + "]";
             }
             protected boolean[] _full;
             protected String _error;
@@ -1316,8 +1392,8 @@ public class PlayerManager
      * completed.
      */
     protected void handleInviteSuccess (
-        PlayerObject user, Handle inviter, Date lastSession, boolean accept,
-        boolean[] full, InvocationService.ConfirmListener listener)
+            PlayerObject user, Handle inviter, Date lastSession, boolean accept,
+            boolean[] full, InvocationService.ConfirmListener listener)
     {
         // if the inviter is online on any server, update and send a notification
         respondToPardnerInvite(inviter, user.handle, accept, full != null && full[1]);
@@ -1360,12 +1436,12 @@ public class PlayerManager
      * Processes the response to a warning message.
      */
     protected void handleWarningResponse (
-        final PlayerObject user, final InvocationService.ConfirmListener listener)
+            final PlayerObject user, final InvocationService.ConfirmListener listener)
     {
         // update the database
         BangServer.invoker.postUnit(new PersistingUnit("handleWarningResponse", listener) {
             public void invokePersistent ()
-                throws PersistenceException {
+                    throws PersistenceException {
                 _playrepo.clearWarning(user.playerId);
             }
             public void handleSuccess () {
@@ -1386,7 +1462,7 @@ public class PlayerManager
     protected String createDownloadSymlink (String song)
     {
         File source = new File(ServerConfig.serverRoot, "data" + File.separator + "soundtrack" +
-                               File.separator + song + ".mp3");
+                File.separator + song + ".mp3");
         if (!source.exists()) {
             log.warning("Requested to create symlink for missing source", "song", song);
             return null;
@@ -1396,17 +1472,17 @@ public class PlayerManager
         long rando = (long)(Math.random() * Long.MAX_VALUE);
         String ident = StringUtil.md5hex("" + (rando ^ System.currentTimeMillis()));
         File dest = new File(ServerConfig.serverRoot, "data" + File.separator + "downloads" +
-                             File.separator + ident);
+                File.separator + ident);
 
         // Java's file abstraction does not support symlinks, so we have to exec a process
         String stderr = "";
         try {
             Process proc = new ProcessBuilder(
-                "ln", "-s", source.toString(), dest.toString()).start();
+                    "ln", "-s", source.toString(), dest.toString()).start();
             stderr = IOUtils.toString(proc.getErrorStream());
             if (proc.waitFor() != 0) {
                 log.warning("Failed to create download symlink", "song", song, "ident", ident,
-                            "stderr", stderr);
+                        "stderr", stderr);
                 return null;
             }
 
@@ -1483,7 +1559,7 @@ public class PlayerManager
                                 });
                     } catch (InvocationException ie) {
                         log.warning("Failure removing purged player from gang! Proceeding with " +
-                                    "purge anyway", "ie", ie);
+                                "purge anyway", "ie", ie);
                     }
                 }
                 _playrepo.deletePlayer(user);
@@ -1536,9 +1612,9 @@ public class PlayerManager
             items.add(new BigShotItem(user.playerId, "indian_post/tricksterraven"));
             // two free copper stars
             items.add(new Star(user.playerId, BangUtil.getTownIndex(BangCodes.FRONTIER_TOWN),
-                               Star.Difficulty.MEDIUM));
+                    Star.Difficulty.MEDIUM));
             items.add(new Star(user.playerId, BangUtil.getTownIndex(BangCodes.INDIAN_POST),
-                               Star.Difficulty.MEDIUM));
+                    Star.Difficulty.MEDIUM));
         }
 
         // stick the new item in the database and in their inventory
@@ -1560,7 +1636,7 @@ public class PlayerManager
             }
             public void handleFailure (Exception err) {
                 log.warning("Failed to grant gold pass and bonuses", "who", user.who(),
-                            "items", items, err);
+                        "items", items, err);
             }
         });
 
@@ -1572,7 +1648,7 @@ public class PlayerManager
                 }
                 public void requestFailed (String cause) {
                     log.warning("Failed to grant gold pass cards", "who", user.who(),
-                                "cause", cause);
+                            "cause", cause);
                 }
             };
             try {

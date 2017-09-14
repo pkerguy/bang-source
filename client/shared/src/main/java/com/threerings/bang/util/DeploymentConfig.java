@@ -28,7 +28,7 @@ public class DeploymentConfig
      */
     public static long getVersion ()
     {
-        return 501; // Change upon each release version
+        return 502; // Change upon each release version
     }
 
     /**

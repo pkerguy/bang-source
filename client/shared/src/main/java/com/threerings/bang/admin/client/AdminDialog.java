@@ -94,7 +94,7 @@ public class AdminDialog extends SteelWindow
             case "execute":
                 String valueText = null;
                 if (_valueField instanceof BComboBox) {
-                    valueText = ((Badge.Type) ((BComboBox) _valueField).getSelectedValue()).name();
+                    valueText = ((BComboBox) _valueField).getText();
                 } else if (_valueField instanceof BTextField &&
                         (valueText = ((BTextField) _valueField).getText()).isEmpty()) {
                     return;

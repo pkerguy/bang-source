@@ -788,7 +788,6 @@ public class PlayerManager
             case GameMasterDialog.PERMA_BAN:
                 try {
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
-                    long banExpires = System.currentTimeMillis() + duration;
                     _playrepo.setTempBan(player.username.getNormal(), new Timestamp(Long.MAX_VALUE), reason);
                     listener.requestProcessed();
                 } catch (PersistenceException e) {

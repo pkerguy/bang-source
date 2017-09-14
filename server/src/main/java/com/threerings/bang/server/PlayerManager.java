@@ -775,6 +775,9 @@ public class PlayerManager
             case GameMasterDialog.TEMP_BAN:
                 try {
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
+                    if (player == null) {
+                        listener.requestFailed("Target player not online");
+                    }
                     long banExpires = System.currentTimeMillis() + Long.parseLong(duration);
                     _playrepo.setTempBan(player.username.getNormal(), new Timestamp(banExpires), reason);
                     listener.requestProcessed();
@@ -790,6 +793,9 @@ public class PlayerManager
             case GameMasterDialog.PERMA_BAN:
                 try {
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
+                    if (player == null) {
+                        listener.requestFailed("Target player not online");
+                    }
                     _playrepo.setTempBan(player.username.getNormal(), new Timestamp(Long.MAX_VALUE), reason);
                     listener.requestProcessed();
                 } catch (PersistenceException e) {

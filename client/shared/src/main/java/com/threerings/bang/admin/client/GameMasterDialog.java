@@ -27,10 +27,10 @@ public class GameMasterDialog extends SteelWindow
     implements ActionListener
 {
     public static final int
-            WARN = 6,
-            KICK = 7,
-            TEMP_BAN = 8,
-            PERMA_BAN = 9;
+            WARN = 1,
+            KICK = 2,
+            TEMP_BAN = 3,
+            PERMA_BAN = 4;
 
     /** The width to hint when laying out this window. */
     public static final int WIDTH_HINT = 875;

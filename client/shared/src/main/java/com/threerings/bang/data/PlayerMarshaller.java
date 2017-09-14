@@ -221,7 +221,7 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
     public void gameMasterAction(Handle handle, int action, String value, ConfirmListener listener) {
         InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
         listener2.listener = listener;
-        sendRequest(ADMIN_ACTION, new Object[] {
+        sendRequest(GAME_MASTER_ACTION, new Object[] {
                 handle, action, value, listener2
         });
     }

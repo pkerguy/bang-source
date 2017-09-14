@@ -73,7 +73,7 @@ public class AdminDialog extends SteelWindow
                 break;
             case GRANT_BADGE: case REMOVE_BADGE:
                 add(3, new BLabel(_numberLabel));
-                add(4, _valueField = new BList(Badge.Type.values()));
+                add(4, _valueField = new BComboBox(Badge.Type.values()));
 
                 _valueField.requestFocus();
                 break;
@@ -93,8 +93,8 @@ public class AdminDialog extends SteelWindow
                 break;
             case "execute":
                 String valueText = null;
-                if (_valueField instanceof BList) {
-                    valueText = ((Badge.Type) ((BList) _valueField).getSelectedValue()).name();
+                if (_valueField instanceof BComboBox) {
+                    valueText = ((Badge.Type) ((BComboBox) _valueField).getSelectedValue()).name();
                 } else if (_valueField instanceof BTextField &&
                         (valueText = ((BTextField) _valueField).getText()).isEmpty()) {
                     return;

@@ -737,7 +737,7 @@ public class PlayerManager
     }
 
     // from interface PlayerProvider
-    public void gameMasterAction(PlayerObject caller, Handle handle, int action, String reason, long duration, InvocationService.ConfirmListener listener) throws InvocationException {
+    public void gameMasterAction(PlayerObject caller, Handle handle, int action, String reason, String duration, InvocationService.ConfirmListener listener) throws InvocationException {
         if (!caller.getTokens().isSupport()) {
             listener.requestFailed("You need to be a Bang! Howdy game master for this.");
         }
@@ -773,11 +773,15 @@ public class PlayerManager
             case GameMasterDialog.TEMP_BAN:
                 try {
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
-                    long banExpires = System.currentTimeMillis() + duration;
+                    long banExpires = System.currentTimeMillis() + Long.parseLong(duration);
                     _playrepo.setTempBan(player.username.getNormal(), new Timestamp(banExpires), reason);
                     listener.requestProcessed();
                 } catch (PersistenceException e) {
                     listener.requestFailed("Failed getting player. Persistence error.");
+                    return;
+                } catch (NumberFormatException e)
+                {
+                    listener.requestFailed("Failed to process numbers!");
                     return;
                 }
                 break;

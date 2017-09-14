@@ -218,11 +218,11 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
     public static final int GAME_MASTER_ACTION = 16;
 
     // from interface PlayerService
-    public void gameMasterAction(Handle handle, int action, String reason, long duration, ConfirmListener listener) {
+    public void gameMasterAction(Handle handle, int action, String value, ConfirmListener listener) {
         InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
         listener2.listener = listener;
         sendRequest(ADMIN_ACTION, new Object[] {
-                handle, action, reason, duration, listener2
+                handle, action, value, listener2
         });
     }
 }

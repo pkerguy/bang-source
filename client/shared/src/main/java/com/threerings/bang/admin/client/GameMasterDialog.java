@@ -91,11 +91,11 @@ public class GameMasterDialog extends SteelWindow
                 _ctx.getBangClient().clearPopup(this, true);
                 break;
             case "execute":
-                String reason = _reasonField.getText();
+                String reason = _reasonField.getText().replaceAll(":", "");
 
                 long duration = 0;
                 if (_durationField != null) {
-                    String str = _durationField.getText();
+                    String str = _durationField.getText().replaceAll(":", "");
 
                     char c;
                     StringBuilder sb = new StringBuilder();
@@ -136,7 +136,7 @@ public class GameMasterDialog extends SteelWindow
                 }
 
                 _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
-                        _handle, _action, reason, duration,
+                        _handle, _action, reason + ":" + duration,
                         new InvocationService.ConfirmListener() {
                             @Override
                             public void requestProcessed() {

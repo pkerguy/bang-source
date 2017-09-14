@@ -737,10 +737,12 @@ public class PlayerManager
     }
 
     // from interface PlayerProvider
-    public void gameMasterAction(PlayerObject caller, Handle handle, int action, String reason, String duration, InvocationService.ConfirmListener listener) throws InvocationException {
+    public void gameMasterAction(PlayerObject caller, Handle handle, int action, String value, InvocationService.ConfirmListener listener) throws InvocationException {
         if (!caller.getTokens().isSupport()) {
             listener.requestFailed("You need to be a Bang! Howdy game master for this.");
         }
+        String reason = value.split(":")[0];
+        String duration = value.split(":")[1];
         switch (action) {
             case GameMasterDialog.WARN:
                 warnPlayer(caller, handle, reason, new InvocationService.ConfirmListener() {

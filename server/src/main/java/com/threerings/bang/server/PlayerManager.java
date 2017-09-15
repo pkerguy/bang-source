@@ -667,10 +667,12 @@ public class PlayerManager
     public void adminAction(PlayerObject caller, Handle handle, int action, String value, InvocationService.ConfirmListener listener) throws InvocationException {
         if (!caller.getTokens().isAdmin()) {
             listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
+            return;
         }
         PlayerObject user = BangServer.locator.lookupPlayer(handle);
         if (user == null) {
             listener.requestFailed("Target player not online");
+            return;
         }
         switch (action) {
             case AdminDialog.GRANT_SCRIP:
@@ -678,6 +680,7 @@ public class PlayerManager
                 try {
                     if ((amount = Integer.parseInt(value)) <= 0) {
                         listener.requestFailed("Amount must be > 0");
+                        return;
                     }
                     user.setScrip(user.getScrip() + amount);
                     listener.requestProcessed();
@@ -689,6 +692,7 @@ public class PlayerManager
                 try {
                     if ((amount = Integer.parseInt(value)) <= 0) {
                         listener.requestFailed("Amount must be > 0");
+                        return;
                     }
                     user.setScrip(Math.max(user.getScrip() - amount, 0));
                     listener.requestProcessed();
@@ -701,24 +705,35 @@ public class PlayerManager
                 listener.requestProcessed();
                 break;
             case AdminDialog.GRANT_BADGE: case AdminDialog.REMOVE_BADGE:
-                Badge.Type type;
+                Badge.Type type = null;
                 try {
-                    type = Badge.Type.valueOf(value);
-                    if (action == AdminDialog.GRANT_BADGE) {
-                        Badge badge = type.newBadge();
-                        badge.setOwnerId(user.playerId);
-                        if (user.inventory.contains(badge)) {
-                            user.updateInventory(badge);
-                        } else {
-                            user.addToInventory(badge);
+                    int code = Integer.parseInt(value);
+                    for (Badge.Type t : Badge.Type.values()) {
+                        if (t.code() == code) {
+                            type = t;
+                            break;
                         }
-                    } else {
-                        user.removeFromInventory(type);
                     }
-                    listener.requestProcessed();
-                } catch (IllegalArgumentException ex) {
+                } catch (NumberFormatException ex) {
                     listener.requestFailed("Invalid badge type");
+                    break;
                 }
+                if (type == null) {
+                    listener.requestFailed("Invalid badge type");
+                    break;
+                }
+                if (action == AdminDialog.GRANT_BADGE) {
+                    Badge badge = type.newBadge();
+                    badge.setOwnerId(user.playerId);
+                    if (user.inventory.contains(badge)) {
+                        user.updateInventory(badge);
+                    } else {
+                        user.addToInventory(badge);
+                    }
+                } else {
+                    user.removeFromInventory(type);
+                }
+                listener.requestProcessed();
 
                 break;
             case AdminDialog.RESET_BADGE:
@@ -737,12 +752,11 @@ public class PlayerManager
     }
 
     // from interface PlayerProvider
-    public void gameMasterAction(PlayerObject caller, Handle handle, int action, String value, InvocationService.ConfirmListener listener) throws InvocationException {
+    public void gameMasterAction(PlayerObject caller, Handle handle, int action, String reason, long duration, InvocationService.ConfirmListener listener) throws InvocationException {
         if (!caller.getTokens().isSupport()) {
             listener.requestFailed("You need to be a Bang! Howdy game master for this.");
+            return;
         }
-        String reason = value.split(":")[0];
-        String duration = value.split(":")[1];
         switch (action) {
             case GameMasterDialog.WARN:
                 warnPlayer(caller, handle, reason, new InvocationService.ConfirmListener() {
@@ -777,8 +791,9 @@ public class PlayerManager
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
                     if (player == null) {
                         listener.requestFailed("Target player not online");
+                        return;
                     }
-                    long banExpires = System.currentTimeMillis() + Long.parseLong(duration);
+                    long banExpires = System.currentTimeMillis() + duration;
                     _playrepo.setTempBan(player.username.getNormal(), new Timestamp(banExpires), reason);
                     listener.requestProcessed();
                 } catch (PersistenceException e) {
@@ -795,12 +810,12 @@ public class PlayerManager
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
                     if (player == null) {
                         listener.requestFailed("Target player not online");
+                        return;
                     }
                     _playrepo.setTempBan(player.username.getNormal(), new Timestamp(Long.MAX_VALUE), reason);
                     listener.requestProcessed();
                 } catch (PersistenceException e) {
                     listener.requestFailed("Failed getting player. Persistence error.");
-                    return;
                 }
         }
     }

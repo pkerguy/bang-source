@@ -136,7 +136,7 @@ public class GameMasterDialog extends SteelWindow
                 }
 
                 _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
-                        _handle, _action, reason + ":" + duration,
+                        _handle, _action, reason, duration,
                         new InvocationService.ConfirmListener() {
                             @Override
                             public void requestProcessed() {

@@ -118,6 +118,6 @@ public interface PlayerProvider extends InvocationProvider
     /**
      * Handles a {@link PlayerService#gameMasterAction} request.
      */
-    void gameMasterAction (PlayerObject caller, Handle handle, int action, String value, InvocationService.ConfirmListener listener)
+    void gameMasterAction (PlayerObject caller, Handle handle, int action, String reason, long duration, InvocationService.ConfirmListener listener)
             throws InvocationException;
 }

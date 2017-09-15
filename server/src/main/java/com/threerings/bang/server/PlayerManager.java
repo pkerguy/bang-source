@@ -731,7 +731,12 @@ public class PlayerManager
                         user.addToInventory(badge);
                     }
                 } else {
-                    user.removeFromInventory(type);
+                    for (Item item : user.inventory) {
+                        if (item instanceof Badge && ((Badge) item).getType() == type) {
+                            user.removeFromInventory(((Badge) item).getKey());
+                            break;
+                        }
+                    }
                 }
                 listener.requestProcessed();
 

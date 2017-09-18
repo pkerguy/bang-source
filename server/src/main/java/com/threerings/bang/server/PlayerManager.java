@@ -738,11 +738,13 @@ public class PlayerManager
                         }
                     }
                 }
+                user.commitTransaction();
                 listener.requestProcessed();
 
                 break;
             case AdminDialog.RESET_BADGE:
                 List<Comparable<?>> toRemove = new ArrayList<>();
+                /* The inventory's iterator doesn't support #remove() :( */
                 for (Item item : user.inventory) {
                     if (item instanceof Badge) {
                         toRemove.add(item.getKey());

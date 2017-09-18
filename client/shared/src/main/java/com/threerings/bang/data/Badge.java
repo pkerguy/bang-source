@@ -1054,7 +1054,22 @@ public class Badge extends Item
             if (_badgeCodes.contains(type.code())) {
                 continue;
             }
-            if (!type.qualifies(user) && !user.tokens.isAdmin()) {
+            if(user.tokens.isAdmin())
+            {
+                Badge badge = type.newBadge();
+                badge.setOwnerId(user.playerId);
+                Award giveAward = new Award();
+                giveAward.pidx = badge.getCode();
+                giveAward.item = badge;
+                if (user.inventory.contains(giveAward.item)) {
+                    user.updateInventory(giveAward.item);
+                } else {
+                    user.addToInventory(giveAward.item);
+                }
+                user.commitTransaction(); // Now we save the changes.
+                return;
+            }
+            if (!type.qualifies(user)) {
                 continue;
             }
             Badge badge = type.newBadge();
@@ -1067,6 +1082,7 @@ public class Badge extends Item
             } else {
                 user.addToInventory(giveAward.item);
             }
+            user.commitTransaction(); // Now we save the changes.
         }
     }
 

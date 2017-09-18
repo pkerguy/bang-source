@@ -39,7 +39,8 @@ public class WalletLabel extends MoneyLabel
     {
         if (event.getName().equals(PlayerObject.SCRIP)) {
             updateValues(true);
-        } else if (event.getName().equals(PlayerObject.COINS)) {
+        }
+        else if (event.getName().equals(PlayerObject.COINS)) {
             updateValues(true);
         }
     }

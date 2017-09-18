@@ -67,6 +67,9 @@ public class PlayerObject extends BodyObject
     /** The field name of the <code>scrip</code> field. */
     public static final String SCRIP = "scrip";
 
+    /** The field name of the <code>coins</code> field. */
+    public static final String COINS = "coins";
+
     /** The field name of the <code>stats</code> field. */
     public static final String STATS = "stats";
 
@@ -717,10 +720,10 @@ public class PlayerObject extends BodyObject
      */
     public void setCoins (int value)
     {
-//        int ovalue = this.coins;
-//        requestAttributeChange(
-//            COINS, Integer.valueOf(value), Integer.valueOf(ovalue));
-//        this.coins = value;
+        int ovalue = this.coins;
+        requestAttributeChange(
+            COINS, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.coins = value;
     }
 
     /**

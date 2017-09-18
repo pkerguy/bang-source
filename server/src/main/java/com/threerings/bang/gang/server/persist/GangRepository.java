@@ -31,6 +31,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interator;
 import com.samskivert.util.IntIntMap;
 
+import com.threerings.bang.server.ServerConfig;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.bang.avatar.server.persist.LookRepository;
@@ -249,6 +250,10 @@ public class GangRepository extends JORARepository
     public void grantScrip (int gangId, int scrip)
         throws PersistenceException
     {
+        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
+        {
+            return;
+        }
         checkedUpdate("update GANGS set SCRIP = SCRIP + " + scrip +
                       " where GANG_ID = " + gangId, 1);
     }
@@ -259,6 +264,10 @@ public class GangRepository extends JORARepository
     public void spendScrip (int gangId, int scrip)
         throws PersistenceException
     {
+        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
+        {
+            return;
+        }
         checkedUpdate("update GANGS set SCRIP = SCRIP - " + scrip +
                       " where GANG_ID = " + gangId + " and SCRIP >= " + scrip, 1);
     }
@@ -269,6 +278,10 @@ public class GangRepository extends JORARepository
     public void recordDonation (int userId, int scrip, int coins)
         throws PersistenceException
     {
+        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
+        {
+            return;
+        }
         checkedUpdate("update GANG_MEMBERS set SCRIP_DONATED = SCRIP_DONATED + " + scrip +
                       ", COINS_DONATED = COINS_DONATED + " + coins + " where PLAYER_ID = " +
                       userId, 1);
@@ -280,6 +293,10 @@ public class GangRepository extends JORARepository
     public void retractDonation (int userId, int scrip, int coins)
         throws PersistenceException
     {
+        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
+        {
+            return;
+        }
         checkedUpdate("update GANG_MEMBERS set SCRIP_DONATED = SCRIP_DONATED - " + scrip +
                       ", COINS_DONATED = COINS_DONATED - " + coins + " where PLAYER_ID = " +
                       userId, 1);

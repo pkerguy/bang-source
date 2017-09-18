@@ -137,10 +137,6 @@ public class BangClientResolver extends CrowdClientResolver
         buser.tokens.setToken(BangTokenRing.ANONYMOUS, player.isSet(PlayerRecord.IS_ANONYMOUS));
         buser.tokens.setToken(BangTokenRing.OVER_13, player.isOver13);
         buser.tokens.setToken(BangTokenRing.DEMO, player.isSet(PlayerRecord.IS_DEMO_ACCOUNT));
-        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
-        {
-            player.scrip = 500000;
-        }
         buser.scrip = player.scrip;
 
         // load up this player's gang information

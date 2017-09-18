@@ -1058,29 +1058,23 @@ public class Badge extends Item
             {
                 Badge badge = type.newBadge();
                 badge.setOwnerId(user.playerId);
-                Award giveAward = new Award();
-                giveAward.pidx = badge.getCode();
-                giveAward.item = badge;
-                if (user.inventory.contains(giveAward.item)) {
-                    user.updateInventory(giveAward.item);
+                if (user.inventory.contains(badge)) {
+                    user.updateInventory(badge);
                 } else {
-                    user.addToInventory(giveAward.item);
+                    user.addToInventory(badge);
                 }
                 user.commitTransaction(); // Now we save the changes.
-                return;
+                continue;
             }
             if (!type.qualifies(user)) {
                 continue;
             }
             Badge badge = type.newBadge();
             badge.setOwnerId(user.playerId);
-            Award giveAward = new Award();
-            giveAward.pidx = badge.getCode();
-            giveAward.item = badge;
-            if (user.inventory.contains(giveAward.item)) {
-                user.updateInventory(giveAward.item);
+            if (user.inventory.contains(badge)) {
+                user.updateInventory(badge);
             } else {
-                user.addToInventory(giveAward.item);
+                user.addToInventory(badge);
             }
             user.commitTransaction(); // Now we save the changes.
         }

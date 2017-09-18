@@ -1058,11 +1058,7 @@ public class Badge extends Item
             {
                 Badge badge = type.newBadge();
                 badge.setOwnerId(user.playerId);
-                if (user.inventory.contains(badge)) {
-                    user.updateInventory(badge);
-                } else {
-                    user.addToInventory(badge);
-                }
+                user.addToInventory(badge);
                 user.commitTransaction(); // Now we save the changes.
                 continue;
             }

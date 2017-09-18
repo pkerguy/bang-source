@@ -16,6 +16,7 @@ import com.samskivert.util.*;
 import com.samskivert.util.Config;
 import com.threerings.admin.data.*;
 import com.threerings.bang.avatar.client.*;
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.bounty.data.*;
 import com.threerings.bang.chat.client.*;
 import com.threerings.bang.client.bui.*;
@@ -972,8 +973,21 @@ public class BangClient extends BasicClient
     public void clientDidClear (Client client)
     {
         if (_pendingTownId != null) {
-            _ctx.getClient().setServer(DeploymentConfig.getServerHost(_pendingTownId),
-                                       DeploymentConfig.getServerPorts(_pendingTownId));
+            try {
+                URL data = new URL("http://148.251.113.72/support_debug/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+                final String result = in.readLine();
+                if(result.contains("&") && result.contains(","))
+                {
+                    String[] info = result.split("&"),
+                            portStr = info[1].split(",");
+                    _ctx.getClient().setServer(info[0], DeploymentConfig.getServerPorts(_pendingTownId));
+                } else {
+                    return;
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+            }
             if (!_ctx.getClient().logon()) {
                 log.warning("Trying to connect to " + _pendingTownId +
                             " but we're already logged on!?");

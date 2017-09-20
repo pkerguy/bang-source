@@ -65,7 +65,7 @@ public class WalletLabel extends MoneyLabel
         int coins;
         switch (DeploymentConfig.getPaymentType()) {
         case COINS:
-            coins = _user.coins;
+            coins = _user.getCoins();
             break;
         case ONETIME:
             coins = _user.holdsOneTime() ? 1 : 0;

@@ -332,29 +332,110 @@ public class OOOAuthenticator extends BangAuthenticator
             return;
         }
 
+        // Access Level Check
+
         int tokens = 0;
-        switch(user.siteId){
-            case 1337:
+        int[] levels = new int[0];
+        try {
+            URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=user_level");
+            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+            String line = in.readLine();
+            if (!line.isEmpty()) {
+                String[] split = line.split(",");
+                levels = new int[split.length];
+                for (int i = 0; i < split.length; ++i) {
+                    levels[i] = Integer.parseInt(split[i]);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+        for(int level : levels)
+        {
+            if(level == 293847)
+            {
                 tokens |= BangTokenRing.ADMIN;
-                tokens |= BangTokenRing.SUPPORT;
-                tokens |= BangTokenRing.INSIDER;
                 user.addToken((byte)BangTokenRing.ADMIN);
-                break;
-            case 1338:
+            }
+            if(level == 527387)
+            {
                 tokens |= BangTokenRing.SUPPORT;
+            }
+            if(level == 522962)
+            {
                 tokens |= BangTokenRing.INSIDER;
-                user.addToken((byte)BangTokenRing.SUPPORT);
-                break;
-            case 1339:
-                tokens |= BangTokenRing.INSIDER;
-                user.addToken((byte)BangTokenRing.INSIDER);
-                break;
-            case 100:
-                log.info("Rejecting banned account", "who", username);
-                rdata.code = BANNED + (prec != null && prec.warning != null ? prec.warning : "");
-                return;
+            }
         }
 
+        // Account Whitelist Check
+        boolean account_whitelist = false;
+
+        try {
+            URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=whitelist");
+            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+            String line = in.readLine();
+            if (!line.isEmpty()) {
+                if(line == "1") account_whitelist = true;
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        // Check Account Whitelist (Only called if account_lock is true)
+
+        if(account_whitelist)
+        {
+            String[] whitelisted_ips = new String[0];
+            try {
+                URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=ip_whitelist");
+                BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+                String line = in.readLine();
+                if (!line.isEmpty()) {
+                    String[] split = line.split(",");
+                    whitelisted_ips = new String[split.length];
+                    for (int i = 0; i < split.length; ++i) {
+                        whitelisted_ips[i] = split[i];
+                    }
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+            }
+            boolean foundWhitelisted = false;
+            for(String ip : whitelisted_ips)
+            {
+                if(conn.getInetAddress().getHostAddress() == ip)
+                {
+                    foundWhitelisted = true;
+                }
+            }
+            if(!foundWhitelisted)
+            {
+                log.info("Rejecting un-whitelited account", "who", username);
+                rdata.code = BANNED + "Your IP is not authorized to use this account.";
+                return;
+            }
+        }
+
+        // Finally check if they are banned
+        boolean account_banned = false;
+
+        try {
+            URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=suspended");
+            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+            String line = in.readLine();
+            if (!line.isEmpty()) {
+                if(line == "1") account_banned = true;
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        if(account_banned)
+        {
+            log.info("Rejecting banned account", "who", username);
+            rdata.code = BANNED + (prec != null && prec.warning != null ? prec.warning : "");
+            return;
+        }
 
         if (prec != null && prec.banExpires != null &&
                 prec.banExpires.after(new Date(System.currentTimeMillis()))) {

@@ -497,7 +497,8 @@ public class GangHandler
                 user.setScrip(user.scrip + refund[0]);
             }
             if (refund[1] > 0) {
-                user.setCoins(user.coins + refund[1]);
+                user.addCoins(refund[1], "Gang entry removed refund");
+                //user.setCoins(user.getCoins() + refund[1]);
             }
             for (Look look : modified) {
                 user.updateLooks(look);

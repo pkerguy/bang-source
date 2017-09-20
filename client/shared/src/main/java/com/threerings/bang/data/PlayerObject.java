@@ -3,6 +3,10 @@
 
 package com.threerings.bang.data;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.Date;
 
 import java.util.Arrays;
@@ -101,6 +105,9 @@ public class PlayerObject extends BodyObject
     public static final String QUITTER = "quitter";
     // AUTO-GENERATED: FIELDS END
 
+    /** Delay between web api requests */
+    private static final long COIN_CHECK_DELAY = 10_000;
+
     /** This user's persistent unique id. */
     public int playerId;
 
@@ -137,8 +144,8 @@ public class PlayerObject extends BodyObject
     /** The amount of game currency this player is carrying. */
     public int scrip;
 
-    /** The amount of "hard" currency this player is carrying. */
-    public int coins;
+    /** The amount of "hard" currency this player is carrying. Private because we want to use the web api in getCoins() */
+    private int coins;
 
     /** Statistics tracked for this player. */
     public StatSet stats;
@@ -179,9 +186,25 @@ public class PlayerObject extends BodyObject
         return scrip;
     }
 
+    private long _coinLastChecked;
+
     // from interface Wallet
     public int getCoins ()
     {
+        if (System.currentTimeMillis() - _coinLastChecked >= COIN_CHECK_DELAY) {
+            _coinLastChecked = System.currentTimeMillis();
+
+            try {
+                URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=tokens");
+                BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+                String line = in.readLine();
+                if (!line.isEmpty()) {
+                    coins = Integer.parseInt(line);
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
         return coins;
     }
 
@@ -302,6 +325,7 @@ public class PlayerObject extends BodyObject
         }
         return holdsTicket(townId);
     }
+
     /**
      * Returns true if the player holds a ticket to the specified town.
      */
@@ -710,6 +734,43 @@ public class PlayerObject extends BodyObject
         this.scrip = value;
     }
 
+    public boolean spendCoins(int amount, String description) {
+        try {
+            URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=spend&username=" + username + "&amount=" + amount + "&description=" + description);
+            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+            String line = in.readLine();
+            switch (line) {
+                case "FAILED":
+                    return false;
+                case "":
+                    return false;
+                default:
+                    coins = Integer.parseInt(line);
+                    return true;
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    public void addCoins(int amount, String description) {
+        try {
+            URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=add&username=" + username + "&amount=" + amount + "&description=" + description);
+            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+            String line = in.readLine();
+            switch (line) {
+                case "FAILED": case "":
+                    break;
+                default:
+                    coins = Integer.parseInt(line);
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Requests that the <code>coins</code> field be set to the
      * specified value. The local value will be updated immediately and an
@@ -718,13 +779,14 @@ public class PlayerObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
+    /*@Deprecated
     public void setCoins (int value)
     {
         int ovalue = this.coins;
         requestAttributeChange(
             COINS, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.coins = value;
-    }
+    }*/
 
     /**
      * Requests that the specified entry be added to the

@@ -35,6 +35,7 @@ import com.threerings.crowd.server.*;
 import com.threerings.parlor.server.ParlorManager;
 import com.threerings.presents.annotation.*;
 import com.threerings.presents.data.*;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.net.*;
 import com.threerings.presents.peer.server.*;
 import com.threerings.presents.server.*;
@@ -44,6 +45,7 @@ import com.threerings.user.depot.*;
 import com.threerings.util.*;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.threerings.bang.Log.*;
@@ -287,6 +289,28 @@ public class BangServer extends CrowdServer
             _peermgr.init(ServerConfig.nodename, ServerConfig.sharedSecret,
                           ServerConfig.hostname, ServerConfig.publicHostname, getListenPorts()[0]);
         }
+
+        String initConfig = System.getProperty("init");
+        if(initConfig.equalsIgnoreCase("runtime"))
+        {
+            RuntimeConfig.server.setAllowNewGames(true);
+            RuntimeConfig.server.setAnonymousAccessEnabled(false);
+            RuntimeConfig.server.setArticleRentMultiplier(new float[]{5f, 12f, 23f, 45f, 110f});
+            RuntimeConfig.server.setBarberEnabled(false);
+            RuntimeConfig.server.setFreeIndianPost(false);
+            RuntimeConfig.server.setHideoutEnabled(false);
+            RuntimeConfig.server.setLooseRankRange(400);
+            RuntimeConfig.server.setNearRankRange(200);
+            RuntimeConfig.server.setNonAdminsAllowed(false);
+            RuntimeConfig.server.setOfficeEnabled(false);
+            RuntimeConfig.server.setOpenToPublic(false);
+            RuntimeConfig.server.setStationEnabled(false);
+            RuntimeConfig.server.setSelectPhaseTimeout(180);
+            RuntimeConfig.server.setStoreEnabled(false);
+            log.info("Init of Runtime Config finished!");
+            queueShutdown();
+        }
+
 
         // set up our authenticator
         author = (BangAuthenticator)_author;

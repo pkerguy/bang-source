@@ -683,6 +683,7 @@ public class PlayerManager
                         return;
                     }
                     user.setScrip(user.getScrip() + amount);
+                    user.commitTransaction(); // Now we save the changes.
                     listener.requestProcessed();
                 } catch (NumberFormatException ex) {
                     listener.requestFailed("Invalid Amount");
@@ -695,6 +696,7 @@ public class PlayerManager
                         return;
                     }
                     user.setScrip(Math.max(user.getScrip() - amount, 0));
+                    user.commitTransaction(); // Now we save the changes.
                     listener.requestProcessed();
                 } catch (NumberFormatException ex) {
                     listener.requestFailed("Invalid Amount");
@@ -702,6 +704,7 @@ public class PlayerManager
                 break;
             case AdminDialog.RESET_SCRIP:
                 user.setScrip(0);
+                user.commitTransaction(); // Now we save the changes.
                 listener.requestProcessed();
                 break;
             case AdminDialog.GRANT_BADGE: case AdminDialog.REMOVE_BADGE:
@@ -738,6 +741,7 @@ public class PlayerManager
                         }
                     }
                 }
+                user.commitTransaction();
                 listener.requestProcessed();
 
                 break;
@@ -752,6 +756,7 @@ public class PlayerManager
                 for (Comparable<?> key : toRemove) {
                     user.removeFromInventory(key);
                 }
+                user.commitTransaction(); // Now we save the changes.
                 listener.requestProcessed();
                 break;
         }

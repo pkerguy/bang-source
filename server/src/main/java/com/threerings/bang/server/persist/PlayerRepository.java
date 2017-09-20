@@ -30,7 +30,6 @@ import com.samskivert.jdbc.JORARepository;
 import com.samskivert.jdbc.jora.FieldMask;
 import com.samskivert.jdbc.jora.Table;
 
-import com.threerings.bang.server.ServerConfig;
 import com.threerings.util.Name;
 
 import com.threerings.bang.avatar.data.Look;
@@ -252,10 +251,6 @@ public class PlayerRepository extends JORARepository
     public void spendScrip (int playerId, int amount)
         throws PersistenceException
     {
-        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
-        {
-            return;
-        }
         updateScrip("PLAYER_ID = " + playerId + " and SCRIP >= " + amount, amount, "spend");
     }
 
@@ -487,10 +482,6 @@ public class PlayerRepository extends JORARepository
     protected void updateScrip (String where, int amount, String type)
         throws PersistenceException
     {
-        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
-        {
-            return;
-        }
         if (amount <= 0) {
             throw new PersistenceException(
                 "Illegal scrip " + type + " [where=" + where + ", amount=" + amount + "]");

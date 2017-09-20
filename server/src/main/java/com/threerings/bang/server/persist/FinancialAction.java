@@ -266,7 +266,7 @@ public abstract class FinancialAction extends Invoker.Unit
         switch (DeploymentConfig.getPaymentType()) {
         default:
         case COINS:
-            if (_user.coins < _coinCost) {
+            if (_user.getCoins() < _coinCost) {
                 return BangCodes.E_INSUFFICIENT_COINS;
             }
             break;
@@ -288,7 +288,9 @@ public abstract class FinancialAction extends Invoker.Unit
         try {
             _user.setScrip(_user.scrip - _scripCost);
             if (DeploymentConfig.usesCoins()) {
-                _user.setCoins(_user.coins - _coinCost);
+                String desc = getCoinDescrip();
+                _user.spendCoins(_coinCost, desc == null ? "Unknown_" + getClass().getName() : desc);
+                //_user.setCoins(_user.getCoins() - _coinCost);
             }
         } finally {
             _user.commitTransaction();
@@ -304,7 +306,9 @@ public abstract class FinancialAction extends Invoker.Unit
         try {
             _user.setScrip(_user.scrip + _scripCost);
             if (DeploymentConfig.usesCoins()) {
-                _user.setCoins(_user.coins + _coinCost);
+                String desc = getCoinDescrip();
+                _user.addCoins(_coinCost, desc == null ? "Unknown_" + getClass().getName() : desc);
+                //_user.setCoins(_user.getCoins() + _coinCost);
             }
         } finally {
             _user.commitTransaction();
@@ -343,14 +347,17 @@ public abstract class FinancialAction extends Invoker.Unit
     protected boolean spendCoins (int resId)
         throws PersistenceException
     {
-        //return _coinmgr.getCoinRepository().spendCoins(resId, getCoinType(), getCoinDescrip());
-        if(_user.coins < resId)
+        String desc = getCoinDescrip();
+        return _user.spendCoins(resId, desc == null ? "Unknown_" + getClass().getName() : desc);
+
+        /*//return _coinmgr.getCoinRepository().spendCoins(resId, getCoinType(), getCoinDescrip());
+        if(_user.getCoins() < resId)
         {
             return false; // They don't have the money
         }
-        _user.setCoins(_user.coins - resId);
+        _user.setCoins(_user.getCoins() - resId);
 
-        return true;
+        return true;*/
     }
 
     /**

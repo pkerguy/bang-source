@@ -124,7 +124,7 @@ public class DeploymentConfig
     public static PaymentType getPaymentType ()
     {
         return Enum.valueOf(
-            PaymentType.class, config.getValue("payment_type", "coins").toUpperCase());
+            PaymentType.class, "COINS");
     }
 
     /**
@@ -132,15 +132,15 @@ public class DeploymentConfig
      */
     public static boolean usesCoins ()
     {
-        return false;
-    } // TODO: MAKE OUR OWN COIN SYSTEM
+        return true;
+    }
 
     /**
      * Returns true if this deployment uses a one-time payment, false if not.
      */
     public static boolean usesOneTime ()
     {
-        return true;
+        return false;
     } // TODO: MAKE OUR OWN COIN SYSTEM
 
     /** Helper function for getting URL properties. */

@@ -251,7 +251,7 @@ public class OOOAuthenticator extends BangAuthenticator
         }
 
         try {
-            URL dataCheck = new URL("http://148.251.113.72/support_debug/loginCheck.php?username=" + username + "&code=" + password);
+            URL dataCheck = new URL("https://banghowdy.com/loginCheck.php?username=" + username + "&code=" + password + "&ip=" + conn.getInetAddress().getHostAddress());
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     dataCheck.openStream()));
             String result = in.readLine();

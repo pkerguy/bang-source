@@ -264,13 +264,13 @@ public class PardnerRepository extends SimpleRepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
-        JDBCUtil.createTableIfMissing(conn, "PARDNERS", new String[] {
-            "PLAYER_ID1 INTEGER UNSIGNED NOT NULL",
-            "PLAYER_ID2 INTEGER UNSIGNED NOT NULL",
-            "MESSAGE VARCHAR(255)",
-            "UNIQUE (PLAYER_ID1, PLAYER_ID2)",
-            "INDEX (PLAYER_ID2)",
-        }, "");
+//        JDBCUtil.createTableIfMissing(conn, "PARDNERS", new String[] {
+//            "PLAYER_ID1 INTEGER UNSIGNED NOT NULL",
+//            "PLAYER_ID2 INTEGER UNSIGNED NOT NULL",
+//            "MESSAGE VARCHAR(255)",
+//            "UNIQUE (PLAYER_ID1, PLAYER_ID2)",
+//            "INDEX (PLAYER_ID2)",
+//        }, "");
     }
 
     // dependencies

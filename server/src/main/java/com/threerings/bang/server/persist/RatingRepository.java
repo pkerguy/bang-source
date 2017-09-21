@@ -543,58 +543,58 @@ public class RatingRepository extends SimpleRepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
-        JDBCUtil.createTableIfMissing(conn, "RATINGS", new String[] {
-            "PLAYER_ID INTEGER NOT NULL",
-            "SCENARIO VARCHAR(2) NOT NULL",
-            "WEEK DATE NULL DEFAULT NULL",
-            "RATING SMALLINT NOT NULL",
-            "EXPERIENCE INTEGER NOT NULL",
-            "LAST_PLAYED TIMESTAMP NOT NULL",
-            "UNIQUE INDEX (PLAYER_ID, SCENARIO, WEEK)",
-        }, "");
-        JDBCUtil.createTableIfMissing(conn, "RANKS", new String[] {
-            "RATING_TYPE VARCHAR(2) NOT NULL",
-            "RANK SMALLINT NOT NULL",
-            "WEEK DATE NULL DEFAULT NULL",
-            "LEVEL INTEGER NOT NULL",
-            "UNIQUE INDEX (RATING_TYPE, RANK, WEEK)",
-        }, "");
-        JDBCUtil.createTableIfMissing(conn, "SCORE_TRACKERS", new String[] {
-            "SCENARIO VARCHAR(2) NOT NULL",
-            "PLAYERS INTEGER NOT NULL",
-            "DATA BLOB NOT NULL",
-            "PRIMARY KEY (SCENARIO, PLAYERS)",
-        }, "");
-
-        // TEMP: add our LAST_PLAYED column, change RANKS to support non-scenario
-        // ratings
-        if (!JDBCUtil.tableContainsColumn(conn, "RATINGS", "LAST_PLAYED")) {
-            JDBCUtil.addColumn(
-                conn, "RATINGS", "LAST_PLAYED", "TIMESTAMP NOT NULL", null);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("update RATINGS set LAST_PLAYED = " +
-                               "DATE_SUB(NOW(), INTERVAL 1 WEEK)");
-            stmt.close();
-        }
-        if (!JDBCUtil.tableContainsColumn(conn, "RANKS", "RATING_TYPE")) {
-            JDBCUtil.changeColumn(conn, "RANKS", "SCENARIO", "RATING_TYPE VARCHAR(2) NOT NULL");
-            JDBCUtil.changeColumn(conn, "RANKS", "LEVEL", "LEVEL INTEGER NOT NULL");
-        }
-        if (!JDBCUtil.tableContainsColumn(conn, "RATINGS", "WEEK")) {
-            JDBCUtil.addColumn(conn, "RATINGS", "WEEK", "DATE NULL DEFAULT NULL", "SCENARIO");
-            JDBCUtil.dropPrimaryKey(conn, "RATINGS");
-            Statement stmt = conn.createStatement();
-            stmt.execute("alter table RATINGS add UNIQUE INDEX (PLAYER_ID, SCENARIO, WEEK)");
-            stmt.close();
-        }
-        if (!JDBCUtil.tableContainsColumn(conn, "RANKS", "WEEK")) {
-            JDBCUtil.addColumn(conn, "RANKS", "WEEK", "DATE NULL DEFAULT NULL", "RANK");
-            JDBCUtil.dropPrimaryKey(conn, "RANKS");
-            Statement stmt = conn.createStatement();
-            stmt.execute("alter table RANKS add UNIQUE INDEX (RATING_TYPE, RANK, WEEK)");
-            stmt.close();
-        }
-        // END TEMP
+//        JDBCUtil.createTableIfMissing(conn, "RATINGS", new String[] {
+//            "PLAYER_ID INTEGER NOT NULL",
+//            "SCENARIO VARCHAR(2) NOT NULL",
+//            "WEEK DATE NULL DEFAULT NULL",
+//            "RATING SMALLINT NOT NULL",
+//            "EXPERIENCE INTEGER NOT NULL",
+//            "LAST_PLAYED TIMESTAMP NOT NULL",
+//            "UNIQUE INDEX (PLAYER_ID, SCENARIO, WEEK)",
+//        }, "");
+//        JDBCUtil.createTableIfMissing(conn, "RANKS", new String[] {
+//            "RATING_TYPE VARCHAR(2) NOT NULL",
+//            "RANK SMALLINT NOT NULL",
+//            "WEEK DATE NULL DEFAULT NULL",
+//            "LEVEL INTEGER NOT NULL",
+//            "UNIQUE INDEX (RATING_TYPE, RANK, WEEK)",
+//        }, "");
+//        JDBCUtil.createTableIfMissing(conn, "SCORE_TRACKERS", new String[] {
+//            "SCENARIO VARCHAR(2) NOT NULL",
+//            "PLAYERS INTEGER NOT NULL",
+//            "DATA BLOB NOT NULL",
+//            "PRIMARY KEY (SCENARIO, PLAYERS)",
+//        }, "");
+//
+//        // TEMP: add our LAST_PLAYED column, change RANKS to support non-scenario
+//        // ratings
+//        if (!JDBCUtil.tableContainsColumn(conn, "RATINGS", "LAST_PLAYED")) {
+//            JDBCUtil.addColumn(
+//                conn, "RATINGS", "LAST_PLAYED", "TIMESTAMP NOT NULL", null);
+//            Statement stmt = conn.createStatement();
+//            stmt.executeUpdate("update RATINGS set LAST_PLAYED = " +
+//                               "DATE_SUB(NOW(), INTERVAL 1 WEEK)");
+//            stmt.close();
+//        }
+//        if (!JDBCUtil.tableContainsColumn(conn, "RANKS", "RATING_TYPE")) {
+//            JDBCUtil.changeColumn(conn, "RANKS", "SCENARIO", "RATING_TYPE VARCHAR(2) NOT NULL");
+//            JDBCUtil.changeColumn(conn, "RANKS", "LEVEL", "LEVEL INTEGER NOT NULL");
+//        }
+//        if (!JDBCUtil.tableContainsColumn(conn, "RATINGS", "WEEK")) {
+//            JDBCUtil.addColumn(conn, "RATINGS", "WEEK", "DATE NULL DEFAULT NULL", "SCENARIO");
+//            JDBCUtil.dropPrimaryKey(conn, "RATINGS");
+//            Statement stmt = conn.createStatement();
+//            stmt.execute("alter table RATINGS add UNIQUE INDEX (PLAYER_ID, SCENARIO, WEEK)");
+//            stmt.close();
+//        }
+//        if (!JDBCUtil.tableContainsColumn(conn, "RANKS", "WEEK")) {
+//            JDBCUtil.addColumn(conn, "RANKS", "WEEK", "DATE NULL DEFAULT NULL", "RANK");
+//            JDBCUtil.dropPrimaryKey(conn, "RANKS");
+//            Statement stmt = conn.createStatement();
+//            stmt.execute("alter table RANKS add UNIQUE INDEX (RATING_TYPE, RANK, WEEK)");
+//            stmt.close();
+//        }
+//        // END TEMP
     }
 
     /** Extends {@link RankLevels} with data collected using calculations */

@@ -807,85 +807,85 @@ public class GangRepository extends JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
-        JDBCUtil.createTableIfMissing(conn, "GANGS", new String[] {
-            "GANG_ID INTEGER NOT NULL AUTO_INCREMENT",
-            "NAME VARCHAR(64) NOT NULL",
-            "NORMALIZED VARCHAR(64) NOT NULL UNIQUE",
-            "FOUNDED DATETIME NOT NULL",
-            "STATEMENT TEXT NOT NULL",
-            "URL VARCHAR(255) NOT NULL",
-            "WEIGHT_CLASS TINYINT NOT NULL",
-            "NOTORIETY INTEGER NOT NULL",
-            "LAST_PLAYED DATETIME NOT NULL",
-            "SCRIP INTEGER NOT NULL",
-            "ACES INTEGER NOT NULL",
-            "BUCKLE BLOB NOT NULL",
-            "BUCKLE_PRINT BLOB NOT NULL",
-            "PRIMARY KEY (GANG_ID)",
-        }, "");
-
-        JDBCUtil.createTableIfMissing(conn, "GANG_MEMBERS", new String[] {
-            "PLAYER_ID INTEGER NOT NULL",
-            "GANG_ID INTEGER NOT NULL",
-            "RANK TINYINT NOT NULL",
-            "COMMAND_ORDER INTEGER NOT NULL",
-            "LEADER_LEVEL INTEGER NOT NULL",
-            "LAST_LEADER_COMMAND DATETIME NOT NULL DEFAULT \"2005-01-01\"",
-            "JOINED DATETIME NOT NULL",
-            "NOTORIETY INTEGER NOT NULL",
-            "SCRIP_DONATED INTEGER NOT NULL",
-            "COINS_DONATED INTEGER NOT NULL",
-            "TITLE INTEGER NOT NULL",
-            "PRIMARY KEY (PLAYER_ID)",
-            "INDEX (GANG_ID)",
-        }, "");
-
-        // TEMP: add command order, scrip donated, coins donated columns
-        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "COMMAND_ORDER", "INTEGER NOT NULL", "RANK");
-        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "SCRIP_DONATED", "INTEGER NOT NULL", "NOTORIETY");
-        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "COINS_DONATED", "INTEGER NOT NULL",
-            "SCRIP_DONATED");
-        // END TEMP
-
-        // TEMP: add title
-        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "TITLE", "INTEGER NOT NULL", "COINS_DONATED");
-        // END TEMP
-
-        // TEMP: add leader tracking
-        if (!JDBCUtil.tableContainsColumn(conn, "GANG_MEMBERS", "LEADER_LEVEL")) {
-            JDBCUtil.addColumn(
-                    conn, "GANG_MEMBERS", "LEADER_LEVEL", "INTEGER NOT NULL", "COMMAND_ORDER");
-            JDBCUtil.addColumn(conn, "GANG_MEMBERS", "LAST_LEADER_COMMAND",
-                    "DATETIME NOT NULL DEFAULT \"2005-01-01\"", "LEADER_LEVEL");
-            update("update GANG_MEMBERS set LEADER_LEVEL = 10 where RANK = " +
-                    GangCodes.LEADER_RANK);
-        }
-        // END TEMP
-
-        JDBCUtil.createTableIfMissing(conn, "GANG_INVITES", new String[] {
-            "INVITER_ID INTEGER NOT NULL",
-            "GANG_ID INTEGER NOT NULL",
-            "PLAYER_ID INTEGER NOT NULL",
-            "MESSAGE VARCHAR(255) NOT NULL",
-            "UNIQUE (GANG_ID, PLAYER_ID)",
-            "INDEX (PLAYER_ID)",
-        }, "");
-
-        JDBCUtil.createTableIfMissing(conn, "GANG_HISTORY", new String[] {
-            "ENTRY_ID INTEGER NOT NULL AUTO_INCREMENT",
-            "GANG_ID INTEGER NOT NULL",
-            "RECORDED TIMESTAMP NOT NULL",
-            "DESCRIPTION TEXT NOT NULL",
-            "PRIMARY KEY (ENTRY_ID)",
-            "INDEX (GANG_ID)",
-        }, "");
-
-        JDBCUtil.createTableIfMissing(conn, "GANG_OUTFITS", new String[] {
-            "GANG_ID INTEGER NOT NULL",
-            "ARTICLE VARCHAR(64) NOT NULL",
-            "ZATIONS INTEGER NOT NULL",
-            "INDEX (GANG_ID)",
-        }, "");
+//        JDBCUtil.createTableIfMissing(conn, "GANGS", new String[] {
+//            "GANG_ID INTEGER NOT NULL AUTO_INCREMENT",
+//            "NAME VARCHAR(64) NOT NULL",
+//            "NORMALIZED VARCHAR(64) NOT NULL UNIQUE",
+//            "FOUNDED DATETIME NOT NULL",
+//            "STATEMENT TEXT NOT NULL",
+//            "URL VARCHAR(255) NOT NULL",
+//            "WEIGHT_CLASS TINYINT NOT NULL",
+//            "NOTORIETY INTEGER NOT NULL",
+//            "LAST_PLAYED DATETIME NOT NULL",
+//            "SCRIP INTEGER NOT NULL",
+//            "ACES INTEGER NOT NULL",
+//            "BUCKLE BLOB NOT NULL",
+//            "BUCKLE_PRINT BLOB NOT NULL",
+//            "PRIMARY KEY (GANG_ID)",
+//        }, "");
+//
+//        JDBCUtil.createTableIfMissing(conn, "GANG_MEMBERS", new String[] {
+//            "PLAYER_ID INTEGER NOT NULL",
+//            "GANG_ID INTEGER NOT NULL",
+//            "RANK TINYINT NOT NULL",
+//            "COMMAND_ORDER INTEGER NOT NULL",
+//            "LEADER_LEVEL INTEGER NOT NULL",
+//            "LAST_LEADER_COMMAND DATETIME NOT NULL DEFAULT \"2005-01-01\"",
+//            "JOINED DATETIME NOT NULL",
+//            "NOTORIETY INTEGER NOT NULL",
+//            "SCRIP_DONATED INTEGER NOT NULL",
+//            "COINS_DONATED INTEGER NOT NULL",
+//            "TITLE INTEGER NOT NULL",
+//            "PRIMARY KEY (PLAYER_ID)",
+//            "INDEX (GANG_ID)",
+//        }, "");
+//
+//        // TEMP: add command order, scrip donated, coins donated columns
+//        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "COMMAND_ORDER", "INTEGER NOT NULL", "RANK");
+//        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "SCRIP_DONATED", "INTEGER NOT NULL", "NOTORIETY");
+//        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "COINS_DONATED", "INTEGER NOT NULL",
+//            "SCRIP_DONATED");
+//        // END TEMP
+//
+//        // TEMP: add title
+//        JDBCUtil.addColumn(conn, "GANG_MEMBERS", "TITLE", "INTEGER NOT NULL", "COINS_DONATED");
+//        // END TEMP
+//
+//        // TEMP: add leader tracking
+//        if (!JDBCUtil.tableContainsColumn(conn, "GANG_MEMBERS", "LEADER_LEVEL")) {
+//            JDBCUtil.addColumn(
+//                    conn, "GANG_MEMBERS", "LEADER_LEVEL", "INTEGER NOT NULL", "COMMAND_ORDER");
+//            JDBCUtil.addColumn(conn, "GANG_MEMBERS", "LAST_LEADER_COMMAND",
+//                    "DATETIME NOT NULL DEFAULT \"2005-01-01\"", "LEADER_LEVEL");
+//            update("update GANG_MEMBERS set LEADER_LEVEL = 10 where RANK = " +
+//                    GangCodes.LEADER_RANK);
+//        }
+//        // END TEMP
+//
+//        JDBCUtil.createTableIfMissing(conn, "GANG_INVITES", new String[] {
+//            "INVITER_ID INTEGER NOT NULL",
+//            "GANG_ID INTEGER NOT NULL",
+//            "PLAYER_ID INTEGER NOT NULL",
+//            "MESSAGE VARCHAR(255) NOT NULL",
+//            "UNIQUE (GANG_ID, PLAYER_ID)",
+//            "INDEX (PLAYER_ID)",
+//        }, "");
+//
+//        JDBCUtil.createTableIfMissing(conn, "GANG_HISTORY", new String[] {
+//            "ENTRY_ID INTEGER NOT NULL AUTO_INCREMENT",
+//            "GANG_ID INTEGER NOT NULL",
+//            "RECORDED TIMESTAMP NOT NULL",
+//            "DESCRIPTION TEXT NOT NULL",
+//            "PRIMARY KEY (ENTRY_ID)",
+//            "INDEX (GANG_ID)",
+//        }, "");
+//
+//        JDBCUtil.createTableIfMissing(conn, "GANG_OUTFITS", new String[] {
+//            "GANG_ID INTEGER NOT NULL",
+//            "ARTICLE VARCHAR(64) NOT NULL",
+//            "ZATIONS INTEGER NOT NULL",
+//            "INDEX (GANG_ID)",
+//        }, "");
     }
 
     @Override // documentation inherited

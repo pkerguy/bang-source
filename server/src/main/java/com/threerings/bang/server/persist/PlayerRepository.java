@@ -504,75 +504,75 @@ public class PlayerRepository extends JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
-        JDBCUtil.createTableIfMissing(conn, "PLAYERS", new String[] {
-            "PLAYER_ID INTEGER NOT NULL AUTO_INCREMENT",
-            "ACCOUNT_NAME VARCHAR(64) NOT NULL",
-            "HANDLE VARCHAR(64)",
-            "NORMALIZED VARCHAR(64) UNIQUE",
-            "SCRIP INTEGER NOT NULL",
-            "LOOK VARCHAR(" + Look.MAX_NAME_LENGTH + ") NOT NULL",
-            "VICTORY_LOOK VARCHAR(" + Look.MAX_NAME_LENGTH + ") NOT NULL",
-            "WANTED_LOOK VARCHAR(" + Look.MAX_NAME_LENGTH + ") NOT NULL",
-            "TOWN_ID VARCHAR(64) NOT NULL",
-            "NEXT_TOWN DATETIME DEFAULT NULL",
-            "CREATED DATETIME NOT NULL",
-            "SESSIONS INTEGER NOT NULL",
-            "SESSION_MINUTES INTEGER NOT NULL",
-            "LAST_SESSION DATETIME NOT NULL",
-            "FLAGS INTEGER NOT NULL",
-            "BAN_EXPIRES DATETIME DEFAULT NULL",
-            "WARNING VARCHAR(255)",
-            "PRIMARY KEY (PLAYER_ID)",
-            "UNIQUE (ACCOUNT_NAME)",
-            "INDEX (LAST_SESSION)",
-        }, "");
-
-        JDBCUtil.createTableIfMissing(conn, "FOLKS", new String[] {
-            "PLAYER_ID INTEGER NOT NULL",
-            "TARGET_ID INTEGER NOT NULL",
-            "OPINION TINYINT NOT NULL",
-            "KEY (PLAYER_ID)",
-            "UNIQUE (PLAYER_ID, TARGET_ID)",
-        }, "");
-
-        // TEMP: remove gang fields
-        JDBCUtil.dropColumn(conn, "PLAYERS", "GANG_ID");
-        JDBCUtil.dropColumn(conn, "PLAYERS", "GANG_RANK");
-        JDBCUtil.dropColumn(conn, "PLAYERS", "JOINED_GANG");
-        // END TEMP
-
-        // TEMP: add normalized column
-        if (!JDBCUtil.tableContainsColumn(conn, "PLAYERS", "NORMALIZED")) {
-            JDBCUtil.addColumn(conn, "PLAYERS", "NORMALIZED", "VARCHAR(64) UNIQUE", "HANDLE");
-            Statement stmt = conn.createStatement();
-            try {
-                stmt.executeUpdate("drop index HANDLE on PLAYERS");
-                // NOTE: all collisions must be removed by hand before this is run or it will fail
-                stmt.executeUpdate(
-                    "update PLAYERS set NORMALIZED = LOWER(REPLACE(HANDLE, \" \", \"\")) " +
-                    "where HANDLE is NOT NULL");
-            } finally {
-                stmt.close();
-            }
-        }
-        // END TEMP
-
-        // TEMP: add next town timestamp column
-        if (!JDBCUtil.tableContainsColumn(conn, "PLAYERS", "NEXT_TOWN")) {
-            JDBCUtil.addColumn(conn, "PLAYERS", "NEXT_TOWN", "DATETIME DEFAULT NULL", "TOWN_ID");
-        }
-        // ENT TEMP
-
-        // TEMP: add PLAYERS.LAST_SESSION index
-        JDBCUtil.addIndexToTable(conn, "PLAYERS", "LAST_SESSION", "LAST_SESSION_INDEX");
-        // END TEMP
-
-        // TEMP: add temp ban columns
-        if (!JDBCUtil.tableContainsColumn(conn, "PLAYERS", "BAN_EXPIRES")) {
-            JDBCUtil.addColumn(conn, "PLAYERS", "BAN_EXPIRES", "DATETIME DEFAULT NULL", "FLAGS");
-            JDBCUtil.addColumn(conn, "PLAYERS", "WARNING", "VARCHAR(255)", "BAN_EXPIRES");
-        }
-        // END TEMP
+//        JDBCUtil.createTableIfMissing(conn, "PLAYERS", new String[] {
+//            "PLAYER_ID INTEGER NOT NULL AUTO_INCREMENT",
+//            "ACCOUNT_NAME VARCHAR(64) NOT NULL",
+//            "HANDLE VARCHAR(64)",
+//            "NORMALIZED VARCHAR(64) UNIQUE",
+//            "SCRIP INTEGER NOT NULL",
+//            "LOOK VARCHAR(" + Look.MAX_NAME_LENGTH + ") NOT NULL",
+//            "VICTORY_LOOK VARCHAR(" + Look.MAX_NAME_LENGTH + ") NOT NULL",
+//            "WANTED_LOOK VARCHAR(" + Look.MAX_NAME_LENGTH + ") NOT NULL",
+//            "TOWN_ID VARCHAR(64) NOT NULL",
+//            "NEXT_TOWN DATETIME DEFAULT NULL",
+//            "CREATED DATETIME NOT NULL",
+//            "SESSIONS INTEGER NOT NULL",
+//            "SESSION_MINUTES INTEGER NOT NULL",
+//            "LAST_SESSION DATETIME NOT NULL",
+//            "FLAGS INTEGER NOT NULL",
+//            "BAN_EXPIRES DATETIME DEFAULT NULL",
+//            "WARNING VARCHAR(255)",
+//            "PRIMARY KEY (PLAYER_ID)",
+//            "UNIQUE (ACCOUNT_NAME)",
+//            "INDEX (LAST_SESSION)",
+//        }, "");
+//
+//        JDBCUtil.createTableIfMissing(conn, "FOLKS", new String[] {
+//            "PLAYER_ID INTEGER NOT NULL",
+//            "TARGET_ID INTEGER NOT NULL",
+//            "OPINION TINYINT NOT NULL",
+//            "KEY (PLAYER_ID)",
+//            "UNIQUE (PLAYER_ID, TARGET_ID)",
+//        }, "");
+//
+//        // TEMP: remove gang fields
+//        JDBCUtil.dropColumn(conn, "PLAYERS", "GANG_ID");
+//        JDBCUtil.dropColumn(conn, "PLAYERS", "GANG_RANK");
+//        JDBCUtil.dropColumn(conn, "PLAYERS", "JOINED_GANG");
+//        // END TEMP
+//
+//        // TEMP: add normalized column
+//        if (!JDBCUtil.tableContainsColumn(conn, "PLAYERS", "NORMALIZED")) {
+//            JDBCUtil.addColumn(conn, "PLAYERS", "NORMALIZED", "VARCHAR(64) UNIQUE", "HANDLE");
+//            Statement stmt = conn.createStatement();
+//            try {
+//                stmt.executeUpdate("drop index HANDLE on PLAYERS");
+//                // NOTE: all collisions must be removed by hand before this is run or it will fail
+//                stmt.executeUpdate(
+//                    "update PLAYERS set NORMALIZED = LOWER(REPLACE(HANDLE, \" \", \"\")) " +
+//                    "where HANDLE is NOT NULL");
+//            } finally {
+//                stmt.close();
+//            }
+//        }
+//        // END TEMP
+//
+//        // TEMP: add next town timestamp column
+//        if (!JDBCUtil.tableContainsColumn(conn, "PLAYERS", "NEXT_TOWN")) {
+//            JDBCUtil.addColumn(conn, "PLAYERS", "NEXT_TOWN", "DATETIME DEFAULT NULL", "TOWN_ID");
+//        }
+//        // ENT TEMP
+//
+//        // TEMP: add PLAYERS.LAST_SESSION index
+//        JDBCUtil.addIndexToTable(conn, "PLAYERS", "LAST_SESSION", "LAST_SESSION_INDEX");
+//        // END TEMP
+//
+//        // TEMP: add temp ban columns
+//        if (!JDBCUtil.tableContainsColumn(conn, "PLAYERS", "BAN_EXPIRES")) {
+//            JDBCUtil.addColumn(conn, "PLAYERS", "BAN_EXPIRES", "DATETIME DEFAULT NULL", "FLAGS");
+//            JDBCUtil.addColumn(conn, "PLAYERS", "WARNING", "VARCHAR(255)", "BAN_EXPIRES");
+//        }
+//        // END TEMP
     }
 
     @Override // documentation inherited

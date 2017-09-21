@@ -531,16 +531,16 @@ public class ItemRepository extends SimpleRepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
-        JDBCUtil.createTableIfMissing(conn, "ITEMS", new String[] {
-            "ITEM_ID INTEGER NOT NULL AUTO_INCREMENT",
-            "GANG_OWNED BOOLEAN NOT NULL",
-            "OWNER_ID INTEGER NOT NULL",
-            "EXPIRES DATE DEFAULT NULL",
-            "GANG_ID INTEGER NOT NULL",
-            "ITEM_TYPE INTEGER NOT NULL",
-            "ITEM_DATA BLOB NOT NULL",
-            "PRIMARY KEY (ITEM_ID)",
-            "KEY (OWNER_ID)",
-        }, "");
+//        JDBCUtil.createTableIfMissing(conn, "ITEMS", new String[] {
+//            "ITEM_ID INTEGER NOT NULL AUTO_INCREMENT",
+//            "GANG_OWNED BOOLEAN NOT NULL",
+//            "OWNER_ID INTEGER NOT NULL",
+//            "EXPIRES DATE DEFAULT NULL",
+//            "GANG_ID INTEGER NOT NULL",
+//            "ITEM_TYPE INTEGER NOT NULL",
+//            "ITEM_DATA BLOB NOT NULL",
+//            "PRIMARY KEY (ITEM_ID)",
+//            "KEY (OWNER_ID)",
+//        }, "");
     }
 }

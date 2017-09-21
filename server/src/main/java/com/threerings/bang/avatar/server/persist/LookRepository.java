@@ -246,18 +246,18 @@ public class LookRepository extends SimpleRepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
-        JDBCUtil.createTableIfMissing(conn, "LOOKS", new String[] {
-            "PLAYER_ID INTEGER NOT NULL",
-            "NAME VARCHAR(24) NOT NULL",
-            "ASPECTS BLOB NOT NULL",
-            "ARTICLES BLOB NOT NULL",
-            "KEY (PLAYER_ID)",
-        }, "");
-
-        JDBCUtil.createTableIfMissing(conn, "SNAPSHOTS", new String[] {
-            "PLAYER_ID INTEGER NOT NULL",
-            "AVATAR BLOB NOT NULL",
-            "PRIMARY KEY (PLAYER_ID)",
-        }, "");
+//        JDBCUtil.createTableIfMissing(conn, "LOOKS", new String[] {
+//            "PLAYER_ID INTEGER NOT NULL",
+//            "NAME VARCHAR(24) NOT NULL",
+//            "ASPECTS BLOB NOT NULL",
+//            "ARTICLES BLOB NOT NULL",
+//            "KEY (PLAYER_ID)",
+//        }, "");
+//
+//        JDBCUtil.createTableIfMissing(conn, "SNAPSHOTS", new String[] {
+//            "PLAYER_ID INTEGER NOT NULL",
+//            "AVATAR BLOB NOT NULL",
+//            "PRIMARY KEY (PLAYER_ID)",
+//        }, "");
     }
 }

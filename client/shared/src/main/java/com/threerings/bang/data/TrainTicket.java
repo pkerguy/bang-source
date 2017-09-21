@@ -46,7 +46,7 @@ public class TrainTicket extends Item
      */
     public int getScripCost ()
     {
-        return StationCodes.TICKET_SCRIP[getTownIndex()];
+        return -1; // Must use coins to get the other town
     }
 
     /**
@@ -54,9 +54,7 @@ public class TrainTicket extends Item
      */
     public int getCoinCost (PlayerObject user)
     {
-        int ptidx = Math.max(0, getTownIndex()-1);
-        return (DeploymentConfig.usesOneTime() || user.holdsGoldPass(BangCodes.TOWN_IDS[ptidx])) ?
-            0 : StationCodes.TICKET_COINS[getTownIndex()];
+        return 2;
     }
 
     @Override // documentation inherited

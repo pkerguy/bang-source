@@ -1059,7 +1059,6 @@ public class Badge extends Item
                 Badge badge = type.newBadge();
                 badge.setOwnerId(user.playerId);
                 user.addToInventory(badge);
-                user.commitTransaction(); // Now we save the changes.
                 continue;
             }
             if (!type.qualifies(user)) {
@@ -1072,7 +1071,6 @@ public class Badge extends Item
             } else {
                 user.addToInventory(badge);
             }
-            user.commitTransaction(); // Now we save the changes.
         }
     }
 

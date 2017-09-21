@@ -291,7 +291,7 @@ public class BangServer extends CrowdServer
         }
 
         String initConfig = System.getProperty("init");
-        if(initConfig.equalsIgnoreCase("runtime"))
+        if(initConfig != null && initConfig.equalsIgnoreCase("runtime"))
         {
             RuntimeConfig.server.setAllowNewGames(true);
             RuntimeConfig.server.setAnonymousAccessEnabled(false);

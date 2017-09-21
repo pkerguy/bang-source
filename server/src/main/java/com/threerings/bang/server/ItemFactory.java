@@ -107,7 +107,7 @@ public class ItemFactory
         registerItemClass(FreeTicket.class);
         registerItemClass(WeightClassUpgrade.class);
         registerItemClass(BuckleUpgrade.class);
-        registerItemClass(GoldPass.class);
+        //registerItemClass(GoldPass.class);
         registerItemClass(ExchangePass.class);
         // end of registration (DO NOT CHANGE ORDER, SEE NOTE ABOVE)
     }

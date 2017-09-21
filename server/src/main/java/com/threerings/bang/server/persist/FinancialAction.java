@@ -289,7 +289,7 @@ public abstract class FinancialAction extends Invoker.Unit
             _user.setScrip(_user.scrip - _scripCost);
             if (DeploymentConfig.usesCoins()) {
                 String desc = getCoinDescrip();
-                _user.spendCoins(_coinCost, desc == null ? "Unknown_" + getClass().getName() : desc);
+                _user.spendCoins(_coinCost, desc);
                 //_user.setCoins(_user.getCoins() - _coinCost);
             }
         } finally {
@@ -307,7 +307,8 @@ public abstract class FinancialAction extends Invoker.Unit
             _user.setScrip(_user.scrip + _scripCost);
             if (DeploymentConfig.usesCoins()) {
                 String desc = getCoinDescrip();
-                _user.addCoins(_coinCost, desc == null ? "Unknown_" + getClass().getName() : desc);
+                if(desc == null) desc = "Unknown";
+                _user.addCoins(_coinCost, desc);
                 //_user.setCoins(_user.getCoins() + _coinCost);
             }
         } finally {
@@ -348,7 +349,8 @@ public abstract class FinancialAction extends Invoker.Unit
         throws PersistenceException
     {
         String desc = getCoinDescrip();
-        return _user.spendCoins(resId, desc == null ? "Unknown_" + getClass().getName() : desc);
+        if(desc == null) desc = "Unknown";
+        return _user.spendCoins(resId, desc);
 
         /*//return _coinmgr.getCoinRepository().spendCoins(resId, getCoinType(), getCoinDescrip());
         if(_user.getCoins() < resId)

@@ -117,15 +117,15 @@ public class TownView extends BWindow
         }
 
         // register the commands for our various shops
-        Enumeration<?> iter = props.propertyNames();
-        while (iter.hasMoreElements()) {
-            String command = (String)iter.nextElement();
-            // disable the bank on non-coin deployments
-            if (!DeploymentConfig.usesCoins() && command.equals("bank")) {
-                continue;
-            }
-            _commands.put(props.getProperty(command), command);
-        }
+//        Enumeration<?> iter = props.propertyNames();
+//        while (iter.hasMoreElements()) {
+//            String command = (String)iter.nextElement();
+//            // disable the bank on non-coin deployments
+//            if (!DeploymentConfig.usesCoins() && command.equals("bank")) {
+//                continue;
+//            }
+//            _commands.put(props.getProperty(command), command);
+//        }
 
         // create the town display
         add(_bview = new TownBoardView(ctx));

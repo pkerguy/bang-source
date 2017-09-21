@@ -225,22 +225,23 @@ public class ItemRepository extends SimpleRepository
     public boolean holdsGoldPass (final int playerId)
         throws PersistenceException
     {
-        return execute(new Operation<Boolean>() {
-            public Boolean invoke (Connection conn, DatabaseLiaison liaison)
-                throws SQLException, PersistenceException
-            {
-                PreparedStatement stmt = conn.prepareStatement(
-                    "select count(*) from ITEMS where OWNER_ID = ? and ITEM_TYPE = ?");
-                try {
-                    stmt.setInt(1, playerId);
-                    stmt.setInt(2, ItemFactory.getType(GoldPass.class));
-                    return stmt.executeQuery().next();
-
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
+//        return execute(new Operation<Boolean>() {
+//            public Boolean invoke (Connection conn, DatabaseLiaison liaison)
+//                throws SQLException, PersistenceException
+//            {
+//                PreparedStatement stmt = conn.prepareStatement(
+//                    "select count(*) from ITEMS where OWNER_ID = ? and ITEM_TYPE = ?");
+//                try {
+//                    stmt.setInt(1, playerId);
+//                    stmt.setInt(2, ItemFactory.getType(GoldPass.class));
+//                    return stmt.executeQuery().next();
+//
+//                } finally {
+//                    JDBCUtil.close(stmt);
+//                }
+//            }
+//        });
+        return false;
     }
 
     /**

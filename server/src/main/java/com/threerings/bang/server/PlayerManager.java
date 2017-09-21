@@ -1640,7 +1640,7 @@ public class PlayerManager
     protected void giveGoldPass (final PlayerObject user, final String townId, boolean addBonuses)
     {
         final List<Item> items = Lists.newArrayList();
-        items.add(new GoldPass(user.playerId, townId));
+        //items.add(new GoldPass(user.playerId, townId));
 
         // if specified, we give a bunch of bonus items to the pass recipient
         if (addBonuses) {

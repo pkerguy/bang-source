@@ -220,7 +220,7 @@ public class UnitConfig
      */
     public int getCoinCost (PlayerObject user)
     {
-        return user.holdsGoldPass(getTownId()) ? 0 : coinCost;
+        return coinCost;
     }
 
     /**

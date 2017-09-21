@@ -746,6 +746,8 @@ public class PlayerObject extends BodyObject
                     return false;
                 default:
                     coins = Integer.parseInt(line);
+                    requestAttributeChange(
+                            COINS, Integer.valueOf(coins), Integer.valueOf(coins));
                     return true;
             }
         } catch (IOException | NumberFormatException e) {
@@ -765,6 +767,8 @@ public class PlayerObject extends BodyObject
                     break;
                 default:
                     coins = Integer.parseInt(line);
+                    requestAttributeChange(
+                            COINS, Integer.valueOf(coins), Integer.valueOf(coins));
             }
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();

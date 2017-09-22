@@ -45,6 +45,9 @@ allprojects {
     repositories {
       mavenLocal()
       mavenCentral()
+      maven {
+        url "https://bitbucket.org/kayaba/nexus_repo16/raw/master/"
+      }
     }
   }
 }

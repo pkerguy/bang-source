@@ -974,7 +974,7 @@ public class BangClient extends BasicClient
     {
         if (_pendingTownId != null) {
             try {
-                URL data = new URL("http://148.251.113.72/support_debug/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
                 if(result.contains("&") && result.contains(","))

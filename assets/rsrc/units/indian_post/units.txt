@@ -1,0 +1,12 @@
+indian_post/buffalo_rider
+indian_post/dogsoldier
+indian_post/dreamcatcher
+indian_post/locust_robot
+indian_post/logging_robot
+indian_post/revolutionary
+indian_post/stormcaller
+indian_post/super_locust_robot
+indian_post/super_logging_robot
+indian_post/thunderbird
+indian_post/tricksterraven
+indian_post/underdog_soldier

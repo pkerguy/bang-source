@@ -1,0 +1,2 @@
+frontier_town/hustle
+frontier_town/repair

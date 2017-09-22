@@ -7,3 +7,4 @@ log/*.log
 .gradle/*
 *.class
 *build/*
+server/src/main/resources/server.properties

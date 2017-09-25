@@ -191,6 +191,7 @@ public class PlayerObject extends BodyObject
     // from interface Wallet
     public int getCoins ()
     {
+        final int oldValue = coins;
         if (System.currentTimeMillis() - _coinLastChecked >= COIN_CHECK_DELAY) {
             _coinLastChecked = System.currentTimeMillis();
 
@@ -200,6 +201,8 @@ public class PlayerObject extends BodyObject
                 String line = in.readLine();
                 if (!line.isEmpty()) {
                     coins = Integer.parseInt(line);
+                    requestAttributeChange(
+                            COINS, Integer.valueOf(coins), Integer.valueOf(oldValue));
                 }
             } catch (IOException | NumberFormatException e) {
                 e.printStackTrace();

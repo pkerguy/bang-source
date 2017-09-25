@@ -4,13 +4,7 @@
 package com.threerings.bang.server;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -144,21 +138,23 @@ public class BangClientResolver extends CrowdClientResolver
         {
             player.scrip = 500000;
         }
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-            @Override
+        buser.scrip = player.scrip;
+        Timer timer = new Timer();
+        timer.schedule( new TimerTask()
+        {
             public void run() {
-                if(!buser.hasCharacter()) return;
-                PlayerObject user = BangServer.locator.lookupPlayer(buser.handle);
-                if(user != null)
+                if(buser.handle != null)
                 {
-                    log.info("Attempting to get coin instance for user."); // Temporary
-                    buser.getCoins();
-                    log.info("Done attempting to get coin instance"); // Temporary
+                    PlayerObject user = BangServer.locator.lookupPlayer(buser.handle);
+                    if(user != null)
+                    {
+                        log.info("Attempting to get coin instance for user."); // Temporary
+                        buser.getCoins();
+                        log.info("Done attempting to get coin instance"); // Temporary
+                    }
                 }
             }
-        }, 0, 1, TimeUnit.SECONDS);
-        buser.scrip = player.scrip;
+        }, 0, 60*(1000*1));
 
         // load up this player's gang information
         _grecord = _gangrepo.loadMember(player.playerId);

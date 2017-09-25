@@ -11,6 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -141,6 +144,16 @@ public class BangClientResolver extends CrowdClientResolver
         {
             player.scrip = 500000;
         }
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if(buser.isActive())
+                {
+                    buser.getCoins();
+                }
+            }
+        }, 0, 1, TimeUnit.SECONDS);
         buser.scrip = player.scrip;
 
         // load up this player's gang information

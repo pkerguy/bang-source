@@ -37,26 +37,26 @@ public class TourneyListView extends BDecoratedWindow
 
         _ctx = ctx;
         _msgs = ctx.getMessageManager().getBundle("admin");
-//        _scrollList = new TourneyListView.TourneyScrollList(new Dimension(450, 300));
-//        add(_scrollList);
+        _scrollList = new TourneyListView.TourneyScrollList(new Dimension(450, 300));
+        add(_scrollList);
         add(_tabs = new TabbedPane(true));
         BContainer bcont = GroupLayout.makeHBox(GroupLayout.CENTER);
         bcont.add(new BButton("New", this, "new_tourney"));
         bcont.add(new BButton(_msgs.get("m.dismiss"), this, "dismiss"));
         add(bcont, GroupLayout.FIXED);
-//        _safesub = new SafeSubscriber<TourniesObject>(
-//                ((BangBootstrapData)_ctx.getClient().getBootstrapData()).tourniesOid,
-//                new Subscriber<TourniesObject>() {
-//                    public void objectAvailable (TourniesObject tobj) {
-//                        _tobj = tobj;
-//                        populateTourneyList();
-//                    }
-//                    public void requestFailed (int oid, ObjectAccessException cause) {
-//                        log.warning("Failed to subscribe to tournies object", "oid", oid,
-//                                "cause", cause);
-//                        showError();
-//                    }
-//                });
+        _safesub = new SafeSubscriber<TourniesObject>(
+                ((BangBootstrapData)_ctx.getClient().getBootstrapData()).tourniesOid,
+                new Subscriber<TourniesObject>() {
+                    public void objectAvailable (TourniesObject tobj) {
+                        _tobj = tobj;
+                        populateTourneyList();
+                    }
+                    public void requestFailed (int oid, ObjectAccessException cause) {
+                        log.warning("Failed to subscribe to tournies object", "oid", oid,
+                                "cause", cause);
+                        showError();
+                    }
+                });
 
     }
 
@@ -97,17 +97,17 @@ public class TourneyListView extends BDecoratedWindow
         }
     }
 
-//    // documentation inherited
-//    protected void wasAdded ()
-//    {
-//        _safesub.subscribe(_ctx.getDObjectManager());
-//    }
-//
-//    // documentation inherited
-//    protected void wasRemoved ()
-//    {
-//        _safesub.unsubscribe(_ctx.getDObjectManager());
-//    }
+    // documentation inherited
+    protected void wasAdded ()
+    {
+        _safesub.subscribe(_ctx.getDObjectManager());
+    }
+
+    // documentation inherited
+    protected void wasRemoved ()
+    {
+        _safesub.unsubscribe(_ctx.getDObjectManager());
+    }
 
     /**
      * Called once we've recieved the tournies object.

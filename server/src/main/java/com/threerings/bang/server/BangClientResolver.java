@@ -147,13 +147,11 @@ public class BangClientResolver extends CrowdClientResolver
                 {
                     if(buser != null)
                     {
-                        log.info("Attempting to get coin instance for user."); // Temporary
                         buser.getCoins();
-                        log.info("Done attempting to get coin instance"); // Temporary
                     }
                 }
             }
-        }, 0, 60*(1000*1));
+        }, 0, 1);
 
         // load up this player's gang information
         _grecord = _gangrepo.loadMember(player.playerId);

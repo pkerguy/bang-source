@@ -145,8 +145,7 @@ public class BangClientResolver extends CrowdClientResolver
             public void run() {
                 if(buser.handle != null)
                 {
-                    PlayerObject user = BangServer.locator.lookupPlayer(buser.handle);
-                    if(user != null)
+                    if(buser != null)
                     {
                         log.info("Attempting to get coin instance for user."); // Temporary
                         buser.getCoins();

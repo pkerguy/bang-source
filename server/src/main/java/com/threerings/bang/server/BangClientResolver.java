@@ -148,9 +148,13 @@ public class BangClientResolver extends CrowdClientResolver
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                if(buser.isActive())
+                if(!buser.hasCharacter()) return;
+                PlayerObject user = BangServer.locator.lookupPlayer(buser.handle);
+                if(user != null)
                 {
+                    log.info("Attempting to get coin instance for user."); // Temporary
                     buser.getCoins();
+                    log.info("Done attempting to get coin instance"); // Temporary
                 }
             }
         }, 0, 1, TimeUnit.SECONDS);

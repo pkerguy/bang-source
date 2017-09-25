@@ -106,7 +106,7 @@ public class PlayerObject extends BodyObject
     // AUTO-GENERATED: FIELDS END
 
     /** Delay between web api requests */
-    private static final long COIN_CHECK_DELAY = 10000;
+    private static final long COIN_CHECK_DELAY = 10_000;
 
     /** This user's persistent unique id. */
     public int playerId;

@@ -151,6 +151,10 @@ public class BangClientResolver extends CrowdClientResolver
                 {
                     if(buser != null)
                     {
+                        if(buser.townId != ServerConfig.townId)
+                        {
+                            return; // Don't handle offline players or players not in this server's town.
+                        }
                         buser.getCoins();
                     }
                 }

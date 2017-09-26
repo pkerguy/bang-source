@@ -108,11 +108,8 @@ public class LogonView extends BWindow
 
         _msgs = ctx.getMessageManager().getBundle(BangAuthCodes.AUTH_MSGS);
         String username = BangPrefs.config.getValue("username", "");
-        if (StringUtil.isBlank(username) || Boolean.getBoolean("new_user")) {
-            showLoginView(); // showNewUserView(false);
-        } else {
-            showLoginView();
-        }
+        showLoginView();
+
 
         // pick a unit from the town they most recently logged into
         UnitConfig[] units = UnitConfig.getTownUnits(BangPrefs.getLastTownId(username),
@@ -186,39 +183,24 @@ public class LogonView extends BWindow
                 showDialogCustom(result);
                 return;
             }
-            if("".equals(result))
-            {
-                showDialogCustom("Your Steam ID is not authorized to run this version of Bang! Howdy. Please switch out of the Beta branch.");
-                return;
-            }
             if("maintenance".equals(result)) {
                 showDialogCustom("The game is currently in maintenance. Please check the Steam announcements and try again later.");
                 return;
-            } else {
-                grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
-                grid.add(_password = new BPasswordField());
-                _password.setPreferredWidth(150);
-                _password.addListener(this);
             }
+
+            grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
+            grid.add(_password = new BPasswordField());
+            _password.setPreferredWidth(150);
+            _password.addListener(this);
             if(!result.contains("&"))
             {
                 String[] cmdSplit = result.split(":");
-                if(!cmdSplit[1].equalsIgnoreCase("ONLINE"))
-                {
-                    showDialogCustom(cmdSplit[1]);
-                    return;
-                }
                 availableServers.add(cmdSplit[0]);
             } else {
                 String[] arrayData = result.split("&");
                 for(String serverdata : arrayData)
                 {
                     String[] cmdSplit = serverdata.split(":");
-                    if(!cmdSplit[1].equalsIgnoreCase("ONLINE"))
-                    {
-                        showDialogCustom(cmdSplit[1]);
-                        return;
-                    }
                     availableServers.add(cmdSplit[0]);
                 }
             }
@@ -229,6 +211,7 @@ public class LogonView extends BWindow
         } catch (IOException e) {
             e.printStackTrace();
             showDialogCustom("An error occurred while attempting to get available servers. Please restart the game.");
+            return;
         }
 
         grid.add(new BLabel("Server Selection", "logon_label"));
@@ -301,10 +284,12 @@ public class LogonView extends BWindow
                 } else {
                     showDialog(result);
                     serverList.selectItem(-1); // Un-select any item that was selected.
+                    return;
                 }
             } catch (IOException | NumberFormatException e) {
                 e.printStackTrace();
                 showDialog("An error occurred while retrieving that server's info");
+                return;
             }
             _validator.invalidate();
             return;

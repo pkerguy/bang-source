@@ -268,7 +268,7 @@ public class LogonView extends BWindow
                 _logon.setEnabled(true);
             }
             try {
-                URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
                 if(result.contains("&") && result.contains(","))
@@ -318,7 +318,7 @@ public class LogonView extends BWindow
                     townId = BangCodes.FRONTIER_TOWN;
                 }
 
-                logon(townId, username, password);
+                logon(username, password);
 
                 break;
             case "options":
@@ -344,8 +344,6 @@ public class LogonView extends BWindow
 
                 break;
             case "anonymous":
-                logon(BangCodes.FRONTIER_TOWN, BangPrefs.config.getValue("anonymous", ""), null);
-
                 break;
             case "exit":
                 _ctx.getApp().stop();
@@ -353,24 +351,33 @@ public class LogonView extends BWindow
         }
     }
 
-    public void logon (String townId, String username, String password)
+    public void logon (String username, String password)
     {
-        if(serverList.getSelectedIndex() == -1)
-        {
-            return;
-        }
-        _status.setStatus(_msgs.get("m.logging_on"), false);
 
         log.info("Set version to: " + DeploymentConfig.getVersion());
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
-        if(serverIP == null)
-        {
-            serverIP = DeploymentConfig.getServerHost("frontier_town");
-        }
-        if(serverPorts[0] == 0)
-        {
-            serverPorts = DeploymentConfig.getServerPorts("frontier_town");
+        try {
+            URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+            final String result = in.readLine();
+            if(result.contains("&") && result.contains(","))
+            {
+                String[] info = result.split("&"),
+                        portStr = info[1].split(",");
+                serverIP = info[0];
+                serverPorts = new int[portStr.length];
+                for (int i = 0, len = portStr.length; i < len; ) {
+                    serverPorts[i] = Integer.parseInt(portStr[i++]);
+                }
+
+            } else {
+                showDialog(result);
+                serverList.selectItem(-1); // Un-select any item that was selected.
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+            showDialog("An error occurred while retrieving that server's info");
         }
 
         _ctx.getClient().setServer(serverIP, serverPorts);

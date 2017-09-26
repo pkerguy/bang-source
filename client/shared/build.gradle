@@ -10,6 +10,9 @@ dependencies {
   compile "com.badlogicgames.gdx:gdx-backend-lwjgl:${gdxVersion}"
   compile group: "com.badlogicgames.gdx", name: "gdx-platform", version: gdxVersion,
           classifier: "natives-desktop"
+  compile "javax.mail:mail:1.4.5"
+  compile "javax.activation:activation:1.1.1"
+
 
   testCompile "junit:junit:4.8.1"
 }

@@ -1,6 +1,3 @@
-//
-// $Id$
-
 package com.threerings.bang.client;
 
 import com.google.common.base.Splitter;
@@ -15,7 +12,6 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.*;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.*;
-import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.client.bui.*;
 import com.threerings.bang.data.*;
 import com.threerings.bang.steam.*;
@@ -176,16 +172,89 @@ public class LogonView extends BWindow
         //grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
         //_username.setPreferredWidth(150);
 
+        showStatus();
+
+        List<String> availableServers = new ArrayList<String>();
+
+        try {
+            URL serverList = new URL("https://banghowdy.com/serverList.php?id=" + SteamStorage.user.getSteamID().toString() + "&version=" + DeploymentConfig.getVersion());
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    serverList.openStream()));
+            final String result = in.readLine();
+            if(!result.contains(":"))
+            {
+                showDialogCustom(result);
+                return;
+            }
+            if("".equals(result))
+            {
+                showDialogCustom("Your Steam ID is not authorized to run this version of Bang! Howdy. Please switch out of the Beta branch.");
+                return;
+            }
+            if("maintenance".equals(result)) {
+                showDialogCustom("The game is currently in maintenance. Please check the Steam announcements and try again later.");
+                return;
+            } else {
+                grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
+                grid.add(_password = new BPasswordField());
+                _password.setPreferredWidth(150);
+                _password.addListener(this);
+            }
+            if(!result.contains("&"))
+            {
+                String[] cmdSplit = result.split(":");
+                if(!cmdSplit[1].equalsIgnoreCase("ONLINE"))
+                {
+                    showDialogCustom(cmdSplit[1]);
+                    return;
+                }
+                availableServers.add(cmdSplit[0]);
+            } else {
+                String[] arrayData = result.split("&");
+                for(String serverdata : arrayData)
+                {
+                    String[] cmdSplit = serverdata.split(":");
+                    if(!cmdSplit[1].equalsIgnoreCase("ONLINE"))
+                    {
+                        showDialogCustom(cmdSplit[1]);
+                        return;
+                    }
+                    availableServers.add(cmdSplit[0]);
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            showDialogCustom("An error occurred while attempting to get available servers. Please restart the game.");
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            showDialogCustom("An error occurred while attempting to get available servers. Please restart the game.");
+        }
+
+        grid.add(new BLabel("Server Selection", "logon_label"));
+        grid.add(serverList = new BComboBox(availableServers.toArray()));
+        grid.add(registerBtn = new BButton("Create Account", "new_account"));
+        registerBtn.addListener(this);
+        serverList.addListener(this);
+
         row.add(grid);
 
         BContainer col = GroupLayout.makeVBox(GroupLayout.CENTER);
         row.add(col);
+        col.add(_logon = new BButton(_msgs.get("m.logon"), this, "logon"));
+        _logon.setStyleClass("big_button");
+        // use a special sound effect for logon (the ricochet that we also use for window open)
+        _logon.setProperty("feedback_sound", BangUI.FeedbackSound.WINDOW_OPEN);
         //col.add(_action = new BButton(_msgs.get("m.new_account"), this, "new_account"));
 //        _action.setStyleClass("logon_new");
-        add(row, new Rectangle(40, 200, 365, 80));
+        add(row, new Rectangle(40, 200, 365, 100));
 
-        showStatus();
-        //logon(BangDesktop.username, BangDesktop.password);
+        // disable the logon button until a password is entered (and until we're initialized)
+        _validator = new EnablingValidator(_password, _logon) {
+            protected boolean checkEnabled (String text) {
+                return super.checkEnabled(text) && _initialized && serverList.getSelectedIndex() != -1;
+            }
+        };
     }
 
     protected void showStatus ()
@@ -206,7 +275,67 @@ public class LogonView extends BWindow
     // documentation inherited from interface ActionListener
     public void actionPerformed (ActionEvent event)
     {
-        switch (event.getAction()) {
+        if(event.getSource() == serverList)
+        {
+            if(serverList.getSelectedIndex() == -1)
+            {
+                _logon.setEnabled(false);
+                return;
+            } else {
+                _logon.setEnabled(true);
+            }
+            try {
+                URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+                final String result = in.readLine();
+                if(result.contains("&") && result.contains(","))
+                {
+                    String[] info = result.split("&");
+                    serverIP = info[0];
+                    String[] portStr = info[1].split(",");
+                    serverPorts = new int[portStr.length];
+                    for (int i = 0, len = portStr.length; i < len; ) {
+                        serverPorts[i] = Integer.parseInt(portStr[i++]);
+                    }
+
+                } else {
+                    showDialog(result);
+                    serverList.selectItem(-1); // Un-select any item that was selected.
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+                showDialog("An error occurred while retrieving that server's info");
+            }
+            _validator.invalidate();
+            return;
+        }
+        switch (event.getSource() == _password ? "logon" : event.getAction()) {
+            case "logon":
+                if (!_initialized) {
+                    log.warning("Not finished initializing. Hang tight.");
+                    return;
+                }
+
+                String username = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
+                String password = _password.getText();
+
+                if(password == "" || password == null)
+                {
+                    log.warning("You didn't enter any password in");
+                    return;
+                }
+
+                // try to connect to the town lobby server that this player last accessed
+                String townId = BangPrefs.getLastTownId(username);
+                // but make sure this town has been activated on this client
+                if (!BangClient.isTownActive(townId)) {
+                    // fall back to frontier town if it has not
+                    townId = BangCodes.FRONTIER_TOWN;
+                }
+
+                logon(townId, username, password);
+
+                break;
             case "options":
                 _ctx.getBangClient().displayPopup(new OptionsView(_ctx, this), true);
 
@@ -217,11 +346,9 @@ public class LogonView extends BWindow
 
                 break;
             case "new_account":
-                String affsuf = BangClient.getAffiliateFromInstallFile();
-                affsuf = (affsuf == null) ? null : ("affiliate=" + affsuf);
-                _ctx.showURL(DeploymentConfig.getNewAccountURL(affsuf));
-                _status.setStatus(_msgs.get("m.new_account_launched"), false);
-
+                _ctx.getBangClient().displayPopup(new CreateAccountView(_ctx), true);
+                break;
+            case "anon_account":
                 break;
             case "my_account":
                 showNewUserView(true);
@@ -229,6 +356,11 @@ public class LogonView extends BWindow
                 break;
             case "have_account":
                 showLoginView();
+
+                break;
+            case "anonymous":
+                logon(BangCodes.FRONTIER_TOWN, BangPrefs.config.getValue("anonymous", ""), null);
+
                 break;
             case "exit":
                 _ctx.getApp().stop();
@@ -236,33 +368,24 @@ public class LogonView extends BWindow
         }
     }
 
-    public void logon (String username, String password)
+    public void logon (String townId, String username, String password)
     {
+        if(serverList.getSelectedIndex() == -1)
+        {
+            return;
+        }
+        _status.setStatus(_msgs.get("m.logging_on"), false);
 
         log.info("Set version to: " + DeploymentConfig.getVersion());
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
-        try {
-            URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + SteamStorage.user.getSteamID() + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
-            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
-            final String result = in.readLine();
-            if(result.contains("&") && result.contains(","))
-            {
-                String[] info = result.split("&"),
-                        portStr = info[1].split(",");
-                serverIP = info[0];
-                serverPorts = new int[portStr.length];
-                for (int i = 0, len = portStr.length; i < len; ) {
-                    serverPorts[i] = Integer.parseInt(portStr[i++]);
-                }
-
-            } else {
-                showDialog(result);
-                serverList.selectItem(-1); // Un-select any item that was selected.
-            }
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-            showDialog("An error occurred while retrieving that server's info");
+        if(serverIP == null)
+        {
+            serverIP = DeploymentConfig.getServerHost("frontier_town");
+        }
+        if(serverPorts[0] == 0)
+        {
+            serverPorts = DeploymentConfig.getServerPorts("frontier_town");
         }
 
         _ctx.getClient().setServer(serverIP, serverPorts);
@@ -281,8 +404,8 @@ public class LogonView extends BWindow
         if (percent < 100) {
             _status.setStatus(_msgs.get("m.init_progress", ""+percent), false);
         } else {
+            _status.setStatus(_msgs.get("m.init_complete"), false);
             _initialized = true;
-            logon(BangDesktop.username, BangDesktop.password);
         }
     }
 
@@ -290,6 +413,15 @@ public class LogonView extends BWindow
     protected void wasAdded ()
     {
         super.wasAdded();
+
+        // focus the appropriate textfield
+        if (_username != null) {
+            if (StringUtil.isBlank(_username.getText())) {
+                _username.requestFocus();
+            } else {
+                _password.requestFocus();
+            }
+        }
 
         if (_unitIcon != null) {
             _unitIcon.wasAdded();
@@ -346,6 +478,15 @@ public class LogonView extends BWindow
     {
         OptionDialog.showConfirmDialog(_ctx, BangAuthCodes.AUTH_MSGS, message,
                 new String[] {"m.ok"}, new OptionDialog.ResponseReceiver() {
+                    public void resultPosted (int button, Object result) {
+                    }
+                });
+    }
+
+    protected void showDialogCustom(String message)
+    {
+        OptionDialog.showConfirmDialog(_ctx, null, message,
+                new String[] {"OK"}, new OptionDialog.ResponseReceiver() {
                     public void resultPosted (int button, Object result) {
                     }
                 });
@@ -425,9 +566,11 @@ public class LogonView extends BWindow
     protected MessageBundle _msgs;
 
     protected BTextField _username;
-    protected BButton _action, _account, _anon;
+    protected BPasswordField _password;
+    protected BButton _logon, _action, _account, _anon, registerBtn;
     protected BComboBox serverList;
     protected BIcon _unitIcon;
+    protected EnablingValidator _validator;
 
     protected StatusLabel _status;
     protected boolean _initialized;

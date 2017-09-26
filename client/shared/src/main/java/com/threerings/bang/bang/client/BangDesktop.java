@@ -39,68 +39,24 @@ public class BangDesktop {
     private static String OS = System.getProperty("os.name").toLowerCase();
 
     public static void main(String[] args) {
-        List<Option> optsList = new ArrayList<Option>();
-        List<String> doubleOptsList = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) {
-            switch (args[i].charAt(0)) {
-                case '-':
-                    if (args[i].length() < 2)
-                        throw new IllegalArgumentException("Not a valid argument: "+args[i]);
-                    if (args[i].charAt(1) == '-') {
-                        if (args[i].length() < 3)
-                            throw new IllegalArgumentException("Not a valid argument: "+args[i]);
-                        // --opt
-                        doubleOptsList.add(args[i].substring(2, args[i].length()));
-                    } else {
-                        if (args.length-1 == i)
-                            throw new IllegalArgumentException("Expected arg after: "+args[i]);
-                        // -opt
-                        optsList.add(new Option(args[i], args[i+1]));
-                        i++;
-                    }
-                    break;
-            }
+        System.out.println("Running Bang! Howdy Steam");
+        SteamStorage.init();
+        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        cfg.title = "Bang! Howdy";
+        cfg.depth = BangPrefs.getDisplayBPP();
+        if(new File("safemode.txt").exists()) {
+            cfg.width = 800;
+            cfg.height = 600;
+            cfg.fullscreen = false;
+        } else {
+            cfg.width = BangPrefs.getDisplayWidth();
+            cfg.height = BangPrefs.getDisplayHeight();
+            cfg.fullscreen = BangPrefs.isFullscreenSet();
         }
-        for(Option options : optsList)
-        {
-            if(options.flag.equalsIgnoreCase("-editor")) {
-                new EditorFrame();
-                return;
-            }
-        if(options.flag.equalsIgnoreCase("-username"))
-            {
-                username = options.opt;
-            }
-            if(options.flag.equalsIgnoreCase("-server"))
-            {
-                server = options.opt;
-            }
-            if(options.flag.equalsIgnoreCase("-password"))
-            {
-                password = options.opt;
-            }
-        }
-        if(username != "" && server != "" && password != "")
-        {
-            System.out.println("Running Bang! Howdy Steam");
-            SteamStorage.init();
-            System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
-            LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-            cfg.title = "Bang! Howdy";
-            cfg.depth = BangPrefs.getDisplayBPP();
-            if(new File("safemode.txt").exists()) {
-                cfg.width = 800;
-                cfg.height = 600;
-                cfg.fullscreen = false;
-            } else {
-                cfg.width = BangPrefs.getDisplayWidth();
-                cfg.height = BangPrefs.getDisplayHeight();
-                cfg.fullscreen = BangPrefs.isFullscreenSet();
-            }
-            cfg.resizable = false; // This glitches the game when resized if not set.
-            // TODO: cfg.setFromDisplayMode when in fullscreen mode
-            new LwjglApplication(new BangApp(), cfg);
-        }
+        cfg.resizable = false; // This glitches the game when resized if not set.
+        // TODO: cfg.setFromDisplayMode when in fullscreen mode
+        new LwjglApplication(new BangApp(), cfg);
     }
 
 }

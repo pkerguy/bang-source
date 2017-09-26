@@ -1042,7 +1042,6 @@ public class BangClient extends BasicClient
             Iterables.filter(_popups, CreateAccountView.class).iterator().hasNext()) {
             return true;
         }
-        CreateAccountView.show(_ctx, null, true);
         return false;
     }
 
@@ -1448,7 +1447,6 @@ public class BangClient extends BasicClient
                 } else if (reason.startsWith(E_SIGN_UP)) {
                     String[] bits = MessageUtil.decompose(reason);
                     String customMsg = (bits.length > 1) ? "m.account_info_" + bits[1] : null;
-                    CreateAccountView.show(_ctx, customMsg, false);
                 } else if (E_UNDER_13.equals(reason)) {
                     _headingTo = placeId;
                     displayPopup(new CoppaView(_ctx), true, 800);

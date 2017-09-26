@@ -140,7 +140,7 @@ public class PlayerPopupMenu extends BPopupMenu
             }
             case "invite_pardner":
                 _ctx.getBangClient().displayPopup(
-                        new InvitePardnerDialog(_ctx, null, _handle), true, 400, true);
+                new InvitePardnerDialog(_ctx, null, _handle), true, 400, true);
 
                 break;
             case "invite_member":

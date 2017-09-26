@@ -120,6 +120,10 @@ public class BangClientResolver extends CrowdClientResolver
                     }
                 }
             }
+            if(ServerConfig.hostname.equalsIgnoreCase("papajohns")) // This is Inferno aka our Beta Server
+            {
+                BangServer.playmgr.sendWarningMessage(buser, false, "Please remember this is a beta server. All data on this server is seperate from non-beta client servers. Thanks for helping us test and improve Bang! Howdy.");
+            }
             BangServer.generalLog(
                     "first_timer " + player.playerId + (anonymous ? " anon" : " account"));
         }
@@ -134,9 +138,9 @@ public class BangClientResolver extends CrowdClientResolver
         buser.tokens.setToken(BangTokenRing.ANONYMOUS, player.isSet(PlayerRecord.IS_ANONYMOUS));
         buser.tokens.setToken(BangTokenRing.OVER_13, player.isOver13);
         buser.tokens.setToken(BangTokenRing.DEMO, player.isSet(PlayerRecord.IS_DEMO_ACCOUNT));
-        if(ServerConfig.hostname.equalsIgnoreCase("bh-inferno")) // This is Inferno aka our Beta Server
+        if(ServerConfig.hostname.equalsIgnoreCase("papajohns")) // This is Inferno aka our Beta Server
         {
-            player.scrip = 500000;
+            player.scrip = 5000;
         }
         buser.scrip = player.scrip;
         Timer timer = new Timer();

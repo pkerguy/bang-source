@@ -153,6 +153,7 @@ public class BangClientResolver extends CrowdClientResolver
                     {
                         if(buser.townId != ServerConfig.townId)
                         {
+                            timer.cancel(); // Gives the memory back to server :>
                             return; // Don't handle offline players or players not in this server's town.
                         }
                         buser.getCoins();

@@ -983,6 +983,7 @@ public class BangClient extends BasicClient
                             portStr = info[1].split(",");
                     _ctx.getClient().setServer(info[0], DeploymentConfig.getServerPorts(_pendingTownId));
                 } else {
+                    log.warning("Failed to grab server data in clientDidClear()");
                     return;
                 }
             } catch (IOException | NumberFormatException e) {

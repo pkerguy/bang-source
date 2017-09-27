@@ -12,6 +12,7 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.*;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.*;
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.client.bui.*;
 import com.threerings.bang.data.*;
 import com.threerings.bang.steam.*;
@@ -380,6 +381,7 @@ public class LogonView extends BWindow
             showDialog("An error occurred while retrieving that server's info");
         }
 
+        BangDesktop.server = (String)serverList.getSelectedItem();
         _ctx.getClient().setServer(serverIP, serverPorts);
 
         // configure the client with the supplied credentials

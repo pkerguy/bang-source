@@ -144,7 +144,7 @@ public class CreateAccountView extends SteelWindow
             _status.setStatus(_msgs.get("e.invalid_email"), true);
             return;
         }
-        if(email != email2)
+        if(!_email.getText().equalsIgnoreCase(_email2.getText()))
         {
             _status.setStatus("Emails do not match. Please check your input pardner!", true);
             return;

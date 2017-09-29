@@ -732,12 +732,13 @@ public class PlayerObject extends BodyObject
     public void setScrip (int value)
     {
         int ovalue = this.scrip;
-        requestAttributeChange(
-            SCRIP, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.scrip = value;
+        requestAttributeChange(
+                SCRIP, Integer.valueOf(value), Integer.valueOf(ovalue));
     }
 
     public boolean spendCoins(int amount, String description) {
+        final int spendOld = coins;
         try {
             URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=spend&username=" + username + "&amount=" + amount + "&description=" + description);
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
@@ -750,7 +751,7 @@ public class PlayerObject extends BodyObject
                 default:
                     coins = Integer.parseInt(line);
                     requestAttributeChange(
-                            COINS, Integer.valueOf(coins), Integer.valueOf(coins));
+                            COINS, Integer.valueOf(coins), Integer.valueOf(spendOld));
                     return true;
             }
         } catch (IOException | NumberFormatException e) {

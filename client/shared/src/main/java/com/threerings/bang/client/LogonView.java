@@ -105,6 +105,7 @@ public class LogonView extends BWindow
         setStyleClass("logon_view");
 
         _ctx = ctx;
+        _ctx.getBangClient().queueMusic("theme", true, 0, 25);
         _ctx.getRenderer().setBackgroundColor(ColorRGBA.black);
 
         _msgs = ctx.getMessageManager().getBundle(BangAuthCodes.AUTH_MSGS);
@@ -500,6 +501,7 @@ public class LogonView extends BWindow
 
     protected ClientAdapter _listener = new ClientAdapter() {
         public void clientDidLogon (Client client) {
+            _ctx.getBangClient().fadeOutMusic(0); // Kill the music
             _status.setStatus(_msgs.get("m.logged_on"), false);
             PlayerObject user = (PlayerObject)client.getClientObject();
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",

@@ -28,8 +28,11 @@ public class DeploymentConfig
      */
     public static long getVersion ()
     {
-        return 304; // Change upon each release version
+        return 400; // Change upon each release version
     }
+
+    // Current release: 400+
+    // Current beta release: 10000+
 
     /**
      * Returns the default locale for this server. This isn't the actual locale setting of the

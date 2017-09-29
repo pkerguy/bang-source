@@ -624,6 +624,12 @@ public class BangClient extends BasicClient
         return _pcview;
     }
 
+    // Legacy Music method.. DO NOT REMOVE
+    public void queueMusic (String key, boolean loop, float crossfade)
+    {
+        queueMusic(key, loop, crossfade, -1);
+    }
+
     /**
      * Queues up the music track with the specified path.
      *
@@ -631,7 +637,7 @@ public class BangClient extends BasicClient
      * @param crossfade if non-zero, the interval over which to fade out the music previously
      * playing and fade in the new music
      */
-    public void queueMusic (String key, boolean loop, float crossfade)
+    public void queueMusic (String key, boolean loop, float crossfade, float forceStartVolume)
     {
         // if we're already playing this track, keep it running
         if (key.equals(_playingMusic)) {
@@ -640,6 +646,10 @@ public class BangClient extends BasicClient
 
         // set the volume based on the user's volume preferences
         float volume = BangPrefs.getMusicVolume() / 100f;
+        if(forceStartVolume != -1)
+        {
+            volume = forceStartVolume / 100f;
+        }
         if (volume == 0f) {
             // if we're at zero volume, don't play it at all
             return;

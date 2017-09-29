@@ -77,9 +77,12 @@ public class GoodsInspector extends BContainer
                     CreateAvatarView.show(_ctx, _reinit);
                     return false;
                 }
+                _buy.setEnabled(false);
                 _goodsobj.buyGood(_good.getType(), _args, createConfirmListener());
+                _buy.setEnabled(true);
                 return true;
             }
+
             protected boolean onSuccess (Object result) {
                 boughtGood();
                 return true;

@@ -118,12 +118,18 @@ public class TicketView extends BContainer
         _stobj = stobj;
     }
 
+    private boolean processing = false;
+
     // documentation inherited from interface ActionListener
     public void actionPerformed (ActionEvent event)
     {
         if ("buy".equals(event.getAction())) {
             // avoid double clicky badness
+            if (processing) {
+                return;
+            }
             _buy.setEnabled(false);
+            processing = true;
 
             // fire off a request to buy the ticket
             _stobj.service.buyTicket(new StationService.ConfirmListener() {
@@ -133,6 +139,7 @@ public class TicketView extends BContainer
                 }
                 public void requestFailed (String reason) {
                     _status.setStatus(StationCodes.STATION_MSGS, reason, true);
+                    processing = false;
                     _buy.setEnabled(true);
                 }
             });

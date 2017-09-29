@@ -90,7 +90,7 @@ public class ArticleGood extends Good
     @Override // from Good
     public boolean honorsGoldPass ()
     {
-        return true;
+        return false;
     }
 
     @Override // from Good

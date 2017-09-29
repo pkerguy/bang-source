@@ -59,7 +59,7 @@ public class StarGood extends Good
     @Override // from Good
     public boolean honorsGoldPass ()
     {
-        return true;
+        return false;
     }
 
     @Override // documentation inherited

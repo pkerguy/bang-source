@@ -148,7 +148,7 @@ public abstract class Good extends SimpleStreamableObject
      */
     public int getCoinCost (PlayerObject user)
     {
-        return (honorsGoldPass() && user.holdsGoldPass(_townId)) ? 0 :  _coinCost;
+        return _coinCost;
     }
 
     /**

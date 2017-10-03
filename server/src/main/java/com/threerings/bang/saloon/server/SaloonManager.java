@@ -170,20 +170,6 @@ public class SaloonManager extends MatchHostManager
         // make sure they meet the entry requirements
         parmgr.ratifyEntry(user, password);
 
-        // otherwise we need to create a new match
-        Criterion criterion = new Criterion();
-        criterion.rounds = 1;
-        criterion.players = 2;
-        criterion.range = Criterion.OPEN;
-        criterion.mode = Criterion.COMP;
-        criterion.gang = false;
-        criterion.allowPreviousTowns = true;
-
-        Match match = createMatch(user, criterion);
-        match.setObject(BangServer.omgr.registerObject(new MatchObject()));
-        _matches.put(match.matchobj.getOid(), match);
-        _adminmgr.statobj.setPendingMatches(_matches.size());
-
         // they've run the gauntlet, let 'em in
         rl.requestProcessed(parmgr.getPlaceObject().getOid());
     }

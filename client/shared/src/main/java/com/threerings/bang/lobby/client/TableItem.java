@@ -117,12 +117,9 @@ public class TableItem extends BContainer
                 _seats[i].setAction("join");
 
             } else if (table.players[i].equals(_self) && !table.inPlay()) {
-                if(!BangDesktop.server.equalsIgnoreCase("Inferno"))
-                {
-                    _seats[i].setText(_msgs.get("m.leave"));
-                    _seats[i].setEnabled(true);
-                    _seats[i].setAction("leave");
-                }
+                _seats[i].setText(_msgs.get("m.leave"));
+                _seats[i].setEnabled(true);
+                _seats[i].setAction("leave");
             } else {
                 _seats[i].setText(table.players[i].toString());
                 _seats[i].setEnabled(false);
@@ -168,6 +165,10 @@ public class TableItem extends BContainer
 
         } else if (cmd.equals("leave")) {
             // if we're not joining, we're leaving
+            if(BangDesktop.server.equalsIgnoreCase("Inferno"))
+            {
+                return;
+            }
             _tdtr.leaveTable(table.tableId);
 
         } else if (cmd.equals("go")) {

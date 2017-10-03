@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Throttle;
 
+import com.threerings.bang.saloon.data.*;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -27,12 +28,10 @@ import com.threerings.bang.data.StatType;
 import com.threerings.bang.server.BangServer;
 
 import com.threerings.bang.saloon.client.ParlorService;
-import com.threerings.bang.saloon.data.Criterion;
-import com.threerings.bang.saloon.data.ParlorGameConfig;
-import com.threerings.bang.saloon.data.ParlorInfo;
-import com.threerings.bang.saloon.data.ParlorMarshaller;
-import com.threerings.bang.saloon.data.ParlorObject;
-import com.threerings.bang.saloon.data.SaloonCodes;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.threerings.bang.Log.log;
 
@@ -278,6 +277,38 @@ public class ParlorManager extends PlaceManager
 
         // update our occupant count in the saloon
         publishOccupants();
+        
+        // create a new match
+        Criterion criterion = new Criterion();
+        criterion.rounds = 1;
+        criterion.players = 2;
+        criterion.range = Criterion.OPEN;
+        criterion.mode = Criterion.COMP;
+        criterion.gang = false;
+        criterion.allowPreviousTowns = true;
+
+        List<PlayerObject> players = new ArrayList<>();
+        for (Integer oid : _parobj.occupants) {
+            BangOccupantInfo boi = (BangOccupantInfo)_occInfo.get(oid);
+            if (boi == null) {
+                return;
+            }
+
+            players.add(BangServer.locator.lookupPlayer(boi.playerId));
+        }
+
+        if (players.size() > 1) {
+            Iterator<PlayerObject> it = players.iterator();
+
+            Match match = _salmgr.createMatch(it.next(), criterion);
+            match.setObject(BangServer.omgr.registerObject(new MatchObject()));
+            SaloonManager._matches.put(match.matchobj.getOid(), match);
+            _salmgr._adminmgr.statobj.setPendingMatches(SaloonManager._matches.size());
+
+            while (it.hasNext()) {
+                match.join(it.next(), criterion);
+            }
+        }
     }
 
     @Override // from PlaceManager

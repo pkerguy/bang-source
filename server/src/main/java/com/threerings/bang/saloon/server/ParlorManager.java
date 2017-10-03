@@ -115,6 +115,10 @@ public class ParlorManager extends PlaceManager
                     if (round == null ? roundId != 0 : (round != roundId || round == -1)) {
                         throw new InvocationException(INVALID_ROUND);
                     }
+                    if(_parobj.info.occupants == 2 && !user.tokens.isSupport())
+                    {
+                        throw new InvocationException(ACCESS_DENIED);
+                    }
                 }
                 break;
             
@@ -277,38 +281,37 @@ public class ParlorManager extends PlaceManager
 
         // update our occupant count in the saloon
         publishOccupants();
-        
-        // create a new match
-        Criterion criterion = new Criterion();
-        criterion.rounds = 1;
-        criterion.players = 2;
-        criterion.range = Criterion.OPEN;
-        criterion.mode = Criterion.COMP;
-        criterion.gang = false;
-        criterion.allowPreviousTowns = true;
-
-        List<PlayerObject> players = new ArrayList<>();
-        for (Integer oid : _parobj.occupants) {
-            BangOccupantInfo boi = (BangOccupantInfo)_occInfo.get(oid);
-            if (boi == null) {
-                return;
-            }
-
-            players.add(BangServer.locator.lookupPlayer(boi.playerId));
-        }
-
-        if (players.size() > 1) {
-            Iterator<PlayerObject> it = players.iterator();
-
-            Match match = _salmgr.createMatch(it.next(), criterion);
-            match.setObject(BangServer.omgr.registerObject(new MatchObject()));
-            SaloonManager._matches.put(match.matchobj.getOid(), match);
-            _salmgr._adminmgr.statobj.setPendingMatches(SaloonManager._matches.size());
-
-            while (it.hasNext()) {
-                match.join(it.next(), criterion);
-            }
-        }
+//
+//        // create a new match
+//        Criterion criterion = new Criterion();
+//        criterion.rounds = 1;
+//        criterion.players = 2;
+//        criterion.range = Criterion.OPEN;
+//        criterion.mode = Criterion.COMP;
+//        criterion.gang = false;
+//        criterion.allowPreviousTowns = true;
+//
+//        List<PlayerObject> players = new ArrayList<>();
+//        for (Integer oid : _parobj.occupants) {
+//            BangOccupantInfo boi = (BangOccupantInfo)_occInfo.get(oid);
+//            if (boi == null) {
+//                return;
+//            }
+//
+//            players.add(BangServer.locator.lookupPlayer(boi.playerId));
+//        }
+//        if (players.size() > 1) {
+//            Iterator<PlayerObject> it = players.iterator();
+//
+//            Match match = _salmgr.createMatch(it.next(), criterion);
+//            match.setObject(BangServer.omgr.registerObject(new MatchObject()));
+//            SaloonManager._matches.put(match.matchobj.getOid(), match);
+//            _salmgr._adminmgr.statobj.setPendingMatches(SaloonManager._matches.size());
+//
+//            while (it.hasNext()) {
+//                match.join(it.next(), criterion);
+//            }
+//        }
     }
 
     @Override // from PlaceManager

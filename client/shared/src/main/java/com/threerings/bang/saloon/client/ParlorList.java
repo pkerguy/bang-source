@@ -145,6 +145,11 @@ public class ParlorList extends BContainer
 
             // see if we already have an entry that we can update
             for (ParlorRow row : _parlors) {
+                if(row.info.tournament && row.info.occupants == 2 && !_ctx.getUserObject().tokens.isSupport())
+                {
+                    // Let's hide full tournament rooms unless you are staff
+                    continue;
+                }
                 if (row.info.creator.equals(info.creator)) {
                     // remove and reinsert in case our sort order changed
                     _parlors.remove(row);

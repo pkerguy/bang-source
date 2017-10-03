@@ -255,7 +255,10 @@ public class BangServer extends CrowdServer
                 return;
             }
         }
-        scenerioIds = System.getProperty("scenerios").split(",");
+        if(System.getProperty("scenerios") != null)
+        {
+            scenerioIds = System.getProperty("scenerios").split(",");
+        }
         if(isTournamentServer && amountofPlayers == 0 && scenerioIds.length > 0)
         {
             log.info("Tournament mode is active and no player count or scenerioIds where defined.");

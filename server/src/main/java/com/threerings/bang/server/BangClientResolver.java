@@ -120,9 +120,9 @@ public class BangClientResolver extends CrowdClientResolver
                     }
                 }
             }
-            if(ServerConfig.hostname.equalsIgnoreCase("papajohns")) // This is Inferno aka our Beta Server
+            if(ServerConfig.hostname.equalsIgnoreCase("erving")) // This is Inferno aka our Beta Server
             {
-                BangServer.playmgr.sendWarningMessage(buser, false, "Please remember this is a beta server. All data on this server is seperate from non-beta client servers. Thanks for helping us test and improve Bang! Howdy.");
+                BangServer.playmgr.sendWarningMessage(buser, false, "Welcome to the Bang! Howdy Tournament server. Please enter the saloon in Frontier Town to enter your place in the tournament!");
             }
             BangServer.generalLog(
                     "first_timer " + player.playerId + (anonymous ? " anon" : " account"));

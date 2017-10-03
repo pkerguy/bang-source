@@ -127,6 +127,10 @@ public class SaloonManager extends MatchHostManager
                               boolean matched, SaloonService.ResultListener rl)
         throws InvocationException
     {
+        if(BangServer.isTournamentServer) // Prevent making new parlors on a Tournament server
+        {
+            throw new InvocationException(ACCESS_DENIED);
+        }
         PlayerObject user = requireShopEnabled(caller);
 
         // creating back parlors requires the onetime pass

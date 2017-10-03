@@ -272,6 +272,10 @@ public class TableGameManager implements TableGameProvider
     {
         if (readyToStart() && _starter == null) {
             _tobj.setStarting(true);
+            if(BangServer.isTournamentServer)
+            {
+
+            }
             _starter = new Interval(BangServer.omgr) {
                 public void expired () {
                     if (_starter != this) {

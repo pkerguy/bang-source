@@ -2,6 +2,66 @@
 #
 # $Id$
 #
-# Command line launcher for the Bang! editor
+# Command line launcher for the Bang! development client
 
-`dirname $0`/bangjava -client -Dno_log_redir=true -mx128M com.threerings.bang.editor.EditorFrame "$@"
+BANG_HOME=`dirname $0`
+BANG_HOME=`cd $BANG_HOME/.. ; pwd`
+ARGS=""
+JARGS=""
+
+# parse our arguments
+while [ ! -z "$1" ]; do
+    case "$1" in
+        -go=*)
+            GO=`echo $1 | sed 's:-go=::g'`;
+            JARGS="$JARGS -Dgo=$GO";
+            ;;
+
+        -test=*)
+            BOARD=`echo $1 | sed 's:-test=::g'`;
+            JARGS="$JARGS -Dboard=\"$BOARD\" -Dtest=true";
+            ;;
+
+        -test)
+            JARGS="$JARGS -Dtest=true";
+            ;;
+
+        -autoplay)
+            JARGS="$JARGS -Dautoplay=true";
+            ;;
+
+        -loopplay)
+            JARGS="$JARGS -Dloopplay=true";
+            ;;
+
+        -tutorial)
+            JARGS="$JARGS -Dtutorial=test";
+            ;;
+
+        -tutorial=*)
+            TUTORIAL=`echo $1 | sed 's:-tutorial=::g'`;
+            JARGS="$JARGS -Dtutorial=$TUTORIAL";
+            ;;
+
+        -build)
+            ant
+            if [ $? != 0 ]; then
+                echo "Compilation failed."
+                exit 255
+            fi
+            ;;
+
+        -D*)
+            JARGS="$JARGS '$1'"
+            ;;
+
+        *)
+            ARGS="$ARGS '$1'"
+            ;;
+    esac
+    shift
+done
+
+CLIENT_MEMORY=128M
+CLASS=com.threerings.bang.bang.editor.EditorFrame
+eval $BANG_HOME/bin/bangjava -client -Dno_log_redir=true -mx$CLIENT_MEMORY $JARGS $CLASS $ARGS

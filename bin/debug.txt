@@ -1,0 +1,6 @@
+Oct 01, 2017 8:05:28 PM com.jme.scene.Node <init>
+INFO: Node created.
+Oct 01, 2017 8:05:28 PM com.jme.scene.Node <init>
+INFO: Node created.
+Oct 01, 2017 8:05:28 PM com.jme.system.gdx.GDXDisplaySystem <init>
+INFO: GDX Display System created.

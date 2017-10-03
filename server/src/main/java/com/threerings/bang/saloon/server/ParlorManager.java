@@ -344,6 +344,11 @@ public class ParlorManager extends PlaceManager
      */
     protected void maybeShutdown ()
     {
+        if(BangServer.isTournamentServer) // Deletes the Parlor once the game has started
+        {
+            placeBecameEmpty();
+            return;
+        }
         if (shouldDeclareEmpty(null)) {
             placeBecameEmpty();
         }

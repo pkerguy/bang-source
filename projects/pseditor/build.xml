@@ -45,7 +45,7 @@
     </javac>
   </target>
 
-  <!-- builds the standalone viewer jar -->
+  <!-- builds the standalone model jar -->
   <target name="proguard" depends="dist">
     <artifact:dependencies pathId="proguard.classpath">
       <dependency groupId="net.sf.proguard" artifactId="proguard" version="4.4"/>

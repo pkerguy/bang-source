@@ -586,7 +586,7 @@
       <libraryjar name="${deploy.dir}/lib/lwjgl.jar"/>
       <libraryjar name="${deploy.dir}/lib/lwjgl_util.jar"/>
 
-      <!-- these are just for the model viewer, sigh -->
+      <!-- these are just for the model model, sigh -->
       <libraryjar name="${commons-digester:commons-digester:jar}"/>
       <libraryjar name="${commons-beanutils:commons-beanutils:jar}"/>
       <libraryjar name="${commons-logging:commons-logging:jar}"/>

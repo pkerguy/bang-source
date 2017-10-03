@@ -49,6 +49,10 @@ public abstract class MatchHostManager extends ShopManager
         if (!RuntimeConfig.server.allowNewGames) {
             throw new InvocationException(NEW_GAMES_DISABLED);
         }
+        if(BangServer.isTournamentServer)
+        {
+            throw new InvocationException(NEW_GAMES_DISABLED);
+        }
 
         // sanity check the criterion
         checkCriterion(criterion);

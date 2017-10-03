@@ -98,6 +98,9 @@ public class TableGameManager implements TableGameProvider
                 game.teamSize = 1;
                 game.scenarios = BangServer.scenerioIds;
                 _tobj.setGame(game);
+                _tobj.playerOids = new int[game.getCount(Slot.HUMAN)];
+                _tobj.playerOids[0] = caller.getOid();
+                _tobj.setPlayerOids(_tobj.playerOids);
             }
             joinMatch(caller);
             checkStart();

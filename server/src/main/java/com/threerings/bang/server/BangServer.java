@@ -237,6 +237,32 @@ public class BangServer extends CrowdServer
             System.exit(255);
         }
 
+        String initConfig = System.getProperty("init");
+        if(initConfig != null && initConfig.equalsIgnoreCase("tourny"))
+        {
+            log.info("THIS IS A TOURNAMENT SERVER");
+            isTournamentServer = true;
+        }
+        String maxPlayers = System.getProperty("maxPlayers");
+        if(maxPlayers != null)
+        {
+            try {
+                amountofPlayers = Integer.parseInt(maxPlayers);
+            } catch (NumberFormatException ex)
+            {
+                log.info("MaxPlayers didn't use a number.");
+                queueShutdown();
+                return;
+            }
+        }
+        scenerioIds = System.getProperty("scenerios").split(",");
+        if(isTournamentServer && amountofPlayers == 0 && scenerioIds.length > 0)
+        {
+            log.info("Tournament mode is active and no player count or scenerioIds where defined.");
+            queueShutdown();
+            return;
+        }
+
         // set up some legacy static references
         invoker = _invoker;
         conmgr = _conmgr;
@@ -296,51 +322,6 @@ public class BangServer extends CrowdServer
             log.info("Running in cluster mode as node '" + ServerConfig.nodename + "'.");
             _peermgr.init(ServerConfig.nodename, ServerConfig.sharedSecret,
                           ServerConfig.hostname, ServerConfig.publicHostname, getListenPorts()[0]);
-        }
-
-        String initConfig = System.getProperty("init");
-        if(initConfig != null && initConfig.equalsIgnoreCase("runtime"))
-        {
-            RuntimeConfig.server.setAllowNewGames(true);
-            RuntimeConfig.server.setAnonymousAccessEnabled(false);
-            RuntimeConfig.server.setArticleRentMultiplier(new float[]{5f, 12f, 23f, 45f, 110f});
-            RuntimeConfig.server.setBarberEnabled(false);
-            RuntimeConfig.server.setFreeIndianPost(false);
-            RuntimeConfig.server.setHideoutEnabled(false);
-            RuntimeConfig.server.setLooseRankRange(400);
-            RuntimeConfig.server.setNearRankRange(200);
-            RuntimeConfig.server.setNonAdminsAllowed(false);
-            RuntimeConfig.server.setOfficeEnabled(false);
-            RuntimeConfig.server.setOpenToPublic(false);
-            RuntimeConfig.server.setStationEnabled(false);
-            RuntimeConfig.server.setSelectPhaseTimeout(180);
-            RuntimeConfig.server.setStoreEnabled(false);
-            log.info("Init of Runtime Config finished!");
-            queueShutdown();
-        }
-        if(initConfig != null && initConfig.equalsIgnoreCase("tourny"))
-        {
-            log.info("THIS IS A TOURNAMENT SERVER");
-            isTournamentServer = true;
-        }
-        String maxPlayers = System.getProperty("maxPlayers");
-        if(maxPlayers != null)
-        {
-            try {
-                amountofPlayers = Integer.parseInt(maxPlayers);
-            } catch (NumberFormatException ex)
-            {
-                log.info("MaxPlayers didn't use a number.");
-                queueShutdown();
-                return;
-            }
-        }
-        scenerioIds = System.getProperty("scenerios").split(",");
-        if(isTournamentServer && amountofPlayers == 0 && scenerioIds.length > 0)
-        {
-            log.info("Tournament mode is active and no player count or scenerioIds where defined.");
-            queueShutdown();
-            return;
         }
 
         // set up our authenticator

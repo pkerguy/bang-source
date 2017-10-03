@@ -1934,7 +1934,7 @@ public class BangManager extends GameManager
                         _adminmgr.scheduleReboot(0, "Tournament End");
                     } else {
                         for (int j = 0; j < parlorCount; ++j) {
-                            BangServer.saloonmgr.createParlor(new Handle("Parlor #" + j), ParlorInfo.Type.NORMAL, null, false, 0, true, true, 2, 0, null);
+                            BangServer.saloonmgr.createParlor(new Handle("!!!SERVER!!!"), ParlorInfo.Type.NORMAL, null, false, 0, false, true, 2, 0, null);
                         }
                     }
                 }

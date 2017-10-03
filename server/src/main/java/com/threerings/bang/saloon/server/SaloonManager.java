@@ -208,7 +208,7 @@ public class SaloonManager extends MatchHostManager
             int parlorCount = BangServer.parlorCount = BangServer.amountofPlayers / 2;
 
             for (int i = 0; i < parlorCount; ++i) {
-                createParlor(new Handle("Parlor #" + i), ParlorInfo.Type.NORMAL, null, false, 0, false, true, 2, 0, null);
+                createParlor(new Handle("!!!SERVER!!!"), ParlorInfo.Type.NORMAL, null, false, 0, true, true, 2, 0, null);
             }
         }
         // start up our top-ranked list refresher interval

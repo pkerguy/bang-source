@@ -19,6 +19,7 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
+import com.threerings.bang.saloon.data.*;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
@@ -37,13 +38,6 @@ import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.bang.game.data.scenario.ScenarioInfo;
 
 import com.threerings.bang.saloon.client.SaloonService;
-import com.threerings.bang.saloon.data.ParlorConfig;
-import com.threerings.bang.saloon.data.ParlorInfo;
-import com.threerings.bang.saloon.data.ParlorObject;
-import com.threerings.bang.saloon.data.SaloonMarshaller;
-import com.threerings.bang.saloon.data.SaloonObject;
-import com.threerings.bang.saloon.data.TopRankObject;
-import com.threerings.bang.saloon.data.TopRankedList;
 
 import static com.threerings.bang.Log.log;
 
@@ -175,6 +169,20 @@ public class SaloonManager extends MatchHostManager
 
         // make sure they meet the entry requirements
         parmgr.ratifyEntry(user, password);
+
+        // otherwise we need to create a new match
+        Criterion criterion = new Criterion();
+        criterion.rounds = 1;
+        criterion.players = 2;
+        criterion.range = Criterion.OPEN;
+        criterion.mode = Criterion.COMP;
+        criterion.gang = false;
+        criterion.allowPreviousTowns = true;
+
+        Match match = createMatch(user, criterion);
+        match.setObject(BangServer.omgr.registerObject(new MatchObject()));
+        _matches.put(match.matchobj.getOid(), match);
+        _adminmgr.statobj.setPendingMatches(_matches.size());
 
         // they've run the gauntlet, let 'em in
         rl.requestProcessed(parmgr.getPlaceObject().getOid());

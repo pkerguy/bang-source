@@ -10,6 +10,7 @@ import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.TableLayout;
 
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
@@ -116,10 +117,12 @@ public class TableItem extends BContainer
                 _seats[i].setAction("join");
 
             } else if (table.players[i].equals(_self) && !table.inPlay()) {
-                _seats[i].setText(_msgs.get("m.leave"));
-                _seats[i].setEnabled(true);
-                _seats[i].setAction("leave");
-
+                if(!BangDesktop.server.equalsIgnoreCase("Inferno"))
+                {
+                    _seats[i].setText(_msgs.get("m.leave"));
+                    _seats[i].setEnabled(true);
+                    _seats[i].setAction("leave");
+                }
             } else {
                 _seats[i].setText(table.players[i].toString());
                 _seats[i].setEnabled(false);

@@ -33,6 +33,7 @@ import com.samskivert.util.Multex;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.saloon.data.ParlorInfo;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StreamablePoint;
 
@@ -1902,6 +1903,48 @@ public class BangManager extends GameManager
 
         // do the normal round ending stuff as well
         roundDidEnd(false);
+
+        if(BangServer.isTournamentServer)
+        {
+            int numPlayers = _playerOids.length;
+            BodyObject winner = null, loser = null;
+            for (int ii = 0; ii < numPlayers; ++ii) {
+                BodyObject user = getPlayer(ii);
+                if (user != null) {
+                    if (_gameobj.isWinner(ii)) {
+                        winner = user;
+                    } else {
+                        loser = user;
+                    }
+                }
+            }
+            if (winner == null) {
+                return;
+            }
+
+            BodyObject finalWinner = winner; // Stupid java
+
+            BangServer.round.compute(winner, (body, round) -> {
+                int i = round == null ? 1 : round + 1;
+
+                if (--BangServer.parlorCount <= 0) { // Next round
+                    int parlorCount = BangServer.amountofPlayers / (2 << i); // c / 2, c / 4, c / 8 etc.
+                    if (parlorCount == 0) { // No more rounds, we have a winner!
+                        log.info("TOURNAMENT WINNER:" + finalWinner.username);
+                        _adminmgr.scheduleReboot(0, "Tournament End");
+                    } else {
+                        for (int j = 0; j < parlorCount; ++j) {
+                            BangServer.saloonmgr.createParlor(new Handle("Parlor #" + j), ParlorInfo.Type.NORMAL, null, false, 0, true, true, 2, 0, null);
+                        }
+                    }
+                }
+
+                return i;
+            });
+            BangServer.round.put(loser, -1);
+
+            return;
+        }
 
         // indicates whether we completed our bounty for the first time
         boolean completedBounty = false;

@@ -96,6 +96,22 @@ public class WantedPosterView extends BContainer
                 });
             buttonBox.add(editButton);
         }
+        // Add an edit button for administrators
+        if(ctx.getUserObject().getTokens().isAdmin() && !handle.equals(ctx.getUserObject().handle))
+        {
+            final BButton editButton = new BButton(
+                    ctx.xlate(BangCodes.BANG_MSGS, "m.poster_edit"));
+            editButton.addListener(
+                    new ActionListener() {
+                        public void actionPerformed (ActionEvent event) {
+                            if (event.getSource() == editButton) {
+                                ctx.getBangClient().clearPopup(popup, false);
+                                EditPosterView.editWantedPoster(ctx, handle);
+                            }
+                        }
+                    });
+            buttonBox.add(editButton);
+        }
 
         // then a button that knows how to clear the popup
         final BButton backButton = new BButton(

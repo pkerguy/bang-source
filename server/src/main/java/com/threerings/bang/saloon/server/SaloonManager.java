@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.google.inject.internal.ErrorsException;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.Interval;
@@ -53,6 +54,10 @@ import static com.threerings.bang.Log.log;
 public class SaloonManager extends MatchHostManager
     implements SaloonProvider
 {
+
+    protected ArrayList<TopRankedList> _lists;
+    protected boolean _clearThisWeek;
+
     /**
      * Refreshes the top-ranked lists for all scenarios (plus the overall rankings) in the
      * specified object.
@@ -66,6 +71,11 @@ public class SaloonManager extends MatchHostManager
     public void refreshTopRanked (final TopRankObject rankobj, final String[] scenarios,
                                          final String join, final String where, final int count)
     {
+        if(BangServer.isTournamentServer)
+        {
+
+            return; // Do NOT EXECUTE THE BELOW CODE!
+        }
         BangServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 String[] scens = ArrayUtil.append(scenarios, ScenarioInfo.OVERALL_IDENT);
@@ -109,9 +119,6 @@ public class SaloonManager extends MatchHostManager
                     commitTopRanked(rankobj, list);
                 }
             }
-
-            protected ArrayList<TopRankedList> _lists;
-            protected boolean _clearThisWeek;
         });
     }
 
@@ -190,9 +197,16 @@ public class SaloonManager extends MatchHostManager
         _salobj = (SaloonObject)_plobj;
         _salobj.setService(BangServer.invmgr.registerProvider(this, SaloonMarshaller.class));
 
-        // create our default parlor
-        createParlor(new Handle("!!!SERVER!!!"), ParlorInfo.Type.SOCIAL, null, true, 0, true, null);
+        if(!BangServer.isTournamentServer) {
+            // create our default parlor
+            createParlor(new Handle("!!!SERVER!!!"), ParlorInfo.Type.SOCIAL, null, true, 0, true, null);
+        } else {
+            int parlorCount = BangServer.parlorCount = BangServer.amountofPlayers / 2;
 
+            for (int i = 0; i < parlorCount; ++i) {
+                createParlor(new Handle("Parlor #" + i), ParlorInfo.Type.NORMAL, null, false, 0, true, true, 2, 0, null);
+            }
+        }
         // start up our top-ranked list refresher interval
         _rankval = new Interval(BangServer.omgr) {
             public void expired () {
@@ -219,6 +233,39 @@ public class SaloonManager extends MatchHostManager
         if (_rankval != null) {
             _rankval.cancel();
             _rankval = null;
+        }
+    }
+
+    // This createParlor is specifically for creating a Tournament's parlor
+    public void createParlor (Handle creator, ParlorInfo.Type type, final String password,
+                                 boolean matched, int gangId, boolean server, boolean tournament, int maxPlayers, int roundId, final SaloonService.ResultListener rl)
+    {
+        // create the new parlor
+        final ParlorInfo info = new ParlorInfo();
+        info.creator = creator;
+        info.type = type;
+        info.matched = matched;
+        info.server = server;
+        info.tournament = tournament;
+        info.maxPlayers = maxPlayers;
+        info.gangId = gangId;
+        info.roundId = roundId;
+
+        try {
+            ParlorManager parmgr = (ParlorManager)BangServer.plreg.createPlace(new ParlorConfig());
+            ParlorObject parobj = (ParlorObject)parmgr.getPlaceObject();
+            parmgr.init(SaloonManager.this, info, password);
+            _parlors.put(info.creator, parmgr);
+            _salobj.addToParlors(info);
+            if (rl != null) {
+                rl.requestProcessed(parobj.getOid());
+            }
+
+        } catch (Exception e) {
+            log.warning("Failed to create parlor " + info + ".", e);
+            if (rl != null) {
+                rl.requestFailed(INTERNAL_ERROR);
+            }
         }
     }
 

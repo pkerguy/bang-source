@@ -31,6 +31,7 @@ import com.threerings.bang.tourney.server.*;
 import com.threerings.bang.util.*;
 import com.threerings.cast.bundle.*;
 import com.threerings.crowd.chat.server.*;
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.*;
 import com.threerings.parlor.server.ParlorManager;
 import com.threerings.presents.annotation.*;
@@ -47,6 +48,7 @@ import com.threerings.util.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.threerings.bang.Log.*;
 
@@ -161,6 +163,12 @@ public class BangServer extends CrowdServer
     public static PlayerLocator locator;
     public static PlaceRegistry plreg;
     public static LocationManager locman;
+
+    // Statics relating to Tournament data
+    public static boolean isTournamentServer = false;
+    public static int amountofPlayers = 0, parlorCount = 0;
+    public static Map<BodyObject, Integer> round = new ConcurrentHashMap<>();
+    public static String[] scenerioIds;
 
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
@@ -310,7 +318,27 @@ public class BangServer extends CrowdServer
             log.info("Init of Runtime Config finished!");
             queueShutdown();
         }
-
+        if(initConfig != null && initConfig.equalsIgnoreCase("tourny"))
+        {
+            isTournamentServer = true;
+        }
+        String maxPlayers = System.getProperty("maxPlayers");
+        if(maxPlayers != null)
+        {
+            try {
+                amountofPlayers = Integer.parseInt(maxPlayers);
+            } catch (NumberFormatException ex)
+            {
+                log.info("MaxPlayers didn't use a number.");
+                return;
+            }
+        }
+        scenerioIds = System.getProperty("scenerios").split(",");
+        if(isTournamentServer && amountofPlayers == 0 && scenerioIds.length > 0)
+        {
+            log.info("Tournament mode is active and no player count or scenerioIds where defined.");
+            return;
+        }
 
         // set up our authenticator
         author = (BangAuthenticator)_author;

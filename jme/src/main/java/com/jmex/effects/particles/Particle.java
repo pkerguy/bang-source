@@ -173,13 +173,13 @@ public class Particle implements Savable {
     }
 
     /**
-     * Update the vertices for this particle, taking size, spin and viewer into
+     * Update the vertices for this particle, taking size, spin and model into
      * consideration. In the case of particle type PT_GEOMBATCH, the original
      * triangle normal is maintained rather than rotating it to face the camera
      * or parent vectors.
      * 
      * @param cam
-     *            Camera to use in determining viewer aspect. If null, or if
+     *            Camera to use in determining model aspect. If null, or if
      *            parent is not set to camera facing, parent's left and up
      *            vectors are used.
      */

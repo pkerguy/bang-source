@@ -202,7 +202,6 @@ public class ParlorList extends BContainer
         if (_salobj == null) {
             return;
         }
-
         _salobj.service.joinParlor(owner, password, new SaloonService.ResultListener() {
             public void requestProcessed (Object result) {
                 _ctx.getLocationDirector().moveTo((Integer)result);

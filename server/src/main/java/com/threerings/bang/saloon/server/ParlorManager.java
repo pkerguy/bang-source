@@ -106,27 +106,39 @@ public class ParlorManager extends PlaceManager
             throw new InvocationException(BOOTED);
         }
 
-        switch (_parobj.info.type) {
-        case PASSWORD:
-            // make sure the password matches if we have a password
-            if (password == null || !password.equalsIgnoreCase(_password)) {
-                throw new InvocationException(INCORRECT_PASSWORD);
-            }
-            break;
-
-        case PARDNERS_ONLY:
-            // make sure they're a pardner of the creator if that is required
-            PlayerObject creator = BangServer.locator.lookupPlayer(_parobj.info.creator);
-            if (creator == null) {
-                throw new InvocationException(CREATOR_NOT_ONLINE);
-            }
-            if (!creator.pardners.containsKey(user.handle)) {
-                throw new InvocationException(NOT_PARDNER);
-            }
-            break;
-
-        default:
-            break; // nada
+        switch (_parobj.info.type) { 
+            
+            case NORMAL:
+                if(BangServer.isTournamentServer)
+                {
+                    int roundId = _parobj.info.roundId;
+                    Integer round = BangServer.round.get(user);
+                    if (round == null ? roundId != 0 : (round != roundId || round == -1)) {
+                        throw new InvocationException(INVALID_ROUND);
+                    }
+                }
+                break;
+            
+            case PASSWORD:
+                // make sure the password matches if we have a password
+                if (password == null || !password.equalsIgnoreCase(_password)) {
+                    throw new InvocationException(INCORRECT_PASSWORD);
+                }
+                break;
+    
+            case PARDNERS_ONLY:
+                // make sure they're a pardner of the creator if that is required
+                PlayerObject creator = BangServer.locator.lookupPlayer(_parobj.info.creator);
+                if (creator == null) {
+                    throw new InvocationException(CREATOR_NOT_ONLINE);
+                }
+                if (!creator.pardners.containsKey(user.handle)) {
+                    throw new InvocationException(NOT_PARDNER);
+                }
+                break;
+    
+            default:
+                break; // nada
         }
     }
 

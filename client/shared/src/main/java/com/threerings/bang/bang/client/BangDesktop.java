@@ -39,7 +39,7 @@ public class BangDesktop {
     private static String OS = System.getProperty("os.name").toLowerCase();
 
     public static void main(String[] args) {
-        System.out.println("Running Bang! Howdy Steam");
+        System.out.println("Runnang! Howdy Steam");
         SteamStorage.init();
         System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();

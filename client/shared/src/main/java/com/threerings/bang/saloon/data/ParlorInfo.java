@@ -34,8 +34,17 @@ public class ParlorInfo extends SimpleStreamableObject
     /** If this is a server parlor. */
     public boolean server;
 
+    /** If this is a tournament's parlor */
+    public boolean tournament;
+
+    /** How many players are allowed entry into this parlor */
+    public int maxPlayers; // Should either be 2 or 4.. No more!
+
     /** The gangId for a recruiting parlor. */
     public int gangId;
+
+    /** Required round id */
+    public int roundId;
 
     // documentation inherited from interface DSet.Entry
     public Comparable<?> getKey ()
@@ -55,6 +64,7 @@ public class ParlorInfo extends SimpleStreamableObject
      */
     public boolean powerUser (PlayerObject user)
     {
+        if(tournament) return false; // No one can control the tournament parlors.
         // if this player is the creator, or an admin/support, let 'em in regardless
         return user.handle.equals(creator) || user.tokens.isSupport() ||
             (type == Type.RECRUITING && user.gangId == gangId && user.canRecruit());

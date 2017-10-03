@@ -29,16 +29,17 @@ import com.threerings.presents.data.InvocationMarshaller;
 
 public class EditorFrame
 {
-    public static void main(String[] args) {
-        new EditorFrame();
-    }
     private EditorApp app;
     private LwjglApplicationConfiguration cfg;
     private JFrame frame;
     private LwjglCanvas canvas;
     LwjglApplicationConfiguration config;
+    public static void main(String[] args) {
+        new EditorFrame();
+    }
     public EditorFrame() {
 
+        System.out.println("Starting editor...");
         SteamStorage.init();
 
 //        try {

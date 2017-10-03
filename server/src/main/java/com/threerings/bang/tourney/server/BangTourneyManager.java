@@ -40,6 +40,7 @@ public class BangTourneyManager extends TourneyManager
     // documentation inherited
     public void notifyAllParticipants (String msg)
     {
+
     }
 
     // documentation inherited

@@ -120,10 +120,6 @@ public class TownView extends BWindow
         Enumeration<?> iter = props.propertyNames();
         while (iter.hasMoreElements()) {
             String command = (String)iter.nextElement();
-            // disable the bank as it's not ready yet
-            if (command.equals("bank")) {
-                continue;
-            }
             _commands.put(props.getProperty(command), command);
         }
 
@@ -310,7 +306,7 @@ public class TownView extends BWindow
         setActive(false);
     }
 
-    /** A simple viewer for the town board. */
+    /** A simple model for the town board. */
     protected class TownBoardView extends BoardView
         implements Subscriber<TownObject>, AttributeChangeListener
     {

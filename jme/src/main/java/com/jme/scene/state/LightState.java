@@ -53,7 +53,7 @@ import com.jme.util.geom.BufferUtils;
  *
  * @author Mark Powell
  * @author Joshua Slack - Light state combining and performance enhancements
- * @author Three Rings: Local viewer and separate specular
+ * @author Three Rings: Local model and separate specular
  * @version $Id$
  */
 public abstract class LightState extends RenderState {
@@ -264,10 +264,10 @@ public abstract class LightState extends RenderState {
     }
 
     /**
-     * Sets if local viewer mode should be enabled for this LightState.
+     * Sets if local model mode should be enabled for this LightState.
      *
      * @param localViewerOn
-     *            If true, local viewer mode is enabled.
+     *            If true, local model mode is enabled.
      */
     public void setLocalViewer(boolean localViewerOn) {
         this.localViewerOn = localViewerOn;
@@ -275,10 +275,10 @@ public abstract class LightState extends RenderState {
     }
 
     /**
-     * Returns the current state of local viewer mode for this LightState. By
+     * Returns the current state of local model mode for this LightState. By
      * default, it is off.
      *
-     * @return True if local viewer mode is enabled.
+     * @return True if local model mode is enabled.
      */
     public boolean getLocalViewer() {
         return this.localViewerOn;

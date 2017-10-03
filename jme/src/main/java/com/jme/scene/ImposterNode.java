@@ -153,7 +153,7 @@ public class ImposterNode extends Node {
 	 * the given eyeLocation
 	 * 
 	 * @param eyeLocation
-	 *            The location the viewer is looking from in the real world.
+	 *            The location the model is looking from in the real world.
 	 */
 	public void updateCamera(Vector3f eyeLocation) {
 		float vDist = eyeLocation.distance(standIn.getCenter());

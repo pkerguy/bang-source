@@ -9,6 +9,7 @@ import com.samskivert.util.IntListUtil;
 import com.samskivert.util.Interval;
 import com.samskivert.util.RandomUtil;
 
+import com.threerings.bang.data.BangCodes;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.media.util.MathUtil;
@@ -86,6 +87,23 @@ public class TableGameManager implements TableGameProvider
             InvocationService.ConfirmListener listener)
         throws InvocationException
     {
+
+        if(BangServer.isTournamentServer)
+        {
+            if (_tobj.playerOids == null) { // No player in match yet
+                game.slots[0] = game.slots[1] = Slot.HUMAN;
+                game.slots[2] = game.slots[3] = Slot.NONE;
+                game.mode = ParlorGameConfig.Mode.NORMAL;
+                game.rounds = 1;
+                game.teamSize = 1;
+                game.scenarios = BangServer.scenerioIds;
+                _tobj.setGame(game);
+            }
+            joinMatch(caller);
+            checkStart();
+            listener.requestProcessed();
+            return;
+        }
         // if we're not allowing new games, fail immediately
         if (!RuntimeConfig.server.allowNewGames) {
             throw new InvocationException(SaloonCodes.NEW_GAMES_DISABLED);

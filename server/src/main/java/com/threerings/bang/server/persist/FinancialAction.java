@@ -287,11 +287,6 @@ public abstract class FinancialAction extends Invoker.Unit
         _user.startTransaction();
         try {
             _user.setScrip(_user.scrip - _scripCost);
-            if (DeploymentConfig.usesCoins()) {
-                String desc = getCoinDescrip();
-                _user.spendCoins(_coinCost, desc);
-                //_user.setCoins(_user.getCoins() - _coinCost);
-            }
         } finally {
             _user.commitTransaction();
         }

@@ -37,6 +37,9 @@ public class BangBootstrapData extends BootstrapData
     /** The room oid of the Sheriff's office. */
     public int officeOid;
 
+    /** The room oid of the Bank. */
+    public int bankOid;
+
     /** The oid for the list of active/pending tournies. */
     public int tourniesOid;
 
@@ -53,6 +56,7 @@ public class BangBootstrapData extends BootstrapData
         case SALOON: return saloonOid;
         case STATION: return stationOid;
         case STORE: return storeOid;
+        case BANK: return bankOid;
         default: throw new IllegalArgumentException("ZOUNDS! I know not this " + shop + ".");
         }
     }

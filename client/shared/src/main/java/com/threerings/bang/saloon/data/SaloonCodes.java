@@ -40,4 +40,7 @@ public interface SaloonCodes extends InvocationCodes
     /** An error code reported when trying to start a new game when not the creator. */
     public static final String CREATOR_ONLY =
         MessageBundle.qualify(SALOON_MSGS, "m.creator_only");
+
+    public static final String INVALID_ROUND = "m.invalid_round";
+
 }

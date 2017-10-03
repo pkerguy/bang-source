@@ -67,15 +67,6 @@ public abstract class FinancialAction extends Invoker.Unit
             }
             _actionTaken = true;
 
-            if (DeploymentConfig.usesCoins() && _coinCost > 0) {
-                // finally "spend" our reserved coins
-                if (!spendCoins(_coinres)) {
-                    log.warning("Failed to spend coin reservation " + this, "resid", _coinres);
-                    fail(BangCodes.INTERNAL_ERROR);
-                    return true;
-                }
-            }
-
         } catch (Exception e) {
             log.warning("Financial action failed " + this, e);
             fail(BangCodes.INTERNAL_ERROR);

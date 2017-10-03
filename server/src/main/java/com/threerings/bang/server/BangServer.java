@@ -320,6 +320,7 @@ public class BangServer extends CrowdServer
         }
         if(initConfig != null && initConfig.equalsIgnoreCase("tourny"))
         {
+            log.info("THIS IS A TOURNAMENT SERVER");
             isTournamentServer = true;
         }
         String maxPlayers = System.getProperty("maxPlayers");
@@ -330,6 +331,7 @@ public class BangServer extends CrowdServer
             } catch (NumberFormatException ex)
             {
                 log.info("MaxPlayers didn't use a number.");
+                queueShutdown();
                 return;
             }
         }
@@ -337,6 +339,7 @@ public class BangServer extends CrowdServer
         if(isTournamentServer && amountofPlayers == 0 && scenerioIds.length > 0)
         {
             log.info("Tournament mode is active and no player count or scenerioIds where defined.");
+            queueShutdown();
             return;
         }
 

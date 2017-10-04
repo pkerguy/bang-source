@@ -34,7 +34,7 @@ public class DeploymentConfig
         {
             return 100010;
         }
-        return 404; // Change upon each release version
+        return 405; // Change upon each release version
     }
 
     // Current release: 400+

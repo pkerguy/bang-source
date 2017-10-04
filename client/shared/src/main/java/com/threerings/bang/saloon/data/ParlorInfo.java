@@ -37,6 +37,9 @@ public class ParlorInfo extends SimpleStreamableObject
     /** If this is a tournament's parlor */
     public boolean tournament;
 
+    /** Has this parlor been filled! */
+    public boolean filled = false;
+
     /** How many players are allowed entry into this parlor */
     public int maxPlayers; // Should either be 2 or 4.. No more!
 

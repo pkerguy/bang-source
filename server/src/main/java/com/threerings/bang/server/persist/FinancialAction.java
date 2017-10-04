@@ -59,6 +59,7 @@ public abstract class FinancialAction extends Invoker.Unit
                 _cashSpent = true;
             }
 
+
             // then do our persistent business
             String errmsg = persistentAction();
             if (errmsg != null) {
@@ -66,6 +67,15 @@ public abstract class FinancialAction extends Invoker.Unit
                 return true;
             }
             _actionTaken = true;
+
+            if (DeploymentConfig.usesCoins() && _coinCost > 0) {
+                // finally "spend" our reserved coins
+                if (!spendCoinsNow(_coinres)) {
+                    log.warning("Failed to spend coin reservation " + this, "resid", _coinres);
+                    fail(BangCodes.INTERNAL_ERROR);
+                    return true;
+                }
+            }
 
         } catch (Exception e) {
             log.warning("Financial action failed " + this, e);
@@ -331,7 +341,7 @@ public abstract class FinancialAction extends Invoker.Unit
     /**
      * Updates the database to spend the actor's coins.
      */
-    protected boolean spendCoins (int resId)
+    protected boolean spendCoinsNow (int resId)
         throws PersistenceException
     {
         String desc = getCoinDescrip();

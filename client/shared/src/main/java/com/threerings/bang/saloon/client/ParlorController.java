@@ -3,6 +3,7 @@
 
 package com.threerings.bang.saloon.client;
 
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
@@ -65,6 +66,7 @@ public class ParlorController extends PlaceController
      */
     public void leaveSaloonMatch (int matchOid)
     {
+        _parobj.service.bootPlayer(matchOid);
         if (_gameStarting) {
             return;
         }

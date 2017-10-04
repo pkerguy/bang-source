@@ -3,6 +3,10 @@
 
 package com.threerings.bang.server.persist;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.Statement;
 import java.util.Map;
 
@@ -70,7 +74,7 @@ public abstract class FinancialAction extends Invoker.Unit
 
             if (DeploymentConfig.usesCoins() && _coinCost > 0) {
                 // finally "spend" our reserved coins
-                if (!spendCoinsNow(_coinres)) {
+                if (!spendCoinsNow(_coinCost)) {
                     log.warning("Failed to spend coin reservation " + this, "resid", _coinres);
                     fail(BangCodes.INTERNAL_ERROR);
                     return true;
@@ -304,7 +308,19 @@ public abstract class FinancialAction extends Invoker.Unit
             if (DeploymentConfig.usesCoins()) {
                 String desc = getCoinDescrip();
                 if(desc == null) desc = "Unknown";
-                _user.addCoins(_coinCost, desc);
+                try {
+                    URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=add&username=" + _user + "&amount=" + _coinCost + "&description=" + desc);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+                    String line = in.readLine();
+                    switch (line) {
+                        case "FAILED": case "":
+                            break;
+                        default:
+                            _user.addCoins(_coinCost, desc);
+                    }
+                } catch (IOException | NumberFormatException e) {
+                    e.printStackTrace();
+                }
                 //_user.setCoins(_user.getCoins() + _coinCost);
             }
         } finally {
@@ -346,8 +362,23 @@ public abstract class FinancialAction extends Invoker.Unit
     {
         String desc = getCoinDescrip();
         if(desc == null) desc = "Unknown";
-        return _user.spendCoins(resId, desc);
+        try {
+            URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=spend&username=" + _user.username + "&amount=" + resId + "&description=" + desc);
+            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
+            String line = in.readLine();
+            switch (line) {
+                case "FAILED":
+                    return false;
+                case "":
+                    return false;
+                default:
+                    return _user.spendCoins(resId, desc);
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
 
+            return false;
+        }
         /*//return _coinmgr.getCoinRepository().spendCoins(resId, getCoinType(), getCoinDescrip());
         if(_user.getCoins() < resId)
         {

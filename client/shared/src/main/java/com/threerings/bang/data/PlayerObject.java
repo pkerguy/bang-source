@@ -739,44 +739,19 @@ public class PlayerObject extends BodyObject
 
     public boolean spendCoins(int amount, String description) {
         final int spendOld = coins;
-        try {
-            URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=spend&username=" + username + "&amount=" + amount + "&description=" + description);
-            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
-            String line = in.readLine();
-            switch (line) {
-                case "FAILED":
-                    return false;
-                case "":
-                    return false;
-                default:
-                    coins = Integer.parseInt(line);
-                    requestAttributeChange(
-                            COINS, Integer.valueOf(coins), Integer.valueOf(spendOld));
-                    return true;
-            }
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-
-            return false;
-        }
+        int newAmount = coins -= amount;
+        requestAttributeChange(
+                COINS, Integer.valueOf(newAmount), Integer.valueOf(spendOld));
+        coins = newAmount;
+        return true;
     }
 
     public void addCoins(int amount, String description) {
-        try {
-            URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=add&username=" + username + "&amount=" + amount + "&description=" + description);
-            BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
-            String line = in.readLine();
-            switch (line) {
-                case "FAILED": case "":
-                    break;
-                default:
-                    coins = Integer.parseInt(line);
-                    requestAttributeChange(
-                            COINS, Integer.valueOf(coins), Integer.valueOf(coins));
-            }
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-        }
+        final int spendOld = coins;
+        int newAmount = coins += amount;
+        coins = newAmount;
+        requestAttributeChange(
+                            COINS, Integer.valueOf(newAmount), Integer.valueOf(coins));
     }
 
     /**

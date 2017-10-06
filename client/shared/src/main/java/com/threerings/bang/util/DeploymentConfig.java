@@ -34,7 +34,7 @@ public class DeploymentConfig
         {
             return 100010;
         }
-        return 405; // Change upon each release version
+        return 407; // Change upon each release version
     }
 
     // Current release: 400+
@@ -76,7 +76,12 @@ public class DeploymentConfig
      */
     public static URL getDocBaseURL ()
     {
-        return getURL("doc_base_url", null);
+        try {
+            return new URL("https://banghowdy.com/");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

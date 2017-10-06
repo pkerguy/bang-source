@@ -740,16 +740,16 @@ public class PlayerObject extends BodyObject
     public boolean spendCoins(int amount, String description) {
         final int spendOld = coins;
         int newAmount = coins -= amount;
+        this.coins = newAmount;
         requestAttributeChange(
                 COINS, Integer.valueOf(newAmount), Integer.valueOf(spendOld));
-        coins = newAmount;
         return true;
     }
 
     public void addCoins(int amount, String description) {
         final int spendOld = coins;
         int newAmount = coins += amount;
-        coins = newAmount;
+        this.coins = newAmount;
         requestAttributeChange(
                             COINS, Integer.valueOf(newAmount), Integer.valueOf(coins));
     }

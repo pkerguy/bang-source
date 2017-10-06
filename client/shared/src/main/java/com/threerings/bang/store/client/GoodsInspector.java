@@ -15,6 +15,7 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.Point;
 import com.jmex.bui.util.Rectangle;
 
+import com.threerings.bang.client.WalletLabel;
 import com.threerings.media.image.Colorization;
 import com.threerings.util.MessageBundle;
 
@@ -94,8 +95,9 @@ public class GoodsInspector extends BContainer
     /**
      * Gives us access to our store object when it is available.
      */
-    public void init (GoodsObject goodsobj)
+    public void init (WalletLabel wallet, GoodsObject goodsobj)
     {
+        _wallet = wallet;
         _goodsobj = goodsobj;
     }
 
@@ -209,6 +211,8 @@ public class GoodsInspector extends BContainer
         }
 
         _descrip.setText(_msgs.get(msg));
+        PlayerObject pobj = _ctx.getUserObject();
+        if(_wallet != null) _wallet.setMoney(pobj.scrip, pobj.getCoins(), true); // Forcefully update the money
         BangUI.play(BangUI.FeedbackSound.ITEM_PURCHASE);
     }
 
@@ -319,6 +323,7 @@ public class GoodsInspector extends BContainer
     protected BButton _buy, _try, _download;
     protected BContainer _ccont, _dcont;
     protected MoneyLabel _cost;
+    protected WalletLabel _wallet;
 
     protected GoodsPalette _palette;
     protected ColorSelector[] _colorsel = new ColorSelector[3];

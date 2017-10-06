@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.threerings.bang.bang.editor.EditorFrame;
 import com.threerings.bang.client.BangApp;
 import com.threerings.bang.client.BangPrefs;
+import com.threerings.bang.minigames.webapi.Server;
 import com.threerings.bang.steam.SteamStorage;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;

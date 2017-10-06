@@ -143,7 +143,7 @@ public class GangStoreDialog extends BDecoratedWindow
 
         ccont.add(new Spacer(30, 1), GroupLayout.FIXED);
         ccont.add(_inspector = new GangGoodsInspector(_ctx, _palette));
-        _inspector.init(hideoutobj);
+        _inspector.init(null, hideoutobj);
         _palette.setInspector(_inspector);
 
         BContainer dcont = GroupLayout.makeVBox(GroupLayout.CENTER);

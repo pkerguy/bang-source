@@ -53,6 +53,9 @@ public interface BangCodes extends InvocationCodes
     public static final String GOODS_MSGS = "goods";
 
     /** The message bundle identifier for our translation messages. */
+    public static final String MINIGAME_MSGS = "minigames";
+
+    /** The message bundle identifier for our translation messages. */
     public static final String CARDS_MSGS = "cards";
 
     /** The message bundle identifier for our translation messages. */

@@ -39,7 +39,7 @@ public class StoreView extends ShopView
         add(new BLabel(_msgs.get("m.intro_tip"), "shop_status"),
             new Rectangle(232, 640, 570, 35));
 
-        add(new WalletLabel(_ctx, true), new Rectangle(43, 82, 150, 40));
+        add(_wallet = new WalletLabel(_ctx, true), new Rectangle(43, 82, 150, 40));
 
         add(_goods = new GoodsPalette(_ctx, 6, 3), new Rectangle(181, 140, 817, 495));
 
@@ -72,7 +72,7 @@ public class StoreView extends ShopView
             }
         }
         _goods.init(stobj);
-        _inspector.init(stobj);
+        _inspector.init(_wallet, stobj);
     }
 
     @Override // documentation inherited
@@ -82,5 +82,6 @@ public class StoreView extends ShopView
     }
 
     protected GoodsPalette _goods;
+    protected WalletLabel _wallet;
     protected GoodsInspector _inspector;
 }

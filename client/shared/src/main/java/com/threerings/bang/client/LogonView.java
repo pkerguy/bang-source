@@ -15,6 +15,7 @@ import com.samskivert.util.*;
 import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.client.bui.*;
 import com.threerings.bang.data.*;
+import com.threerings.bang.minigames.webapi.Server;
 import com.threerings.bang.steam.*;
 import com.threerings.bang.util.*;
 import com.threerings.presents.client.*;

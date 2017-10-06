@@ -25,6 +25,9 @@ import com.threerings.bang.util.PaymentType;
 
 import com.threerings.bang.store.data.StarGood;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * Notifies the player that they need the onetime purchase to access some content.
  */
@@ -55,7 +58,11 @@ public class NeedPremiumView extends BDecoratedWindow
 
         // only head to the bank if requested
         if ("get_onetime".equals(event.getAction())) {
-            _ctx.showURL(DeploymentConfig.getBillingPassURL(_ctx, _ctx.getUserObject().townId));
+            try {
+                _ctx.showURL(new URL("http://banghowdy.com/buy.php"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -683,7 +683,11 @@ public class PlayerManager
                         return;
                     }
                     user.startTransaction();
-                    user.setScrip(user.getScrip() + amount);
+                    try {
+                        _playrepo.grantScrip(user.playerId, amount);
+                    } catch (PersistenceException e) {
+                        e.printStackTrace();
+                    }
                     user.commitTransaction();
                     listener.requestProcessed();
                 } catch (NumberFormatException ex) {
@@ -697,8 +701,11 @@ public class PlayerManager
                         return;
                     }
                     user.startTransaction();
-                    user.setScrip(Math.max(user.getScrip() - amount, 0));
-                    user.commitTransaction();
+                    try {
+                        _playrepo.grantScrip(user.playerId, -amount);
+                    } catch (PersistenceException e) {
+                        e.printStackTrace();
+                    }                    user.commitTransaction();
                     listener.requestProcessed();
                 } catch (NumberFormatException ex) {
                     listener.requestFailed("Invalid Amount");
@@ -706,7 +713,11 @@ public class PlayerManager
                 break;
             case AdminDialog.RESET_SCRIP:
                 user.startTransaction();
-                user.setScrip(0);
+                try {
+                    _playrepo.grantScrip(user.playerId, -user.getScrip());
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
                 user.commitTransaction();
                 listener.requestProcessed();
                 break;

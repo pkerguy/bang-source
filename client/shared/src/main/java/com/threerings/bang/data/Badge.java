@@ -3,9 +3,7 @@
 
 package com.threerings.bang.data;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import com.jmex.bui.BImage;
@@ -1039,8 +1037,9 @@ public class Badge extends Item
     /**
      * Determines whether this player qualifies for badges on-logon
      */
-    public static void logonBadgeCheck (PlayerObject user)
+    public static List<Badge> logonBadgeCheck (PlayerObject user)
     {
+        List<Badge> result = new ArrayList<Badge>();
         // first enumerate the badges they already hold
         _badgeCodes.clear();
         for (Item item : user.inventory) {
@@ -1058,7 +1057,7 @@ public class Badge extends Item
             {
                 Badge badge = type.newBadge();
                 badge.setOwnerId(user.playerId);
-                user.addToInventory(badge);
+                result.add(badge);
                 continue;
             }
             if (!type.qualifies(user)) {
@@ -1066,12 +1065,9 @@ public class Badge extends Item
             }
             Badge badge = type.newBadge();
             badge.setOwnerId(user.playerId);
-            if (user.inventory.contains(badge)) {
-                user.updateInventory(badge);
-            } else {
-                user.addToInventory(badge);
-            }
+            result.add(badge);
         }
+        return result;
     }
 
     /** Creates a blank instance for serialization. */

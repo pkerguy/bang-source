@@ -682,7 +682,9 @@ public class PlayerManager
                         listener.requestFailed("Amount must be > 0");
                         return;
                     }
+                    user.startTransaction();
                     user.setScrip(user.getScrip() + amount);
+                    user.commitTransaction();
                     listener.requestProcessed();
                 } catch (NumberFormatException ex) {
                     listener.requestFailed("Invalid Amount");
@@ -694,14 +696,18 @@ public class PlayerManager
                         listener.requestFailed("Amount must be > 0");
                         return;
                     }
+                    user.startTransaction();
                     user.setScrip(Math.max(user.getScrip() - amount, 0));
+                    user.commitTransaction();
                     listener.requestProcessed();
                 } catch (NumberFormatException ex) {
                     listener.requestFailed("Invalid Amount");
                 }
                 break;
             case AdminDialog.RESET_SCRIP:
+                user.startTransaction();
                 user.setScrip(0);
+                user.commitTransaction();
                 listener.requestProcessed();
                 break;
             case AdminDialog.GRANT_BADGE: case AdminDialog.REMOVE_BADGE:
@@ -726,14 +732,29 @@ public class PlayerManager
                     Badge badge = type.newBadge();
                     badge.setOwnerId(user.playerId);
                     if (user.inventory.contains(badge)) {
-                        user.updateInventory(badge);
+                        try {
+                            _itemrepo.insertItem(badge);
+                            user.updateInventory(badge);
+                        } catch (PersistenceException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                        user.addToInventory(badge);
+                        try {
+                            _itemrepo.insertItem(badge);
+                            user.addToInventory(badge);
+                        } catch (PersistenceException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     for (Item item : user.inventory) {
                         if (item instanceof Badge && ((Badge) item).getType() == type) {
-                            user.removeFromInventory(((Badge) item).getKey());
+                            try {
+                                _itemrepo.deleteItem(item, "Deleted by Admin");
+                                user.removeFromInventory(((Badge) item).getKey());
+                            } catch (PersistenceException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         }
                     }
@@ -746,7 +767,12 @@ public class PlayerManager
                 /* The inventory's iterator doesn't support #remove() :( */
                 for (Item item : user.inventory) {
                     if (item instanceof Badge) {
-                        toRemove.add(item.getKey());
+                        try {
+                            _itemrepo.deleteItem(item, "RESET By Admin");
+                            toRemove.add(item.getKey());
+                        } catch (PersistenceException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 for (Comparable<?> key : toRemove) {

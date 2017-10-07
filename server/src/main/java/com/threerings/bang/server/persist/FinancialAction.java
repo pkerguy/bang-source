@@ -265,6 +265,10 @@ public abstract class FinancialAction extends Invoker.Unit
      */
     protected String checkSufficientFunds ()
     {
+        if(DeploymentConfig.beta_build)
+        {
+            return null;
+        }
         if (_user.scrip < _scripCost) {
             return BangCodes.E_INSUFFICIENT_SCRIP;
         }
@@ -302,6 +306,10 @@ public abstract class FinancialAction extends Invoker.Unit
      */
     protected void returnCost ()
     {
+        if(DeploymentConfig.beta_build)
+        {
+            return;
+        }
         _user.startTransaction();
         try {
             _user.setScrip(_user.scrip + _scripCost);
@@ -342,6 +350,10 @@ public abstract class FinancialAction extends Invoker.Unit
     protected void spendCash ()
         throws PersistenceException
     {
+        if(DeploymentConfig.beta_build)
+        {
+            return;
+        }
         _playrepo.spendScrip(_user.playerId, _scripCost);
     }
 
@@ -351,6 +363,10 @@ public abstract class FinancialAction extends Invoker.Unit
     protected void grantCash ()
         throws PersistenceException
     {
+        if(DeploymentConfig.beta_build)
+        {
+            return;
+        }
         _playrepo.grantScrip(_user.playerId, _scripCost);
     }
 
@@ -360,6 +376,10 @@ public abstract class FinancialAction extends Invoker.Unit
     protected boolean spendCoinsNow (int resId)
         throws PersistenceException
     {
+        if(DeploymentConfig.beta_build)
+        {
+            return true;
+        }
         String desc = getCoinDescrip();
         if(desc == null) desc = "Unknown";
         try {

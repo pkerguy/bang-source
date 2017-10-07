@@ -276,10 +276,13 @@ public class BangClientResolver extends CrowdClientResolver
             }
         }
 
-        List<Badge> giveBadgesList = Badge.logonBadgeCheck(buser);
-        for(Badge badge : giveBadgesList)
+        if(buser.hasCharacter())
         {
-            _itemrepo.insertItem(badge);
+            List<Badge> giveBadgesList = Badge.logonBadgeCheck(buser);
+            for(Badge badge : giveBadgesList)
+            {
+                _itemrepo.insertItem(badge);
+            }
         }
 
         // load up this player's pardners

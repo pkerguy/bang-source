@@ -282,6 +282,7 @@ public class BangClientResolver extends CrowdClientResolver
             for(Badge badge : giveBadgesList)
             {
                 _itemrepo.insertItem(badge);
+                buser.addToInventory(badge);
             }
         }
 

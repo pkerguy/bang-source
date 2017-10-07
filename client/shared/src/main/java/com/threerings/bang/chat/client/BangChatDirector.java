@@ -11,6 +11,10 @@ import java.util.Map;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Throttle;
+import com.threerings.bang.admin.client.GameMasterDialog;
+import com.threerings.bang.client.PlayerService;
+import com.threerings.bang.client.bui.OptionDialog;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
@@ -36,6 +40,8 @@ import com.threerings.bang.gang.data.HideoutObject;
  */
 public class BangChatDirector extends ChatDirector
 {
+    protected static boolean success = false;
+
     public BangChatDirector (BangContext ctx)
     {
         super(ctx, BangCodes.CHAT_MSGS);
@@ -80,6 +86,47 @@ public class BangChatDirector extends ChatDirector
                 return new Handle(handle);
             }
         });
+
+        if(_ctx.getUserObject().tokens.isSupport())
+        {
+            registerCommandHandler(msg, "watch", new CommandHandler() {
+                public String handleCommand (
+                        SpeakService speaksvc, String command, String args,
+                        String[] history) {
+                    if (StringUtil.isBlank(args)) {
+                        return getUsage("Usage: /watch user");
+                    }
+                    Handle name = new Handle(args);
+                    _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
+                            name, GameMasterDialog.WATCH_GAME, "", 0L,
+                            new InvocationService.ConfirmListener() {
+                                @Override
+                                public void requestProcessed() {
+                                   success = false;
+                                   return;
+                                }
+
+                                @Override
+                                public void requestFailed(String cause) {
+                                    try {
+                                        int placeOid = Integer.parseInt(cause);
+                                        _ctx.getLocationDirector().moveTo(placeOid);
+                                    } catch(NumberFormatException ex) {
+                                        success = false;
+                                        return;
+                                    }
+                                    success = true;
+                                }
+                            });
+                    if(success)
+                    {
+                        return SUCCESS;
+                    } else {
+                        return "Failed to execute command!";
+                    }
+                }
+            });
+        }
 
     }
 

@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.util.Name;
 
 import com.threerings.stats.data.Stat;
@@ -191,6 +192,10 @@ public class PlayerObject extends BodyObject
     // from interface Wallet
     public int getCoins ()
     {
+        if(BangDesktop.server != null && BangDesktop.server.equalsIgnoreCase("Inferno"))
+        {
+            return 99999;
+        }
         final int oldValue = coins;
         if (System.currentTimeMillis() - _coinLastChecked >= COIN_CHECK_DELAY) {
             _coinLastChecked = System.currentTimeMillis();

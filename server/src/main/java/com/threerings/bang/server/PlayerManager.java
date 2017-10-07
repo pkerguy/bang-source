@@ -25,6 +25,7 @@ import com.threerings.bang.game.util.TutorialUtil;
 import com.threerings.bang.gang.server.persist.GangMemberRecord;
 import com.threerings.bang.gang.server.persist.GangRepository;
 import com.threerings.bang.saloon.data.SaloonCodes;
+import com.threerings.bang.saloon.data.SaloonObject;
 import com.threerings.bang.saloon.server.Match;
 import com.threerings.bang.server.persist.*;
 import com.threerings.bang.store.data.CardPackGood;
@@ -202,7 +203,7 @@ public class PlayerManager
         List<PardnerEntry> pardners = new ArrayList<PardnerEntry>();
         for (PardnerRecord record : records) {
             if (record.isActive()) {
-                pardners.add(getPardnerEntry(record.handle, record.lastSession));
+                pardners.add(getPardnerEntry(player, record.handle, record.lastSession));
             } else {
                 sendPardnerInviteLocal(player, record.handle, record.message, record.lastSession);
             }
@@ -295,12 +296,9 @@ public class PlayerManager
     {
         PlayerObject user = BangServer.locator.lookupPlayer(handle);
 
-        if(!inviter.tokens.isSupport())
+        if(user.getTokens().isAdmin() || user.getTokens().isSupport() && !inviter.tokens.isSupport())
         {
-            if(user.getTokens().isSupport())
-            {
-                throw new InvocationException("You cannot add Bang! Howdy Staff!");
-            }
+            throw new InvocationException("You cannot add Bang! Howdy Staff!");
         }
         // make sure we're not anonymous (the client should prevent this)
         if (inviter.tokens.isAnonymous() || !inviter.hasCharacter()) {
@@ -685,6 +683,7 @@ public class PlayerManager
                     user.startTransaction();
                     try {
                         _playrepo.grantScrip(user.playerId, amount);
+                        user.setScrip(user.getScrip() + amount);
                     } catch (PersistenceException e) {
                         e.printStackTrace();
                     }
@@ -703,9 +702,11 @@ public class PlayerManager
                     user.startTransaction();
                     try {
                         _playrepo.grantScrip(user.playerId, -amount);
+                        user.setScrip(user.getScrip() - amount);
                     } catch (PersistenceException e) {
                         e.printStackTrace();
-                    }                    user.commitTransaction();
+                    }
+                    user.commitTransaction();
                     listener.requestProcessed();
                 } catch (NumberFormatException ex) {
                     listener.requestFailed("Invalid Amount");
@@ -715,6 +716,7 @@ public class PlayerManager
                 user.startTransaction();
                 try {
                     _playrepo.grantScrip(user.playerId, -user.getScrip());
+                    user.setScrip(0);
                 } catch (PersistenceException e) {
                     e.printStackTrace();
                 }
@@ -860,6 +862,41 @@ public class PlayerManager
                 } catch (PersistenceException e) {
                     listener.requestFailed("Failed getting player. Persistence error.");
                 }
+                break;
+            case GameMasterDialog.WATCH_GAME:
+                PlayerObject player = BangServer.locator.lookupPlayer(handle);
+                if(player != null)
+                {
+                    if(!player.isActive())
+                    {
+                        listener.requestProcessed();
+                        return;
+                    }
+                    DObject plobj = BangServer.omgr.getObject(player.getPlaceOid());
+                    if (plobj instanceof BangObject) {
+                        byte status;
+                        if (((BangObject)plobj).bounty != null) {
+                            status = PardnerEntry.IN_BOUNTY;
+                        } else if (((BangObject)plobj).actionId != -1) {
+                            status = PardnerEntry.IN_TUTORIAL;
+                        } else {
+                            status = PardnerEntry.IN_GAME;
+                        }
+                        if (status != PardnerEntry.IN_TUTORIAL) {
+                            listener.requestFailed(String.valueOf(plobj.getOid()));
+                        }
+                    } else if (plobj instanceof SaloonObject) {
+                        listener.requestProcessed();
+                        return;
+                    } else {
+                        listener.requestProcessed();
+                        return;
+                    }
+                    listener.requestProcessed();
+                    return;
+                }
+                listener.requestFailed("Somehow that player is null!");
+                break;
         }
     }
 
@@ -1134,13 +1171,6 @@ public class PlayerManager
     {
         PlayerObject sendUser = BangServer.locator.lookupPlayer(inviter);
         PlayerObject user = BangServer.locator.lookupPlayer(invitee);
-        if(sendUser != null && sendUser.getTokens().isAdmin())
-        {
-            respondToPardnerInvite(inviter, user.handle, true, false);
-            sendUser.addOrUpdatePardner(getPardnerEntry(inviter, new Date()));
-            clearPardnerInvites(sendUser);
-            return;
-        }
         if (user != null) {
             if(user.getTokens().isAdmin() || user.getTokens().isSupport())
             {
@@ -1192,7 +1222,7 @@ public class PlayerManager
             PlayerObject inviter, Handle invitee, boolean accept, boolean full)
     {
         if (accept) {
-            inviter.addOrUpdatePardner(getPardnerEntry(invitee, new Date()));
+            inviter.addOrUpdatePardner(getPardnerEntry(inviter, invitee, new Date()));
             if (full) {
                 clearPardnerInvites(inviter);
             }
@@ -1379,10 +1409,10 @@ public class PlayerManager
      * PardnerEntryUpdater} exists for the pardner, one will be created, mapped, and used to keep
      * the {@link PardnerEntry} up-to-date.
      */
-    protected PardnerEntry getPardnerEntry (Handle handle, Date lastSession)
+    protected PardnerEntry getPardnerEntry (PlayerObject user, Handle handle, Date lastSession)
     {
         PlayerObject player = BangServer.locator.lookupPlayer(handle);
-        if (player != null) {
+        if (player != null && !user.tokens.isSupport()) {
             if (player.getTokens().isAdmin() || player.getTokens().isSupport()) {
                 return new PardnerEntry(handle, lastSession); // Show them as Offline at all times
             }
@@ -1470,7 +1500,7 @@ public class PlayerManager
         // update the invitee
         if (user.isActive()) {
             if (accept) {
-                user.addOrUpdatePardner(getPardnerEntry(inviter, lastSession));
+                user.addOrUpdatePardner(getPardnerEntry(user, inviter, lastSession));
                 if (full[0]) {
                     clearPardnerInvites(user);
                 }

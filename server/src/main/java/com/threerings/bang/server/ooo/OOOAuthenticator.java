@@ -79,7 +79,7 @@ public class OOOAuthenticator extends BangAuthenticator
             int rv = _authrep.checkCanCreate(machIdent, OOOUser.BANGHOWDY_SITE_ID);
             if(DeploymentConfig.beta_build)
             {
-                rv = _authrep.checkCanCreate(machIdent, 1337);
+                rv = 0;
             }
             switch(rv) {
             case OOOUserRepository.NEW_ACCOUNT_TAINTED:

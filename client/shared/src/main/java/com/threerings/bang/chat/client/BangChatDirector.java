@@ -87,12 +87,15 @@ public class BangChatDirector extends ChatDirector
             }
         });
 
-        if(_ctx.getUserObject().tokens.isSupport())
-        {
-            registerCommandHandler(msg, "watch", new CommandHandler() {
+        registerCommandHandler(msg, "watch", new CommandHandler() {
                 public String handleCommand (
                         SpeakService speaksvc, String command, String args,
                         String[] history) {
+                    if(_ctx.getUserObject() == null) return "NOPE";
+                    if(!_ctx.getUserObject().tokens.isSupport())
+                    {
+                        return "ACCESS DENIED";
+                    }
                     if (StringUtil.isBlank(args)) {
                         return getUsage("Usage: /watch user");
                     }
@@ -126,7 +129,6 @@ public class BangChatDirector extends ChatDirector
                     }
                 }
             });
-        }
 
     }
 

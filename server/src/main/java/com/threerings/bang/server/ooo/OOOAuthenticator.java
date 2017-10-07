@@ -75,22 +75,23 @@ public class OOOAuthenticator extends BangAuthenticator
         int siteId = getSiteId(affiliate);
 
         try {
-            if(DeploymentConfig.getVersion() < 10000) // Not a beta build
+            // make sure that this machine identifier is allowed to create a new account
+            int rv = _authrep.checkCanCreate(machIdent, OOOUser.BANGHOWDY_SITE_ID);
+            if(DeploymentConfig.beta_build)
             {
-                // make sure that this machine identifier is allowed to create a new account
-                int rv = _authrep.checkCanCreate(machIdent, OOOUser.BANGHOWDY_SITE_ID);
-                switch(rv) {
-                    case OOOUserRepository.NEW_ACCOUNT_TAINTED:
-                        return MACHINE_TAINTED;
-                    case OOOUserRepository.NO_NEW_FREE_ACCOUNT: // we don't care, let 'em in
-                    case OOOUserRepository.ACCESS_GRANTED:
-                        break;
+                rv = _authrep.checkCanCreate(machIdent, 1337);
+            }
+            switch(rv) {
+            case OOOUserRepository.NEW_ACCOUNT_TAINTED:
+                return MACHINE_TAINTED;
+            case OOOUserRepository.NO_NEW_FREE_ACCOUNT: // we don't care, let 'em in
+            case OOOUserRepository.ACCESS_GRANTED:
+                break;
 
-                    default:
-                        log.warning("Unhandled checkCanCreate() response code", "ident", machIdent,
-                                "rv", rv);
-                        return SERVER_ERROR;
-                }
+            default:
+                log.warning("Unhandled checkCanCreate() response code", "ident", machIdent,
+                            "rv", rv);
+                return SERVER_ERROR;
             }
 
             Username uname = new Username(username);
@@ -542,6 +543,10 @@ public class OOOAuthenticator extends BangAuthenticator
      */
     protected int getSiteId (String affiliate)
     {
+        if(DeploymentConfig.beta_build)
+        {
+            return 1337; // Bang Howdy's Beta Site ID
+        }
         // figure out the siteId
         int siteId;
         try {

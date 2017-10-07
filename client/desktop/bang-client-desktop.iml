@@ -9,10 +9,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="bang-client-shared" />
+    <orderEntry type="module" module-name="client_shared" />
     <orderEntry type="module" module-name="bang-app" />
-    <orderEntry type="module" module-name="bang-bui" />
-    <orderEntry type="module" module-name="bang-jme" />
+    <orderEntry type="module" module-name="bui" />
+    <orderEntry type="module" module-name="jme" />
     <orderEntry type="library" name="Maven: com.threerings:nenya:1.7-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.samskivert:samskivert:1.9" level="project" />
     <orderEntry type="library" name="Maven: com.threerings:narya:1.15" level="project" />
@@ -22,6 +22,15 @@
     <orderEntry type="library" name="Maven: javax.annotation:jsr250-api:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.threerings:vilya:1.6" level="project" />
     <orderEntry type="library" name="Maven: com.threerings:getdown:1.4" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: java:plugin:1.5">
+        <CLASSES>
+          <root url="jar://C:/Program Files/Java/jdk1.8.0_144/jre/lib/plugin.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: com.threerings:ooo-util:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />

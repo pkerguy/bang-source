@@ -23,7 +23,7 @@ public class DeploymentConfig
     /** Contains our deployment version information. */
     public static Config build = new Config("build");
 
-    private static final boolean beta_build = true;
+    public static final boolean beta_build = true;
 
     /**
      * Returns the version associated with this build of the deployment's code.

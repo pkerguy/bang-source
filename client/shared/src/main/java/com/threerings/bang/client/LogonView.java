@@ -1,7 +1,5 @@
 package com.threerings.bang.client;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.jme.renderer.*;
 import com.jme.renderer.Renderer;
 import com.jmex.bui.*;
@@ -12,16 +10,18 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.*;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.*;
+import com.threerings.bang.admin.client.GameMasterDialog;
 import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.client.bui.*;
 import com.threerings.bang.data.*;
-import com.threerings.bang.minigames.webapi.Server;
+import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.bang.steam.*;
 import com.threerings.bang.util.*;
+import com.threerings.crowd.chat.client.ChatDirector;
+import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.presents.client.*;
 import com.threerings.util.*;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
@@ -377,10 +377,12 @@ public class LogonView extends BWindow
             } else {
                 showDialog(result);
                 serverList.selectItem(-1); // Un-select any item that was selected.
+                return;
             }
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
             showDialog("An error occurred while retrieving that server's info");
+            return;
         }
 
         BangDesktop.server = (String)serverList.getSelectedItem();
@@ -389,6 +391,18 @@ public class LogonView extends BWindow
         // configure the client with the supplied credentials
         _ctx.getClient().setCredentials(
                 _ctx.getBangClient().createCredentials(new Name(username), password));
+
+        // Begin NetClient Code
+
+        _netclient = new com.jmr.wrapper.client.Client(serverIP, serverPorts[0] + 2, serverPorts[0] + 2);
+        _netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
+        _netclient.connect();
+        if(!_netclient.isConnected())
+        {
+            showDialog("Failed to connect to Charlie service... Please try again!");
+            return;
+        }
+        // End NetClient Code
 
         // now we can log on
         _ctx.getClient().logon();
@@ -500,13 +514,106 @@ public class LogonView extends BWindow
                 });
     }
 
+    protected static boolean success = false;
+
     protected ClientAdapter _listener = new ClientAdapter() {
         public void clientDidLogon (Client client) {
-            _ctx.getBangClient().fadeOutMusic(0); // Kill the music
             _status.setStatus(_msgs.get("m.logged_on"), false);
             PlayerObject user = (PlayerObject)client.getClientObject();
+            if(!_netclient.isConnected()){
+                _status.setStatus("Failed to connect to Charlie!", false);
+                return;
+            } else {
+                _netclient.getServerConnection().sendTcp(new NewClientPacket(user.username.getNormal()));
+            }
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
                     user.username.toString());
+            if(user.tokens.isSupport() || user.tokens.isAdmin())
+            {
+                MessageBundle msg = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);
+                _ctx.getChatDirector().registerCommandHandler(msg, "watch", new ChatDirector.CommandHandler() {
+                    public String handleCommand (
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+                        if(_ctx.getUserObject() == null) return "NOPE";
+                        if(!_ctx.getUserObject().tokens.isSupport())
+                        {
+                            return "ACCESS DENIED";
+                        }
+                        if (StringUtil.isBlank(args)) {
+                            return getUsage("Usage: /watch user");
+                        }
+                        Handle name = new Handle(args);
+                        _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
+                                name, GameMasterDialog.WATCH_GAME, "", 0L,
+                                new InvocationService.ConfirmListener() {
+                                    @Override
+                                    public void requestProcessed() {
+                                        success = false;
+                                        return;
+                                    }
+
+                                    @Override
+                                    public void requestFailed(String cause) {
+                                        try {
+                                            int placeOid = Integer.parseInt(cause);
+                                            _ctx.getLocationDirector().moveTo(placeOid);
+                                        } catch(NumberFormatException ex) {
+                                            success = false;
+                                            return;
+                                        }
+                                        success = true;
+                                    }
+                                });
+                        if(success)
+                        {
+                            return "success";
+                        } else {
+                            return "Failed to execute command!";
+                        }
+                    }
+                });
+                _ctx.getChatDirector().registerCommandHandler(msg, "showurl", new ChatDirector.CommandHandler() {
+                    public String handleCommand (
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+                        if(_ctx.getUserObject() == null) return "NOPE";
+                        if(!_ctx.getUserObject().tokens.isAdmin())
+                        {
+                            return "ACCESS DENIED";
+                        }
+                        if (StringUtil.isBlank(args)) {
+                            return getUsage("Ask Kayaba!");
+                        }
+                        String[] commandArgs = args.split(" ");
+                        if(commandArgs.length != 2)
+                        {
+                            return getUsage("Ask Kayaba!");
+                        }
+                        Handle name = new Handle(commandArgs[0].replace("_", " "));
+                        _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
+                                name, GameMasterDialog.SHOW_URL, commandArgs[1], 0L,
+                                new InvocationService.ConfirmListener() {
+                                    @Override
+                                    public void requestProcessed() {
+                                        success = true;
+                                        return;
+                                    }
+
+                                    @Override
+                                    public void requestFailed(String cause) {
+                                        success = false;
+                                    }
+                                });
+                        if(success)
+                        {
+                            return "success";
+                        } else {
+                            return "Failed to execute command!";
+                        }
+                    }
+                });
+            }
         }
 
         public void clientFailedToLogon (Client client, Exception cause) {
@@ -560,6 +667,7 @@ public class LogonView extends BWindow
     };
 
     protected BangContext _ctx;
+    public static com.jmr.wrapper.client.Client _netclient;
     protected MessageBundle _msgs;
 
     protected BTextField _username;

@@ -40,8 +40,6 @@ import com.threerings.bang.gang.data.HideoutObject;
  */
 public class BangChatDirector extends ChatDirector
 {
-    protected static boolean success = false;
-
     public BangChatDirector (BangContext ctx)
     {
         super(ctx, BangCodes.CHAT_MSGS);
@@ -86,49 +84,6 @@ public class BangChatDirector extends ChatDirector
                 return new Handle(handle);
             }
         });
-
-        registerCommandHandler(msg, "watch", new CommandHandler() {
-                public String handleCommand (
-                        SpeakService speaksvc, String command, String args,
-                        String[] history) {
-                    if(_ctx.getUserObject() == null) return "NOPE";
-                    if(!_ctx.getUserObject().tokens.isSupport())
-                    {
-                        return "ACCESS DENIED";
-                    }
-                    if (StringUtil.isBlank(args)) {
-                        return getUsage("Usage: /watch user");
-                    }
-                    Handle name = new Handle(args);
-                    _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
-                            name, GameMasterDialog.WATCH_GAME, "", 0L,
-                            new InvocationService.ConfirmListener() {
-                                @Override
-                                public void requestProcessed() {
-                                   success = false;
-                                   return;
-                                }
-
-                                @Override
-                                public void requestFailed(String cause) {
-                                    try {
-                                        int placeOid = Integer.parseInt(cause);
-                                        _ctx.getLocationDirector().moveTo(placeOid);
-                                    } catch(NumberFormatException ex) {
-                                        success = false;
-                                        return;
-                                    }
-                                    success = true;
-                                }
-                            });
-                    if(success)
-                    {
-                        return SUCCESS;
-                    } else {
-                        return "Failed to execute command!";
-                    }
-                }
-            });
 
     }
 

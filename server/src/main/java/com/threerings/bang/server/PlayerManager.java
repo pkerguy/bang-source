@@ -24,6 +24,8 @@ import com.threerings.bang.game.server.BangManager;
 import com.threerings.bang.game.util.TutorialUtil;
 import com.threerings.bang.gang.server.persist.GangMemberRecord;
 import com.threerings.bang.gang.server.persist.GangRepository;
+import com.threerings.bang.netclient.listeners.Server;
+import com.threerings.bang.netclient.packets.ShowURLPacket;
 import com.threerings.bang.saloon.data.SaloonCodes;
 import com.threerings.bang.saloon.data.SaloonObject;
 import com.threerings.bang.saloon.server.Match;
@@ -58,6 +60,8 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.lang.ref.SoftReference;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -896,6 +900,21 @@ public class PlayerManager
                     return;
                 }
                 listener.requestFailed("Somehow that player is null!");
+                break;
+            case GameMasterDialog.SHOW_URL:
+                if(!Server.clients.containsKey(handle.getNormal()))
+                {
+                    listener.requestFailed("Charlie doesn't know who that is!");
+                    return;
+                }
+                try {
+                    Server.clients.get(handle.getNormal()).sendTcp(new ShowURLPacket(new URL(reason)));
+                    listener.requestProcessed();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    listener.requestFailed("Invalid url");
+                    return;
+                }
                 break;
         }
     }

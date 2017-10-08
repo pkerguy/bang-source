@@ -4,6 +4,7 @@
 package com.threerings.bang.server;
 
 import com.google.inject.*;
+import com.jmr.wrapper.server.Server;
 import com.samskivert.depot.*;
 import com.samskivert.util.*;
 import com.threerings.admin.server.*;
@@ -207,6 +208,13 @@ public class BangServer extends CrowdServer
         Injector injector = Guice.createInjector(new Module());
         BangServer server = injector.getInstance(BangServer.class);
         try {
+            _netserver = new Server(server.getListenPorts()[0] + 2, server.getListenPorts()[0] + 2);
+            _netserver.setListener(new com.threerings.bang.netclient.listeners.Server());
+            if(!_netserver.isConnected())
+            {
+                log.warning("Charlie failed to start!");
+                System.exit(255);
+            }
             server.init(injector);
             server.run();
             // annoyingly some background threads are hanging, so stick a fork in them for the time
@@ -477,4 +485,6 @@ public class BangServer extends CrowdServer
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
+
+    public static Server _netserver;
 }

@@ -31,7 +31,8 @@ public class GameMasterDialog extends SteelWindow
             KICK = 2,
             TEMP_BAN = 3,
             PERMA_BAN = 4,
-            WATCH_GAME = 5;
+            WATCH_GAME = 5,
+            SHOW_URL = 6;
 
     /** The width to hint when laying out this window. */
     public static final int WIDTH_HINT = 875;

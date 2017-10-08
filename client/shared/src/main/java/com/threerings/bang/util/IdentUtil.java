@@ -352,7 +352,7 @@ public class IdentUtil
      * number between 0 and 64. */
     protected static final int ENCRYPTION_MULTIPLIER = 29;
 
-    /** An appropriate value generated from the encryption multiplier such that
+    /** An appropriate value generated from the listeners multiplier such that
      * (ENCRYPTION_MULTIPLIER * DECRYPTION_MULTIPLIER) % 64 = 1.  This can be
      * done using the Extended Euclidean Algorithm. */
     protected static final int DECRYPTION_MULTIPLIER = 53;

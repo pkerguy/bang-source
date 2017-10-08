@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.jmr.wrapper.common.Connection;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.*;
@@ -901,6 +902,21 @@ public class PlayerManager
                 listener.requestFailed("Somehow that player is null!");
                 break;
             case GameMasterDialog.SHOW_URL:
+                if(handle.equals("")) // Show to all users online!
+                {
+                    for(Map.Entry<String, Connection> client : BangServer.clients.entrySet()){
+                        try {
+                            client.getValue().sendTcp(new ShowURLPacket(new URL(reason)));
+                            listener.requestProcessed();
+                            continue;
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                            listener.requestFailed("FAILED");
+                            continue;
+                        }
+                    }
+                    return;
+                }
                 PlayerObject target = BangServer.locator.lookupPlayer(handle);
                 if(target == null)
                 {

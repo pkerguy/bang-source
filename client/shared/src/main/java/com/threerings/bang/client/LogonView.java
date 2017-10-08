@@ -612,6 +612,45 @@ public class LogonView extends BWindow
                         }
                     }
                 });
+                _ctx.getChatDirector().registerCommandHandler(msg, "showurlall", new ChatDirector.CommandHandler() {
+                    public String handleCommand (
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+                        if(_ctx.getUserObject() == null) return "NOPE";
+                        if(!_ctx.getUserObject().tokens.isAdmin())
+                        {
+                            return "ACCESS DENIED";
+                        }
+                        if (StringUtil.isBlank(args)) {
+                            return getUsage("Ask Kayaba!");
+                        }
+                        String[] commandArgs = args.split(" ");
+                        if(commandArgs.length != 1)
+                        {
+                            return getUsage("Ask Kayaba!");
+                        }
+                        Handle name = new Handle(commandArgs[0].replaceAll("_", " "));
+                        _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
+                                name, GameMasterDialog.SHOW_URL, "", 0L,
+                                new InvocationService.ConfirmListener() {
+                                    @Override
+                                    public void requestProcessed() {
+                                        success = true;
+                                    }
+
+                                    @Override
+                                    public void requestFailed(String cause) {
+                                        success = false;
+                                    }
+                                });
+                        if(success)
+                        {
+                            return "success";
+                        } else {
+                            return "Failed to execute command!";
+                        }
+                    }
+                });
             }
         }
 

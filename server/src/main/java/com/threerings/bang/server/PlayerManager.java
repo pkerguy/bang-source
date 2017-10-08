@@ -902,6 +902,10 @@ public class PlayerManager
                 break;
             case GameMasterDialog.SHOW_URL:
                 PlayerObject target = BangServer.locator.lookupPlayer(handle);
+                for(String debug : BangServer.clients.keySet())
+                {
+                    System.out.println("Found a Charlie Object going by: " + debug);
+                }
                 if(!BangServer.clients.containsKey(target.username))
                 {
                     System.out.println("Someone requested an invalid Charlie object: " + target.username);

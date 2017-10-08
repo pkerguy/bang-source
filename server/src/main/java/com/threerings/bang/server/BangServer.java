@@ -468,7 +468,7 @@ public class BangServer extends CrowdServer
     @Inject protected BangChatManager _chatmgr;
     @Inject protected BangReportManager _repmgr;
 
-    public final static HashMap<String, Connection> clients = new HashMap<String, Connection>();
+    public static HashMap<String, Connection> clients = new HashMap<>();
 
     // need to inject this guy here as he's otherwise not referenced until the office manager is
     // created which is too late in our initialization for safe repository creation

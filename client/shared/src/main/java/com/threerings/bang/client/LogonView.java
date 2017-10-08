@@ -303,7 +303,7 @@ public class LogonView extends BWindow
                     log.warning("Not finished initializing. Hang tight.");
                     return;
                 }
-
+                _status.setStatus("Logging in.. Please wait", false);
                 String username = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
                 String password = _password.getText();
 
@@ -356,7 +356,7 @@ public class LogonView extends BWindow
 
     public void logon (String username, String password)
     {
-
+        _ctx.getBangClient().fadeOutMusic(0);
         log.info("Set version to: " + DeploymentConfig.getVersion());
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
@@ -590,14 +590,13 @@ public class LogonView extends BWindow
                         {
                             return getUsage("Ask Kayaba!");
                         }
-                        Handle name = new Handle(commandArgs[0].replace("_", " "));
+                        Handle name = new Handle(commandArgs[0].replaceAll("_", " "));
                         _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
                                 name, GameMasterDialog.SHOW_URL, commandArgs[1], 0L,
                                 new InvocationService.ConfirmListener() {
                                     @Override
                                     public void requestProcessed() {
                                         success = true;
-                                        return;
                                     }
 
                                     @Override

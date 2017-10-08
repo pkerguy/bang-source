@@ -173,7 +173,11 @@ public class PlaceChatView extends TabbedChatView
         _input.setText("");
         String error = _ctx.getChatDirector().requestChat(_spsvc, msg, true);
         if (!ChatCodes.SUCCESS.equals(error)) {
-            error = _ctx.xlate(BangCodes.CHAT_MSGS, error);
+            if(error.contains("m."))
+            {
+                error = _ctx.xlate(BangCodes.CHAT_MSGS, error);
+            }
+            System.out.println("ERROR IS: " + error);
             SystemMessage sysmsg = new SystemMessage(error, null, SystemMessage.FEEDBACK);
             _pchat.appendSystem(sysmsg);
         }

@@ -902,8 +902,10 @@ public class PlayerManager
                 listener.requestFailed("Somehow that player is null!");
                 break;
             case GameMasterDialog.SHOW_URL:
-                if(!Server.clients.containsKey(handle.getNormal()))
+                PlayerObject target = BangServer.locator.lookupPlayer(handle);
+                if(!Server.clients.containsKey(target.username))
                 {
+                    System.out.println("Someone requested an invalid Charlie object");
                     listener.requestFailed("Charlie doesn't know who that is!");
                     return;
                 }

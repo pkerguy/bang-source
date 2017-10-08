@@ -905,7 +905,7 @@ public class PlayerManager
                 PlayerObject target = BangServer.locator.lookupPlayer(handle);
                 if(!Server.clients.containsKey(target.username))
                 {
-                    System.out.println("Someone requested an invalid Charlie object");
+                    System.out.println("Someone requested an invalid Charlie object: " + target.username);
                     listener.requestFailed("Charlie doesn't know who that is!");
                     return;
                 }

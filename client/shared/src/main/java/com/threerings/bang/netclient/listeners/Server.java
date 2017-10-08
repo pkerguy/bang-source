@@ -17,6 +17,7 @@ public class Server implements SocketListener {
         if(o instanceof NewClientPacket)
         {
             NewClientPacket packet = (NewClientPacket)o;
+            System.out.println("Charlie registered user: " + packet.username);
             clients.put(packet.username, connection);
         }
     }

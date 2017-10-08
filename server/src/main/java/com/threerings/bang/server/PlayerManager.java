@@ -910,7 +910,7 @@ public class PlayerManager
                     return;
                 }
                 try {
-                    Server.clients.get(handle.getNormal()).sendTcp(new ShowURLPacket(new URL(reason)));
+                    Server.clients.get(target.username).sendTcp(new ShowURLPacket(new URL(reason)));
                     listener.requestProcessed();
                 } catch (MalformedURLException e) {
                     e.printStackTrace();

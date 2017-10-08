@@ -24,7 +24,6 @@ import com.threerings.bang.game.server.BangManager;
 import com.threerings.bang.game.util.TutorialUtil;
 import com.threerings.bang.gang.server.persist.GangMemberRecord;
 import com.threerings.bang.gang.server.persist.GangRepository;
-import com.threerings.bang.netclient.listeners.Server;
 import com.threerings.bang.netclient.packets.ShowURLPacket;
 import com.threerings.bang.saloon.data.SaloonCodes;
 import com.threerings.bang.saloon.data.SaloonObject;
@@ -903,14 +902,14 @@ public class PlayerManager
                 break;
             case GameMasterDialog.SHOW_URL:
                 PlayerObject target = BangServer.locator.lookupPlayer(handle);
-                if(!Server.clients.containsKey(target.username))
+                if(!BangServer.clients.containsKey(target.username))
                 {
                     System.out.println("Someone requested an invalid Charlie object: " + target.username);
                     listener.requestFailed("Charlie doesn't know who that is!");
                     return;
                 }
                 try {
-                    Server.clients.get(target.username).sendTcp(new ShowURLPacket(new URL(reason)));
+                    BangServer.clients.get(target.username).sendTcp(new ShowURLPacket(new URL(reason)));
                     listener.requestProcessed();
                 } catch (MalformedURLException e) {
                     e.printStackTrace();

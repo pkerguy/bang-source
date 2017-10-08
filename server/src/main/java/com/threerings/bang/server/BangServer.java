@@ -4,11 +4,11 @@
 package com.threerings.bang.server;
 
 import com.google.inject.*;
+import com.jmr.wrapper.common.Connection;
 import com.jmr.wrapper.server.Server;
 import com.samskivert.depot.*;
 import com.samskivert.util.*;
 import com.threerings.admin.server.*;
-import com.threerings.bang.*;
 import com.threerings.bang.admin.server.*;
 import com.threerings.bang.avatar.data.*;
 import com.threerings.bang.avatar.server.*;
@@ -37,7 +37,6 @@ import com.threerings.crowd.server.*;
 import com.threerings.parlor.server.ParlorManager;
 import com.threerings.presents.annotation.*;
 import com.threerings.presents.data.*;
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.net.*;
 import com.threerings.presents.peer.server.*;
 import com.threerings.presents.server.*;
@@ -47,7 +46,6 @@ import com.threerings.user.depot.*;
 import com.threerings.util.*;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -209,7 +207,7 @@ public class BangServer extends CrowdServer
         BangServer server = injector.getInstance(BangServer.class);
         try {
             _netserver = new Server(server.getListenPorts()[0] + 2, server.getListenPorts()[0] + 2);
-            _netserver.setListener(new com.threerings.bang.netclient.listeners.Server());
+            _netserver.setListener(new com.threerings.bang.server.Server());
             if(!_netserver.isConnected())
             {
                 log.warning("Charlie failed to start!");
@@ -469,6 +467,8 @@ public class BangServer extends CrowdServer
     @Inject protected BangPeerManager _peermgr;
     @Inject protected BangChatManager _chatmgr;
     @Inject protected BangReportManager _repmgr;
+
+    public final static HashMap<String, Connection> clients = new HashMap<String, Connection>();
 
     // need to inject this guy here as he's otherwise not referenced until the office manager is
     // created which is too late in our initialization for safe repository creation

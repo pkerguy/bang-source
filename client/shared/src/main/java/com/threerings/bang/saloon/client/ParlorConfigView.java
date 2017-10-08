@@ -3,6 +3,10 @@
 
 package com.threerings.bang.saloon.client;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import com.jmex.bui.BButton;
@@ -17,6 +21,10 @@ import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.layout.TableLayout;
 
+import com.mb3364.twitch.api.Twitch;
+import com.mb3364.twitch.api.auth.Scopes;
+import com.mb3364.twitch.api.handlers.UserResponseHandler;
+import com.mb3364.twitch.api.models.User;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
@@ -70,6 +78,10 @@ public class ParlorConfigView extends BDecoratedWindow
         _changePass.setEnabled(false);
         cont.add(bits);
 
+//        bits.add(_twitchMode = new BButton("Twitch Mode", new TwitchModeHelper(), ""));
+//        _twitchMode.setEnabled(false);
+//        cont.add(bits);
+
         BContainer row = GroupLayout.makeHBox(GroupLayout.LEFT);
         row.add(_creator = new BCheckBox(_msgs.get("m.creator_only")));
         _creator.setTooltipText(_msgs.get("m.creator_only_tip"));
@@ -120,6 +132,11 @@ public class ParlorConfigView extends BDecoratedWindow
         _type.setEnabled(amCreator);
         _changePass.setEnabled(amCreator && _parobj.info.type == ParlorInfo.Type.PASSWORD);
         _creator.setEnabled(amCreator);
+        if(_parobj.info.isTwitch)
+        {
+            _creator.setEnabled(true);
+            _creator.setSelected(true); // Only the Twitch Streamer can start the game
+        }
     }
 
     protected void updateConfig ()
@@ -142,6 +159,66 @@ public class ParlorConfigView extends BDecoratedWindow
             types.add(new BComboBox.Item(type, ctx.xlate(SaloonCodes.SALOON_MSGS, msg)));
         }
         return types;
+    }
+
+    protected class TwitchModeHelper
+            implements ActionListener, OptionDialog.ResponseReceiver, UserResponseHandler
+    {
+        public void actionPerformed (ActionEvent event) {
+            if(_parobj.occupants.size() != 1)
+            {
+                try {
+                    _ctx.showURL(new URL("http://howdypedia.com"));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            OptionDialog.showStringDialog(
+                    _ctx, null, "Are you sure you want to enable Twitch mode?",
+                    new String[] { "Yes", "No" }, 150, "", this);
+        }
+
+        public void resultPosted (int button, Object result) {
+            if (button == 0) {
+                  Twitch twitch = new Twitch();
+                  twitch.setClientId("0f38jf54a6xfg33h2jgjrte14n9rp1");
+                try {
+                    URI callbackUri = new URI("http://127.0.0.1:23522/authorize.html");
+                    String authUrl = twitch.auth().getAuthenticationUrl(twitch.getClientId(), callbackUri, Scopes.USER_READ, Scopes.CHANNEL_READ);
+                    _ctx.showURL(new URL(authUrl));
+                    boolean authSuccess = twitch.auth().awaitAccessToken();
+                    if (authSuccess) {
+                        System.out.println("Twitch Link SUCCESS!");
+                        twitch.users().get(this);
+                    } else {
+                        System.out.println(twitch.auth().getAuthenticationError());
+                    }
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        @Override
+        public void onSuccess(User user) {
+                ParlorInfo pc = _parobj.info;
+                pc.isTwitch = true;
+                pc.twitchUsername = user.getName();
+                _parobj.service.updateParlorConfig(pc, true);
+        }
+
+        @Override
+        public void onFailure(int i, String s, String s1) {
+        }
+
+        @Override
+        public void onFailure(Throwable throwable) {
+
+        }
     }
 
     protected class ChangePasswordHelper

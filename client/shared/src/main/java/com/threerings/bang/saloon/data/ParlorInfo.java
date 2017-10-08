@@ -40,6 +40,12 @@ public class ParlorInfo extends SimpleStreamableObject
     /** Has this parlor been filled! */
     public boolean filled = false;
 
+    /** Is this a Twitch integerated Parlor? */
+    public boolean isTwitch = false;
+
+    /** Stores the Twitch Usernameo of Creator */
+    public String twitchUsername;
+
     /** How many players are allowed entry into this parlor */
     public int maxPlayers; // Should either be 2 or 4.. No more!
 

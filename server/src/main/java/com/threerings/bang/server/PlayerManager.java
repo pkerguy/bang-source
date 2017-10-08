@@ -908,14 +908,14 @@ public class PlayerManager
                     listener.requestFailed("Charlie doesn't know who that is!");
                     return;
                 }
-                if(BangServer.clients.get(target.username) == null)
+                if(!BangServer.clients.containsKey(target.username.getNormal()))
                 {
-                    System.out.println("Someone requested an invalid Charlie object: " + target.username);
+                    System.out.println("Someone requested an invalid Charlie object: " + target.username.getNormal());
                     listener.requestFailed("Charlie doesn't know who that is!");
                     return;
                 }
                 try {
-                    BangServer.clients.get(target.username).sendTcp(new ShowURLPacket(new URL(reason)));
+                    BangServer.clients.get(target.username.getNormal()).sendTcp(new ShowURLPacket(new URL(reason)));
                     listener.requestProcessed();
                 } catch (MalformedURLException e) {
                     e.printStackTrace();

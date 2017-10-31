@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Statement;
 import java.util.Map;
 
@@ -317,6 +318,9 @@ public abstract class FinancialAction extends Invoker.Unit
                 String desc = getCoinDescrip();
                 if(desc == null) desc = "Unknown";
                 try {
+                    desc = desc.replaceAll("m.", "");
+                    desc = desc.replaceAll("|", "");
+                    desc = URLEncoder.encode(desc, "UTF-8"); // Fixes how sometimes some transactions fail.
                     URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=add&username=" + _user + "&amount=" + _coinCost + "&description=" + desc);
                     BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                     String line = in.readLine();

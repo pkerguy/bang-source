@@ -9,6 +9,8 @@ import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.text.IntegerDocument;
+import com.jmex.bui.util.Dimension;
+import com.samskivert.util.StringUtil;
 import com.threerings.bang.client.BangUI;
 import com.threerings.bang.client.PlayerService;
 import com.threerings.bang.client.bui.OptionDialog;
@@ -16,6 +18,8 @@ import com.threerings.bang.client.bui.SteelWindow;
 import com.threerings.bang.data.Badge;
 import com.threerings.bang.data.BangCodes;
 import com.threerings.bang.data.Handle;
+import com.threerings.bang.tourney.client.TourneyListView;
+import com.threerings.bang.tourney.data.TourneyListingEntry;
 import com.threerings.bang.util.BangContext;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.util.MessageBundle;
@@ -59,6 +63,8 @@ public class AdminDialog extends SteelWindow
         showDialog();
     }
 
+    protected BadgeList _badgeList;
+
     public void showDialog ()
     {
         switch (_action) {
@@ -73,9 +79,7 @@ public class AdminDialog extends SteelWindow
                 break;
             case GRANT_BADGE: case REMOVE_BADGE:
                 add(3, new BLabel(_numberLabel));
-                add(4, _valueField = new BComboBox(Badge.Type.values()));
-
-                _valueField.requestFocus();
+                add(4, new BadgeList(new Dimension(450, 300)));
                 break;
         }
 
@@ -92,21 +96,8 @@ public class AdminDialog extends SteelWindow
                 _ctx.getBangClient().clearPopup(this, true);
                 break;
             case "execute":
-                String valueText = null;
-                if (_valueField instanceof BComboBox) {
-                    String result = ((BComboBox) _valueField).getText(); // BACKER_TIER4
-                    for(Badge.Type b : Badge.Type.values())
-                    {
-                        if(b.name().equalsIgnoreCase(result))
-                        {
-                            valueText = String.valueOf(b.code());
-                            break;
-                        }
-                    }
-                } else if (_valueField instanceof BTextField &&
-                        (valueText = ((BTextField) _valueField).getText()).isEmpty()) {
-                    return;
-                }
+                String valueText = _badgeList.getSelected();
+                if(valueText == null || StringUtil.isBlank(valueText)) return;
 
                 _ctx.getClient().requireService(PlayerService.class).adminAction(
                         _handle, _action, valueText,

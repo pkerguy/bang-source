@@ -138,7 +138,7 @@ public class GoodsCatalog
     public ArrayList<Good> getGoods (String townId)
     {
         ArrayList<Good> goods = new ArrayList<Good>();
-        //goods.addAll(_tgoods.get("")); // global goods
+//        goods.addAll(_tgoods.get("")); // global goods
         goods.addAll(_tgoods.get(townId)); // goods for sale in this town
         return goods;
     }

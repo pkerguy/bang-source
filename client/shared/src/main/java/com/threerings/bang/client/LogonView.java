@@ -1,58 +1,72 @@
 package com.threerings.bang.client;
 
-import com.jme.renderer.*;
+import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jmex.bui.*;
-import com.jmex.bui.event.*;
-import com.jmex.bui.icon.*;
-import com.jmex.bui.layout.*;
+import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.event.ActionListener;
+import com.jmex.bui.icon.BIcon;
+import com.jmex.bui.layout.AbsoluteLayout;
 import com.jmex.bui.layout.GroupLayout;
-import com.jmex.bui.util.*;
+import com.jmex.bui.layout.TableLayout;
+import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Point;
+import com.jmex.bui.util.Rectangle;
 import com.samskivert.util.RandomUtil;
-import com.samskivert.util.*;
+import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 import com.threerings.bang.admin.client.GameMasterDialog;
 import com.threerings.bang.bang.client.BangDesktop;
-import com.threerings.bang.client.bui.*;
+import com.threerings.bang.client.bui.EnablingValidator;
+import com.threerings.bang.client.bui.OptionDialog;
+import com.threerings.bang.client.bui.StatusLabel;
 import com.threerings.bang.data.*;
 import com.threerings.bang.netclient.packets.NewClientPacket;
-import com.threerings.bang.steam.*;
-import com.threerings.bang.util.*;
+import com.threerings.bang.steam.SteamStorage;
+import com.threerings.bang.util.BangContext;
+import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.SpeakService;
-import com.threerings.presents.client.*;
-import com.threerings.util.*;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.LogonException;
+import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 
-import java.io.*;
-import java.net.*;
-import java.text.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.threerings.bang.Log.*;
+import static com.threerings.bang.Log.log;
 
 /**
  * Displays a simple user interface for logging in.
  */
 public class LogonView extends BWindow
-        implements ActionListener, BasicClient.InitObserver
-{
+        implements ActionListener, BasicClient.InitObserver {
 
     private String serverIP;
-    private int[] serverPorts = {0,0};
+    private int[] serverPorts = {0, 0};
 
     /**
      * Converts an arbitrary exception into a translatable error string (which should be looked up
      * in the {@link BangAuthCodes#AUTH_MSGS} bundle). If the exception indicates that the client
      * is out of date, the process of updating the client <em>will be started</em>; the client will
      * exit a few seconds later, so be sure to display the returned error message.
-     *
+     * <p>
      * <p> An additional boolean paramater will be returned indicating whether or not the returned
      * error message is indicative of a connection failure, in which case the caller may wish to
      * direct the user to the server status page so they can find out if we are in the middle of a
      * sceduled downtime.
      */
-    public static Tuple<String,Boolean> decodeLogonException (
-            BangContext ctx, Exception cause)
-    {
+    public static Tuple<String, Boolean> decodeLogonException(
+            BangContext ctx, Exception cause) {
         String msg = cause.getMessage();
         boolean connectionFailure = false;
 
@@ -97,11 +111,10 @@ public class LogonView extends BWindow
             connectionFailure = true;
         }
 
-        return new Tuple<String,Boolean>(msg, connectionFailure);
+        return new Tuple<String, Boolean>(msg, connectionFailure);
     }
 
-    public LogonView (BangContext ctx)
-    {
+    public LogonView(BangContext ctx) {
         super(ctx.getStyleSheet(), new AbsoluteLayout());
         setStyleClass("logon_view");
 
@@ -125,13 +138,12 @@ public class LogonView extends BWindow
         _ctx.getClient().addClientObserver(_listener);
     }
 
-    protected void showNewUserView (boolean account)
-    {
+    protected void showNewUserView(boolean account) {
         removeAll();
 
         BContainer cont = new BContainer(GroupLayout.makeHoriz(
                 GroupLayout.STRETCH, GroupLayout.CENTER, GroupLayout.NONE));
-        ((GroupLayout)cont.getLayoutManager()).setGap(20);
+        ((GroupLayout) cont.getLayoutManager()).setGap(20);
 
         String btn1 = "m.continue_player", act1 = "anonymous";
         String btn2 = "m.my_account", act2 = "my_account";
@@ -161,12 +173,11 @@ public class LogonView extends BWindow
         showStatus();
     }
 
-    protected void showLoginView ()
-    {
+    protected void showLoginView() {
         removeAll();
 
         BContainer row = GroupLayout.makeHBox(GroupLayout.LEFT);
-        ((GroupLayout)row.getLayoutManager()).setOffAxisJustification(GroupLayout.BOTTOM);
+        ((GroupLayout) row.getLayoutManager()).setOffAxisJustification(GroupLayout.BOTTOM);
         BContainer grid = new BContainer(new TableLayout(2, 5, 5));
         //grid.add(new BLabel(_msgs.get("m.username"), "logon_label"));
         //grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
@@ -177,16 +188,19 @@ public class LogonView extends BWindow
         List<String> availableServers = new ArrayList<String>();
 
         try {
-            URL serverList = new URL("https://banghowdy.com/serverList.php?id=" + SteamStorage.user.getSteamID().toString() + "&version=" + DeploymentConfig.getVersion());
+            URL serverList = new URL("https://banghowdy.com/serverList.php?id=" + SteamStorage.user.getSteamID().getAccountID() + "&version=" + DeploymentConfig.getVersion());
+            if(BangDesktop.isSudoAllowed)
+            {
+                serverList = new URL("https://banghowdy.com/serverList.php?id=" + BangDesktop.sudoUser + "&version=" + DeploymentConfig.getVersion());
+            }
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     serverList.openStream()));
             final String result = in.readLine();
-            if(!result.contains(":"))
-            {
+            if (!result.contains(":")) {
                 showDialogCustom(result);
                 return;
             }
-            if("maintenance".equals(result)) {
+            if ("maintenance".equals(result)) {
                 showDialogCustom("The game is currently in maintenance. Please check the Steam announcements and try again later.");
                 return;
             }
@@ -195,14 +209,12 @@ public class LogonView extends BWindow
             grid.add(_password = new BPasswordField());
             _password.setPreferredWidth(150);
             _password.addListener(this);
-            if(!result.contains("&"))
-            {
+            if (!result.contains("&")) {
                 String[] cmdSplit = result.split(":");
                 availableServers.add(cmdSplit[0]);
             } else {
                 String[] arrayData = result.split("&");
-                for(String serverdata : arrayData)
-                {
+                for (String serverdata : arrayData) {
                     String[] cmdSplit = serverdata.split(":");
                     availableServers.add(cmdSplit[0]);
                 }
@@ -219,6 +231,11 @@ public class LogonView extends BWindow
 
         grid.add(new BLabel("Server Selection", "logon_label"));
         grid.add(serverList = new BComboBox(availableServers.toArray()));
+
+        //Auto select the first server so we dont need to manually select it EVERY time.
+        if (availableServers.size() > 0)
+            serverList.selectItem(0);
+
         grid.add(registerBtn = new BButton("Create Account", "new_account"));
         registerBtn.addListener(this);
         serverList.addListener(this);
@@ -227,7 +244,7 @@ public class LogonView extends BWindow
 
         BContainer col = GroupLayout.makeVBox(GroupLayout.CENTER);
         row.add(col);
-        col.add(_logon = new BButton(_msgs.get("m.logon"), this, "logon"));
+        grid.add(_logon = new BButton(_msgs.get("m.logon"), this, "logon"));
         _logon.setStyleClass("big_button");
         // use a special sound effect for logon (the ricochet that we also use for window open)
         _logon.setProperty("feedback_sound", BangUI.FeedbackSound.WINDOW_OPEN);
@@ -237,14 +254,13 @@ public class LogonView extends BWindow
 
         // disable the logon button until a password is entered (and until we're initialized)
         _validator = new EnablingValidator(_password, _logon) {
-            protected boolean checkEnabled (String text) {
+            protected boolean checkEnabled(String text) {
                 return super.checkEnabled(text) && _initialized && serverList.getSelectedIndex() != -1;
             }
         };
     }
 
-    protected void showStatus ()
-    {
+    protected void showStatus() {
         if (_status == null) {
             _status = new StatusLabel(_ctx);
             _status.setStyleClass("logon_status");
@@ -259,12 +275,9 @@ public class LogonView extends BWindow
     }
 
     // documentation inherited from interface ActionListener
-    public void actionPerformed (ActionEvent event)
-    {
-        if(event.getSource() == serverList)
-        {
-            if(serverList.getSelectedIndex() == -1)
-            {
+    public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == serverList) {
+            if (serverList.getSelectedIndex() == -1) {
                 _logon.setEnabled(false);
                 return;
             } else {
@@ -274,8 +287,7 @@ public class LogonView extends BWindow
                 URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
-                if(result.contains("&") && result.contains(","))
-                {
+                if (result.contains("&") && result.contains(",")) {
                     String[] info = result.split("&");
                     serverIP = info[0];
                     String[] portStr = info[1].split(",");
@@ -305,10 +317,13 @@ public class LogonView extends BWindow
                 }
                 _status.setStatus("Logging in.. Please wait", false);
                 String username = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
+                if(BangDesktop.isSudoAllowed)
+                {
+                    username = BangDesktop.sudoUser;
+                }
                 String password = _password.getText();
 
-                if(password == "" || password == null)
-                {
+                if (password == "" || password == null) {
                     log.warning("You didn't enter any password in");
                     return;
                 }
@@ -354,8 +369,7 @@ public class LogonView extends BWindow
         }
     }
 
-    public void logon (String username, String password)
-    {
+    public void logon(String username, String password) {
         _ctx.getBangClient().fadeOutMusic(0);
         log.info("Set version to: " + DeploymentConfig.getVersion());
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
@@ -364,8 +378,7 @@ public class LogonView extends BWindow
             URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             final String result = in.readLine();
-            if(result.contains("&") && result.contains(","))
-            {
+            if (result.contains("&") && result.contains(",")) {
                 String[] info = result.split("&"),
                         portStr = info[1].split(",");
                 serverIP = info[0];
@@ -385,7 +398,7 @@ public class LogonView extends BWindow
             return;
         }
 
-        BangDesktop.server = (String)serverList.getSelectedItem();
+        BangDesktop.server = (String) serverList.getSelectedItem();
         _ctx.getClient().setServer(serverIP, serverPorts);
 
         // configure the client with the supplied credentials
@@ -397,8 +410,7 @@ public class LogonView extends BWindow
         _netclient = new com.jmr.wrapper.client.Client(serverIP, serverPorts[0] + 2, serverPorts[0] + 2);
         _netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
         _netclient.connect();
-        if(!_netclient.isConnected())
-        {
+        if (!_netclient.isConnected()) {
             showDialog("Failed to connect to Charlie service... Please try again!");
             return;
         }
@@ -409,10 +421,9 @@ public class LogonView extends BWindow
     }
 
     // documentation inherited from interface BasicClient.InitObserver
-    public void progress (int percent)
-    {
+    public void progress(int percent) {
         if (percent < 100) {
-            _status.setStatus(_msgs.get("m.init_progress", ""+percent), false);
+            _status.setStatus(_msgs.get("m.init_progress", "" + percent), false);
         } else {
             _status.setStatus(_msgs.get("m.init_complete"), false);
             _initialized = true;
@@ -420,8 +431,7 @@ public class LogonView extends BWindow
     }
 
     @Override // documentation inherited
-    protected void wasAdded ()
-    {
+    protected void wasAdded() {
         super.wasAdded();
 
         // focus the appropriate textfield
@@ -439,8 +449,7 @@ public class LogonView extends BWindow
     }
 
     @Override // documentation inherited
-    protected void wasRemoved ()
-    {
+    protected void wasRemoved() {
         super.wasRemoved();
 
         if (_unitIcon != null) {
@@ -449,8 +458,7 @@ public class LogonView extends BWindow
     }
 
     @Override // documentation inherited
-    protected void renderBackground (Renderer renderer)
-    {
+    protected void renderBackground(Renderer renderer) {
         super.renderBackground(renderer);
 
         if (_unitIcon != null) {
@@ -458,24 +466,22 @@ public class LogonView extends BWindow
         }
     }
 
-    protected void switchToServerStatus ()
-    {
+    protected void switchToServerStatus() {
         if (_action != null) {
             _action.setText(_msgs.get("m.server_status"));
             _action.setAction("server_status");
         }
     }
 
-    protected void showTempBanDialog (String reason, long time)
-    {
+    protected void showTempBanDialog(String reason, long time) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy, hh:mm aaa z");
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("America/Los_Angeles"));
         cal.setTimeInMillis(time);
         String expires = sdf.format(cal.getTime());
         OptionDialog.showConfirmDialog(_ctx, BangAuthCodes.AUTH_MSGS, "m.tb_title",
                 MessageBundle.tcompose("m.tb_info", reason, expires),
-                new String[] { "m.exit", "m.tb_tos" }, new OptionDialog.ResponseReceiver() {
-                    public void resultPosted (int button, Object result) {
+                new String[]{"m.exit", "m.tb_tos"}, new OptionDialog.ResponseReceiver() {
+                    public void resultPosted(int button, Object result) {
                         if (button == 1) {
                             _ctx.showURL(DeploymentConfig.getTosURL());
                         }
@@ -484,31 +490,28 @@ public class LogonView extends BWindow
                 });
     }
 
-    protected void showDialog(String message)
-    {
+    protected void showDialog(String message) {
         OptionDialog.showConfirmDialog(_ctx, BangAuthCodes.AUTH_MSGS, message,
-                new String[] {"m.ok"}, new OptionDialog.ResponseReceiver() {
-                    public void resultPosted (int button, Object result) {
+                new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                    public void resultPosted(int button, Object result) {
                     }
                 });
     }
 
-    protected void showDialogCustom(String message)
-    {
+    protected void showDialogCustom(String message) {
         OptionDialog.showConfirmDialog(_ctx, null, message,
-                new String[] {"OK"}, new OptionDialog.ResponseReceiver() {
-                    public void resultPosted (int button, Object result) {
+                new String[]{"OK"}, new OptionDialog.ResponseReceiver() {
+                    public void resultPosted(int button, Object result) {
                     }
                 });
     }
 
 
-    protected void showBannedDialog (String reason)
-    {
+    protected void showBannedDialog(String reason) {
         OptionDialog.showConfirmDialog(_ctx, BangAuthCodes.AUTH_MSGS, "m.ban_title",
                 MessageBundle.tcompose("m.ban_info", reason),
-                new String[] { "m.exit" }, new OptionDialog.ResponseReceiver() {
-                    public void resultPosted (int button, Object result) {
+                new String[]{"m.exit"}, new OptionDialog.ResponseReceiver() {
+                    public void resultPosted(int button, Object result) {
                         _ctx.getApp().stop();
                     }
                 });
@@ -517,10 +520,10 @@ public class LogonView extends BWindow
     protected static boolean success = false;
 
     protected ClientAdapter _listener = new ClientAdapter() {
-        public void clientDidLogon (Client client) {
+        public void clientDidLogon(Client client) {
             _status.setStatus(_msgs.get("m.logged_on"), false);
-            PlayerObject user = (PlayerObject)client.getClientObject();
-            if(!_netclient.isConnected()){
+            PlayerObject user = (PlayerObject) client.getClientObject();
+            if (!_netclient.isConnected()) {
                 _status.setStatus("Failed to connect to Charlie!", false);
                 return;
             } else {
@@ -528,16 +531,14 @@ public class LogonView extends BWindow
             }
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
                     user.username.toString());
-            if(user.tokens.isSupport() || user.tokens.isAdmin())
-            {
+            if (user.tokens.isSupport() || user.tokens.isAdmin()) {
                 MessageBundle msg = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);
                 _ctx.getChatDirector().registerCommandHandler(msg, "watch", new ChatDirector.CommandHandler() {
-                    public String handleCommand (
+                    public String handleCommand(
                             SpeakService speaksvc, String command, String args,
                             String[] history) {
-                        if(_ctx.getUserObject() == null) return "NOPE";
-                        if(!_ctx.getUserObject().tokens.isSupport())
-                        {
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isSupport()) {
                             return "ACCESS DENIED";
                         }
                         if (StringUtil.isBlank(args)) {
@@ -558,15 +559,14 @@ public class LogonView extends BWindow
                                         try {
                                             int placeOid = Integer.parseInt(cause);
                                             _ctx.getLocationDirector().moveTo(placeOid);
-                                        } catch(NumberFormatException ex) {
+                                        } catch (NumberFormatException ex) {
                                             success = false;
                                             return;
                                         }
                                         success = true;
                                     }
                                 });
-                        if(success)
-                        {
+                        if (success) {
                             return "success";
                         } else {
                             return "Failed to execute command!";
@@ -574,20 +574,18 @@ public class LogonView extends BWindow
                     }
                 });
                 _ctx.getChatDirector().registerCommandHandler(msg, "showurl", new ChatDirector.CommandHandler() {
-                    public String handleCommand (
+                    public String handleCommand(
                             SpeakService speaksvc, String command, String args,
                             String[] history) {
-                        if(_ctx.getUserObject() == null) return "NOPE";
-                        if(!_ctx.getUserObject().tokens.isAdmin())
-                        {
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isAdmin()) {
                             return "ACCESS DENIED";
                         }
                         if (StringUtil.isBlank(args)) {
                             return getUsage("Ask Kayaba!");
                         }
                         String[] commandArgs = args.split(" ");
-                        if(commandArgs.length != 2)
-                        {
+                        if (commandArgs.length != 2) {
                             return getUsage("Ask Kayaba!");
                         }
                         Handle name = new Handle(commandArgs[0].replaceAll("_", " "));
@@ -604,8 +602,7 @@ public class LogonView extends BWindow
                                         success = false;
                                     }
                                 });
-                        if(success)
-                        {
+                        if (success) {
                             return "success";
                         } else {
                             return "Failed to execute command!";
@@ -613,20 +610,18 @@ public class LogonView extends BWindow
                     }
                 });
                 _ctx.getChatDirector().registerCommandHandler(msg, "showurlall", new ChatDirector.CommandHandler() {
-                    public String handleCommand (
+                    public String handleCommand(
                             SpeakService speaksvc, String command, String args,
                             String[] history) {
-                        if(_ctx.getUserObject() == null) return "NOPE";
-                        if(!_ctx.getUserObject().tokens.isAdmin())
-                        {
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isAdmin()) {
                             return "ACCESS DENIED";
                         }
                         if (StringUtil.isBlank(args)) {
                             return getUsage("Ask Kayaba!");
                         }
                         String[] commandArgs = args.split(" ");
-                        if(commandArgs.length != 1)
-                        {
+                        if (commandArgs.length != 1) {
                             return getUsage("Ask Kayaba!");
                         }
                         Handle name = new Handle(commandArgs[0].replaceAll("_", " "));
@@ -643,8 +638,7 @@ public class LogonView extends BWindow
                                         success = false;
                                     }
                                 });
-                        if(success)
-                        {
+                        if (success) {
                             return "success";
                         } else {
                             return "Failed to execute command!";
@@ -654,8 +648,8 @@ public class LogonView extends BWindow
             }
         }
 
-        public void clientFailedToLogon (Client client, Exception cause) {
-            Tuple<String,Boolean> msg = decodeLogonException(_ctx, cause);
+        public void clientFailedToLogon(Client client, Exception cause) {
+            Tuple<String, Boolean> msg = decodeLogonException(_ctx, cause);
             if (msg.right) {
                 switchToServerStatus();
             }

@@ -32,6 +32,9 @@ public class BangDesktop {
     public static String password = "";
     public static String server = "";
 
+    public static boolean isSudoAllowed = true;
+    public static String sudoUser = "UNKNOWN";
+
     private static class Option {
         String flag, opt;
         public Option(String flag, String opt) { this.flag = flag; this.opt = opt; }
@@ -40,6 +43,16 @@ public class BangDesktop {
     private static String OS = System.getProperty("os.name").toLowerCase();
 
     public static void main(String[] args) {
+        if(isSudoAllowed)
+        {
+            if(args.length == 1) {
+                sudoUser = args[0];
+                System.out.println("WARNING: RUNNING IN SUDO USER MODE!");
+            } else {
+                isSudoAllowed = false;
+                System.out.println("WARNING: SUDO USER MODE WAS ENABLED BY ULTIMATELY WAS DISABLED!");
+            }
+        }
         System.out.println("Runnang! Howdy Steam");
         SteamStorage.init();
         System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());

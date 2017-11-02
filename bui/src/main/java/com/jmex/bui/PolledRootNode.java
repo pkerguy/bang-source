@@ -158,6 +158,10 @@ public class PolledRootNode extends BRootNode
     /** This listener is notified when the mouse is updated. */
     protected MouseInputListener _mouseListener = new MouseInputListener() {
         public void onButton (int button, boolean pressed, int x, int y) {
+
+            //Ignored button click?
+            if(button >= MOUSE_MODIFIER_MAP.length)return;
+
             // recalculate the hover component whenever the a button is pressed
             updateHoverComponent(x, y);
 

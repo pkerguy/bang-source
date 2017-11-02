@@ -202,9 +202,9 @@ public class BoundedRangeModel
                     delta *= 2;
                 }
                 if (event.getDelta() > 0) {
-                    setValue(getValue() - delta);
-                } else {
                     setValue(getValue() + delta);
+                } else {
+                    setValue(getValue() - delta);
                 }
             }
         };

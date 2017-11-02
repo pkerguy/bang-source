@@ -10,7 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="client_shared" />
-    <orderEntry type="module" module-name="bang-app" />
+    <orderEntry type="module" module-name="app" />
     <orderEntry type="module" module-name="bui" />
     <orderEntry type="module" module-name="jme" />
     <orderEntry type="library" name="Maven: com.threerings:nenya:1.7-SNAPSHOT" level="project" />
@@ -25,7 +25,7 @@
     <orderEntry type="module-library">
       <library name="Maven: java:plugin:1.5">
         <CLASSES>
-          <root url="jar://C:/Program Files/Java/jdk1.8.0_144/jre/lib/plugin.jar!/" />
+          <root url="jar://C:/Program Files/Java/jdk1.8.0_65/jre/lib/plugin.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -35,7 +35,7 @@
     <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.jcraft:jorbis:0.0.17" level="project" />
-    <orderEntry type="module" module-name="bang-assets" />
+    <orderEntry type="module" module-name="assets" />
     <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-backend-lwjgl:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl:2.9.2" level="project" />

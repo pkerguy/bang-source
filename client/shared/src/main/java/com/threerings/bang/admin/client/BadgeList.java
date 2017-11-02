@@ -6,48 +6,52 @@ import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.Dimension;
 import com.threerings.bang.data.Badge;
-import jdk.nashorn.internal.objects.annotations.Getter;
 
-public class BadgeList extends BScrollingList<BadgeList.EntryBuilder, BComponent>
-{
+//Pretty sure we dont want a scrolling list in the end but can rework later to use dropdown.
+public class BadgeList extends BScrollingList<BadgeList.EntryBuilder, BComponent> {
 
-    private String selected;
+    private Badge selected;
+    private BLabel selectedLabel;
 
-    public BadgeList (Dimension size)
-    {
+    public BadgeList(Dimension size, BLabel selectedLabel) {
         super();
 
+        this.selectedLabel = selectedLabel;
         setPreferredSize(size);
+
+        for (Badge b : Badge.getAll())
+            addValue(new EntryBuilder(b), false);
+
     }
 
     @Override // from BScrollingList
-    protected BComponent createComponent (BadgeList.EntryBuilder entry)
-    {
+    protected BComponent createComponent(BadgeList.EntryBuilder entry) {
         return entry.build();
     }
 
     protected class EntryBuilder implements ActionListener {
-        public EntryBuilder() {
+        private Badge badge;
+
+        public EntryBuilder(Badge currentBadge) {
+            this.badge = currentBadge;
         }
 
         public BComponent build() {
-
             BContainer cont = GroupLayout.makeHBox(GroupLayout.CENTER);
-            for(Badge b : Badge.getAll())
-            {
-                cont.add(new BButton(b.getName(), this, String.valueOf(b.getCode())));
-            }
-
+            cont.add(new BButton(this.badge.getType().name(), this, String.valueOf(this.badge.getCode())));
             return cont;
         }
 
+
         @Override
-        public void actionPerformed (ActionEvent event) {
-            selected = event.getAction();
+        public void actionPerformed(ActionEvent event) {
+            selected = badge;
+            selectedLabel.setText(selected.getType().name());
         }
 
     }
-    public String getSelected(){
+
+    public Badge getSelected() {
         return selected;
     }
 }

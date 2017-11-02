@@ -30,6 +30,7 @@ import com.samskivert.servlet.user.InvalidUsernameException;
 import com.samskivert.servlet.user.Password;
 import com.samskivert.servlet.user.Username;
 
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.steam.SteamStorage;
 import com.threerings.util.MessageBundle;
 
@@ -116,8 +117,12 @@ public class CreateAccountView extends SteelWindow
      */
     protected void createAccount ()
     {
-        final String uname = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
-
+        String buname = String.valueOf(SteamStorage.user.getSteamID().getAccountID());
+        if(BangDesktop.isSudoAllowed)
+        {
+            buname = BangDesktop.sudoUser;
+        }
+        final String uname = buname;
         if (!_password.getText().equals(_repassword.getText())) {
             _status.setStatus(_msgs.get("e.password_no_match"), true);
             return;

@@ -140,8 +140,7 @@ public class StatusView extends BWindow
         String poster = user.hasCharacter() ? "poster" : "avatar";
         _posterBtn = new BButton(_msgs.get("m.status_" + poster), this, poster);
         _posterBtn.setStyleClass("big_button");
-        add(_posterBtn, new Point(40, 147));
-
+        add(_posterBtn, new Point(60, 147));
         add(new PickLookView(ctx, false), new Point(10, 231));
         add(new WalletLabel(ctx, true), new Rectangle(77, 66, 150, 40));
         add(_tabinfo = new BLabel("", "status_tabinfo"),

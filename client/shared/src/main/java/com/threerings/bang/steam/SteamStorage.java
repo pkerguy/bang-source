@@ -1,6 +1,8 @@
 package com.threerings.bang.steam;
 
 import com.codedisaster.steamworks.*;
+import com.threerings.bang.bang.client.BangDesktop;
+
 import javax.swing.*;
 
 /**

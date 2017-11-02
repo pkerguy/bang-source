@@ -78,8 +78,12 @@ public class AdminDialog extends SteelWindow
                 field.requestFocus();
                 break;
             case GRANT_BADGE: case REMOVE_BADGE:
+
+                BLabel label;
+
                 add(3, new BLabel(_numberLabel));
-                add(4, new BadgeList(new Dimension(450, 300)));
+                add(4, label = new BLabel("No Badge Selected"));
+                add(5, _badgeList = new BadgeList(new Dimension(450, 325), label), GroupLayout.FIXED);
                 break;
         }
 
@@ -96,20 +100,22 @@ public class AdminDialog extends SteelWindow
                 _ctx.getBangClient().clearPopup(this, true);
                 break;
             case "execute":
-                String valueText = _badgeList.getSelected();
-                if(valueText == null || StringUtil.isBlank(valueText)) return;
+                Badge valueText = _badgeList.getSelected();
+                if(valueText == null)  {
+                    System.out.println("No badge selected!");
+                    ((BLabel)getComponent(3)).setText("Badge: (Required)");
+                    return;
+                }
 
                 _ctx.getClient().requireService(PlayerService.class).adminAction(
-                        _handle, _action, valueText,
+                        _handle, _action, String.valueOf(valueText.getCode()),
                         new InvocationService.ConfirmListener() {
                             @Override
                             public void requestProcessed() {
                                 _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
                                 OptionDialog.showConfirmDialog(
-                                        _ctx, null, "Success!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
-                                            public void resultPosted(int button, Object result) {
-                                                // Automatically dismisses the dialog so nothing needed to be done here
-                                            }
+                                        _ctx, null, "Success!", new String[]{"m.ok"}, (button, result) -> {
+                                            // Automatically dismisses the dialog so nothing needed to be done here
                                         });
                             }
 
@@ -117,10 +123,8 @@ public class AdminDialog extends SteelWindow
                             public void requestFailed(String cause) {
                                 _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
                                 OptionDialog.showConfirmDialog(
-                                        _ctx, null, "Failed!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
-                                            public void resultPosted(int button, Object result) {
-                                                // Automatically dismisses the dialog so nothing needed to be done here
-                                            }
+                                        _ctx, null, "Failed!", new String[]{"m.ok"}, (button, result) -> {
+                                            // Automatically dismisses the dialog so nothing needed to be done here
                                         });
                             }
                 });

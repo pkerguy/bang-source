@@ -9,6 +9,7 @@ import java.util.Properties;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.presents.server.Authenticator;
 
 import com.threerings.bang.data.BangCodes;

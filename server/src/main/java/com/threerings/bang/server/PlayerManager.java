@@ -902,19 +902,19 @@ public class PlayerManager
                 listener.requestFailed("Somehow that player is null!");
                 break;
             case GameMasterDialog.SHOW_URL:
-                if(handle.equals("")) // Show to all users online!
+                if(handle.equals("ALL")) // Show to all users online!
                 {
                     for(Map.Entry<String, Connection> client : BangServer.clients.entrySet()){
                         try {
                             client.getValue().sendTcp(new ShowURLPacket(new URL(reason)));
-                            listener.requestProcessed();
                             continue;
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
                             listener.requestFailed("FAILED");
-                            continue;
+                            return;
                         }
                     }
+                    listener.requestProcessed();
                     return;
                 }
                 PlayerObject target = BangServer.locator.lookupPlayer(handle);
@@ -933,12 +933,12 @@ public class PlayerManager
                 try {
                     BangServer.clients.get(target.username.getNormal()).sendTcp(new ShowURLPacket(new URL(reason)));
                     listener.requestProcessed();
+                    return;
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     listener.requestFailed("Invalid url");
                     return;
                 }
-                break;
         }
     }
 

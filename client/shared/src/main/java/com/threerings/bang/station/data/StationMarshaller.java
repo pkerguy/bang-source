@@ -1,5 +1,8 @@
 //
+
 // $Id$
+
+
 
 package com.threerings.bang.station.data;
 

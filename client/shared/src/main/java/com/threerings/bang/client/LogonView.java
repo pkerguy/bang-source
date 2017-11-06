@@ -42,6 +42,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import static com.threerings.bang.Log.log;
 
@@ -175,10 +176,10 @@ public class LogonView extends BWindow
 
     protected void showLoginView() {
         removeAll();
-
         BContainer row = GroupLayout.makeHBox(GroupLayout.LEFT);
         ((GroupLayout) row.getLayoutManager()).setOffAxisJustification(GroupLayout.BOTTOM);
         BContainer grid = new BContainer(new TableLayout(2, 5, 5));
+        BContainer passwordgrid = new BContainer(new TableLayout(2, 5, 15));
         //grid.add(new BLabel(_msgs.get("m.username"), "logon_label"));
         //grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
         //_username.setPreferredWidth(150);
@@ -206,9 +207,21 @@ public class LogonView extends BWindow
             }
 
             grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
-            grid.add(_password = new BPasswordField());
+            grid.add(passwordgrid);
+            passwordgrid.add(_password = new BPasswordField());
+            passwordgrid.add(_savepassword = new BCheckBox(null));
+            _savepassword.setTooltipText("Remember Me");
             _password.setPreferredWidth(150);
             _password.addListener(this);
+            _savepassword.addListener(new ActionListener() {
+                public void actionPerformed (ActionEvent event) {
+                   if(!_savepassword.isSelected())
+                   {
+                       BangPrefs.config.remove("password");
+                       _password.setText("");
+                   }
+                }
+            });
             if (!result.contains("&")) {
                 String[] cmdSplit = result.split(":");
                 availableServers.add(cmdSplit[0]);
@@ -251,7 +264,6 @@ public class LogonView extends BWindow
         //col.add(_action = new BButton(_msgs.get("m.new_account"), this, "new_account"));
 //        _action.setStyleClass("logon_new");
         add(row, new Rectangle(40, 200, 365, 100));
-
         // disable the logon button until a password is entered (and until we're initialized)
         _validator = new EnablingValidator(_password, _logon) {
             protected boolean checkEnabled(String text) {
@@ -321,11 +333,17 @@ public class LogonView extends BWindow
                 {
                     username = BangDesktop.sudoUser;
                 }
+
                 String password = _password.getText();
 
                 if (password == "" || password == null) {
                     log.warning("You didn't enter any password in");
                     return;
+                }
+
+                if(_savepassword.isSelected())
+                {
+                    BangPrefs.config.setValue("password", _password.getText());
                 }
 
                 // try to connect to the town lobby server that this player last accessed
@@ -517,8 +535,6 @@ public class LogonView extends BWindow
                 });
     }
 
-    protected static boolean success = false;
-
     protected ClientAdapter _listener = new ClientAdapter() {
         public void clientDidLogon(Client client) {
             _status.setStatus(_msgs.get("m.logged_on"), false);
@@ -528,6 +544,12 @@ public class LogonView extends BWindow
                 return;
             } else {
                 _netclient.getServerConnection().sendTcp(new NewClientPacket(user.username.getNormal()));
+            }
+            if(!BangPrefs.config.getValue("password", "").equals(""))
+            {
+                _savepassword.setSelected(true);
+                _password.setText(BangPrefs.config.getValue("password", ""));
+                _logon.setEnabled(true);
             }
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
                     user.username.toString());
@@ -550,7 +572,7 @@ public class LogonView extends BWindow
                                 new InvocationService.ConfirmListener() {
                                     @Override
                                     public void requestProcessed() {
-                                        success = false;
+                                        _ctx.getChatDirector().displayFeedback(null, "An error occurred performing that command!");
                                         return;
                                     }
 
@@ -559,18 +581,15 @@ public class LogonView extends BWindow
                                         try {
                                             int placeOid = Integer.parseInt(cause);
                                             _ctx.getLocationDirector().moveTo(placeOid);
+                                            _ctx.getChatDirector().displayFeedback(null, "Spectating player successful!");
+                                            return;
                                         } catch (NumberFormatException ex) {
-                                            success = false;
+                                            _ctx.getChatDirector().displayFeedback(null, "NumberFormatException error.");
                                             return;
                                         }
-                                        success = true;
                                     }
                                 });
-                        if (success) {
-                            return "success";
-                        } else {
-                            return "Failed to execute command!";
-                        }
+                        return "success";
                     }
                 });
                 _ctx.getChatDirector().registerCommandHandler(msg, "showurl", new ChatDirector.CommandHandler() {
@@ -594,19 +613,15 @@ public class LogonView extends BWindow
                                 new InvocationService.ConfirmListener() {
                                     @Override
                                     public void requestProcessed() {
-                                        success = true;
+                                        _ctx.getChatDirector().displayFeedback(null, "An error occurred performing that command!");
                                     }
 
                                     @Override
                                     public void requestFailed(String cause) {
-                                        success = false;
+
                                     }
                                 });
-                        if (success) {
-                            return "success";
-                        } else {
-                            return "Failed to execute command!";
-                        }
+                        return "success";
                     }
                 });
                 _ctx.getChatDirector().registerCommandHandler(msg, "showurlall", new ChatDirector.CommandHandler() {
@@ -624,25 +639,20 @@ public class LogonView extends BWindow
                         if (commandArgs.length != 1) {
                             return getUsage("Ask Kayaba!");
                         }
-                        Handle name = new Handle(commandArgs[0].replaceAll("_", " "));
                         _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
-                                name, GameMasterDialog.SHOW_URL, "", 0L,
+                                new Handle("ALL"), GameMasterDialog.SHOW_URL, commandArgs[1], 0L,
                                 new InvocationService.ConfirmListener() {
                                     @Override
-                                    public void requestProcessed() {
-                                        success = true;
+                                    public void requestProcessed(){
+                                        _ctx.getChatDirector().displayFeedback(null, "An error occurred performing that command!");
                                     }
 
                                     @Override
                                     public void requestFailed(String cause) {
-                                        success = false;
+                                        _ctx.getChatDirector().displayFeedback(null, "Spectating player successful!");
                                     }
                                 });
-                        if (success) {
-                            return "success";
-                        } else {
-                            return "Failed to execute command!";
-                        }
+                        return "success";
                     }
                 });
             }
@@ -704,6 +714,7 @@ public class LogonView extends BWindow
 
     protected BTextField _username;
     protected BPasswordField _password;
+    protected BCheckBox _savepassword;
     protected BButton _logon, _action, _account, _anon, registerBtn;
     protected BComboBox serverList;
     protected BIcon _unitIcon;

@@ -267,10 +267,11 @@ public class TownView extends BWindow
                 _bctx.showURL(new URL("http://www.howdypedia.com"));
             } catch (MalformedURLException e) {}
         } else if ("buycoins".equals(cmd)) {
-            try {
-                _bctx.showURL(new URL("http://banghowdy.com/buy.php"));
-            } catch (MalformedURLException e) {
-            }
+//            try {
+                _bctx.getBangClient().getPopupManager().showPopup(FKeyPopups.Type.COIN_SHOP);
+                //_bctx.showURL(new URL("http://banghowdy.com/buy.php"));
+//            } catch (MalformedURLException e) {
+//            }
         } else if ("buycoins".equals(cmd)) {
             // BUY COINS DIALOG HERE
 

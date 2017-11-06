@@ -163,6 +163,7 @@ public class TutorialController
             return;
         }
         TutorialConfig.Text text = _history.get(_hidx);
+        log.warning("[DEBUG]" + text.index, "type");
         displayMessage(text.message, text.step, text.avatar);
         _back.setEnabled(_hidx > 0);
         _forward.setEnabled(_hidx < _history.size() - 1);

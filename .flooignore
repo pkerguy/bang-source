@@ -6,3 +6,5 @@ vendor
 /.gradle/*
 *build/*
 *debug.txt*
+*.jar
+assets/*

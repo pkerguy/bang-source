@@ -75,6 +75,11 @@ public class BorderLayout extends BLayoutManager
     // documentation inherited
     public void addLayoutComponent (BComponent comp, Object constraints)
     {
+        if (constraints instanceof GroupLayout.Justification)
+        {
+            GroupLayout.Justification justi = (GroupLayout.Justification)constraints;
+            constraints = justi.code;
+        }
         if (constraints instanceof Integer) {
             if (constraints != IGNORE) {
                 _components[((Integer)constraints).intValue()] = comp;

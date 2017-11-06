@@ -8,7 +8,6 @@ import com.codedisaster.steamworks.*;
 public class SteamServer {
 
     public static SteamUserCallback userCallback; // Abusing statics is not good
-    public static SteamUser user;
 
     public static void init()
     {
@@ -28,7 +27,6 @@ public class SteamServer {
 
                     }
                 };
-                user = new SteamUser(userCallback);
             }
         } catch (SteamException e) {
             e.printStackTrace();

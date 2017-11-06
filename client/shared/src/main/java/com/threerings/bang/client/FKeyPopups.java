@@ -3,50 +3,34 @@
 
 package com.threerings.bang.client;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import javax.imageio.ImageIO;
-
 import com.badlogic.gdx.Input.Keys;
-
 import com.jme.renderer.ColorRGBA;
-
-import com.jmex.bui.BButton;
-import com.jmex.bui.BContainer;
-import com.jmex.bui.BDecoratedWindow;
-import com.jmex.bui.BLabel;
-import com.jmex.bui.BScrollPane;
-import com.jmex.bui.BTextArea;
-import com.jmex.bui.BTextField;
+import com.jmex.bui.*;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.event.InputEvent;
 import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.Dimension;
-
 import com.samskivert.util.ResultListener;
-import com.threerings.bang.tourney.client.TourneyListView;
-import com.threerings.util.MessageBundle;
-
-import com.threerings.bang.avatar.client.AvatarView;
-import com.threerings.bang.avatar.data.Look;
-
 import com.threerings.bang.admin.client.RuntimeConfigView;
 import com.threerings.bang.admin.client.ServerStatusView;
+import com.threerings.bang.avatar.client.AvatarView;
+import com.threerings.bang.avatar.data.Look;
 import com.threerings.bang.chat.client.BangChatDirector;
-import com.threerings.bang.client.bui.EnablingValidator;
 import com.threerings.bang.data.BangCodes;
 import com.threerings.bang.data.BangTokenRing;
 import com.threerings.bang.data.PlayerObject;
+import com.threerings.bang.tourney.client.TourneyListView;
 import com.threerings.bang.util.BangContext;
-import com.threerings.crowd.chat.data.ChatCodes;
-import com.threerings.crowd.chat.data.ChatMessage;
-import com.threerings.crowd.chat.data.SystemMessage;
-import com.threerings.crowd.chat.data.TellFeedbackMessage;
-import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.data.*;
+import com.threerings.util.MessageBundle;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import static com.threerings.bang.Log.log;
 
@@ -55,9 +39,10 @@ import static com.threerings.bang.Log.log;
  * some other globally mapped keys.
  */
 public class FKeyPopups
-    implements GlobalKeyManager.Command
-{
-    /** Enumerates the various types of popups we know about. */
+        implements GlobalKeyManager.Command {
+    /**
+     * Enumerates the various types of popups we know about.
+     */
     public static enum Type {
         HELP(false, Keys.F1, 0, 0, true),
         TUTORIALS(true, Keys.T, 0, 0, true),
@@ -70,31 +55,32 @@ public class FKeyPopups
         CLIENT_CONFIG(false, Keys.F6, CTRL_SHIFT, 0, false),
         AVATAR_SHOT(false, Keys.F11, CTRL_SHIFT, BangTokenRing.ADMIN, false),
         SCREEN_SHOT(false, Keys.F12, 0, 0, false),
-        TOURNAMENTS(false, Keys.F7, 0, BangTokenRing.SUPPORT, false);
+        TOURNAMENTS(false, Keys.F7, 0, BangTokenRing.SUPPORT, false),
+        COIN_SHOP(false, Keys.F8, 0, 0, true);
 
 
         public boolean control() {
             return _control;
         }
 
-        public int keyCode () {
+        public int keyCode() {
             return _keyCode;
         }
 
-        public int modifiers () {
+        public int modifiers() {
             return _modifiers;
         }
 
-        public int requiredToken () {
+        public int requiredToken() {
             return _requiredToken;
         }
 
-        public boolean checkCanDisplay () {
+        public boolean checkCanDisplay() {
             return _checkCanDisplay;
         }
 
-        Type (boolean control, int keyCode, int modifiers, int requiredToken,
-              boolean checkCanDisplay) {
+        Type(boolean control, int keyCode, int modifiers, int requiredToken,
+             boolean checkCanDisplay) {
             _control = control;
             _keyCode = keyCode;
             _modifiers = modifiers;
@@ -107,13 +93,14 @@ public class FKeyPopups
         protected int _modifiers;
         protected int _requiredToken;
         protected boolean _checkCanDisplay;
-    };
+    }
+
+    ;
 
     /**
      * Creates the function key popups manager and registers its key bindings.
      */
-    public FKeyPopups (BangContext ctx)
-    {
+    public FKeyPopups(BangContext ctx) {
         _ctx = ctx;
         for (Type type : Type.values()) {
             _ctx.getKeyManager().registerCommand(type.keyCode(), this);
@@ -126,11 +113,10 @@ public class FKeyPopups
      * Shows the popup of the specifide type, clearing any existing popup
      * prior to doing so.
      */
-    public void showPopup (Type type)
-    {
+    public void showPopup(Type type) {
         // don't auto-replace a never clear popup
         if (_popped != null && _popped.isAdded() &&
-            _popped.getLayer() == BangCodes.NEVER_CLEAR_LAYER) {
+                _popped.getLayer() == BangCodes.NEVER_CLEAR_LAYER) {
             return;
         }
 
@@ -143,54 +129,57 @@ public class FKeyPopups
         // make sure we can display an FKEY popup right now (but only if we
         // don't already have one popped up, in which case we'll replace it)
         if (type.checkCanDisplay() && (_popped == null || !_popped.isAdded()) &&
-            !_ctx.getBangClient().canDisplayPopup(MainView.Type.FKEY)) {
+                !_ctx.getBangClient().canDisplayPopup(MainView.Type.FKEY)) {
             return;
         }
 
         // if this popup requires admin privileges, make sure we've got 'em
         if (type.requiredToken() != 0 &&
-            (_ctx.getUserObject() == null ||
-             !_ctx.getUserObject().tokens.holdsToken(type.requiredToken()))) {
+                (_ctx.getUserObject() == null ||
+                        !_ctx.getUserObject().tokens.holdsToken(type.requiredToken()))) {
             return;
         }
 
         BDecoratedWindow popup = null;
         int whint = 500;
         switch (type) {
-        default:
-        case HELP:
-            popup = createHelp();
-            break;
-        // case REPORT_BUG:
-        //     popup = createReportBug();
-        //     break;
-        case TUTORIALS:
-            popup = new TutorialView(_ctx);
-            whint = TutorialView.WIDTH_HINT;
-            break;
-        case WHERETO:
-            popup = new WhereToView(_ctx, false);
-            whint = WhereToView.WIDTH_HINT;
-            break;
-        case CLIENT_LOG:
-            popup = createRecentLog();
-            break;
-        case CHAT_HISTORY:
-            popup = createChatHistory();
-            break;
-        case SERVER_STATUS:
-            popup = new ServerStatusView(_ctx);
-            break;
-        case SERVER_CONFIG:
-            popup = new RuntimeConfigView(_ctx);
-            break;
-        case CLIENT_CONFIG:
-            popup = new ConfigEditorView(_ctx);
-            break;
-        case TOURNAMENTS:
-            popup = new TourneyListView(_ctx);
-            whint = 4000;
-            break;
+            default:
+            case HELP:
+                popup = createHelp();
+                break;
+            // case REPORT_BUG:
+            //     popup = createReportBug();
+            //     break;
+            case TUTORIALS:
+                popup = new TutorialView(_ctx);
+                whint = TutorialView.WIDTH_HINT;
+                break;
+            case WHERETO:
+                popup = new WhereToView(_ctx, false);
+                whint = WhereToView.WIDTH_HINT;
+                break;
+            case CLIENT_LOG:
+                popup = createRecentLog();
+                break;
+            case CHAT_HISTORY:
+                popup = createChatHistory();
+                break;
+            case SERVER_STATUS:
+                popup = new ServerStatusView(_ctx);
+                break;
+            case SERVER_CONFIG:
+                popup = new RuntimeConfigView(_ctx);
+                break;
+            case CLIENT_CONFIG:
+                popup = new ConfigEditorView(_ctx);
+                break;
+            case TOURNAMENTS:
+                popup = new TourneyListView(_ctx);
+                whint = 4000;
+                break;
+            case COIN_SHOP:
+                popup = new BuyCoinsDialog(_ctx);
+                break;
         }
         if (popup != null) {
             clearPopup();
@@ -200,8 +189,7 @@ public class FKeyPopups
     }
 
     // documentation inherited from interface GlobalKeyManager.Command
-    public void invoke (int keyCode, int modifiers)
-    {
+    public void invoke(int keyCode, int modifiers) {
         // // special hackery to handle Ctrl-Shift-F2 which submits an
         // // auto-bug-report and exits the client
         // if (keyCode == Keys.F2 && modifiers == CTRL_SHIFT) {
@@ -216,13 +204,13 @@ public class FKeyPopups
             String fname = "bang_screen_" + _sfmt.format(new Date());
             _ctx.getRenderer().takeScreenShot(fname);
             String msg = MessageBundle.tcompose(
-                "m.screenshot_taken", fname + ".png");
+                    "m.screenshot_taken", fname + ".png");
             _ctx.getChatDirector().displayFeedback(BangCodes.BANG_MSGS, msg);
             return;
         }
 
         boolean isAdmin = (_ctx.getUserObject() != null) &&
-            _ctx.getUserObject().tokens.isAdmin();
+                _ctx.getUserObject().tokens.isAdmin();
 
         // yet more hackery to handle dumping a copy of your current avatar
         // look to a file (only available to admins currently)
@@ -242,8 +230,7 @@ public class FKeyPopups
         }
     }
 
-    protected void clearPopup ()
-    {
+    protected void clearPopup() {
         _poppedType = null;
         if (_popped != null) {
             _ctx.getBangClient().clearPopup(_popped, true);
@@ -251,8 +238,7 @@ public class FKeyPopups
         }
     }
 
-    protected BDecoratedWindow createHelp ()
-    {
+    protected BDecoratedWindow createHelp() {
         BDecoratedWindow help = BangUI.createDialog(_msgs.get("m.key_help_title"));
         String text = _msgs.get("m.key_help_key");
         if (!_ctx.getUserObject().tokens.isAnonymous()) {
@@ -301,14 +287,13 @@ public class FKeyPopups
     //     return bug;
     // }
 
-    protected BDecoratedWindow createRecentLog ()
-    {
+    protected BDecoratedWindow createRecentLog() {
         BDecoratedWindow window = new BDecoratedWindow(
-            _ctx.getStyleSheet(), _msgs.get("m.log_title"));
-        ((GroupLayout)window.getLayoutManager()).setGap(15);
+                _ctx.getStyleSheet(), _msgs.get("m.log_title"));
+        ((GroupLayout) window.getLayoutManager()).setGap(15);
         StringBuffer buf = new StringBuffer();
-        for (int ii = BangApp.recentLog.size()-1; ii >= 0; ii--) {
-            String line = (String)BangApp.recentLog.get(ii);
+        for (int ii = BangApp.recentLog.size() - 1; ii >= 0; ii--) {
+            String line = (String) BangApp.recentLog.get(ii);
             buf.append(line.replace("@", "@@"));
         }
         window.add(new BScrollPane(new BLabel(buf.toString(), "debug_log")));
@@ -318,10 +303,9 @@ public class FKeyPopups
         return window;
     }
 
-    protected BDecoratedWindow createChatHistory ()
-    {
+    protected BDecoratedWindow createChatHistory() {
         BDecoratedWindow window = new BDecoratedWindow(
-            _ctx.getStyleSheet(), _msgs.get("m.chat_history_title"));
+                _ctx.getStyleSheet(), _msgs.get("m.chat_history_title"));
         ((GroupLayout) window.getLayoutManager()).setGap(10);
         window.setLayer(BangUI.POPUP_MENU_LAYER);
 
@@ -329,7 +313,7 @@ public class FKeyPopups
         history.setStyleClass("chat_history_log");
         history.setPreferredSize(new Dimension(800, 600));
         List<ChatMessage> list =
-            ((BangChatDirector)_ctx.getChatDirector()).getMessageHistory();
+                ((BangChatDirector) _ctx.getChatDirector()).getMessageHistory();
         for (ChatMessage msg : list) {
             if (msg instanceof UserMessage) {
                 UserMessage umsg = (UserMessage) msg;
@@ -358,34 +342,33 @@ public class FKeyPopups
         return window;
     }
 
-    protected void createCurrentLookSnapshot ()
-    {
+    protected void createCurrentLookSnapshot() {
         PlayerObject user = _ctx.getUserObject();
         Look look = user.getLook(Look.Pose.DEFAULT);
         final File target = new File(System.getProperty("user.home") +
-                                     File.separator + "Desktop" +
-                                     File.separator + look.name + ".png");
+                File.separator + "Desktop" +
+                File.separator + look.name + ".png");
         AvatarView.getImage(_ctx, look.getAvatar(user), new ResultListener<BufferedImage>() {
-            public void requestCompleted (BufferedImage image) {
+            public void requestCompleted(BufferedImage image) {
                 try {
                     ImageIO.write(image, "PNG", target);
                     _ctx.getChatDirector().displayFeedback(BangCodes.BANG_MSGS, "m.avatar_saved");
                 } catch (Exception e) {
                     log.warning("Failed to write avatar image", "target", target, e);
                     _ctx.getChatDirector().displayFeedback(
-                        BangCodes.BANG_MSGS, "m.avatar_save_failed");
+                            BangCodes.BANG_MSGS, "m.avatar_save_failed");
                 }
             }
-            public void requestFailed (Exception cause) {
+
+            public void requestFailed(Exception cause) {
                 // not called
             }
         });
     }
 
-    protected BButton makeDismiss (final BDecoratedWindow popup)
-    {
+    protected BButton makeDismiss(final BDecoratedWindow popup) {
         return new BButton(_msgs.get("m.dismiss"), new ActionListener() {
-            public void actionPerformed (ActionEvent event) {
+            public void actionPerformed(ActionEvent event) {
                 _ctx.getBangClient().clearPopup(popup, true);
             }
         }, "dismiss");
@@ -399,8 +382,8 @@ public class FKeyPopups
     protected boolean _autoBugged;
 
     protected static SimpleDateFormat _sfmt =
-        new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+            new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
     protected static final int CTRL_SHIFT =
-        InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK;
+            InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK;
 }

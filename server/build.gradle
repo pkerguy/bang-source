@@ -15,6 +15,16 @@ task copyConfig (type: Copy) {
 }
 processResources.dependsOn "copyConfig"
 
+compileJava.doFirst {
+  copy {
+    from("../etc/server_local/server.properties")
+    into("src/main/resources/")
+  }
+  ant.replace(file: "src/main/resources/server.properties", token: 'localServerPath', value: String.valueOf(project.rootProject.rootDir).replace(File.separator, '/') + "/")
+
+}
+
+
 task createTestUser(type:JavaExec) {
   systemProperty "ooo.propfile", "server"
   args(["create", "test", "yeehaw", "test@test.com"])

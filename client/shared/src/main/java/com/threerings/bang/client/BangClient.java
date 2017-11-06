@@ -27,6 +27,7 @@ import com.threerings.bang.game.client.effect.*;
 import com.threerings.bang.game.data.*;
 import com.threerings.bang.game.data.scenario.*;
 import com.threerings.bang.gang.data.*;
+import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.bang.ranch.data.*;
 import com.threerings.bang.saloon.data.Criterion;
 import com.threerings.bang.saloon.data.*;
@@ -989,8 +990,16 @@ public class BangClient extends BasicClient
                 final String result = in.readLine();
                 if(result.contains("&") && result.contains(","))
                 {
-                    String[] info = result.split("&"),
-                            portStr = info[1].split(",");
+                    String[] info = result.split("&");
+                    String[] portStr = info[1].split(",");
+                    LogonView._netclient = new com.jmr.wrapper.client.Client(info[0], Integer.parseInt(portStr[0]) + 2, Integer.parseInt(portStr[0]) + 2);
+                    LogonView._netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
+                    LogonView._netclient.connect();
+                    if (!LogonView._netclient.isConnected()) {
+                        return;
+                    } else {
+                        LogonView._netclient.getServerConnection().sendTcp(new NewClientPacket(_ctx.getUserObject().username.getNormal()));
+                    }
                     _ctx.getClient().setServer(info[0], DeploymentConfig.getServerPorts(_pendingTownId));
                 } else {
                     log.warning("Failed to grab server data in clientDidClear()");

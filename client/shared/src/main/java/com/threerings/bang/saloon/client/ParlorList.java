@@ -19,6 +19,7 @@ import com.jmex.bui.util.Dimension;
 
 import com.samskivert.util.ComparableArrayList;
 import com.samskivert.util.StringUtil;
+import com.threerings.bang.admin.client.TournamentDialog;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -103,6 +104,11 @@ public class ParlorList extends BContainer
                 _ctx.getBangClient().displayPopup(new CreateParlorDialog(_ctx, _salobj), true);
             }
 
+        } else if ("tournament".equals(event.getAction())) {
+            if (_ctx.getUserObject().tokens.isSupport()) {
+                tb = new TournamentDialog(_ctx);
+                _ctx.getBangClient().displayPopup(tb, true);
+            }
         } else if ("enter".equals(event.getAction())) {
             final BButton btn = (BButton)event.getSource();
             final ParlorInfo info = (ParlorInfo)btn.getProperty("info");
@@ -330,6 +336,7 @@ public class ParlorList extends BContainer
     protected BContainer _list;
     protected BButton _enterParlor;
     protected BButton _createTournament;
+    protected TournamentDialog tb;
 
     protected ComparableArrayList<ParlorRow> _parlors = new ComparableArrayList<ParlorRow>();
 }

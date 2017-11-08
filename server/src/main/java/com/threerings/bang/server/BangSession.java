@@ -65,6 +65,7 @@ public class BangSession extends CrowdSession
         bbd.hideoutOid = BangServer.hideoutmgr.getPlaceObject().getOid();
         bbd.officeOid = BangServer.officemgr.getPlaceObject().getOid();
         bbd.tourniesOid = BangServer.tournmgr.getTourniesObject().getOid();
+        bbd.bankOid = BangServer.bankManager.getPlaceObject().getOid();
     }
 
     @Override // documentation inherited

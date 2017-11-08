@@ -162,3 +162,4 @@ rsrc/cards/indian_post/peace_pipe/activate.ogg
 rsrc/cards/indian_post/underdog_soldier/activate.ogg
 rsrc/cards/indian_post/cat_ballou/activate.ogg
 rsrc/cards/indian_post/jack_rabbit/activate.ogg
+rsrc/sounds/voiceovers/frontier_town/welcome.ogg

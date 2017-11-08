@@ -24,6 +24,7 @@ import com.jmex.terrain.util.ParticleDepositionHeightMap;
 
 import com.samskivert.util.RandomUtil;
 
+import com.threerings.bang.util.BangContext;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -56,7 +57,7 @@ import static com.threerings.bang.client.BangMetrics.*;
 public class EditorBoardView extends BoardView
     implements PieceCodes
 {
-    public EditorBoardView (BasicContext ctx, EditorPanel panel)
+    public EditorBoardView (EditorContext ctx, EditorPanel panel)
     {
         super(ctx, true);
         _panel = panel;

@@ -58,6 +58,8 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
+import com.threerings.bang.client.BangClient;
+import com.threerings.bang.util.BangContext;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.jme.effect.FadeInOutEffect;
@@ -182,8 +184,115 @@ public class BoardView extends BComponent
         /** Whether this action has been cleared by the BoardView. */
         protected boolean _cleared = false;
     }
-
     public BoardView (BasicContext ctx, boolean editorMode)
+    {
+        setStyleClass("board_view");
+        setTooltipRelativeToMouse(true);
+        editor_ctx = ctx;
+        _editorMode = editorMode;
+
+        // create our top-level node
+        _node = new Node("board_view");
+
+        // let there be lights
+        _lstate = editor_ctx.getRenderer().createLightState();
+        _lights = new DirectionalLight[BangBoard.NUM_LIGHTS];
+        for (int i = 0; i < _lights.length; i++) {
+            _lstate.attach(_lights[i] = new DirectionalLight());
+            _lights[i].setEnabled(true);
+        }
+        _node.setRenderState(_lstate);
+        _node.setLightCombineMode(LightState.REPLACE);
+        _node.setNormalsMode(Spatial.NM_GL_NORMALIZE_PROVIDED);
+
+        // default states
+        MaterialState mstate = editor_ctx.getRenderer().createMaterialState();
+        mstate.getDiffuse().set(ColorRGBA.white);
+        mstate.getAmbient().set(ColorRGBA.white);
+        _node.setRenderState(mstate);
+        _node.setRenderState(RenderUtil.lequalZBuf);
+        _node.setRenderState(RenderUtil.opaqueAlpha);
+        _node.setTextureCombineMode(TextureState.REPLACE);
+        _node.setCullMode(Spatial.CULL_DYNAMIC);
+        _node.updateRenderState();
+
+        // create the sky
+        if (shouldShowSky() && Config.displaySky) {
+            _node.attachChild(_snode = new SkyNode(editor_ctx));
+        }
+
+        // we'll hang the board geometry off this node
+        Node bnode = new Node("board");
+        _node.attachChild(bnode);
+        _tnode = new TerrainNode(ctx, this, editorMode);
+        if (Config.displayTerrain) {
+            bnode.attachChild(_tnode);
+        }
+        _wnode = new WaterNode(ctx, _lights[0], editorMode);
+        if (Config.displayWater) {
+            bnode.attachChild(_wnode);
+        }
+
+        // create the shared wind influence
+        _wind = new SimpleParticleInfluenceFactory.BasicWind(
+                0f, new Vector3f(), true, false);
+
+        // the children of this node will have special tile textures
+        bnode.attachChild(_texnode = new Node("texturehighlights"));
+        _texnode.setRenderQueueMode(Renderer.QUEUE_TRANSPARENT);
+
+        // the children of this node will display highlighted tiles
+        // with colors that may throb on and off
+        bnode.attachChild(_hnode = new Node("highlights") {
+            public void updateWorldData (float time) {
+                super.updateWorldData(time);
+                if (getQuantity() > 0) {
+                    updateThrobbingColors();
+                }
+            }
+        });
+        _hnode.setRenderQueueMode(Renderer.QUEUE_TRANSPARENT);
+
+        // we'll hang all of our pieces off this node
+        _pnode = createPieceNode();
+        if (Config.displayModels) {
+            _node.attachChild(_pnode);
+        }
+
+        // create our highlight alpha state
+        _hastate = ctx.getDisplay().getRenderer().createAlphaState();
+        _hastate.setBlendEnabled(true);
+        _hastate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
+        _hastate.setDstFunction(AlphaState.DB_ONE);
+        _hastate.setEnabled(true);
+
+        // this is used to target tiles when deploying a card
+        _tgtstate = RenderUtil.createTextureState(
+                ctx, "textures/ustatus/crosshairs_card.png");
+
+        // this is used to indicate where you can move
+        _movstate = RenderUtil.createTextureState(
+                ctx, "textures/ustatus/movement.png");
+
+        // this is used to indicate you hovering over a valid move
+        _movhovstate = RenderUtil.createTextureState(
+                ctx, "textures/ustatus/movement_hover.png");
+
+        // this is used to indicate a movement goal
+        _goalstate = RenderUtil.createTextureState(
+                ctx, "textures/ustatus/movement_goal.png");
+
+        // this is used to indicate you hovering over a movement goal
+        _goalhovstate = RenderUtil.createTextureState(
+                ctx, "textures/ustatus/movement_goal_hover.png");
+
+        // create a paused fade in effect, we'll do our real fading in once
+        // everything is loaded up and we're ready to show the board
+        if (!editorMode) {
+            createPausedFadeIn();
+        }
+    }
+    public BoardView (BangContext ctx, boolean editorMode)
     {
         setStyleClass("board_view");
         setTooltipRelativeToMouse(true);
@@ -285,10 +394,6 @@ public class BoardView extends BComponent
         _goalhovstate = RenderUtil.createTextureState(
             ctx, "textures/ustatus/movement_goal_hover.png");
 
-        // create a sound group that we'll use for all in-game sounds
-        _sounds = ctx.getSoundManager().createGroup(
-            BangUI.clipprov, GAME_SOURCE_COUNT);
-
         // create a paused fade in effect, we'll do our real fading in once
         // everything is loaded up and we're ready to show the board
         if (!editorMode) {
@@ -315,7 +420,12 @@ public class BoardView extends BComponent
             // add our own blackness that we'll fade in when we're ready; we don't
             // attach the main scene graph until we're ready to fade in to avoid
             // consuming CPU while we're loading and decoding models
-            _ctx.getInterface().attachChild(_fadein);
+            if(_ctx == null)
+            {
+                editor_ctx.getInterface().attachChild(_fadein);
+            } else {
+                _ctx.getInterface().attachChild(_fadein);
+            }
         }
 
         // add the listener that will react to pertinent events
@@ -331,85 +441,163 @@ public class BoardView extends BComponent
      */
     public void refreshBoard ()
     {
-        // remove any old sprites
-        removePieceSprites();
+        if(_ctx == null)
+        {
+            // remove any old sprites
+            removePieceSprites();
 
-        // reset the sound effects
-        if (_sounds != null) {
-            _sounds.reclaimAll();
-        }
+            // remove any possible pending or executing board actions
+            clearBoardActions();
 
-        // remove any possible pending or executing board actions
-        clearBoardActions();
+            // start afresh
+            _board = _bangobj.board;
+            _board.init(_bangobj.teams, _bangobj.getPropPieceIterator());
+            _bbounds = new Rectangle(0, 0, _board.getWidth(), _board.getHeight());
 
-        // start afresh
-        _board = _bangobj.board;
-        _board.init(_bangobj.teams, _bangobj.getPropPieceIterator());
-        _bbounds = new Rectangle(0, 0, _board.getWidth(), _board.getHeight());
-
-        // create a marquee if we've been configured to do so
-        if (_bangobj.marquee != null) {
-            createMarquee(_ctx.xlate(GameCodes.GAME_MSGS, _bangobj.marquee));
-        }
-
-        // refresh the lights and fog and wind and such
-        refreshLights();
-        refreshFog();
-        refreshBackgroundColor();
-        refreshWindInfluence();
-
-        // create the board geometry
-        if (_snode != null) {
-            _snode.createBoardSky(_board);
-        }
-        _tnode.createBoardTerrain(_board);
-        _wnode.createBoardWater(_board);
-
-        // display the tile grid if appropriate
-        if (shouldShowGrid()) {
-            if (_grid != null) {
-                _grid.cleanup();
-                _grid.removeFromParent();
+            // create a marquee if we've been configured to do so
+            if (_bangobj.marquee != null) {
+                createMarquee(editor_ctx.xlate(GameCodes.GAME_MSGS, _bangobj.marquee));
             }
-            _grid = null;
-            toggleGrid(false);
-        }
 
-        // create sprites for all of the board pieces
-        for (Iterator<Piece> it = _bangobj.getPropPieceIterator();
-                it.hasNext(); ) {
-            Piece piece = it.next();
-            if (shouldShowStarter(piece)) {
-                createPieceSprite(piece, _bangobj.tick);
+            // refresh the lights and fog and wind and such
+            refreshLights();
+            refreshFog();
+            refreshBackgroundColor();
+            refreshWindInfluence();
+
+            // create the board geometry
+            if (_snode != null) {
+                _snode.createBoardSky(_board);
             }
-        }
-        _pnode.updateGeometricState(0, true);
+            _tnode.createBoardTerrain(_board);
+            _wnode.createBoardWater(_board);
 
-        // create a loading marquee to report loading progress
-        if (_toLoad > 0) {
-            updateLoadingMarquee();
-        }
-
-        // fade the board in when the sprites are all resolved
-        addResolutionObserver(new ResolutionObserver() {
-            public void mediaResolved () {
-                // now that our terrain has finished loading, make sure all
-                // the highlights are updated vertices
-                for (PieceSprite ps : _pieces.values()) {
-                    ps.updateTileHighlightVertices();
+            // display the tile grid if appropriate
+            if (shouldShowGrid()) {
+                if (_grid != null) {
+                    _grid.cleanup();
+                    _grid.removeFromParent();
                 }
+                _grid = null;
+                toggleGrid(false);
+            }
 
-                clearLoadingMarquee();
-
-                // now that we're ready to fade in, go ahead and add our
-                // geometry into the scene graph
-                _ctx.getGeometry().attachChild(_node);
-
-                if (_fadein != null) {
-                    _fadein.setPaused(false);
+            // create sprites for all of the board pieces
+            for (Iterator<Piece> it = _bangobj.getPropPieceIterator();
+                 it.hasNext(); ) {
+                Piece piece = it.next();
+                if (shouldShowStarter(piece)) {
+                    createPieceSprite(piece, _bangobj.tick);
                 }
             }
-        });
+            _pnode.updateGeometricState(0, true);
+
+            // create a loading marquee to report loading progress
+            if (_toLoad > 0) {
+                updateLoadingMarquee();
+            }
+
+            // fade the board in when the sprites are all resolved
+            addResolutionObserver(new ResolutionObserver() {
+                public void mediaResolved () {
+                    // now that our terrain has finished loading, make sure all
+                    // the highlights are updated vertices
+                    for (PieceSprite ps : _pieces.values()) {
+                        ps.updateTileHighlightVertices();
+                    }
+
+                    clearLoadingMarquee();
+
+                    // now that we're ready to fade in, go ahead and add our
+                    // geometry into the scene graph
+                    editor_ctx.getGeometry().attachChild(_node);
+
+                    if (_fadein != null) {
+                        _fadein.setPaused(false);
+                    }
+                }
+            });
+        } else {
+            // remove any old sprites
+            removePieceSprites();
+
+            // reset the sound effects
+            if (_ctx.getBangClient()._sounds != null) {
+                _ctx.getBangClient()._sounds.reclaimAll();
+            }
+
+            // remove any possible pending or executing board actions
+            clearBoardActions();
+
+            // start afresh
+            _board = _bangobj.board;
+            _board.init(_bangobj.teams, _bangobj.getPropPieceIterator());
+            _bbounds = new Rectangle(0, 0, _board.getWidth(), _board.getHeight());
+
+            // create a marquee if we've been configured to do so
+            if (_bangobj.marquee != null) {
+                createMarquee(_ctx.xlate(GameCodes.GAME_MSGS, _bangobj.marquee));
+            }
+
+            // refresh the lights and fog and wind and such
+            refreshLights();
+            refreshFog();
+            refreshBackgroundColor();
+            refreshWindInfluence();
+
+            // create the board geometry
+            if (_snode != null) {
+                _snode.createBoardSky(_board);
+            }
+            _tnode.createBoardTerrain(_board);
+            _wnode.createBoardWater(_board);
+
+            // display the tile grid if appropriate
+            if (shouldShowGrid()) {
+                if (_grid != null) {
+                    _grid.cleanup();
+                    _grid.removeFromParent();
+                }
+                _grid = null;
+                toggleGrid(false);
+            }
+
+            // create sprites for all of the board pieces
+            for (Iterator<Piece> it = _bangobj.getPropPieceIterator();
+                 it.hasNext(); ) {
+                Piece piece = it.next();
+                if (shouldShowStarter(piece)) {
+                    createPieceSprite(piece, _bangobj.tick);
+                }
+            }
+            _pnode.updateGeometricState(0, true);
+
+            // create a loading marquee to report loading progress
+            if (_toLoad > 0) {
+                updateLoadingMarquee();
+            }
+
+            // fade the board in when the sprites are all resolved
+            addResolutionObserver(new ResolutionObserver() {
+                public void mediaResolved () {
+                    // now that our terrain has finished loading, make sure all
+                    // the highlights are updated vertices
+                    for (PieceSprite ps : _pieces.values()) {
+                        ps.updateTileHighlightVertices();
+                    }
+
+                    clearLoadingMarquee();
+
+                    // now that we're ready to fade in, go ahead and add our
+                    // geometry into the scene graph
+                    _ctx.getGeometry().attachChild(_node);
+
+                    if (_fadein != null) {
+                        _fadein.setPaused(false);
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -906,28 +1094,54 @@ public class BoardView extends BComponent
         if (result == null) {
             result = new Vector3f();
         }
+        if(_ctx == null)
+        {
 
-        // compute the vector from camera location to mouse cursor
-        Camera camera = _ctx.getCameraHandler().getCamera();
-        Vector2f screenPos = new Vector2f(e.getX(), e.getY());
-        _worldMouse = _ctx.getDisplay().getWorldCoordinates(screenPos, 0);
-        Vector3f camloc = camera.getLocation();
-        _worldMouse.subtractLocal(camloc).normalizeLocal();
+            // compute the vector from camera location to mouse cursor
+            Camera camera = editor_ctx.getCameraHandler().getCamera();
+            Vector2f screenPos = new Vector2f(e.getX(), e.getY());
+            _worldMouse = editor_ctx.getDisplay().getWorldCoordinates(screenPos, 0);
+            Vector3f camloc = camera.getLocation();
+            _worldMouse.subtractLocal(camloc).normalizeLocal();
 
-        // see if the ray intersects with the terrain
-        if (!planar && _tnode.calculatePick(new Ray(camloc, _worldMouse),
-                result)) {
+            // see if the ray intersects with the terrain
+            if (!planar && _tnode.calculatePick(new Ray(camloc, _worldMouse),
+                    result)) {
+                result.z += 0.1f;
+                return result;
+            }
+
+            // otherwise, intersect with ground plane
+            float dist = (-_groundNormal.dot(camloc) + _tnode.getHeightfieldValue(
+                    -1, -1)) / _groundNormal.dot(_worldMouse);
+            result.scaleAdd(dist, _worldMouse, camloc);
             result.z += 0.1f;
+
+            return result;
+        } else {
+
+            // compute the vector from camera location to mouse cursor
+            Camera camera = _ctx.getCameraHandler().getCamera();
+            Vector2f screenPos = new Vector2f(e.getX(), e.getY());
+            _worldMouse = _ctx.getDisplay().getWorldCoordinates(screenPos, 0);
+            Vector3f camloc = camera.getLocation();
+            _worldMouse.subtractLocal(camloc).normalizeLocal();
+
+            // see if the ray intersects with the terrain
+            if (!planar && _tnode.calculatePick(new Ray(camloc, _worldMouse),
+                    result)) {
+                result.z += 0.1f;
+                return result;
+            }
+
+            // otherwise, intersect with ground plane
+            float dist = (-_groundNormal.dot(camloc) + _tnode.getHeightfieldValue(
+                    -1, -1)) / _groundNormal.dot(_worldMouse);
+            result.scaleAdd(dist, _worldMouse, camloc);
+            result.z += 0.1f;
+
             return result;
         }
-
-        // otherwise, intersect with ground plane
-        float dist = (-_groundNormal.dot(camloc) + _tnode.getHeightfieldValue(
-            -1, -1)) / _groundNormal.dot(_worldMouse);
-        result.scaleAdd(dist, _worldMouse, camloc);
-        result.z += 0.1f;
-
-        return result;
     }
 
     @Override // documentation inherited
@@ -940,52 +1154,96 @@ public class BoardView extends BComponent
     @Override // documentation inherited
     protected void wasRemoved ()
     {
-        super.wasRemoved();
+        if(_ctx == null)
+        {
+            super.wasRemoved();
 
-        // clear our sprites so that piece sprites can clean up after
-        // themselves
-        removePieceSprites();
+            // clear our sprites so that piece sprites can clean up after
+            // themselves
+            removePieceSprites();
 
-        // remove our geometry from the scene graph
-        _ctx.getGeometry().detachChild(_node);
+            // remove our geometry from the scene graph
+            editor_ctx.getGeometry().detachChild(_node);
 
-        // clear any marquee we have up
-        clearMarquee(0f);
+            // clear any marquee we have up
+            clearMarquee(0f);
 
-        // restore the black background color
-        _ctx.getRenderer().setBackgroundColor(ColorRGBA.black);
+            // restore the black background color
+            editor_ctx.getRenderer().setBackgroundColor(ColorRGBA.black);
 
-        // let the child nodes know that they need to clean up any textures
-        // they've created
-        if (_snode != null) {
-            _snode.cleanup();
+            // let the child nodes know that they need to clean up any textures
+            // they've created
+            if (_snode != null) {
+                _snode.cleanup();
+            }
+            _tnode.cleanup();
+            _wnode.cleanup();
+            if (_grid != null) {
+                _grid.cleanup();
+            }
+
+            // if we have a lingering fade-in or marquee, clear them
+            if (_fadein != null) {
+                editor_ctx.getInterface().detachChild(_fadein);
+                _fadein = null;
+            }
+            if (_mroot != null) {
+                editor_ctx.getInterface().detachChild(_mroot);
+            }
+
+            // clear out the particle pool
+            ParticlePool.clear();
+
+            // clear the render queue of any lingering references
+            editor_ctx.getRenderer().clearQueue();
+        } else {
+            super.wasRemoved();
+
+            // clear our sprites so that piece sprites can clean up after
+            // themselves
+            removePieceSprites();
+
+            // remove our geometry from the scene graph
+            _ctx.getGeometry().detachChild(_node);
+
+            // clear any marquee we have up
+            clearMarquee(0f);
+
+            // restore the black background color
+            _ctx.getRenderer().setBackgroundColor(ColorRGBA.black);
+
+            // let the child nodes know that they need to clean up any textures
+            // they've created
+            if (_snode != null) {
+                _snode.cleanup();
+            }
+            _tnode.cleanup();
+            _wnode.cleanup();
+            if (_grid != null) {
+                _grid.cleanup();
+            }
+
+//        // clean up our sound handler
+//        if (_ctx.getBangClient()._sounds != null) {
+//            _ctx.getBangClient()._sounds.dispose();
+//            _ctx.getBangClient()._sounds = null;
+//        }
+
+            // if we have a lingering fade-in or marquee, clear them
+            if (_fadein != null) {
+                _ctx.getInterface().detachChild(_fadein);
+                _fadein = null;
+            }
+            if (_mroot != null) {
+                _ctx.getInterface().detachChild(_mroot);
+            }
+
+            // clear out the particle pool
+            ParticlePool.clear();
+
+            // clear the render queue of any lingering references
+            _ctx.getRenderer().clearQueue();
         }
-        _tnode.cleanup();
-        _wnode.cleanup();
-        if (_grid != null) {
-            _grid.cleanup();
-        }
-
-        // clean up our sound handler
-        if (_sounds != null) {
-            _sounds.dispose();
-            _sounds = null;
-        }
-
-        // if we have a lingering fade-in or marquee, clear them
-        if (_fadein != null) {
-            _ctx.getInterface().detachChild(_fadein);
-            _fadein = null;
-        }
-        if (_mroot != null) {
-            _ctx.getInterface().detachChild(_mroot);
-        }
-
-        // clear out the particle pool
-        ParticlePool.clear();
-
-        // clear the render queue of any lingering references
-        _ctx.getRenderer().clearQueue();
     }
 
     /**
@@ -1043,15 +1301,28 @@ public class BoardView extends BComponent
      */
     protected void updateGrid ()
     {
-        if (_grid == null) {
-            _grid = new GridNode(_ctx, _board, _tnode, _editorMode);
+        if(_ctx == null)
+        {
+            if (_grid == null) {
+                _grid = new GridNode(editor_ctx, _board, _tnode, _editorMode);
+            } else {
+                _grid.updateVertices();
+            }
+            ColorRGBA color = RenderUtil.createColorRGBA(
+                    _board.getGridColor());
+            _grid.getBatch(0).getDefaultColor().set(
+                    color.r, color.g, color.b, 0.4f);
         } else {
-            _grid.updateVertices();
+            if (_grid == null) {
+                _grid = new GridNode(_ctx, _board, _tnode, _editorMode);
+            } else {
+                _grid.updateVertices();
+            }
+            ColorRGBA color = RenderUtil.createColorRGBA(
+                    _board.getGridColor());
+            _grid.getBatch(0).getDefaultColor().set(
+                    color.r, color.g, color.b, 0.4f);
         }
-        ColorRGBA color = RenderUtil.createColorRGBA(
-            _board.getGridColor());
-        _grid.getBatch(0).getDefaultColor().set(
-            color.r, color.g, color.b, 0.4f);
     }
 
     /**
@@ -1141,21 +1412,40 @@ public class BoardView extends BComponent
      */
     protected void refreshFog ()
     {
-        float density = _board.getFogDensity();
-        if (density == 0f) {
-            _node.clearRenderState(RenderState.RS_FOG);
-            _node.updateRenderState();
-            return;
+        if(_ctx == null)
+        {
+            float density = _board.getFogDensity();
+            if (density == 0f) {
+                _node.clearRenderState(RenderState.RS_FOG);
+                _node.updateRenderState();
+                return;
+            }
+            FogState fstate = (FogState) _node.getRenderState(RenderState.RS_FOG);
+            if (fstate == null) {
+                fstate = editor_ctx.getRenderer().createFogState();
+                fstate.setDensityFunction(FogState.DF_EXP);
+                _node.setRenderState(fstate);
+                _node.updateRenderState();
+            }
+            fstate.setColor(RenderUtil.createColorRGBA(_board.getFogColor()));
+            fstate.setDensity(density);
+        } else {
+            float density = _board.getFogDensity();
+            if (density == 0f) {
+                _node.clearRenderState(RenderState.RS_FOG);
+                _node.updateRenderState();
+                return;
+            }
+            FogState fstate = (FogState) _node.getRenderState(RenderState.RS_FOG);
+            if (fstate == null) {
+                fstate = _ctx.getRenderer().createFogState();
+                fstate.setDensityFunction(FogState.DF_EXP);
+                _node.setRenderState(fstate);
+                _node.updateRenderState();
+            }
+            fstate.setColor(RenderUtil.createColorRGBA(_board.getFogColor()));
+            fstate.setDensity(density);
         }
-        FogState fstate = (FogState)_node.getRenderState(RenderState.RS_FOG);
-        if (fstate == null) {
-            fstate = _ctx.getRenderer().createFogState();
-            fstate.setDensityFunction(FogState.DF_EXP);
-            _node.setRenderState(fstate);
-            _node.updateRenderState();
-        }
-        fstate.setColor(RenderUtil.createColorRGBA(_board.getFogColor()));
-        fstate.setDensity(density);
     }
 
     /**
@@ -1164,9 +1454,16 @@ public class BoardView extends BComponent
      */
     protected void refreshBackgroundColor ()
     {
-        int bg = (_board.getFogDensity() > 0f) ?
-            _board.getFogColor() : _board.getSkyHorizonColor();
-        _ctx.getRenderer().setBackgroundColor(RenderUtil.createColorRGBA(bg));
+        if(_ctx == null)
+        {
+            int bg = (_board.getFogDensity() > 0f) ?
+                    _board.getFogColor() : _board.getSkyHorizonColor();
+            editor_ctx.getRenderer().setBackgroundColor(RenderUtil.createColorRGBA(bg));
+        } else {
+            int bg = (_board.getFogDensity() > 0f) ?
+                    _board.getFogColor() : _board.getSkyHorizonColor();
+            _ctx.getRenderer().setBackgroundColor(RenderUtil.createColorRGBA(bg));
+        }
     }
 
     /**
@@ -1246,8 +1543,10 @@ public class BoardView extends BComponent
 
         // throw a runnable on the queue that will execute this action
         _ractions.add(action);
-        _ctx.getApp().postRunnable(new Runnable() {
-            public void run () {
+        if(_ctx == null)
+        {
+            editor_ctx.getApp().postRunnable(new Runnable() {
+            public void run() {
                 try {
                     if (ACTION_DEBUG) {
                         log.info("Running: " + action);
@@ -1270,6 +1569,33 @@ public class BoardView extends BComponent
                 actionCompleted(action);
             }
         });
+
+        } else {
+            _ctx.getApp().postRunnable(new Runnable() {
+                public void run() {
+                    try {
+                        if (ACTION_DEBUG) {
+                            log.info("Running: " + action);
+                        }
+
+                        action.start = System.currentTimeMillis();
+                        if (action.execute()) {
+                            if (ACTION_DEBUG) {
+                                log.info("Waiting: " + action);
+                            }
+                            // the action requires us to wait until it completes
+                            return;
+                        }
+
+                    } catch (Throwable t) {
+                        log.warning("Board action choked: " + action, t);
+                    }
+
+                    // note that this action is completed
+                    actionCompleted(action);
+                }
+            });
+        }
     }
 
     /**
@@ -1336,8 +1662,14 @@ public class BoardView extends BComponent
         clearMarquee(0);
 
         // create the marquee, center it and display it
-        addMarquee(_marquee = createMarqueeLabel(text),
-            _ctx.getRenderer().getWidth()/2, _ctx.getRenderer().getHeight()/2);
+        if(_ctx == null)
+        {
+            addMarquee(_marquee = createMarqueeLabel(text),
+                    editor_ctx.getRenderer().getWidth()/2, editor_ctx.getRenderer().getHeight()/2);
+        } else {
+            addMarquee(_marquee = createMarqueeLabel(text),
+                    _ctx.getRenderer().getWidth()/2, _ctx.getRenderer().getHeight()/2);
+        }
     }
 
     /**
@@ -1373,21 +1705,41 @@ public class BoardView extends BComponent
      */
     protected void updateLoadingMarquee ()
     {
-        // avoid recreating our marquee if not necessary
-        int pct = _loaded * 100 / _toLoad;
-        if (pct == _curpct) {
-            return;
-        }
-        _curpct = pct;
+        if(_ctx == null)
+        {
+            // avoid recreating our marquee if not necessary
+            int pct = _loaded * 100 / _toLoad;
+            if (pct == _curpct) {
+                return;
+            }
+            _curpct = pct;
 
-        String pctstr = _ctx.xlate(
-            GameCodes.GAME_MSGS, MessageBundle.tcompose(
-                "m.loading_pct", String.valueOf(pct)));
-        if (_loading == null) {
-            addMarquee(_loading = new BLabel(pctstr, "loading_marquee"),
-                _ctx.getRenderer().getWidth()/2, 100);
+            String pctstr = editor_ctx.xlate(
+                    GameCodes.GAME_MSGS, MessageBundle.tcompose(
+                            "m.loading_pct", String.valueOf(pct)));
+            if (_loading == null) {
+                addMarquee(_loading = new BLabel(pctstr, "loading_marquee"),
+                        editor_ctx.getRenderer().getWidth()/2, 100);
+            } else {
+                _loading.setText(pctstr);
+            }
         } else {
-            _loading.setText(pctstr);
+            // avoid recreating our marquee if not necessary
+            int pct = _loaded * 100 / _toLoad;
+            if (pct == _curpct) {
+                return;
+            }
+            _curpct = pct;
+
+            String pctstr = _ctx.xlate(
+                    GameCodes.GAME_MSGS, MessageBundle.tcompose(
+                            "m.loading_pct", String.valueOf(pct)));
+            if (_loading == null) {
+                addMarquee(_loading = new BLabel(pctstr, "loading_marquee"),
+                        _ctx.getRenderer().getWidth()/2, 100);
+            } else {
+                _loading.setText(pctstr);
+            }
         }
     }
 
@@ -1409,47 +1761,93 @@ public class BoardView extends BComponent
      */
     protected void addMarquee (BComponent marquee, int x, int y)
     {
-        if (_mroot == null) {
-            // create a bare bones root node above the normal one
-            _ctx.getInterface().attachChild(_mroot = new BRootNode() {
-                public long getTickStamp () {
-                    return System.currentTimeMillis();
-                }
-                public void rootInvalidated (BComponent root) {
-                    root.validate();
-                }
-            });
-            _mroot.setZOrder(-2);
-
-            // the layout centers its components about their positions
-            AbsoluteLayout layout = new AbsoluteLayout() {
-                public void layoutContainer (BContainer target) {
-                    Insets insets = target.getInsets();
-                    for (int ii = 0, cc = target.getComponentCount(); ii < cc; ii++) {
-                        BComponent comp = target.getComponent(ii);
-                        if (!comp.isVisible()) {
-                            continue;
-                        }
-                        com.jmex.bui.util.Point p = (com.jmex.bui.util.Point)_spots.get(comp);
-                        Dimension d = comp.getPreferredSize(-1, -1);
-                        comp.setBounds(
-                            insets.left + p.x - d.width / 2,
-                            insets.bottom + p.y - d.height / 2,
-                            d.width, d.height);
+        if(_ctx == null)
+        {
+            if (_mroot == null) {
+                // create a bare bones root node above the normal one
+                editor_ctx.getInterface().attachChild(_mroot = new BRootNode() {
+                    public long getTickStamp () {
+                        return System.currentTimeMillis();
                     }
-                }
-            };
-            _mwindow = new BWindow(_ctx.getStyleSheet(), layout) {
-                public boolean isOverlay () {
-                    return true;
-                }
-                public BComponent getHitComponent (int mx, int my) {
-                    return null;
-                }
-            };
-            _mroot.addWindow(_mwindow);
-            _mwindow.setBounds(0, 0, _ctx.getRenderer().getWidth(),
-                _ctx.getRenderer().getHeight());
+                    public void rootInvalidated (BComponent root) {
+                        root.validate();
+                    }
+                });
+                _mroot.setZOrder(-2);
+
+                // the layout centers its components about their positions
+                AbsoluteLayout layout = new AbsoluteLayout() {
+                    public void layoutContainer (BContainer target) {
+                        Insets insets = target.getInsets();
+                        for (int ii = 0, cc = target.getComponentCount(); ii < cc; ii++) {
+                            BComponent comp = target.getComponent(ii);
+                            if (!comp.isVisible()) {
+                                continue;
+                            }
+                            com.jmex.bui.util.Point p = (com.jmex.bui.util.Point)_spots.get(comp);
+                            Dimension d = comp.getPreferredSize(-1, -1);
+                            comp.setBounds(
+                                    insets.left + p.x - d.width / 2,
+                                    insets.bottom + p.y - d.height / 2,
+                                    d.width, d.height);
+                        }
+                    }
+                };
+                _mwindow = new BWindow(editor_ctx.getStyleSheet(), layout) {
+                    public boolean isOverlay () {
+                        return true;
+                    }
+                    public BComponent getHitComponent (int mx, int my) {
+                        return null;
+                    }
+                };
+                _mroot.addWindow(_mwindow);
+                _mwindow.setBounds(0, 0, editor_ctx.getRenderer().getWidth(),
+                        editor_ctx.getRenderer().getHeight());
+            }
+        } else {
+            if (_mroot == null) {
+                // create a bare bones root node above the normal one
+                _ctx.getInterface().attachChild(_mroot = new BRootNode() {
+                    public long getTickStamp () {
+                        return System.currentTimeMillis();
+                    }
+                    public void rootInvalidated (BComponent root) {
+                        root.validate();
+                    }
+                });
+                _mroot.setZOrder(-2);
+
+                // the layout centers its components about their positions
+                AbsoluteLayout layout = new AbsoluteLayout() {
+                    public void layoutContainer (BContainer target) {
+                        Insets insets = target.getInsets();
+                        for (int ii = 0, cc = target.getComponentCount(); ii < cc; ii++) {
+                            BComponent comp = target.getComponent(ii);
+                            if (!comp.isVisible()) {
+                                continue;
+                            }
+                            com.jmex.bui.util.Point p = (com.jmex.bui.util.Point)_spots.get(comp);
+                            Dimension d = comp.getPreferredSize(-1, -1);
+                            comp.setBounds(
+                                    insets.left + p.x - d.width / 2,
+                                    insets.bottom + p.y - d.height / 2,
+                                    d.width, d.height);
+                        }
+                    }
+                };
+                _mwindow = new BWindow(_ctx.getStyleSheet(), layout) {
+                    public boolean isOverlay () {
+                        return true;
+                    }
+                    public BComponent getHitComponent (int mx, int my) {
+                        return null;
+                    }
+                };
+                _mroot.addWindow(_mwindow);
+                _mwindow.setBounds(0, 0, _ctx.getRenderer().getWidth(),
+                        _ctx.getRenderer().getHeight());
+            }
         }
         _mwindow.add(marquee, new com.jmex.bui.util.Point(x, y));
     }
@@ -1462,7 +1860,8 @@ public class BoardView extends BComponent
         _mwindow.remove(marquee);
         if (_mwindow.getComponentCount() == 0) {
             _mroot.removeWindow(_mwindow);
-            _ctx.getInterface().detachChild(_mroot);
+            if(_ctx == null) editor_ctx.getInterface().detachChild(_mroot);
+            if(_ctx != null) _ctx.getInterface().detachChild(_mroot);
             _mwindow = null;
             _mroot = null;
         }
@@ -1477,7 +1876,8 @@ public class BoardView extends BComponent
     {
         log.debug("Creating sprite for " + piece + ".");
         PieceSprite sprite = piece.createSprite();
-        sprite.init(_ctx, this, _bangobj.board, _sounds, piece, tick);
+        if(_ctx == null) sprite.init(editor_ctx, this, _bangobj.board, null, piece, tick);
+        if(_ctx != null) sprite.init(_ctx, this, _bangobj.board, _ctx.getBangClient()._sounds, piece, tick);
         _pieces.put(piece.pieceId, sprite);
         addSprite(sprite);
     }
@@ -1587,8 +1987,9 @@ public class BoardView extends BComponent
         // try picking against the highlight tile geometry (this is only
         // for floating tiles)
         if (hover == null) {
-            Vector3f camloc =
-                _ctx.getCameraHandler().getCamera().getLocation();
+            Vector3f camloc = null;
+            if(_ctx == null) camloc = editor_ctx.getCameraHandler().getCamera().getLocation();
+            if(_ctx != null) camloc = _ctx.getCameraHandler().getCamera().getLocation();
             _pick.clear();
             _hnode.findPick(new Ray(camloc, _worldMouse), _pick);
             float dist = Float.MAX_VALUE;
@@ -2105,14 +2506,29 @@ public class BoardView extends BComponent
         }
 
         public void start () {
-            _ctx.getRootNode().addController(this);
+
+            if(_ctx == null)
+            {
+                editor_ctx.getRootNode().addController(this);
+            } else {
+                _ctx.getRootNode().addController(this);
+            }
         }
 
         public void update (float time) {
-            _target.setAlpha(_tfunc.getValue(time));
-            if (_tfunc.isComplete()) {
-                _ctx.getRootNode().removeController(this);
-                fadeComplete();
+            if(_ctx == null)
+            {
+                _target.setAlpha(_tfunc.getValue(time));
+                if (_tfunc.isComplete()) {
+                    _ctx.getRootNode().removeController(this);
+                    fadeComplete();
+                }
+            } else {
+                _target.setAlpha(_tfunc.getValue(time));
+                if (_tfunc.isComplete()) {
+                    _ctx.getRootNode().removeController(this);
+                    fadeComplete();
+                }
             }
         }
 
@@ -2124,7 +2540,8 @@ public class BoardView extends BComponent
         protected TimeFunction _tfunc;
     }
 
-    protected BasicContext _ctx;
+    protected BangContext _ctx;
+    protected BasicContext editor_ctx;
     protected boolean _editorMode;
     protected BangObject _bangobj;
     protected BangBoard _board;
@@ -2186,9 +2603,6 @@ public class BoardView extends BComponent
     /** The grid indicating where the tile boundaries lie. */
     protected GridNode _grid;
 
-    /** Used to load all in-game sounds. */
-    protected SoundGroup _sounds;
-
     protected HashMap<Integer,PieceSprite> _pieces =
         new HashMap<Integer,PieceSprite>();
 
@@ -2243,9 +2657,6 @@ public class BoardView extends BComponent
 
     /** The time in milliseconds that it takes to complete one throb cycle. */
     protected static final long THROB_PERIOD = 1000L;
-
-    /** The number of simultaneous sound "sources" available to the game. */
-    protected static final int GAME_SOURCE_COUNT = 10;
 
     /** The longest we'll let the shadows get. */
     protected static final float MAX_SHADOW_LENGTH = TILE_SIZE * 3;

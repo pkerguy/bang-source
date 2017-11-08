@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.threerings.bang.client.BangClient;
 import org.lwjgl.input.Cursor;
 
 import com.jme.bounding.BoundingBox;
@@ -419,7 +420,7 @@ public class BangBoardView extends BoardView
 
         // preload our sounds for this scenario
         for (String clip : bangobj.scenario.getPreLoadClips()) {
-            _sounds.preloadClip(clip);
+            _ctx.getBangClient()._sounds.preloadClip(clip);
         }
 
         // start with the camera controls disabled; the controller will
@@ -581,8 +582,8 @@ public class BangBoardView extends BoardView
         }
 
         // give some auditory feedback
-        if (_sounds != null) {
-            _sounds.getSound(ORDER_INVALIDATED).play(true);
+        if (_ctx.getBangClient()._sounds != null) {
+            _ctx.getBangClient()._sounds.getSound(ORDER_INVALIDATED).play(true);
         }
 
         // show a question mark over the unit
@@ -636,9 +637,9 @@ public class BangBoardView extends BoardView
         // fade in/out the music and
         if (enable) {
             _ctx.getBangClient().fadeOutMusic(duration);
-            _sounds.getSound(WENDIGO_AMBIANCE_START).play(true);
+            _ctx.getBangClient()._sounds.getSound(WENDIGO_AMBIANCE_START).play(true);
             if (_wendigoLoop == null) {
-                _wendigoLoop = _sounds.getSound(WENDIGO_AMBIANCE_LOOP);
+                _wendigoLoop = _ctx.getBangClient()._sounds.getSound(WENDIGO_AMBIANCE_LOOP);
             }
             _wendigoLoop.loop(true);
 
@@ -2070,7 +2071,7 @@ public class BangBoardView extends BoardView
         EffectHandler handler = effect.createHandler(_bangobj);
         if (handler != null) {
             handler.init(_ctx, _bangobj, _pidx, this,
-                (BangView)_ctrl.getPlaceView(), _sounds, effect);
+                (BangView)_ctrl.getPlaceView(), _ctx.getBangClient()._sounds, effect);
             executeAction(handler);
         }
     }

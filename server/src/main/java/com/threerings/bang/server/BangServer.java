@@ -13,6 +13,8 @@ import com.threerings.bang.admin.server.*;
 import com.threerings.bang.avatar.data.*;
 import com.threerings.bang.avatar.server.*;
 import com.threerings.bang.avatar.util.*;
+import com.threerings.bang.bank.data.BankConfig;
+import com.threerings.bang.bank.server.BankManager;
 import com.threerings.bang.bounty.data.*;
 import com.threerings.bang.bounty.server.*;
 import com.threerings.bang.bounty.server.persist.*;
@@ -144,6 +146,8 @@ public class BangServer extends CrowdServer
 
     /** Manages the Sheriff's Office and Bounties. */
     public static OfficeManager officemgr;
+
+    public static BankManager bankManager;
 
     /** Manages tracking and discouraging of misbehaving players. */
     public static NaughtyPlayerManager npmgr = new NaughtyPlayerManager();
@@ -324,6 +328,7 @@ public class BangServer extends CrowdServer
         stationmgr = (StationManager)plreg.createPlace(new StationConfig());
         hideoutmgr = (HideoutManager)plreg.createPlace(new HideoutConfig());
         officemgr = (OfficeManager)plreg.createPlace(new OfficeConfig());
+        bankManager = (BankManager) plreg.createPlace(new BankConfig());
 
         // if we have a shared secret, assume we're running in a cluster
         String node = System.getProperty("node");

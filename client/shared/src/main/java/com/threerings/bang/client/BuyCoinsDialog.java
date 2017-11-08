@@ -15,6 +15,7 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.layout.TableLayout;
 import com.jmex.bui.util.Point;
 import com.threerings.bang.data.BangCodes;
+import com.threerings.bang.steam.SteamStorage;
 import com.threerings.bang.util.BangContext;
 
 import java.net.MalformedURLException;
@@ -29,12 +30,13 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
     public BuyCoinsDialog(
             BangContext ctx) {
         super(ctx.getStyleSheet(), "Buy Coins");
-        ((GroupLayout) getLayoutManager()).setOffAxisPolicy(GroupLayout.STRETCH);
+        ((GroupLayout)getLayoutManager()).setOffAxisPolicy(GroupLayout.STRETCH);
         setModal(true);
         setLayer(BangCodes.NEVER_CLEAR_LAYER);
         _ctx = ctx;
         setLayoutManager(GroupLayout.makeVert(GroupLayout.LEFT).setGap(5));
-
+        setSize((int)(_ctx.getDisplay().getWidth() * .75), (int)(ctx.getDisplay().getHeight() * .5));
+//        setBounds(getX(), getY(), (int)(_ctx.getDisplay().getWidth() * .75), (int)(ctx.getDisplay().getHeight() * .5));
         BContainer container = new BContainer(GroupLayout.makeHStretch());
         container.setBounds(container.getX(), container.getY(), (int) (_ctx.getDisplay().getWidth()  * .75), (int) (ctx.getDisplay().getHeight() * .5));
 //        container.setW
@@ -75,8 +77,9 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
 //            ((GroupLayout)coinAndPriceContainer.getLayoutManager()).setGap(10);
 //            coinAndPriceContainer.setBounds(0, 0, width, packageContainer.getHeight() / 4);
 
+            packageContainer.add(new BLabel( new ImageIcon(ctx.loadImage("ui/buttons/massive_down.png"))), GroupLayout.FIXED);
 
-            packageContainer.add(new BLabel( new ImageIcon(ctx.loadImage("ui/icons/coins.png")), coinPackage.getCoinAmount() + " Coins"), GroupLayout.FIXED);
+            packageContainer.add(new BLabel(coinPackage.getCoinAmount() + " Coins"), GroupLayout.FIXED);
             BButton butt = new BButton("$" + coinPackage.getPrice(), this, String.valueOf(coinPackage.getPackageID()));
             packageContainer.add(butt, GroupLayout.FIXED);
 
@@ -101,10 +104,10 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
             packageContainer.add(butt, TableLayout.BOTTOM);*/
             butt.setProperty("feedback_sound", BangUI.FeedbackSound.ITEM_PURCHASE);
 
-            container.add(packageContainer);
+            container.add(packageContainer, GroupLayout.FIXED);
         }
 
-        add(container);
+        add(container, GroupLayout.FIXED);
 
 
         add(new BButton("Dismiss", this, "dismiss"));
@@ -117,11 +120,14 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
             if (event.getAction().equals(clicked.getPackageID() + "")) {
                 //Clicked buy this package?
                 try {
-                    _ctx.showURL(new URL("https://banghowdy.com/buy.php?purchase=" + clicked.getPackageID()));
+                    _ctx.showURL(new URL("https://banghowdy.com/buy.php?purchase=" + clicked.getPackageID() + (SteamStorage.user != null ? "&id=" + SteamStorage.user.getSteamID().getAccountID() : "")));
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
                 return;
+
+
+
             }
         }
 

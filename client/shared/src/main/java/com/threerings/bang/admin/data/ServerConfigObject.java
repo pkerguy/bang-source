@@ -79,6 +79,13 @@ public class ServerConfigObject extends ConfigObject
     /** The +/- raing range for "looser match" matched games. */
     public int looseRankRange = 400;
 
+    /** The number is costs to exchange scrip to gold */
+    public int scripToGoldRate = 1500;
+
+    /** The number is costs to exchange gold to script*/
+    public int goldToScripRate = 1000;
+
+
     /** Controls activation of Barber services. */
     public boolean barberEnabled = true;
 

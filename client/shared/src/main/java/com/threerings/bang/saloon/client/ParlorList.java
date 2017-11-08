@@ -58,6 +58,9 @@ public class ParlorList extends BContainer
         BContainer buttons = GroupLayout.makeHBox(GroupLayout.RIGHT);
         String label = ctx.xlate(SaloonCodes.SALOON_MSGS, "m.create_parlor");
         buttons.add(_enterParlor = new BButton(label, this, "create"));
+        if(_ctx.getUserObject().tokens.isSupport()){
+            buttons.add(_createTournament = new BButton("Create Tournament", this, "tournament"));
+        }
         buttons.add(new Spacer(20, 5));
         add(buttons, BorderLayout.SOUTH);
     }
@@ -326,6 +329,7 @@ public class ParlorList extends BContainer
     protected SaloonObject _salobj;
     protected BContainer _list;
     protected BButton _enterParlor;
+    protected BButton _createTournament;
 
     protected ComparableArrayList<ParlorRow> _parlors = new ComparableArrayList<ParlorRow>();
 }

@@ -4,8 +4,15 @@
 package com.threerings.bang.game.client;
 
 import java.awt.Point;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.jme.renderer.Renderer;
 import com.jmex.bui.BButton;
@@ -26,6 +33,10 @@ import com.jmex.bui.layout.GroupLayout;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.client.BangClient;
+import com.threerings.bang.client.BangUI;
+import com.threerings.bang.util.SoundUtil;
+import com.threerings.openal.Sound;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -54,6 +65,7 @@ import static com.threerings.bang.Log.log;
 public class TutorialController
     implements ActionListener
 {
+    private static Sound currentSound;
     /** Called from {@link BangController#init}. */
     public void init (BangContext ctx, BangConfig config, BangView view)
     {
@@ -116,6 +128,7 @@ public class TutorialController
         _tutavatar = new BWindow(_ctx.getStyleSheet(), GroupLayout.makeHStretch());
         _tutavatar.setLayer(1);
         _tutavatar.add(_avatarLabel = new BLabel(new BlankIcon(135, 160)));
+
     }
 
     /** Called from {@link BangController#willEnterPlace}. */
@@ -163,7 +176,6 @@ public class TutorialController
             return;
         }
         TutorialConfig.Text text = _history.get(_hidx);
-        log.warning("[DEBUG]" + text.index, "type");
         displayMessage(text.message, text.step, text.avatar);
         _back.setEnabled(_hidx > 0);
         _forward.setEnabled(_hidx < _history.size() - 1);
@@ -328,6 +340,12 @@ public class TutorialController
 
     protected void displayMessage (String message, int step, String avatar)
     {
+        log.info("[DEBUG]" + "rsrc/sounds/voiceovers/" + _ctx.getUserObject().townId + "/" + message + ".ogg");
+        if(SoundUtil.haveSound("rsrc/sounds/voiceovers/" + _ctx.getUserObject().townId + "/" + message + ".ogg"))
+        {
+            currentSound = _ctx.getBangClient()._sounds.getSound("rsrc/sounds/voiceovers/" + _ctx.getUserObject().townId + "/" + message + ".ogg");
+            currentSound.play(false);
+        }
         String titkey = "m." + message + "_title";
         if (_msgs.exists(titkey)) {
             _title.setText(_msgs.get(titkey));
@@ -404,6 +422,11 @@ public class TutorialController
                 _click.setText("");
                 _bubbleGlow = false;
                 updateBubbleBackground();
+                if(currentSound != null)
+                {
+                    currentSound.stop(); // Stop the sound, if it's still playing some how.
+                    currentSound = null; // Reset
+                }
                 handleEvent(TutorialCodes.TEXT_CLICKED, -1);
             }
         }

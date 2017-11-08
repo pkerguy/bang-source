@@ -6,6 +6,7 @@ package com.threerings.bang.util;
 import java.util.HashSet;
 
 import com.threerings.bang.util.BasicContext;
+import com.threerings.openal.Sound;
 
 /**
  * Handles some useful sound related bits.
@@ -19,6 +20,7 @@ public class SoundUtil
     {
         String[] sounds = BangUtil.resourceToStrings("rsrc/sounds.txt");
         for (int ii = 0; ii < sounds.length; ii++) {
+            System.out.println("Registering sound: " + sounds[ii]);
             _sounds.add(sounds[ii]);
         }
     }

@@ -302,6 +302,11 @@ public abstract class FinancialAction extends Invoker.Unit
         } finally {
             _user.commitTransaction();
         }
+        try {
+            _playrepo.updateScrip("PLAYER_ID = " + _user.playerId, _user.getScrip(), "spend");
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

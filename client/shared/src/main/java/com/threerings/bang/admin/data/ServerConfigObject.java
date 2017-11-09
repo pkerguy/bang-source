@@ -87,10 +87,10 @@ public class ServerConfigObject extends ConfigObject
     public int looseRankRange = 400;
 
     /** The number is costs to exchange scrip to gold */
-    public int scripToGoldRate = 1500;
+    public int scripToGoldRate = 1000;
 
     /** The number is costs to exchange gold to scrip */
-    public int goldToScripRate = 1000;
+    public int goldToScripRate = 1500;
 
 
 

@@ -60,7 +60,10 @@ import com.threerings.util.Name;
 import com.threerings.util.StreamableHashMap;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -994,7 +997,7 @@ public class PlayerManager
         {
             // Buys scrip for gold
             BuyOffer offer = (BuyOffer)data;
-            if(caller.getScrip() < offer.storedoffer * RuntimeConfig.server.scripToGoldRate)
+            if(caller.getScrip() < (offer.storedoffer * RuntimeConfig.server.scripToGoldRate))
             {
                 // Just a server-side check to make sure they aren't trying to screw us
                 listener.requestFailed("You do not have enough scrip for this transaction.");
@@ -1007,11 +1010,32 @@ public class PlayerManager
                         return "Bank - Buy Offer";
                     }
                 });
-                caller.addCoins(offer.storedoffer, "Coin Exchange");
+                String desc = "Bank - Exchange";
+                if(desc == null) desc = "Unknown";
+                desc = desc.replaceAll("m.", "");
+                desc = desc.replaceAll("|", "");
+                desc = desc.replaceAll(" ", "_");
+                try {
+                    URL data2 = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?key=" + FinancialAction.API_KEY + "&action=add&username=" +  caller.username + "&amount=" + offer.storedoffer + "&description=" + desc);
+                    BufferedReader in2 = new BufferedReader(new InputStreamReader(data2.openStream()));
+                    String line2 = in2.readLine();
+                    switch (line2) {
+                        case "FAILED":
+                            listener.requestFailed("Failed to grant coins.. Email support@yourfunworld.com");
+                        case "":
+                            listener.requestFailed("Failed to grant coins.. Email support@yourfunworld.com");
+                        default:
+                            listener.requestFailed("Transaction completed!");
+                            return;
+                    }
+                } catch (IOException | NumberFormatException e) {
+                    e.printStackTrace();
+                    listener.requestFailed(e.getLocalizedMessage());
+                }
             } catch (InvocationException e) {
                 listener.requestFailed("Transaction failed!");
             }
-            listener.requestFailed("Transaction completed!");
+            listener.requestFailed("Transaction failed!");
         }
         else {
             listener.requestProcessed(); // Failed to process.. IK it looks backwards.

@@ -39,7 +39,7 @@ import static com.threerings.bang.Log.log;
 public abstract class FinancialAction extends Invoker.Unit
 {
 
-    public String API_KEY = "13932gh0ghf7803172fg8027fg1328g140891624908164";
+    public static String API_KEY = "13932gh0ghf7803172fg8027fg1328g140891624908164";
 
     /**
      * Starts this financial action. <em>Don't call this method, call {@link BangInvoker#post} and

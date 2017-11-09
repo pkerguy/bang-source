@@ -997,14 +997,14 @@ public class PlayerManager
         {
             // Buys scrip for gold
             SellOffer offer = (SellOffer)data;
-            if(caller.getScrip() < (offer.storedoffer * RuntimeConfig.server.goldToScripRate))
+            if(caller.getScrip() < (offer.storedoffer * RuntimeConfig.server.scripToGoldRate))
             {
                 // Just a server-side check to make sure they aren't trying to screw us
                 listener.requestFailed("You do not have enough scrip for this transaction.");
                 return;
             }
             try {
-                _invoker.post(new FinancialAction(caller,offer.storedoffer * RuntimeConfig.server.goldToScripRate, 0) {
+                _invoker.post(new FinancialAction(caller,offer.storedoffer * RuntimeConfig.server.scripToGoldRate, 0) {
                     @Override
                     protected String getGoodType() {
                         return "Bank - Buy Offer";

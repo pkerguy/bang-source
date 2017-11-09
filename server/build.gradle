@@ -15,14 +15,6 @@ task copyConfig (type: Copy) {
 }
 processResources.dependsOn "copyConfig"
 
-
-task createTestUser(type:JavaExec) {
-  systemProperty "ooo.propfile", "server"
-  args(["create", "test", "yeehaw", "test@test.com"])
-  main = "com.threerings.user.tools.UserTool"
-  classpath = sourceSets.main.runtimeClasspath
-}
-
 task deploy (type: Sync) {
   from jar
   from configurations.runtime

@@ -964,10 +964,10 @@ public class PlayerManager
                 listener.requestProcessed(); // Failed to process request
             }
         }
-        else if(data instanceof SellOffer)
+        else if(data instanceof BuyOffer)
         {
             // Sells gold for scrip
-            SellOffer offer = (SellOffer)data;
+            BuyOffer offer = (BuyOffer)data;
             if(caller.getCoins() < offer.storedoffer)
             {
                 // Just a server-side check to make sure they aren't trying to screw us
@@ -993,10 +993,10 @@ public class PlayerManager
             }
             listener.requestFailed("Transaction completed!");
         }
-        else if(data instanceof BuyOffer)
+        else if(data instanceof SellOffer)
         {
             // Buys scrip for gold
-            BuyOffer offer = (BuyOffer)data;
+            SellOffer offer = (SellOffer)data;
             if(caller.getScrip() < (offer.storedoffer * RuntimeConfig.server.goldToScripRate))
             {
                 // Just a server-side check to make sure they aren't trying to screw us

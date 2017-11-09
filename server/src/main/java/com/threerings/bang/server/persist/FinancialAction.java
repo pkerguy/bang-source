@@ -362,6 +362,7 @@ public abstract class FinancialAction extends Invoker.Unit
     protected void spendCash ()
         throws PersistenceException
     {
+        _user.setScrip(_user.getScrip() - _scripCost);
         _playrepo.spendScrip(_user.playerId, _scripCost);
     }
 
@@ -371,6 +372,7 @@ public abstract class FinancialAction extends Invoker.Unit
     protected void grantCash ()
         throws PersistenceException
     {
+        _user.setScrip(_user.getScrip() + _scripCost);
         _playrepo.grantScrip(_user.playerId, _scripCost);
     }
 

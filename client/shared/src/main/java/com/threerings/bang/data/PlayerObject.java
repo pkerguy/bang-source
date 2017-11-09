@@ -746,8 +746,6 @@ public class PlayerObject extends BodyObject
         final int spendOld = coins;
         int newAmount = coins -= amount;
         this.coins = newAmount;
-        requestAttributeChange(
-                COINS, Integer.valueOf(newAmount), Integer.valueOf(spendOld));
         return true;
     }
 
@@ -755,8 +753,6 @@ public class PlayerObject extends BodyObject
         final int spendOld = coins;
         int newAmount = coins += amount;
         this.coins = newAmount;
-        requestAttributeChange(
-                            COINS, Integer.valueOf(newAmount), Integer.valueOf(coins));
     }
 
     /**

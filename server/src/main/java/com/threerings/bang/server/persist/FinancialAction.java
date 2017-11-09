@@ -362,6 +362,8 @@ public abstract class FinancialAction extends Invoker.Unit
             return;
         }
         _user.setScrip(_user.getScrip() - _scripCost);
+        _playrepo.updateScrip("PLAYER_ID = " + _user.playerId, _user.getScrip(), "spend");
+
     }
 
     /**

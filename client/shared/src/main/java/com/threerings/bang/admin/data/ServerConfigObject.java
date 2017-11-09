@@ -48,6 +48,9 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>storeEnabled</code> field. */
     public static final String STORE_ENABLED = "storeEnabled";
 
+    /** The field name of the <code>bankEnabled</code> field. */
+    public static final String BANK_ENABLED = "bankEnabled";
+
     /** The field name of the <code>anonymousAccessEnabled</code> field. */
     public static final String ANONYMOUS_ACCESS_ENABLED = "anonymousAccessEnabled";
 
@@ -114,6 +117,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** Controls activation of General Store services. */
     public boolean storeEnabled = true;
+
+    /** Controls activation of Bank services. */
+    public boolean bankEnabled = true;
 
     /** Controls access of anonymous accounts. */
     public boolean anonymousAccessEnabled = false;

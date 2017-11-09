@@ -967,7 +967,7 @@ public class PlayerManager
         else if(data instanceof SellOffer)
         {
             // Sells gold for scrip
-            BuyOffer offer = (BuyOffer)data;
+            SellOffer offer = (SellOffer)data;
             if(caller.getCoins() < offer.storedoffer)
             {
                 // Just a server-side check to make sure they aren't trying to screw us
@@ -993,11 +993,11 @@ public class PlayerManager
             }
             listener.requestFailed("Transaction completed!");
         }
-        else if(data instanceof SellOffer)
+        else if(data instanceof BuyOffer)
         {
             // Buys scrip for gold
-            SellOffer offer = (SellOffer)data;
-            if(caller.getScrip() < (offer.storedoffer * RuntimeConfig.server.scripToGoldRate))
+            BuyOffer offer = (BuyOffer)data;
+            if(caller.getScrip() < (offer.storedoffer * RuntimeConfig.server.goldToScripRate))
             {
                 // Just a server-side check to make sure they aren't trying to screw us
                 listener.requestFailed("You do not have enough scrip for this transaction.");

@@ -954,11 +954,11 @@ public class PlayerManager
             String incomingData = (String)data;
             if(incomingData.equalsIgnoreCase("RuntimeConfig.scripToGoldRate"))
             {
-                listener.requestFailed(String.valueOf(RuntimeConfig.server.scripToGoldRate));
+                listener.requestFailed(String.valueOf(RuntimeConfig.server.goldToScripRate));
             }
             if(incomingData.equalsIgnoreCase("RuntimeConfig.goldToScripRate"))
             {
-                listener.requestFailed(String.valueOf(RuntimeConfig.server.goldToScripRate));
+                listener.requestFailed(String.valueOf(RuntimeConfig.server.scripToGoldRate));
             }
             else {
                 listener.requestProcessed(); // Failed to process request

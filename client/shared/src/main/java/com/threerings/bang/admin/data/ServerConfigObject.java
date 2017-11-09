@@ -59,6 +59,13 @@ public class ServerConfigObject extends ConfigObject
 
     /** The field name of the <code>articleRentMultiplier</code> field. */
     public static final String ARTICLE_RENT_MULTIPLIER = "articleRentMultiplier";
+
+    /** The field name of the <code>scripToGoldRate</code> field. */
+    public static final String SCRIP_TO_GOLD_RATE = "scripToGoldRate";
+
+    /** The field name of the <code>scripToGoldRate</code> field. */
+    public static final String GOLD_TO_SCRIP_RATE = "goldToScripRate";
+
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to require insiders or testers. */
@@ -82,8 +89,9 @@ public class ServerConfigObject extends ConfigObject
     /** The number is costs to exchange scrip to gold */
     public int scripToGoldRate = 1500;
 
-    /** The number is costs to exchange gold to script*/
+    /** The number is costs to exchange gold to scrip */
     public int goldToScripRate = 1000;
+
 
 
     /** Controls activation of Barber services. */

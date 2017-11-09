@@ -106,4 +106,7 @@ public interface PlayerService extends InvocationService<PlayerObject>
      * Performs a game master action
      */
     public void gameMasterAction(Handle handle, int action, String reason, long duration, ConfirmListener listener);
+
+    public void serverTunnel(Object data, ConfirmListener listener);
+
 }

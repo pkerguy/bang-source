@@ -118,4 +118,10 @@ public interface PlayerProvider extends InvocationProvider
      */
     void updatePosterInfo (PlayerObject caller, int arg1, String arg2, int[] arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
+    /**
+     * Handles a {@link PlayerService#serverTunnel} request.
+     */
+
+    void serverTunnel (PlayerObject caller, Object arg1, InvocationService.ConfirmListener arg4)
+            throws InvocationException;
 }

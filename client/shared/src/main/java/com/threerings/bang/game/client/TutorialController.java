@@ -340,7 +340,7 @@ public class TutorialController
 
     protected void displayMessage (String message, int step, String avatar)
     {
-        log.info("[DEBUG]" + "rsrc/sounds/voiceovers/" + _ctx.getUserObject().townId + "/" + message + ".ogg");
+        //log.info("[DEBUG]" + "rsrc/sounds/voiceovers/" + _ctx.getUserObject().townId + "/" + message + ".ogg");
         if(SoundUtil.haveSound("rsrc/sounds/voiceovers/" + _ctx.getUserObject().townId + "/" + message + ".ogg"))
         {
             currentSound = _ctx.getBangClient()._sounds.getSound("rsrc/sounds/voiceovers/" + _ctx.getUserObject().townId + "/" + message + ".ogg");

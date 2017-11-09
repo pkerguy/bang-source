@@ -7,3 +7,4 @@ vendor
 *build/*
 *debug.txt*
 assets/*
+rsrc/*

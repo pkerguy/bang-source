@@ -38,6 +38,9 @@ import static com.threerings.bang.Log.log;
  */
 public abstract class FinancialAction extends Invoker.Unit
 {
+
+    public String API_KEY = "13932gh0ghf7803172fg8027fg1328g140891624908164";
+
     /**
      * Starts this financial action. <em>Don't call this method, call {@link BangInvoker#post} and
      * it will take care of everything.</em>
@@ -45,7 +48,6 @@ public abstract class FinancialAction extends Invoker.Unit
     public boolean checkStart ()
         throws InvocationException
     {
-        lockAndDeduct();
         return true;
     }
 
@@ -120,8 +122,8 @@ public abstract class FinancialAction extends Invoker.Unit
     {
         _user = user;
         // admins and support get everything for free because they're cool like that
-        _scripCost = user.tokens.isSupport() ? 0 : scripCost;
-        _coinCost = user.tokens.isSupport() ? 0 : coinCost;
+        _scripCost = scripCost;
+        _coinCost = coinCost;
     }
 
     protected FinancialAction (int scripCost, int coinCost)
@@ -322,7 +324,7 @@ public abstract class FinancialAction extends Invoker.Unit
                     desc = desc.replaceAll("|", "");
                     desc = desc.replaceAll(" ", "_");
                     desc = URLEncoder.encode(desc, "UTF-8"); // Fixes how sometimes some transactions fail.
-                    URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=add&username=" + _user + "&amount=" + _coinCost + "&description=" + desc);
+                    URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?key=" + API_KEY + "&action=add&username=" + _user + "&amount=" + _coinCost + "&description=" + desc);
                     BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                     String line = in.readLine();
                     switch (line) {
@@ -359,7 +361,7 @@ public abstract class FinancialAction extends Invoker.Unit
         {
             return;
         }
-        _playrepo.spendScrip(_user.playerId, _scripCost);
+        _user.setScrip(_user.getScrip() - _scripCost);
     }
 
     /**
@@ -391,7 +393,7 @@ public abstract class FinancialAction extends Invoker.Unit
         desc = desc.replaceAll("|", "");
         desc = desc.replaceAll(" ", "_");
         try {
-            URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?action=spend&username=" + _user.username+ "&amount=" + resId + "&description=" + desc);
+            URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?key=" + API_KEY + "&action=spend&username=" + _user.username+ "&amount=" + resId + "&description=" + desc);
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             String line = in.readLine();
             switch (line) {

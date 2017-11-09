@@ -139,10 +139,11 @@ task compileModels << {
 processResources.dependsOn "compileModels"
 
 // generates lists of props, units, etc.
-task updateLists (type: Exec) {
-  commandLine "./update_lists", stagingDir, towns.join(",")
-}
-processResources.dependsOn "updateLists"
+//task updateLists (type: Exec) {
+//  commandLine "./update_lists", stagingDir, towns.join(",")
+//}
+//}
+//processResources.dependsOn "updateLists"
 
 // package our assets into a bunch of jar files
 task generalJar (type: Jar) {

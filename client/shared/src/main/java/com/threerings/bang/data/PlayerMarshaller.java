@@ -232,4 +232,15 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
             Integer.valueOf(arg1), arg2, arg3, listener4
         });
     }
+    /** The method id used to dispatch {@link #serverTunnel} requests. */
+    public static final int SERVER_TUNNEL = 17;
+
+    @Override
+    public void serverTunnel(Object data, ConfirmListener listener) {
+        InvocationMarshaller.ConfirmMarshaller listener18 = new InvocationMarshaller.ConfirmMarshaller();
+        listener18.listener = listener;
+        sendRequest(SERVER_TUNNEL, new Object[] {
+                data, listener18
+        });
+    }
 }

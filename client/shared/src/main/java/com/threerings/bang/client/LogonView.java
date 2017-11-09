@@ -551,6 +551,10 @@ public class LogonView extends BWindow
                 _password.setText(BangPrefs.config.getValue("password", ""));
                 _logon.setEnabled(true);
             }
+            if(_savepassword.isSelected())
+            {
+                BangPrefs.config.setValue("password", _password.getText());
+            }
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
                     user.username.toString());
             if (user.tokens.isSupport() || user.tokens.isAdmin()) {
@@ -619,37 +623,6 @@ public class LogonView extends BWindow
                                     @Override
                                     public void requestFailed(String cause) {
 
-                                    }
-                                });
-                        return "success";
-                    }
-                });
-                _ctx.getChatDirector().registerCommandHandler(msg, "showurlall", new ChatDirector.CommandHandler() {
-                    public String handleCommand(
-                            SpeakService speaksvc, String command, String args,
-                            String[] history) {
-                        if (_ctx.getUserObject() == null) return "NOPE";
-                        if (!_ctx.getUserObject().tokens.isAdmin()) {
-                            return "ACCESS DENIED";
-                        }
-                        if (StringUtil.isBlank(args)) {
-                            return getUsage("Ask Kayaba!");
-                        }
-                        String[] commandArgs = args.split(" ");
-                        if (commandArgs.length != 1) {
-                            return getUsage("Ask Kayaba!");
-                        }
-                        _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
-                                new Handle("ALL"), GameMasterDialog.SHOW_URL, commandArgs[1], 0L,
-                                new InvocationService.ConfirmListener() {
-                                    @Override
-                                    public void requestProcessed(){
-                                        _ctx.getChatDirector().displayFeedback(null, "An error occurred performing that command!");
-                                    }
-
-                                    @Override
-                                    public void requestFailed(String cause) {
-                                        _ctx.getChatDirector().displayFeedback(null, "Spectating player successful!");
                                     }
                                 });
                         return "success";

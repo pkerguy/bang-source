@@ -13,6 +13,8 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.*;
 import com.threerings.bang.admin.client.AdminDialog;
 import com.threerings.bang.admin.client.GameMasterDialog;
+import com.threerings.bang.admin.data.BuyOffer;
+import com.threerings.bang.admin.data.SellOffer;
 import com.threerings.bang.admin.server.RuntimeConfig;
 import com.threerings.bang.avatar.data.Look;
 import com.threerings.bang.avatar.server.persist.LookRepository;
@@ -939,6 +941,80 @@ public class PlayerManager
                     listener.requestFailed("Invalid url");
                     return;
                 }
+        }
+    }
+
+    @Override
+    public void serverTunnel(PlayerObject caller, Object data, InvocationService.ConfirmListener listener) {
+        if(data instanceof String)
+        {
+            String incomingData = (String)data;
+            if(incomingData.equalsIgnoreCase("RuntimeConfig.scripToGoldRate"))
+            {
+                listener.requestFailed(String.valueOf(RuntimeConfig.server.scripToGoldRate));
+            }
+            if(incomingData.equalsIgnoreCase("RuntimeConfig.goldToScripRate"))
+            {
+                listener.requestFailed(String.valueOf(RuntimeConfig.server.goldToScripRate));
+            }
+            else {
+                listener.requestProcessed(); // Failed to process request
+            }
+        }
+        else if(data instanceof SellOffer)
+        {
+            // Sells gold for scrip
+            SellOffer offer = (SellOffer)data;
+            if(caller.getCoins() < offer.storedoffer)
+            {
+                // Just a server-side check to make sure they aren't trying to screw us
+                listener.requestFailed("You do not have enough coins for this transaction.");
+                return;
+            }
+            // This will also make sure it removes it before granting it
+            try {
+                _invoker.post(new FinancialAction(caller, 0, offer.storedoffer) {
+                    @Override
+                    protected String getGoodType() {
+                        return "Bank - Buy Offer";
+                    }
+                });
+                try {
+                    caller.setScrip(caller.getScrip() + offer.storedoffer * RuntimeConfig.server.goldToScripRate);
+                    _playrepo.grantScrip(caller.username.getNormal(), offer.storedoffer * RuntimeConfig.server.goldToScripRate);
+                } catch (PersistenceException e) {
+                    listener.requestFailed("Transaction failed in granting of scrip! Contact support@yourfunworld.com");
+                }
+            } catch (InvocationException e) {
+                listener.requestFailed("Transaction failed!");
+            }
+            listener.requestFailed("Transaction completed!");
+        }
+        else if(data instanceof BuyOffer)
+        {
+            // Buys scrip for gold
+            BuyOffer offer = (BuyOffer)data;
+            if(caller.getScrip() < offer.storedoffer * RuntimeConfig.server.scripToGoldRate)
+            {
+                // Just a server-side check to make sure they aren't trying to screw us
+                listener.requestFailed("You do not have enough scrip for this transaction.");
+                return;
+            }
+            try {
+                _invoker.post(new FinancialAction(caller,offer.storedoffer * RuntimeConfig.server.goldToScripRate, 0) {
+                    @Override
+                    protected String getGoodType() {
+                        return "Bank - Buy Offer";
+                    }
+                });
+                caller.addCoins(offer.storedoffer, "Coin Exchange");
+            } catch (InvocationException e) {
+                listener.requestFailed("Transaction failed!");
+            }
+            listener.requestFailed("Transaction completed!");
+        }
+        else {
+            listener.requestProcessed(); // Failed to process.. IK it looks backwards.
         }
     }
 

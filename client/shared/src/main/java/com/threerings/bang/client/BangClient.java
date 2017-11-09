@@ -1263,42 +1263,17 @@ public class BangClient extends BasicClient
      */
     protected static boolean relaunchGetdown (final BangContext ctx, long exitDelay)
     {
-        File pro = new File(localDataDir("getdown-pro.jar"));
-        if (LaunchUtil.mustMonitorChildren() || !pro.exists()) {
+        if (LaunchUtil.mustMonitorChildren()) {
             return false;
         }
-
-        File appdir = new File(localDataDir(""));
-        String[] args = new String[] {
-            LaunchUtil.getJVMPath(appdir), "-jar", pro.toString(), appdir.getPath()
-        };
-
-        // if we were passed a username and password on the command line, tack those on as well (we
-        // have to use -Dapp.name to get Getdown to pass them back to us when we're launched)
-        String uname = System.getProperty("username"), pass = System.getProperty("password");
-        if (!StringUtil.isBlank(uname) && !StringUtil.isBlank(pass)) {
-            args = ArrayUtil.concatenate(args, new String[] {
-                "-Dapp.username=" + uname, "-Dapp.password=" + pass
-            });
-        }
-
-        log.info("Running " + StringUtil.join(args, "n  "));
         try {
-            Runtime.getRuntime().exec(args, null);
-        } catch (IOException ioe) {
-            log.warning("Failed to run getdown", ioe);
+            ctx.showURL(new URL("steam://run/675810"));
+            ctx.getApp().stop();
+            return true;
+        } catch (MalformedURLException e) {
+            ctx.getApp().stop();
             return false;
         }
-
-        // now stick a fork in ourselves after the caller specified delay
-        new Interval(ctx.getClient().getRunQueue()) {
-            public void expired () {
-                log.info("Exiting for Getdown relaunch.");
-                ctx.getApp().stop();
-            }
-        }.schedule(exitDelay);
-
-        return true;
     }
 
     /** Tracks user idleness and lets the server know when we're idle and eventually logs us

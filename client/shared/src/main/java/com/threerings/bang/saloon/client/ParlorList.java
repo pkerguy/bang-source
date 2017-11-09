@@ -62,7 +62,6 @@ public class ParlorList extends BContainer
         if(_ctx.getUserObject().tokens.isSupport()){
             buttons.add(_createTournament = new BButton("Create Tournament", this, "tournament"));
         }
-        buttons.add(new Spacer(20, 5));
         add(buttons, BorderLayout.SOUTH);
     }
 

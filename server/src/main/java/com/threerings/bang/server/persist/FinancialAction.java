@@ -325,10 +325,7 @@ public abstract class FinancialAction extends Invoker.Unit
                 String desc = getCoinDescrip();
                 if(desc == null) desc = "Unknown";
                 try {
-                    desc = desc.replaceAll("m.", "");
-                    desc = desc.replaceAll("|", "");
-                    desc = desc.replaceAll(" ", "_");
-                    desc = URLEncoder.encode(desc, "UTF-8"); // Fixes how sometimes some transactions fail.
+                    desc = "Ingame";
                     URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?key=" + API_KEY + "&action=add&username=" + _user + "&amount=" + _coinCost + "&description=" + desc);
                     BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                     String line = in.readLine();
@@ -388,9 +385,7 @@ public abstract class FinancialAction extends Invoker.Unit
         }
         String desc = getCoinDescrip();
         if(desc == null) desc = "Unknown";
-        desc = desc.replaceAll("m.", "");
-        desc = desc.replaceAll("|", "");
-        desc = desc.replaceAll(" ", "_");
+        desc = "Ingame";
         try {
             URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?key=" + API_KEY + "&action=spend&username=" + _user.username+ "&amount=" + resId + "&description=" + desc);
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));

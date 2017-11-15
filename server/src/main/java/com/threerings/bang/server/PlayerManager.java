@@ -21,6 +21,8 @@ import com.threerings.bang.avatar.server.persist.LookRepository;
 import com.threerings.bang.client.PlayerService;
 import com.threerings.bang.data.*;
 import com.threerings.bang.game.data.*;
+import com.threerings.bang.game.data.card.Forgiven;
+import com.threerings.bang.game.data.effect.*;
 import com.threerings.bang.game.data.scenario.PracticeInfo;
 import com.threerings.bang.game.data.scenario.ScenarioInfo;
 import com.threerings.bang.game.server.BangManager;
@@ -31,6 +33,7 @@ import com.threerings.bang.netclient.packets.ShowURLPacket;
 import com.threerings.bang.saloon.data.SaloonCodes;
 import com.threerings.bang.saloon.data.SaloonObject;
 import com.threerings.bang.saloon.server.Match;
+import com.threerings.bang.saloon.server.ParlorManager;
 import com.threerings.bang.server.persist.*;
 import com.threerings.bang.store.data.CardPackGood;
 import com.threerings.bang.store.server.GoodsCatalog;
@@ -956,9 +959,85 @@ public class PlayerManager
             {
                 listener.requestFailed(String.valueOf(RuntimeConfig.server.goldToScripRate));
             }
-            if(incomingData.equalsIgnoreCase("RuntimeConfig.goldToScripRate"))
+            else if(incomingData.equalsIgnoreCase("RuntimeConfig.goldToScripRate"))
             {
                 listener.requestFailed(String.valueOf(RuntimeConfig.server.scripToGoldRate));
+            }
+            else if(incomingData.equalsIgnoreCase("gameStatus"))
+            {
+                if(!caller.getTokens().isContentCreator())
+                {
+                    listener.requestFailed("ACCESS_DENIED");
+                }
+                DObject plobj = BangServer.omgr.getObject(caller.getPlaceOid());
+                if (plobj instanceof BangObject) {
+                    byte status;
+                    if (((BangObject)plobj).bounty != null) {
+                        listener.requestFailed("BOUNTY");
+                        return;
+                    } else if (((BangObject)plobj).actionId != -1) {
+                        listener.requestFailed("TUTORIAL");
+                        return;
+                    } else {
+                        listener.requestFailed("GAME");
+                        return;
+                    }
+                } else if (plobj instanceof SaloonObject) {
+                    listener.requestFailed("SALOON");
+                    return;
+                } else {
+                    listener.requestProcessed();
+                    return;
+                }
+            }
+            else if(incomingData.contains("pollresult:"))
+            {
+                DObject plobj = BangServer.omgr.getObject(caller.getPlaceOid());
+                if (plobj instanceof BangObject) {
+                    if (((BangObject)plobj).bounty != null) {
+                        return;
+                    } else if (((BangObject)plobj).actionId != -1) {
+                        return;
+                    } else {
+                        String[] results = incomingData.split(":");
+                        if(results[1].equalsIgnoreCase("BUFF"))
+                        {
+                            HashMap<String, Effect> possibles = new HashMap<String, Effect>();
+                            // Register the possibities
+
+                            possibles.put("forgiven", new AreaServerRepairEffect(1000, 0, 0));
+                            possibles.put("clearallmods", new ClearAllModificationsEffect());
+
+                            // Now execute the code
+                            Effect[] values = possibles.values().toArray(new Effect[possibles.size()]);
+                            Effect effect = values[new Random().nextInt(values.length)];
+                            BangManager bangManager = (BangManager)BangServer.plreg.getPlaceManager(caller.getPlaceOid());
+                            if(bangManager != null)
+                            {
+                                bangManager.deployEffect(-1, effect);
+                                listener.requestFailed("DONE");
+                                return;
+                            }
+                            listener.requestProcessed();
+                            return;
+                        } else {
+                            BangManager bangManager = (BangManager)BangServer.plreg.getPlaceManager(caller.getPlaceOid());
+                            if(bangManager != null)
+                            {
+                                HashMap<String, Effect> possibles = new HashMap<String, Effect>();
+                                possibles.put("nukeAll", new AreaServerDamageEffect(-1, 60, 1000, 0 ,0));
+                                possibles.put("highNoon", new HighNoonEffect());
+                                Effect[] values = possibles.values().toArray(new Effect[possibles.size()]);
+                                Effect effect = values[new Random().nextInt(values.length)];
+                                bangManager.deployEffect(-1, effect);
+                                listener.requestFailed("DONE");
+                                return;
+                            }
+                            listener.requestProcessed();
+                            return;
+                        }
+                    }
+                }
             }
             else {
                 listener.requestProcessed(); // Failed to process request
@@ -1942,6 +2021,7 @@ public class PlayerManager
     @Inject protected ChatHistory _history;
     @Inject protected BangPeerManager _peermgr;
     @Inject protected PardnerRepository _pardrepo;
+    @Inject protected ParlorManager _parmgr;
     @Inject protected PosterRepository _postrepo;
     @Inject protected LookRepository _lookrepo;
     @Inject protected RatingRepository _raterepo;

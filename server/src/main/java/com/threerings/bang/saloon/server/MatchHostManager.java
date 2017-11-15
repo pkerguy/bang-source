@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.Interval;
 
+import com.threerings.bang.saloon.data.ParlorInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.server.InvocationException;
 
@@ -243,6 +244,15 @@ public abstract class MatchHostManager extends ShopManager
                 // go like the wind!
                 BangConfig config = match.createConfig();
                 try {
+                    ParlorManager parmgr =  _salmgr._parlors.get(match.players[0].handle);
+                    if (parmgr == null) {
+                        log.warning("Choked creating game due to unable to get who created the original parlor!");
+                    } else {
+                        if(parmgr._parobj.info.type == ParlorInfo.Type.CONTENT_CREATOR)
+                        {
+                            config.contentMatch = true; // Set as a content creator match.
+                        }
+                    }
                     BangManager mgr = (BangManager)BangServer.plreg.createPlace(config);
                     match.startingMatch(mgr.getPlaceObject());
                 } catch (Exception e) {
@@ -282,6 +292,7 @@ public abstract class MatchHostManager extends ShopManager
     protected static Map<Integer,Match> _matches = Maps.newHashMap();
 
     @Inject protected BangAdminManager _adminmgr;
+    @Inject protected SaloonManager _salmgr;
 
     /** The delay between reporting that we're going to start a match and the
      * time that we actually start it. */

@@ -1741,7 +1741,6 @@ public class BangManager extends GameManager
             _ticker.cancel();
             return;
         }
-
         try {
             _bangobj.startTransaction();
             // potentially create and add new bonuses

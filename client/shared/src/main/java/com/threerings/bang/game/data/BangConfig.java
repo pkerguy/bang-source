@@ -222,6 +222,8 @@ public class BangConfig extends GameConfig
     /** Indicates the minimum weight of cards and bonuses that will be spawned in this game. */
     public int minWeight = 0;
 
+    public boolean contentMatch = false;
+
     /** Whether units respawn in this game. */
     public boolean respawnUnits = true;
 

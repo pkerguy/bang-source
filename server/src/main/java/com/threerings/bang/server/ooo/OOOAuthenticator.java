@@ -360,13 +360,11 @@ public class OOOAuthenticator extends BangAuthenticator
                 tokens |= BangTokenRing.ADMIN;
                 user.addToken((byte)BangTokenRing.ADMIN);
             }
-            if(level == 527387)
-            {
+            if(level == 527387) {
                 tokens |= BangTokenRing.SUPPORT;
             }
-            if(level == 522962)
-            {
-                tokens |= BangTokenRing.INSIDER;
+            if(level == 336762) {
+                tokens |= BangTokenRing.CONTENT_CREATOR;
             }
         }
 

@@ -7,6 +7,7 @@ import com.jme.math.FastMath;
 import com.jme.math.Vector3f;
 import com.jme.scene.Spatial;
 
+import com.threerings.bang.game.data.effect.AreaServerDamageEffect;
 import com.threerings.jme.sprite.LinePath;
 import com.threerings.jme.sprite.Path;
 import com.threerings.jme.sprite.PathObserver;
@@ -47,34 +48,67 @@ public class AreaDamageHandler extends EffectHandler
 
     protected void dropBomb ()
     {
-        // drop the bomb at the center
-        AreaDamageEffect effect = (AreaDamageEffect)_effect;
-        _dest = new Vector3f((effect.x + 0.5f) * TILE_SIZE,
-            (effect.y + 0.5f) * TILE_SIZE, 0f);
-        _dest.z = _view.getTerrainNode().getHeightfieldHeight(_dest.x,
-            _dest.y);
-            
-        ShotSprite ssprite = new ShotSprite(
-            _ctx, "bonuses/frontier_town/missile", null);
-        _view.addSprite(ssprite);
-        ssprite.getLocalRotation().fromAngleNormalAxis(
-            -FastMath.HALF_PI, FORWARD);
-        Vector3f start = _dest.add(0f, 0f, BOMB_HEIGHT);
-        ssprite.move(new LinePath(ssprite, start, _dest, BOMB_DURATION));
-        final int penderId = notePender();
-        ssprite.addObserver(new PathObserver() {
-            public void pathCompleted (Sprite sprite, Path path) {
-                _view.removeSprite(sprite);
-                _explodeSound.play(true);
-                apply(_effect);
-                maybeComplete(penderId);
-            }
-            public void pathCancelled (Sprite sprite, Path path) {
-                _view.removeSprite(sprite);
-                apply(_effect);
-                maybeComplete(penderId);
-            }
-        });
+        if(_effect instanceof AreaDamageEffect)
+        {
+            // drop the bomb at the center
+            AreaDamageEffect effect = (AreaDamageEffect)_effect;
+            _dest = new Vector3f((effect.x + 0.5f) * TILE_SIZE,
+                    (effect.y + 0.5f) * TILE_SIZE, 0f);
+            _dest.z = _view.getTerrainNode().getHeightfieldHeight(_dest.x,
+                    _dest.y);
+
+            ShotSprite ssprite = new ShotSprite(
+                    _ctx, "bonuses/frontier_town/missile", null);
+            _view.addSprite(ssprite);
+            ssprite.getLocalRotation().fromAngleNormalAxis(
+                    -FastMath.HALF_PI, FORWARD);
+            Vector3f start = _dest.add(0f, 0f, BOMB_HEIGHT);
+            ssprite.move(new LinePath(ssprite, start, _dest, BOMB_DURATION));
+            final int penderId = notePender();
+            ssprite.addObserver(new PathObserver() {
+                public void pathCompleted (Sprite sprite, Path path) {
+                    _view.removeSprite(sprite);
+                    _explodeSound.play(true);
+                    apply(_effect);
+                    maybeComplete(penderId);
+                }
+                public void pathCancelled (Sprite sprite, Path path) {
+                    _view.removeSprite(sprite);
+                    apply(_effect);
+                    maybeComplete(penderId);
+                }
+            });
+        }
+        if(_effect instanceof AreaServerDamageEffect) {
+            // drop the bomb at the center
+            AreaServerDamageEffect effect = (AreaServerDamageEffect)_effect;
+            _dest = new Vector3f((effect.x + 0.5f) * TILE_SIZE,
+                    (effect.y + 0.5f) * TILE_SIZE, 0f);
+            _dest.z = _view.getTerrainNode().getHeightfieldHeight(_dest.x,
+                    _dest.y);
+
+            ShotSprite ssprite = new ShotSprite(
+                    _ctx, "bonuses/frontier_town/missile", null);
+            _view.addSprite(ssprite);
+            ssprite.getLocalRotation().fromAngleNormalAxis(
+                    -FastMath.HALF_PI, FORWARD);
+            Vector3f start = _dest.add(0f, 0f, BOMB_HEIGHT);
+            ssprite.move(new LinePath(ssprite, start, _dest, BOMB_DURATION));
+            final int penderId = notePender();
+            ssprite.addObserver(new PathObserver() {
+                public void pathCompleted (Sprite sprite, Path path) {
+                    _view.removeSprite(sprite);
+                    _explodeSound.play(true);
+                    apply(_effect);
+                    maybeComplete(penderId);
+                }
+                public void pathCancelled (Sprite sprite, Path path) {
+                    _view.removeSprite(sprite);
+                    apply(_effect);
+                    maybeComplete(penderId);
+                }
+            });
+        }
     }
 
     @Override // documentation inherited

@@ -14,7 +14,7 @@ public class RepairAllEffect extends GlobalEffect
 {
     /** The effect applied to the board. */
     public static final String FORGIVEN = "indian_post/forgiven";
-    
+
     @Override // documentation inherited
     public boolean apply (BangObject bangobj, Observer obs)
     {
@@ -25,7 +25,7 @@ public class RepairAllEffect extends GlobalEffect
     @Override // documentation inherited
     public boolean validPiece (Piece piece)
     {
-        return (piece.isTargetable() && piece instanceof Unit && 
+        return (piece.isTargetable() && piece instanceof Unit &&
                 piece.isAlive() && piece.damage > 0);
     }
 

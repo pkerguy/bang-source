@@ -14,7 +14,8 @@ dependencies {
   compile "javax.activation:activation:1.1.1"
   compile "com.mb3364:TwitchAPI:1.0"
   compile "com.jmr:NitroNet:1.0"
-
+  compile "org.quartz-scheduler:quartz:2.2.1"
+  compile "org.quartz-scheduler:quartz-jobs:2.2.1"
 
   testCompile "junit:junit:4.8.1"
 }

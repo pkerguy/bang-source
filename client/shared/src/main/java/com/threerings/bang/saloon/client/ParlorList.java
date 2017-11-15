@@ -105,7 +105,7 @@ public class ParlorList extends BContainer
 
         } else if ("tournament".equals(event.getAction())) {
             if (_ctx.getUserObject().tokens.isSupport()) {
-                tb = new TournamentDialog(_ctx);
+                tb = new TournamentDialog(_ctx, _salobj);
                 _ctx.getBangClient().displayPopup(tb, true);
             }
         } else if ("enter".equals(event.getAction())) {
@@ -113,7 +113,7 @@ public class ParlorList extends BContainer
             final ParlorInfo info = (ParlorInfo)btn.getProperty("info");
             if (!_ctx.getUserObject().tokens.isSupport() &&
                 !_ctx.getUserObject().handle.equals(info.creator) &&
-                info.type == ParlorInfo.Type.PASSWORD) {
+                info.type == ParlorInfo.Type.PASSWORD || info.type == ParlorInfo.Type.CONTENT_CREATOR) {
                 // ask for a password, then join
                 OptionDialog.ResponseReceiver rr = new OptionDialog.ResponseReceiver() {
                     public void resultPosted (int button, Object result) {

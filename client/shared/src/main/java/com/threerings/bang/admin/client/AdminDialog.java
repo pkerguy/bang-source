@@ -28,7 +28,7 @@ import com.threerings.util.MessageBundle;
  * Admin dialog, for performing a variety of actions
  */
 public class AdminDialog extends SteelWindow
-    implements ActionListener
+        implements ActionListener
 {
     public static final int
             GRANT_SCRIP = 0,
@@ -100,6 +100,98 @@ public class AdminDialog extends SteelWindow
                 _ctx.getBangClient().clearPopup(this, true);
                 break;
             case "execute":
+                if(_badgeList == null || _badgeList.getSelected() == null)
+                {
+                    if(_action == GRANT_SCRIP)
+                    {
+                        BTextField field = (BTextField)_valueField;
+                        _ctx.getClient().requireService(PlayerService.class).adminAction(
+                                _handle, 0, field.getText(),
+                                new InvocationService.ConfirmListener() {
+                                    @Override
+                                    public void requestProcessed() {
+                                        _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
+                                        OptionDialog.showConfirmDialog(
+                                                _ctx, null, "Success!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                    public void resultPosted(int button, Object result) {
+                                                        // Automatically dismisses the dialog so nothing needed to be done here
+                                                    }
+                                                });
+                                    }
+
+                                    @Override
+                                    public void requestFailed(String cause) {
+                                        _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
+                                        OptionDialog.showConfirmDialog(
+                                                _ctx, null, "Failed!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                    public void resultPosted(int button, Object result) {
+                                                        // Automatically dismisses the dialog so nothing needed to be done here
+                                                    }
+                                                });
+                                    }
+                                });
+                        return;
+                    }
+                    if(_action == REMOVE_SCRIP)
+                    {
+                        BTextField field = (BTextField)_valueField;
+                        _ctx.getClient().requireService(PlayerService.class).adminAction(
+                                _handle, 1, field.getText(),
+                                new InvocationService.ConfirmListener() {
+                                    @Override
+                                    public void requestProcessed() {
+                                        _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
+                                        OptionDialog.showConfirmDialog(
+                                                _ctx, null, "Success!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                    public void resultPosted(int button, Object result) {
+                                                        // Automatically dismisses the dialog so nothing needed to be done here
+                                                    }
+                                                });
+                                    }
+
+                                    @Override
+                                    public void requestFailed(String cause) {
+                                        _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
+                                        OptionDialog.showConfirmDialog(
+                                                _ctx, null, "Failed!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                    public void resultPosted(int button, Object result) {
+                                                        // Automatically dismisses the dialog so nothing needed to be done here
+                                                    }
+                                                });
+                                    }
+                                });
+                        return;
+                    }
+                }
+                if(_action == RESET_SCRIP)
+                {
+                    _ctx.getClient().requireService(PlayerService.class).adminAction(
+                            _handle, 2, "",
+                            new InvocationService.ConfirmListener() {
+                                @Override
+                                public void requestProcessed() {
+                                    _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
+                                    OptionDialog.showConfirmDialog(
+                                            _ctx, null, "Success!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                public void resultPosted(int button, Object result) {
+                                                    // Automatically dismisses the dialog so nothing needed to be done here
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void requestFailed(String cause) {
+                                    _ctx.getBangClient().clearPopup(instance, true); // Now close the popup
+                                    OptionDialog.showConfirmDialog(
+                                            _ctx, null, "Failed!", new String[]{"m.ok"}, new OptionDialog.ResponseReceiver() {
+                                                public void resultPosted(int button, Object result) {
+                                                    // Automatically dismisses the dialog so nothing needed to be done here
+                                                }
+                                            });
+                                }
+                            });
+                    return;
+                }
                 Badge valueText = _badgeList.getSelected();
                 if(valueText == null)  {
                     System.out.println("No badge selected!");
@@ -127,7 +219,7 @@ public class AdminDialog extends SteelWindow
                                             // Automatically dismisses the dialog so nothing needed to be done here
                                         });
                             }
-                });
+                        });
                 break;
         }
     }

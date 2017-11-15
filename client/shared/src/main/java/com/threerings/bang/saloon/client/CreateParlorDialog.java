@@ -50,7 +50,7 @@ public class CreateParlorDialog extends BDecoratedWindow
         _type.addListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
                 ParlorInfo.Type type = (ParlorInfo.Type)_type.getSelectedValue();
-                _password.setEnabled(type == ParlorInfo.Type.PASSWORD);
+                _password.setEnabled(type == ParlorInfo.Type.PASSWORD || type == ParlorInfo.Type.CONTENT_CREATOR);
                 _matched.setSelected(type == ParlorInfo.Type.SOCIAL);
             }
         });
@@ -77,7 +77,16 @@ public class CreateParlorDialog extends BDecoratedWindow
                                       SaloonCodes.SALOON_MSGS, "m.create_parlor_failed") {
             protected boolean callService () {
                 ParlorInfo.Type type = (ParlorInfo.Type)_type.getSelectedValue();
-                String passwd = type == ParlorInfo.Type.PASSWORD ? _password.getText() : null;
+                if(type == ParlorInfo.Type.CONTENT_CREATOR)
+                {
+                    _matched.setSelected(false);
+                    _matched.setEnabled(false);
+                }
+                if(type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator())
+                {
+                    return false;
+                }
+                String passwd = type == ParlorInfo.Type.PASSWORD || type == ParlorInfo.Type.CONTENT_CREATOR ? _password.getText() : null;
                 _salobj.service.createParlor(
                     type, passwd, _matched.isSelected(), createResultListener());
                 return true;

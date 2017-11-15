@@ -1,5 +1,6 @@
 package com.threerings.bang.minigames.webapi;
 
+import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsServer;
 import com.threerings.bang.minigames.webapi.handlers.CommunicationHandler;
 import com.threerings.bang.minigames.webapi.handlers.MainHandler;
@@ -12,12 +13,12 @@ import java.util.Map;
 
 public class Server {
 
-    public static HttpsServer server;
+    public static HttpServer server;
 
     public static boolean init()
     {
         try {
-            server = HttpsServer.create(new InetSocketAddress(8000), 0);
+            server = HttpServer.create(new InetSocketAddress(8000), 0);
             server.createContext("/", new MainHandler());
             server.createContext("/test", new TestHandler());
             server.createContext("/communicate", new CommunicationHandler());

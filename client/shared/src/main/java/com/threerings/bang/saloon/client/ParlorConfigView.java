@@ -68,7 +68,7 @@ public class ParlorConfigView extends BDecoratedWindow
         _type.addListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
                 ParlorInfo.Type type = (ParlorInfo.Type)_type.getSelectedValue();
-                _changePass.setEnabled(type == ParlorInfo.Type.PASSWORD);
+                _changePass.setEnabled(type == ParlorInfo.Type.PASSWORD || type == ParlorInfo.Type.CONTENT_CREATOR);
             }
         });
         _type.addListener(_parconf);
@@ -77,10 +77,6 @@ public class ParlorConfigView extends BDecoratedWindow
         bits.add(_changePass = new BButton(_msgs.get("m.change"), new ChangePasswordHelper(), ""));
         _changePass.setEnabled(false);
         cont.add(bits);
-
-//        bits.add(_twitchMode = new BButton("Twitch Mode", new TwitchModeHelper(), ""));
-//        _twitchMode.setEnabled(false);
-//        cont.add(bits);
 
         BContainer row = GroupLayout.makeHBox(GroupLayout.LEFT);
         row.add(_creator = new BCheckBox(_msgs.get("m.creator_only")));
@@ -150,6 +146,11 @@ public class ParlorConfigView extends BDecoratedWindow
     {
         ArrayList<BComboBox.Item> types = new ArrayList<BComboBox.Item>();
         for (ParlorInfo.Type type : ParlorInfo.Type.values()) {
+            // only content creators can create Content Creator parlors
+            if(type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator())
+            {
+                continue;
+            }
             // only gang leaders can create recruiting parlors
             if (type == ParlorInfo.Type.RECRUITING &&
                     (!create || !ctx.getUserObject().canRecruit())) {
@@ -159,66 +160,6 @@ public class ParlorConfigView extends BDecoratedWindow
             types.add(new BComboBox.Item(type, ctx.xlate(SaloonCodes.SALOON_MSGS, msg)));
         }
         return types;
-    }
-
-    protected class TwitchModeHelper
-            implements ActionListener, OptionDialog.ResponseReceiver, UserResponseHandler
-    {
-        public void actionPerformed (ActionEvent event) {
-            if(_parobj.occupants.size() != 1)
-            {
-                try {
-                    _ctx.showURL(new URL("http://howdypedia.com"));
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-                return;
-            }
-            OptionDialog.showStringDialog(
-                    _ctx, null, "Are you sure you want to enable Twitch mode?",
-                    new String[] { "Yes", "No" }, 150, "", this);
-        }
-
-        public void resultPosted (int button, Object result) {
-            if (button == 0) {
-                  Twitch twitch = new Twitch();
-                  twitch.setClientId("0f38jf54a6xfg33h2jgjrte14n9rp1");
-                try {
-                    URI callbackUri = new URI("http://127.0.0.1:23522/authorize.html");
-                    String authUrl = twitch.auth().getAuthenticationUrl(twitch.getClientId(), callbackUri, Scopes.USER_READ, Scopes.CHANNEL_READ);
-                    _ctx.showURL(new URL(authUrl));
-                    boolean authSuccess = twitch.auth().awaitAccessToken();
-                    if (authSuccess) {
-                        System.out.println("Twitch Link SUCCESS!");
-                        twitch.users().get(this);
-                    } else {
-                        System.out.println(twitch.auth().getAuthenticationError());
-                    }
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-        @Override
-        public void onSuccess(User user) {
-                ParlorInfo pc = _parobj.info;
-                pc.isTwitch = true;
-                pc.twitchUsername = user.getName();
-                _parobj.service.updateParlorConfig(pc, true);
-        }
-
-        @Override
-        public void onFailure(int i, String s, String s1) {
-        }
-
-        @Override
-        public void onFailure(Throwable throwable) {
-
-        }
     }
 
     protected class ChangePasswordHelper

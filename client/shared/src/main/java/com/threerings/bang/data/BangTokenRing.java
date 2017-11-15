@@ -25,6 +25,8 @@ public class BangTokenRing extends TokenRing
     /** Indicatest that the user is over 13. */
     public static final int OVER_13 = (1 << 5);
 
+    /** Indicatest that the user is a content creator. */
+    public static final int CONTENT_CREATOR = (1 << 6);
 
     /**
      * Constructs a token ring with the supplied set of tokens.
@@ -32,6 +34,14 @@ public class BangTokenRing extends TokenRing
     public BangTokenRing (int tokens)
     {
         super(tokens);
+    }
+
+    /**
+     * Convenience function for checking whether this ring holds the {@link #CONTENT_CREATOR} token.
+     */
+    public boolean isContentCreator ()
+    {
+        return holdsToken(CONTENT_CREATOR);
     }
 
     /**

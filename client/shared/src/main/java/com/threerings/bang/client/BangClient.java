@@ -944,6 +944,12 @@ public class BangClient extends BasicClient
             });
         }
 
+        // If they are a content creator start the bot web service
+        if(_ctx.getUserObject().getTokens().isContentCreator())
+        {
+            com.threerings.bang.contentcreator.webapi.Server.init(_ctx);
+        }
+
         // show the town view to start, it will call checkNotifications() once the town view has
         // "presented" the first town
         showTownView();

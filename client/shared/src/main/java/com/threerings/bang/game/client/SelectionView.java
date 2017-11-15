@@ -182,7 +182,12 @@ public class SelectionView extends SteelWindow
                 sendTeamSelection(new int[0]);
                 return;
             }
-            setPickCardsMode();
+            if(config.contentMatch) // This is a content creator's match.. No cards allowed!
+            {
+                sendTeamSelection(new int[0]);
+            } else {
+                setPickCardsMode();
+            }
 
         } else {
             setPickTeamMode();

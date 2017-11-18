@@ -59,14 +59,6 @@ public abstract class FinancialAction extends Invoker.Unit
                 // _coinres = _coinmgr.getCoinRepository().reserveCoins(getCoinAccount(), _coinCost);
                 _coinres = _coinCost;
             }
-
-            if (shouldSpendCash()) {
-                // spend the in-game cash
-                spendCash();
-                _cashSpent = true;
-            }
-
-
             // then do our persistent business
             String errmsg = persistentAction();
             if (errmsg != null) {
@@ -83,6 +75,12 @@ public abstract class FinancialAction extends Invoker.Unit
                     return true;
                 }
             }
+            if (shouldSpendCash()) {
+                // spend the in-game cash
+                spendCash();
+                _cashSpent = true;
+            }
+
 
         } catch (Exception e) {
             log.warning("Financial action failed " + this, e);

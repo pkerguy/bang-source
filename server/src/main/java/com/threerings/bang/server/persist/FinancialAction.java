@@ -98,7 +98,6 @@ public abstract class FinancialAction extends Invoker.Unit
         try {
             if (_failmsg != null) {
                 // return the scrip and coins to the actor
-                returnCost();
                 actionFailed(_failmsg);
             } else {
                 actionCompleted();
@@ -284,43 +283,6 @@ public abstract class FinancialAction extends Invoker.Unit
             break;
         }
         return null;
-    }
-
-    /**
-     * Returns the cost of the transaction to the fields in the dobj.
-     */
-    protected void returnCost ()
-    {
-        if(DeploymentConfig.beta_build)
-        {
-            return;
-        }
-        _user.startTransaction();
-        try {
-            _user.setScrip(_user.scrip + _scripCost);
-            _user.scrip = _user.getScrip();
-            if (DeploymentConfig.usesCoins()) {
-                String desc = getCoinDescrip();
-                if(desc == null) desc = "Unknown";
-                try {
-                    desc = "Ingame";
-                    URL data = new URL("https://banghowdy.com/spendCoinAmountServerAPI.php?key=" + API_KEY + "&action=add&username=" + _user + "&amount=" + _coinCost + "&description=" + desc);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
-                    String line = in.readLine();
-                    switch (line) {
-                        case "FAILED": case "":
-                            break;
-                        default:
-                            _user.addCoins(_coinCost, desc);
-                    }
-                } catch (IOException | NumberFormatException e) {
-                    e.printStackTrace();
-                }
-                //_user.setCoins(_user.getCoins() + _coinCost);
-            }
-        } finally {
-            _user.commitTransaction();
-        }
     }
 
     /**

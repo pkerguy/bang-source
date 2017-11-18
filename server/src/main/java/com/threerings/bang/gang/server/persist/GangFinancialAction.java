@@ -66,21 +66,21 @@ public abstract class GangFinancialAction extends FinancialAction
 //            _gang.commitTransaction();
 //        }
 //    }
-
-    @Override // documentation inherited
-    protected void returnCost ()
-    {
-        _gang.startTransaction();
-        try {
-            _gang.setScrip(_gang.scrip + _scripCost);
-            if (DeploymentConfig.usesCoins()) {
-                _gang.setCoins(_gang.coins + _coinCost);
-            }
-            _gang.setAces(_gang.aces + _aceCost);
-        } finally {
-            _gang.commitTransaction();
-        }
-    }
+//
+//    @Override // documentation inherited
+//    protected void returnCost ()
+//    {
+//        _gang.startTransaction();
+//        try {
+//            _gang.setScrip(_gang.scrip + _scripCost);
+//            if (DeploymentConfig.usesCoins()) {
+//                _gang.setCoins(_gang.coins + _coinCost);
+//            }
+//            _gang.setAces(_gang.aces + _aceCost);
+//        } finally {
+//            _gang.commitTransaction();
+//        }
+//    }
 
     @Override // documentation inherited
     protected String getCoinAccount ()

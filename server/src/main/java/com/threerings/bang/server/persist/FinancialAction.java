@@ -79,7 +79,7 @@ public abstract class FinancialAction extends Invoker.Unit
                 // finally "spend" our reserved coins
                 if (!spendCoinsNow(_coinCost)) {
                     log.warning("Failed to spend coin reservation " + this, "resid", _coinres);
-                    fail(BangCodes.INTERNAL_ERROR);
+                    fail(BangCodes.E_INSUFFICIENT_COINS);
                     return true;
                 }
             }
@@ -314,8 +314,8 @@ public abstract class FinancialAction extends Invoker.Unit
     protected void grantCash ()
         throws PersistenceException
     {
-        _user.setScrip(_user.getScrip() + _scripCost);
-        _playrepo.grantScrip(_user.playerId, _scripCost);
+//        _user.setScrip(_user.getScrip() + _scripCost);
+//        _playrepo.grantScrip(_user.playerId, _scripCost);
     }
 
     /**

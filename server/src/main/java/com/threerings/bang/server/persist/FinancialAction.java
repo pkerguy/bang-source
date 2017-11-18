@@ -250,7 +250,6 @@ public abstract class FinancialAction extends Invoker.Unit
             _accountLock.remove(account); // release our lock
             throw new InvocationException(errcode);
         }
-        deductCost();
     }
 
     /**
@@ -268,10 +267,6 @@ public abstract class FinancialAction extends Invoker.Unit
      */
     protected String checkSufficientFunds ()
     {
-        if(DeploymentConfig.beta_build)
-        {
-            return null;
-        }
         if (_user.scrip < _scripCost) {
             return BangCodes.E_INSUFFICIENT_SCRIP;
         }
@@ -289,24 +284,6 @@ public abstract class FinancialAction extends Invoker.Unit
             break;
         }
         return null;
-    }
-
-    /**
-     * Deducts the cost of the transaction from the fields in the dobj.
-     */
-    protected void deductCost ()
-    {
-        _user.startTransaction();
-        try {
-            _user.setScrip(_user.scrip - _scripCost);
-        } finally {
-            _user.commitTransaction();
-        }
-        try {
-            _playrepo.updateScrip("PLAYER_ID = " + _user.playerId, _user.getScrip(), "spend");
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -359,6 +336,11 @@ public abstract class FinancialAction extends Invoker.Unit
     protected void spendCash ()
         throws PersistenceException
     {
+        if(_user.scrip < _scripCost)
+        {
+            fail(BangCodes.E_INSUFFICIENT_SCRIP);
+            return;
+        }
         _user.setScrip(_user.getScrip() - _scripCost);
         _playrepo.spendScrip(_user.playerId, _scripCost);
     }
@@ -382,6 +364,11 @@ public abstract class FinancialAction extends Invoker.Unit
         if(DeploymentConfig.beta_build)
         {
             return true;
+        }
+        if(_user.getCoins() < resId)
+        {
+            fail(BangCodes.E_INSUFFICIENT_COINS);
+            return false;
         }
         String desc = getCoinDescrip();
         if(desc == null) desc = "Unknown";

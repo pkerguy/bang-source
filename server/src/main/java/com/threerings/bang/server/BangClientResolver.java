@@ -139,6 +139,11 @@ public class BangClientResolver extends CrowdClientResolver
             player.scrip = 999999;
         }
         buser.scrip = player.scrip;
+        if(buser.scrip < 0)
+        {
+            buser.setScrip(0);
+            buser.scrip = 0;
+        }
         Timer timer = new Timer();
         timer.schedule( new TimerTask()
         {

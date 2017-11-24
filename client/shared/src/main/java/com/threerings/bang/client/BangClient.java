@@ -976,6 +976,10 @@ public class BangClient extends BasicClient
     // documentation inherited from interface ClientObserver
     public void clientDidLogoff (Client client)
     {
+        if(_ctx.getUserObject().getTokens().isContentCreator())
+        {
+            com.threerings.bang.contentcreator.webapi.Server.shutdown(); // Safely shut it off.
+        }
         // clear our status view key bindings
         StatusView.clearKeys(_ctx);
 
@@ -1000,7 +1004,7 @@ public class BangClient extends BasicClient
     {
         if (_pendingTownId != null) {
             try {
-                URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                URL data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
                 if(BangDesktop.isMobileApp)
                 {
                     data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);

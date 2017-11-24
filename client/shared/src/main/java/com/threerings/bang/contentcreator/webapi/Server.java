@@ -11,13 +11,13 @@ import org.quartz.SchedulerException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
 
     public static HttpServer server;
-
     public static boolean init(BangContext ctx)
     {
         _client = ctx;
@@ -33,7 +33,6 @@ public class Server {
             server.start(); // Finally we can start the web server
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
     }

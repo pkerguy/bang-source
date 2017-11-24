@@ -59,7 +59,7 @@ public class NeedPremiumView extends BDecoratedWindow
         // only head to the bank if requested
         if ("get_onetime".equals(event.getAction())) {
             try {
-                _ctx.showURL(new URL("http://banghowdy.com/buy.php"));
+                _ctx.showURL(new URL("https://id.yourfunworld.com/banghowdy/buy.php"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

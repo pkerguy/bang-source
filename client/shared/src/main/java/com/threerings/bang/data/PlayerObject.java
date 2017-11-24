@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.threerings.bang.bang.client.BangDesktop;
+import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.util.Name;
 
 import com.threerings.stats.data.Stat;
@@ -192,16 +193,16 @@ public class PlayerObject extends BodyObject
     // from interface Wallet
     public int getCoins ()
     {
-        if(BangDesktop.server != null && BangDesktop.server.equalsIgnoreCase("Inferno"))
+        if(DeploymentConfig.beta_build)
         {
-            return 99999;
+            return 1337;
         }
         final int oldValue = coins;
         if (System.currentTimeMillis() - _coinLastChecked >= COIN_CHECK_DELAY) {
             _coinLastChecked = System.currentTimeMillis();
 
             try {
-                URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=tokens");
+                URL data = new URL("https://id.yourfunworld.com/getdataAPI.php?username=" + username + "&key=tokens");
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 String line = in.readLine();
                 if (!line.isEmpty()) {

@@ -800,7 +800,12 @@ public class BangClient extends BasicClient
     {
         BangCredentials creds = new BangCredentials(
             username, Password.makeFromClear(password).getCleartext());
-        creds.ident = SteamStorage.user.getSteamID().toString();
+        if(BangDesktop.isMobileApp)
+        {
+            creds.ident = "MOBILE"; // TODO ADD A MOBILE UUID
+        } else {
+            creds.ident = SteamStorage.user.getSteamID().toString();
+        }
         // if we got a real ident from the client, mark it as such
         if (creds.anonymous) {
             creds.affiliate = getAffiliateFromInstallFile();
@@ -1001,6 +1006,10 @@ public class BangClient extends BasicClient
         if (_pendingTownId != null) {
             try {
                 URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                if(BangDesktop.isMobileApp)
+                {
+                    data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                }
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
                 if(result.contains("&") && result.contains(","))

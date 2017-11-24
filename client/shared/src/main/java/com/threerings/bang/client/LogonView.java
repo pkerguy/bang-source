@@ -189,10 +189,14 @@ public class LogonView extends BWindow
         List<String> availableServers = new ArrayList<String>();
 
         try {
-            URL serverList = new URL("https://banghowdy.com/serverList.php?id=" + SteamStorage.user.getSteamID().getAccountID() + "&version=" + DeploymentConfig.getVersion());
+            URL serverList = new URL("https://id.yourfunworld.com/banghowdy/serverList.php?id=" + SteamStorage.user.getSteamID().getAccountID() + "&version=" + DeploymentConfig.getVersion());
             if(BangDesktop.isSudoAllowed)
             {
-                serverList = new URL("https://banghowdy.com/serverList.php?id=" + BangDesktop.sudoUser + "&version=" + DeploymentConfig.getVersion());
+                serverList = new URL("https://id.yourfunworld.com/banghowdy/serverList.php?id=" + BangDesktop.sudoUser + "&version=" + DeploymentConfig.getVersion());
+            }
+            if(BangDesktop.isMobileApp)
+            {
+                serverList = new URL("https://id.yourfunworld.com/banghowdy/serverList.php?id=mobile&version=" + DeploymentConfig.getVersion());
             }
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     serverList.openStream()));
@@ -206,6 +210,12 @@ public class LogonView extends BWindow
                 return;
             }
 
+            if(BangDesktop.isMobileApp)
+            {
+                grid.add(new BLabel(_msgs.get("m.username"), "logon_label"));
+                grid.add(_username = new BTextField(BangPrefs.config.getValue("username", "")));
+                _username.setPreferredWidth(150);
+            }
             grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
             grid.add(passwordgrid);
             passwordgrid.add(_password = new BPasswordField());
@@ -251,6 +261,10 @@ public class LogonView extends BWindow
 
         grid.add(registerBtn = new BButton("Create Account", "new_account"));
         registerBtn.addListener(this);
+        if(BangDesktop.isMobileApp)
+        {
+            registerBtn.setEnabled(false); // TODO: DISABLE FOR NOW
+        }
         serverList.addListener(this);
 
         row.add(grid);
@@ -296,7 +310,11 @@ public class LogonView extends BWindow
                 _logon.setEnabled(true);
             }
             try {
-                URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                URL data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                if(BangDesktop.isMobileApp)
+                {
+                    data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                }
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
                 if (result.contains("&") && result.contains(",")) {
@@ -354,7 +372,12 @@ public class LogonView extends BWindow
                     townId = BangCodes.FRONTIER_TOWN;
                 }
 
-                logon(username, password);
+                if(BangDesktop.isMobileApp)
+                {
+                    logon(_username.getText(), password);
+                } else {
+                    logon(username, password);
+                }
 
                 break;
             case "options":
@@ -393,7 +416,11 @@ public class LogonView extends BWindow
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
         try {
-            URL data = new URL("https://banghowdy.com/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+            URL data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+            if(BangDesktop.isMobileApp)
+            {
+                data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + _username.getText() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+            }
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             final String result = in.readLine();
             if (result.contains("&") && result.contains(",")) {

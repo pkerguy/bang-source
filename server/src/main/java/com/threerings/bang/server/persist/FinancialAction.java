@@ -72,12 +72,15 @@ public abstract class FinancialAction extends Invoker.Unit
             }
             _actionTaken = true;
 
-            if (DeploymentConfig.usesCoins() && _coinCost > 0) {
-                // finally "spend" our reserved coins
-                if (!spendCoinsNow(_coinCost)) {
-                    log.warning("Failed to spend coin reservation " + this, "resid", _coinres);
-                    fail(BangCodes.E_INSUFFICIENT_COINS);
-                    return true;
+            if(!DeploymentConfig.beta_build)
+            {
+                if (DeploymentConfig.usesCoins() && _coinCost > 0) {
+                    // finally "spend" our reserved coins
+                    if (!spendCoinsNow(_coinCost)) {
+                        log.warning("Failed to spend coin reservation " + this, "resid", _coinres);
+                        fail(BangCodes.E_INSUFFICIENT_COINS);
+                        return true;
+                    }
                 }
             }
             if (shouldSpendCash()) {

@@ -33,6 +33,8 @@ public class BangDesktop {
     public static String server = "";
 
     public static boolean isSudoAllowed = false;
+    public static boolean isMobileApp = false;
+
     public static String sudoUser = "UNKNOWN";
 
     private static class Option {
@@ -53,9 +55,12 @@ public class BangDesktop {
                 System.out.println("WARNING: SUDO USER MODE WAS ENABLED BY ULTIMATELY WAS DISABLED!");
             }
         }
-        System.out.println("Runnang! Howdy Steam");
-        SteamStorage.init();
-        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+        if(!isMobileApp)
+        {
+            System.out.println("Runnang! Howdy Steam");
+            SteamStorage.init();
+            System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+        }
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy";
         cfg.depth = BangPrefs.getDisplayBPP();

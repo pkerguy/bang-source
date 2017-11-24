@@ -353,12 +353,18 @@ public class OOOAuthenticator extends BangAuthenticator
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
         }
+        boolean isInsider = false;
         for(int level : levels)
         {
             if(level == 293847)
             {
                 tokens |= BangTokenRing.ADMIN;
                 user.addToken((byte)BangTokenRing.ADMIN);
+            }
+            if(level == 522962)
+            {
+                tokens |= BangTokenRing.INSIDER;
+                isInsider = true;
             }
             if(level == 527387) {
                 tokens |= BangTokenRing.SUPPORT;
@@ -435,6 +441,13 @@ public class OOOAuthenticator extends BangAuthenticator
         {
             log.info("Rejecting banned account", "who", username);
             rdata.code = BANNED + (prec != null && prec.warning != null ? prec.warning : "");
+            return;
+        }
+
+        if(DeploymentConfig.beta_build && !isInsider)
+        {
+            log.info("Rejecting non-insider account", "who", username);
+            rdata.code = BANNED + "This account doesn't have backer status.. Access denied.";
             return;
         }
 

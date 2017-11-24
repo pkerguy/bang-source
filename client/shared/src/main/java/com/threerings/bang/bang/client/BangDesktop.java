@@ -55,12 +55,9 @@ public class BangDesktop {
                 System.out.println("WARNING: SUDO USER MODE WAS ENABLED BY ULTIMATELY WAS DISABLED!");
             }
         }
-        if(!isMobileApp)
-        {
-            System.out.println("Runnang! Howdy Steam");
-            SteamStorage.init();
-            System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
-        }
+        System.out.println("Runnang! Howdy Steam");
+        SteamStorage.init();
+        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy";
         cfg.depth = BangPrefs.getDisplayBPP();

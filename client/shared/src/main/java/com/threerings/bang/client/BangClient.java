@@ -800,12 +800,7 @@ public class BangClient extends BasicClient
     {
         BangCredentials creds = new BangCredentials(
             username, Password.makeFromClear(password).getCleartext());
-        if(BangDesktop.isMobileApp)
-        {
-            creds.ident = "MOBILE"; // TODO ADD A MOBILE UUID
-        } else {
             creds.ident = SteamStorage.user.getSteamID().toString();
-        }
         // if we got a real ident from the client, mark it as such
         if (creds.anonymous) {
             creds.affiliate = getAffiliateFromInstallFile();

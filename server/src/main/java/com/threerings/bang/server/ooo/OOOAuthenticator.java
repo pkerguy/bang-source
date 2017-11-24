@@ -254,7 +254,7 @@ public class OOOAuthenticator extends BangAuthenticator
         }
 
         try {
-                URL dataCheck = new URL("https://banghowdy.com/loginCheck.php?username=" + username + "&code=" + password + "&ip=" + conn.getInetAddress().getHostAddress());
+                URL dataCheck = new URL("https://id.yourfunworld.com/loginCheck.php?username=" + username + "&code=" + password + "&ip=" + conn.getInetAddress().getHostAddress());
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         dataCheck.openStream()));
             String result = in.readLine();
@@ -340,7 +340,7 @@ public class OOOAuthenticator extends BangAuthenticator
         int tokens = 0;
         int[] levels = new int[0];
         try {
-            URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=user_level");
+            URL data = new URL("https://id.yourfunworld.com/getdataAPI.php?username=" + username + "&key=user_level");
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             String line = in.readLine();
             if (!line.isEmpty()) {
@@ -378,7 +378,7 @@ public class OOOAuthenticator extends BangAuthenticator
         boolean account_whitelist = false;
 
         try {
-            URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=whitelist");
+            URL data = new URL("https://id.yourfunworld.com/getdataAPI.php?username=" + username + "&key=whitelist");
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             String line = in.readLine();
             if (!line.isEmpty()) {
@@ -394,7 +394,7 @@ public class OOOAuthenticator extends BangAuthenticator
         {
             String[] whitelisted_ips = new String[0];
             try {
-                URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=ip_whitelist");
+                URL data = new URL("https://id.yourfunworld.com/getdataAPI.php?username=" + username + "&key=ip_whitelist");
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 String line = in.readLine();
                 if (!line.isEmpty()) {
@@ -427,7 +427,7 @@ public class OOOAuthenticator extends BangAuthenticator
         boolean account_banned = false;
 
         try {
-            URL data = new URL("https://banghowdy.com/getdataAPI.php?username=" + username + "&key=suspended");
+            URL data = new URL("https://id.yourfunworld.com/getdataAPI.php?username=" + username + "&key=suspended");
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             String line = in.readLine();
             if (!line.isEmpty()) {

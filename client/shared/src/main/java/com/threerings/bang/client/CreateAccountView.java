@@ -158,7 +158,7 @@ public class CreateAccountView extends SteelWindow
         _create.setEnabled(false);
 
         try {
-            URL dataCheck = new URL("https://id.yourfunworld.com/registerApi.php?username=" + uname + "&code=" + _password.getText() + "&email=" + _email.getText());
+            URL dataCheck = new URL("https://accounting-yourfunworld.herokuapp.com/registerApi.php?username=" + uname + "&code=" + _password.getText() + "&email=" + _email.getText());
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     dataCheck.openStream()));
             String result = in.readLine();

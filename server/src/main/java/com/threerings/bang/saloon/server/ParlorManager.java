@@ -121,7 +121,12 @@ public class ParlorManager extends PlaceManager
                     }
                 }
                 break;
-            
+            case CONTENT_CREATOR:
+                // make sure the password matches if we have a password
+                if (password == null || !password.equalsIgnoreCase(_password)) {
+                    throw new InvocationException(INCORRECT_PASSWORD);
+                }
+                break;
             case PASSWORD:
                 // make sure the password matches if we have a password
                 if (password == null || !password.equalsIgnoreCase(_password)) {

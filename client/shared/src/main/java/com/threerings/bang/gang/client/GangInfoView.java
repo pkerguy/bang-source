@@ -252,11 +252,11 @@ public class GangInfoView extends BContainer
             _coins.setPreferredWidth(50);
             _coins.setDocument(new IntegerDocument(true));
             _coins.addListener(this);
-            if (DeploymentConfig.usesCoins()) {
-                acont.add(new BLabel(_msgs.get("m.and")));
-                acont.add(new BLabel(BangUI.coinIcon));
-                acont.add(_coins);
-            }
+//            if (DeploymentConfig.usesCoins()) {
+//                acont.add(new BLabel(_msgs.get("m.and")));
+//                acont.add(new BLabel(BangUI.coinIcon));
+//                acont.add(_coins);
+//            }
 
             _buttons[0].setEnabled(false);
         }

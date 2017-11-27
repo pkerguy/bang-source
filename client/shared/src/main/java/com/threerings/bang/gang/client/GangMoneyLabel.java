@@ -39,9 +39,10 @@ public class GangMoneyLabel extends MoneyLabel
         _aces.setText(String.valueOf(aces));
         if (_hideUnused) {
             _scrip.setVisible(scrip > 0);
-            _coins.setVisible(coins > 0);
+            //_coins.setVisible(coins > 0);
             _aces.setVisible(aces > 0);
         }
+        _coins.setVisible(false); // TODO CODE THE GANG COIN SYSTEM
     }
 
     @Override // from MoneyLabel

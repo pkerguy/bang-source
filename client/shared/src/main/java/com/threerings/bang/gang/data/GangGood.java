@@ -38,13 +38,13 @@ public abstract class GangGood extends Good
      */
     public int getCoinCost ()
     {
-        return _coinCost;
-    }
+        return 0;
+    } // TODO FIX THE GANG COIN SYSTEM
 
     @Override // documentation inherited
     public int getCoinCost (PlayerObject user)
     {
-        return _coinCost;
+        return 0; //_coinCost;
     }
 
     /**

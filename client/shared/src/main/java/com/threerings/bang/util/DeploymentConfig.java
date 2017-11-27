@@ -77,7 +77,7 @@ public class DeploymentConfig
     public static URL getDocBaseURL ()
     {
         try {
-            return new URL("https://banghowdy.com/");
+            return new URL("http://banghowdy.com/");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;

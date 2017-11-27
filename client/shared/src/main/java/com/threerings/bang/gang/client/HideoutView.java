@@ -314,9 +314,9 @@ public class HideoutView extends ShopView
     {
         BPopupMenu menu = new BPopupMenu(getWindow(), false);
         menu.addMenuItem(new BMenuItem(_msgs.get("m.edit_buckle"), "edit_buckle"));
-        if (DeploymentConfig.usesCoins()) {
-            menu.addMenuItem(new BMenuItem(_msgs.get("m.purchase_outfits"), "purchase_outfits"));
-        }
+//        if (DeploymentConfig.usesCoins()) {
+//            menu.addMenuItem(new BMenuItem(_msgs.get("m.purchase_outfits"), "purchase_outfits"));
+//        }
         menu.addMenuItem(new BMenuItem(_msgs.get("m.inventory"), "inventory"));
         menu.addMenuItem(new BMenuItem(_msgs.get("m.purchase_items"), "purchase_items"));
         menu.addMenuItem(new BMenuItem(_msgs.get("m.member_broadcast"), "member_broadcast"));

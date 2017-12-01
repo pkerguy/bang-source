@@ -36,28 +36,12 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
         _ctx = ctx;
         setLayoutManager(GroupLayout.makeVert(GroupLayout.LEFT).setGap(5));
         setSize((int)(_ctx.getDisplay().getWidth() * .75), (int)(ctx.getDisplay().getHeight() * .5));
-//        setBounds(getX(), getY(), (int)(_ctx.getDisplay().getWidth() * .75), (int)(ctx.getDisplay().getHeight() * .5));
         BContainer container = new BContainer(GroupLayout.makeHStretch());
         container.setBounds(container.getX(), container.getY(), (int) (_ctx.getDisplay().getWidth()  * .75), (int) (ctx.getDisplay().getHeight() * .5));
-//        container.setW
-//        container.add(GroupLayout.makeHBox(GroupLayout.CENTER));
 
-        //10px?
         for (CoinPackage coinPackage : CoinPackage.values()) {
             BContainer packageContainer = new BContainer(GroupLayout.makeVert(GroupLayout.STRETCH, GroupLayout.CENTER, GroupLayout.NONE));
-//            packageContainer.setPreferredSize(container.getWidth() / CoinPackage.values().length, container.getHeight());
-//            packageContainer.setLayoutManager(GroupLayout.makeVert(GroupLayout.CENTER).setGap(15));
-//            packageContainer.setPreferredSize((container.getWidth() - 40) / CoinPackage.values().length , (int) (container.getHeight() * .4));
-
             int width = (container.getWidth() - 40) / CoinPackage.values().length;
-//            packageContainer.setBounds(packageContainer.getX(), packageContainer.getY(), width, (int) (container.getHeight() * .5));
-//            System.out.println("Size: " + packageContainer.getHeight() + " Width " + packageContainer.getWidth() + " Container: " + container.getWidth() + " h: " + container.getHeight() + " displ: " + _ctx.getDisplay().getWidth());
-//            TableLayout layout = new TableLayout(1, 10, 10);
-//            layout.setHorizontalAlignment(TableLayout.CENTER);
-//            layout.setVerticalAlignment(TableLayout.CENTER);
-//            packageContainer.setLayoutManager(layout);
-
-//            packageContainer.setLayoutManager(new AbsoluteLayout());
             packageContainer.setStyleClass("tooltip_window");
 
 
@@ -65,43 +49,11 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
             BLabel label;
             packageContainer.add(label = new BLabel(coinPackage.getName()), GroupLayout.FIXED);
             ImageIcon icon;
-//            packageContainer.add(new BLabel(icon = new ImageIcon(ctx.loadImage("ui/icons/coins.png"))), lastPoint = new Point((packageContainer.getWidth() / 2) - icon.getWidth() / 2, lastPoint.y - 45));
-
-//            BContainer coinAndPriceContainer = GroupLayout.makeHBox(GroupLayout.CENTER);
-//            TableLayout layout = new TableLayout(1, 10, 10);
-//            layout.setHorizontalAlignment(TableLayout.CENTER);
-//            coinAndPriceContainer.setLayoutManager(layout);
-
-//            coinAndPriceContainer.setLayoutManager(GroupLayout.makeVert(GroupLayout.STRETCH, GroupLayout.CENTER,
-//                    GroupLayout.CONSTRAIN).setOffAxisJustification(GroupLayout.CENTER));
-//            ((GroupLayout)coinAndPriceContainer.getLayoutManager()).setGap(10);
-//            coinAndPriceContainer.setBounds(0, 0, width, packageContainer.getHeight() / 4);
-
             packageContainer.add(new BLabel( new ImageIcon(ctx.loadImage("ui/buttons/massive_down.png"))), GroupLayout.FIXED);
 
             packageContainer.add(new BLabel(coinPackage.getCoinAmount() + " Coins"), GroupLayout.FIXED);
             BButton butt = new BButton("$" + coinPackage.getPrice(), this, String.valueOf(coinPackage.getPackageID()));
             packageContainer.add(butt, GroupLayout.FIXED);
-
-            //coinAndPriceContainer.add(new BLabel(coinPackage.getCoinAmount() + " Coins"), lastPoint = new Point((packageContainer.getWidth() / 2) - 30, 50));
-            //BButton butt = new BButton("$" + coinPackage.getPrice(), this, String.valueOf(coinPackage.getPackageID()));
-            //coinAndPriceContainer.add(butt, new Point(12, 5));
-
-//            packageContainer.add(coinAndPriceContainer, new Point(packageContainer.getWidth() / 4, 10));
-            System.out.println("Size: " + packageContainer.getHeight() + " Width " + packageContainer.getWidth() + " Container: " + container.getWidth() + " h: " + container.getHeight() + " displ: " + _ctx.getDisplay().getWidth() + " but width: " + butt.getWidth());
-
-            /*
-            BLabel label;
-            packageContainer.add(label = new BLabel(coinPackage.getName()));
-            ImageIcon icon;
-            packageContainer.add(new BLabel(icon = new ImageIcon(ctx.loadImage("ui/icons/coins.png"))));
-
-//            packageContainer.add(new BLabel(""), new Rectangle(0, 0, packageContainer.getWidth(), (int) (packageContainer.getHeight() * .3)));
-
-            packageContainer.add(new BLabel(coinPackage.getCoinAmount() + " Coins"), TableLayout.BOTTOM);
-
-            BButton butt = new BButton("$" + coinPackage.getPrice(), this, String.valueOf(coinPackage.getPackageID()));
-            packageContainer.add(butt, TableLayout.BOTTOM);*/
             butt.setProperty("feedback_sound", BangUI.FeedbackSound.ITEM_PURCHASE);
 
             container.add(packageContainer, GroupLayout.FIXED);

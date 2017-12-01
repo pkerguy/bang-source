@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.bang.util;
+    package com.threerings.bang.util;
 
 import com.samskivert.util.*;
 import com.threerings.bang.data.*;
@@ -34,7 +34,7 @@ public class DeploymentConfig
         {
             return 100015;
         }
-        return 8000; // Change upon each release version
+        return 8001; // Change upon each release version
     }
 
     // Current release: 400+
@@ -121,7 +121,12 @@ public class DeploymentConfig
      */
     public static URL getBillingURL (BangContext ctx)
     {
-        return getCredentialedURL(ctx, "billing_url");
+        try {
+            return new URL("https://id.yourfunworld.com");
+        } catch (MalformedURLException e) {
+        e.printStackTrace();
+            return getURL("server_status_url", null);
+        }
     }
 
     /**

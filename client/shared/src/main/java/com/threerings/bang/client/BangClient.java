@@ -75,33 +75,6 @@ public class BangClient extends BasicClient
      */
     public static boolean checkForUpgrade (BangContext ctx, String message)
     {
-        if (!message.startsWith(BangAuthCodes.VERSION_MISMATCH)) {
-            return false;
-        }
-
-        int didx = message.indexOf("|~");
-        if (didx == -1) {
-            log.warning("Bogus version mismatch: '" + message + "'.");
-            return false;
-        }
-
-        // create the file that instructs Getdown to upgrade
-        String vers = message.substring(didx+2);
-        File vfile = new File(localDataDir("version.txt"));
-        try {
-            PrintStream ps = new PrintStream(new FileOutputStream(vfile));
-            ps.println(vers);
-            ps.close();
-        } catch (IOException ioe) {
-            log.warning("Error creating '" + vfile + "'", ioe);
-            return false;
-        }
-
-        // if we can relaunch Getdown automatically, do so
-        if (relaunchGetdown(ctx, 3000L)) {
-            return true;
-        }
-
         return false;
     }
 

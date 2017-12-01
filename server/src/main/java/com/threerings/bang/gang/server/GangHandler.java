@@ -1168,7 +1168,7 @@ public class GangHandler
                 // return _coinmgr.getCoinRepository().transferCoins(
                 //     reservationId, _playerAccount, CoinTransaction.GANG_MEMBER_REIMBURSEMENT,
                 //     "m.gang_member_reimbursement", "m.gang_member_reimbursement");
-                return false;
+                return true;
             }
             protected void rollbackPersistentAction () throws PersistenceException {
                 if (_deleting) {

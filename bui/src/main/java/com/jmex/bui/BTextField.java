@@ -261,7 +261,7 @@ public class BTextField extends BTextComponent
 
                     default:
                         char c = kev.getKeyChar();
-                        if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 && !Character.isISOControl(c) &&
+                        if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 && !Character.isISOControl(c) || c == '@' &&
                             /* GDX generates weird key chars; ignore them */ c < Short.MAX_VALUE) {
                             String text = String.valueOf(kev.getKeyChar());
                             if (_text.insert(_cursp, text)) {

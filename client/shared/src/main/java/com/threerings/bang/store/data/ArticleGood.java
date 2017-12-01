@@ -113,9 +113,32 @@ public class ArticleGood extends Good
                     if (!user.holdsBigShot(qualities[ii+1])) {
                         return false;
                     }
+                    } else if ("rank".equals(qualities[ii])) {
+                        final String rankRequire = qualities[ii+1];
+                        if(rankRequire.equalsIgnoreCase("admin"))
+                        {
+                            if(!user.tokens.isAdmin())
+                                return false;
+                        }
+                        if(rankRequire.equalsIgnoreCase("support"))
+                        {
+                            if(!user.tokens.isSupport())
+                                return false;
+                        }
+                        if(rankRequire.equalsIgnoreCase("contentcreator"))
+                        {
+                            if(!user.tokens.isContentCreator())
+                                return false;
+                        }
+                        if(rankRequire.equalsIgnoreCase("backer"))
+                        {
+                            if(!user.tokens.isInsider())
+                                return false;
+                        }
+                    }
 
-                // all unknown qualifiers will immediately cause failure
-                } else {
+                    // all unknown qualifiers will immediately cause failure
+                    else {
                     return false;
                 }
             }

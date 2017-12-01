@@ -36,6 +36,7 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
         _ctx = ctx;
         setLayoutManager(GroupLayout.makeVert(GroupLayout.LEFT).setGap(5));
         setSize((int)(_ctx.getDisplay().getWidth() * .75), (int)(ctx.getDisplay().getHeight() * .5));
+//        setBounds(getX(), getY(), (int)(_ctx.getDisplay().getWidth() * .75), (int)(ctx.getDisplay().getHeight() * .5));
         BContainer container = new BContainer(GroupLayout.makeHStretch());
         container.setBounds(container.getX(), container.getY(), (int) (_ctx.getDisplay().getWidth()  * .75), (int) (ctx.getDisplay().getHeight() * .5));
 
@@ -49,7 +50,7 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
             BLabel label;
             packageContainer.add(label = new BLabel(coinPackage.getName()), GroupLayout.FIXED);
             ImageIcon icon;
-            packageContainer.add(new BLabel( new ImageIcon(ctx.loadImage("ui/buttons/massive_down.png"))), GroupLayout.FIXED);
+            packageContainer.add(new BLabel( new ImageIcon(ctx.loadImage("ui/buttons/coinpackage_"+coinPackage.name()+".png"))), GroupLayout.FIXED);
 
             packageContainer.add(new BLabel(coinPackage.getCoinAmount() + " Coins"), GroupLayout.FIXED);
             BButton butt = new BButton("$" + coinPackage.getPrice(), this, String.valueOf(coinPackage.getPackageID()));
@@ -92,8 +93,8 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
 
 
     private enum CoinPackage {
-        SMALL("Bag O' Coins", 1, 3, 0.99),
-        MEDIUM("Pile O' Coins", 2, 40, 9.99), //worth double
+        SMALL("Pile O' Coins", 1, 3, 0.99),
+        MEDIUM("Bag O' Coins", 2, 40, 9.99), //worth double
         LARGE("Bucket O' Coins", 3, 100, 19.99),
         EXTRALARGE("Wagon O' Coins", 4, 500, 99.99);
 

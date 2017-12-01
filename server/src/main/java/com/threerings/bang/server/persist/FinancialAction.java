@@ -54,10 +54,13 @@ public abstract class FinancialAction extends Invoker.Unit
     @Override // documentation inherited
     public boolean invoke ()
     {
-        if(_user.scrip < _scripCost)
+        if(_user != null)
         {
-            fail(BangCodes.E_INSUFFICIENT_SCRIP);
-            return true;
+            if(_user.scrip < _scripCost)
+            {
+                fail(BangCodes.E_INSUFFICIENT_SCRIP);
+                return true;
+            }
         }
         try {
             if (DeploymentConfig.usesCoins() && _coinCost > 0) {

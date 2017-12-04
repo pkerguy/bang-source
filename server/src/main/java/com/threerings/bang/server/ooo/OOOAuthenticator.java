@@ -450,12 +450,16 @@ public class OOOAuthenticator extends BangAuthenticator
             rdata.code = BANNED + "This account doesn't have backer status.. Access denied.";
             return;
         }
-
-        if (prec != null && prec.banExpires != null &&
-                prec.banExpires.after(new Date(System.currentTimeMillis()))) {
-            log.info("Rejecting temp banned account", "who", username);
-            rdata.code = TEMP_BANNED + prec.banExpires.getTime() + "|" + prec.warning;
-            return;
+        if (prec != null && prec.banExpires != null) {
+            if (prec.banExpires.getTime() == 0) {
+                log.info("Rejecting perm banned account", "who", username);
+                rdata.code = BANNED + prec.warning;
+                return;
+            } else if (prec.banExpires.after(new Date(System.currentTimeMillis()))) {
+                log.info("Rejecting temp banned account", "who", username);
+                rdata.code = TEMP_BANNED + prec.banExpires.getTime() + "|" + prec.warning;
+                return;
+            }
         }
 
         // check whether we're restricting non-insider login

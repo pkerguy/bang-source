@@ -778,6 +778,10 @@ public class BangClient extends BasicClient
         if (creds.anonymous) {
             creds.affiliate = getAffiliateFromInstallFile();
         }
+        if(BangDesktop.isSudoAllowed)
+        {
+            creds.ident = UUID.randomUUID().toString(); // Give a random identity.
+        }
         return creds;
     }
 

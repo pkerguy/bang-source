@@ -75,13 +75,12 @@ public class GameMasterDialog extends SteelWindow
 
     private final long[] times = {
             1,
-            20L,
-            20L * 60,
-            20L * 60 * 60,
-            20L * 60 * 60 * 24,
-            20L * 60 * 60 * 24 * 7,
-            20L * 60 * 60 * 24 * 30,
-            20L * 60 * 60 * 24 * 365
+            60,
+            60 * 60,
+            60 * 60 * 24,
+            60 * 60 * 24 * 7,
+            60 * 60 * 24 * 30,
+            60 * 60 * 24 * 365
     };
 
     // from interface ActionListener
@@ -93,11 +92,11 @@ public class GameMasterDialog extends SteelWindow
                 _ctx.getBangClient().clearPopup(this, true);
                 break;
             case "execute":
-                String reason = _reasonField.getText().replaceAll(":", "");
+                String reason = _reasonField.getText().replace(":", "");
 
                 long duration = 0;
                 if (_durationField != null) {
-                    String str = _durationField.getText().replaceAll(":", "");
+                    String str = _durationField.getText().replace(":", "");
 
                     char c;
                     StringBuilder sb = new StringBuilder();
@@ -107,10 +106,10 @@ public class GameMasterDialog extends SteelWindow
                             case ' ': case '\t':
                                 continue;
                             default:
-                                int index = "tsmhdw".indexOf(c);
+                                int index = "smhdwMy".indexOf(c);
                                 if (index >= 0) {
                                     try {
-                                        duration += Long.parseLong(sb.toString()) * times[index];
+                                        duration += Long.parseLong(sb.toString()) * times[index] * 1000L;
                                         sb.setLength(0);
                                     } catch (NumberFormatException e) {
                                         OptionDialog.showConfirmDialog(
@@ -126,7 +125,7 @@ public class GameMasterDialog extends SteelWindow
                     }
                     if (sb.length() > 0) {
                         try {
-                            duration += Long.parseLong(sb.toString());
+                            duration += Long.parseLong(sb.toString()) * 1000L;
                         } catch (NumberFormatException ex) {
                             OptionDialog.showConfirmDialog(
                                     _ctx, null, "Invalid duration!", new String[]{"m.ok"}, (button, result) -> {

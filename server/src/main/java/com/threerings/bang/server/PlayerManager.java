@@ -71,6 +71,7 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 
 import static com.threerings.bang.Log.log;
@@ -856,8 +857,7 @@ public class PlayerManager
                 } catch (PersistenceException e) {
                     listener.requestFailed("Failed getting player. Persistence error.");
                     return;
-                } catch (NumberFormatException e)
-                {
+                } catch (NumberFormatException e) {
                     listener.requestFailed("Failed to process numbers!");
                     return;
                 }
@@ -869,7 +869,7 @@ public class PlayerManager
                         listener.requestFailed("Target player not online");
                         return;
                     }
-                    _playrepo.setTempBan(player.username.getNormal(), new Timestamp(Long.MAX_VALUE), reason);
+                    _playrepo.setTempBan(player.username.getNormal(), new Timestamp(0), reason);
                     listener.requestProcessed();
                 } catch (PersistenceException e) {
                     listener.requestFailed("Failed getting player. Persistence error.");

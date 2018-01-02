@@ -145,9 +145,9 @@ public abstract class CriterionView extends BContainer
 
     protected ActionListener _golist = new ActionListener() {
         public void actionPerformed (ActionEvent event) {
-            if(!_ctx.getUserObject().holdsBadge(Badge.Type.GAMES_PLAYED_2))
+            if(!_ctx.getUserObject().holdsBadge(Badge.Type.GAMES_PLAYED_1))
             {
-                _ctx.getChatDirector().displayFeedback(null, "You must have played at least 25 games to play ranked.");
+                _ctx.getChatDirector().displayFeedback(null, "You must have played at least 50 casual games to play ranked.");
                return;
             }
             // create a criterion instance from our UI configuration

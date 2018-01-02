@@ -94,9 +94,9 @@ public class ParlorManager extends PlaceManager
             throw new InvocationException(INTERNAL_ERROR);
         }
 
-        if(!user.holdsBadge(Badge.Type.GAMES_PLAYED_2) && _parobj.info.matched)
+        if(!user.holdsBadge(Badge.Type.GAMES_PLAYED_1) && _parobj.info.matched)
         {
-            throw new InvocationException("You must have played 25 games to played ranked.");
+            throw new InvocationException("You must have played 50 casual games to played ranked.");
         }
 
         // if they're a power user, they're always allowed in

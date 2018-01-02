@@ -51,7 +51,7 @@ public class Badge extends Item
         // games played badges
         GAMES_PLAYED_1 {
             public boolean qualifies (PlayerObject user) {
-                return user.stats.getIntStat(StatType.GAMES_PLAYED) >= 5;
+                return user.stats.getIntStat(StatType.UNRANKED_GAMES_PLAYED) >= 50;
             }
         },
         GAMES_PLAYED_2 {

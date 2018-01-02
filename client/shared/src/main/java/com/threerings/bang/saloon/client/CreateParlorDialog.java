@@ -86,10 +86,10 @@ public class CreateParlorDialog extends BDecoratedWindow
                     return false;
                 }
                 String passwd = type == ParlorInfo.Type.PASSWORD || type == ParlorInfo.Type.CONTENT_CREATOR ? _password.getText() : null;
-                if (!_ctx.getUserObject().holdsBadge(Badge.Type.GAMES_PLAYED_2) && _matched.isSelected())
+                if (!_ctx.getUserObject().holdsBadge(Badge.Type.GAMES_PLAYED_1) && _matched.isSelected())
                 {
                     _matched.setSelected(false);
-                    _ctx.getChatDirector().displayFeedback(null, "You must have played 25 games to play ranked.. Ranked mode has been auto-disabled.");
+                    _ctx.getChatDirector().displayFeedback(null, "You must have played 50 casual games to play ranked.. Ranked mode has been auto-disabled.");
                 }
                 _salobj.service.createParlor(
                     type, passwd, _matched.isSelected(), createResultListener());

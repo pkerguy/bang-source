@@ -14,6 +14,7 @@ import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.GroupLayout;
 
+import com.threerings.bang.data.Badge;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.bang.client.bui.ServiceButton;
@@ -76,17 +77,20 @@ public class CreateParlorDialog extends BDecoratedWindow
         buttons.add(new ServiceButton(_ctx, _msgs.get("m.create"),
                                       SaloonCodes.SALOON_MSGS, "m.create_parlor_failed") {
             protected boolean callService () {
-                ParlorInfo.Type type = (ParlorInfo.Type)_type.getSelectedValue();
-                if(type == ParlorInfo.Type.CONTENT_CREATOR)
-                {
+                ParlorInfo.Type type = (ParlorInfo.Type) _type.getSelectedValue();
+                if (type == ParlorInfo.Type.CONTENT_CREATOR) {
                     _matched.setSelected(false);
                     _matched.setEnabled(false);
                 }
-                if(type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator())
-                {
+                if (type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator()) {
                     return false;
                 }
                 String passwd = type == ParlorInfo.Type.PASSWORD || type == ParlorInfo.Type.CONTENT_CREATOR ? _password.getText() : null;
+                if (!_ctx.getUserObject().holdsBadge(Badge.Type.GAMES_PLAYED_2) && _matched.isSelected())
+                {
+                    _matched.setSelected(false);
+                    _ctx.getChatDirector().displayFeedback(null, "You must have played 25 games to play ranked.. Ranked mode has been auto-disabled.");
+                }
                 _salobj.service.createParlor(
                     type, passwd, _matched.isSelected(), createResultListener());
                 return true;

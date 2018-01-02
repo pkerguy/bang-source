@@ -15,9 +15,8 @@ import com.threerings.bang.data.PlayerObject;
  */
 public class ExchangePassGood extends Good
 {
-    /** There is just a token gold cost to get the player to buy gold. */
-    public static final int COIN_COST = 1;
-    public static final int SCRIP_COST = 0;
+    public static final int COIN_COST = 0;
+    public static final int SCRIP_COST = 12500;
 
     /**
      * Creates a good representing the exhange pass.

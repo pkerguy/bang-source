@@ -85,7 +85,7 @@ public class TicketView extends BContainer
 
         } else {
             if (ticketTownIdx > 0) {
-                townEnabled = (StationCodes.TICKET_COINS[ticketTownIdx] > 0) ||
+                townEnabled = (StationCodes.TICKET_COINS[ticketTownIdx] > -1) ||
                     ctx.getUserObject().tokens.isAdmin(); // admins get to go anywhere, yay!
             }
             if (_ticketTownId != null) {

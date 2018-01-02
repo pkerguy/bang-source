@@ -56,7 +56,7 @@ public class Badge extends Item
         },
         GAMES_PLAYED_2 {
             public boolean qualifies (PlayerObject user) {
-                return user.stats.getIntStat(StatType.GAMES_PLAYED) >= 50;
+                return user.stats.getIntStat(StatType.GAMES_PLAYED) >= 25;
             }
         },
         GAMES_PLAYED_3 {
@@ -801,6 +801,11 @@ public class Badge extends Item
         },
 
         BACKER_TIER4 {
+            public boolean qualifies (PlayerObject user) {
+                return false;
+            }
+        },
+        NEW_YEAR_2018 {
             public boolean qualifies (PlayerObject user) {
                 return false;
             }

@@ -4,6 +4,7 @@
 package com.threerings.bang.server;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,6 +19,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.bang.data.*;
+import com.threerings.bang.util.DateUtil;
 import com.threerings.crowd.server.CrowdClientResolver;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
@@ -190,6 +192,21 @@ public class BangClientResolver extends CrowdClientResolver
 
         // finally place their items into their inventory DSet
         buser.inventory = new DSet<Item>(items.iterator());
+
+
+        // Gives the New Year Badge of 2018
+        if(DateUtil.isDateInBetween(new GregorianCalendar(2018, Calendar.JANUARY, 1).getTime(), new GregorianCalendar(2018, Calendar.JANUARY, 5).getTime())) {
+            Badge badge = Badge.Type.NEW_YEAR_2018.newBadge();
+            badge.setOwnerId(buser.playerId);
+            if (!buser.holdsBadge(Badge.Type.NEW_YEAR_2018)) {
+                try {
+                    _itemrepo.insertItem(badge);
+                    buser.addToInventory(badge);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         // load up this player's persistent stats
         List<Stat> stats = _statrepo.loadStats(buser.playerId);

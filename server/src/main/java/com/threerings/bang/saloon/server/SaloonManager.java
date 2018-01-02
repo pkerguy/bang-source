@@ -197,7 +197,9 @@ public class SaloonManager extends MatchHostManager
 
         if(!BangServer.isTournamentServer) {
             // create our default parlor
-            createParlor(new Handle("!!!SERVER!!!"), ParlorInfo.Type.SOCIAL, null, true, 0, true, null);
+            createParlor(new Handle("[OFFICIAL] Casual"), ParlorInfo.Type.SOCIAL, null, false, 0, true, null);
+            createParlor(new Handle("[OFFICIAL] Ranked"), ParlorInfo.Type.SOCIAL, null, true, 0, true, null);
+
         } else {
             int parlorCount = BangServer.parlorCount = BangServer.amountofPlayers / 2;
 

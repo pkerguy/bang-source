@@ -717,8 +717,9 @@ public class RatingRepository extends SimpleRepository
      * The percentage of users that must have a lower rating than you
      * in order for you to be a part of a given rank.
      */
+
     protected static final int[] RANK_PERCENTAGES = {
-        50, 65, 75, 85, 90, 95, 99 };
+            50/2, 65/2, 75/2, 85/2, 90/2, 95/2, 99/2 };
 
     /** The cutoff after which a rating is considered stale and no longer
      * considered when calculating standings or for top scores. */

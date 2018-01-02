@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Throttle;
 
+import com.threerings.bang.data.*;
 import com.threerings.bang.saloon.data.*;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -22,9 +23,6 @@ import com.threerings.crowd.chat.server.SpeakHandler;
 import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.bang.chat.server.BangChatManager;
-import com.threerings.bang.data.BangOccupantInfo;
-import com.threerings.bang.data.PlayerObject;
-import com.threerings.bang.data.StatType;
 import com.threerings.bang.server.BangServer;
 
 import com.threerings.bang.saloon.client.ParlorService;
@@ -94,6 +92,11 @@ public class ParlorManager extends PlaceManager
         // if the parlor is shutting down or not yet initialized, fail
         if (_parobj == null || _parobj.info == null) {
             throw new InvocationException(INTERNAL_ERROR);
+        }
+
+        if(!user.holdsBadge(Badge.Type.GAMES_PLAYED_2) && _parobj.info.matched)
+        {
+            throw new InvocationException("You must have played 25 games to played ranked.");
         }
 
         // if they're a power user, they're always allowed in
@@ -366,6 +369,10 @@ public class ParlorManager extends PlaceManager
     @Override // from PlaceManager
     protected boolean shouldDeclareEmpty (OccupantInfo leaver)
     {
+        // Do NOT auto-delete our new server parlors
+        if(_parobj.info.creator == new Handle("[OFFICIAL] Casual")) return false;
+        if(_parobj.info.creator == new Handle("[OFFICIAL] Ranked")) return false;
+        // Otherwise
         return super.shouldDeclareEmpty(leaver) && !_parobj.info.server &&
             _activeGames.size() == 0;
     }

@@ -272,7 +272,7 @@ public class ParlorList extends BContainer
 
         public ParlorRow (ParlorInfo info) {
             MessageBundle msgs = _ctx.getMessageManager().getBundle(SaloonCodes.SALOON_MSGS);
-            String lbl = info.server ? msgs.get("m.server_parlor") :
+            String lbl = info.server ? msgs.get("m.server_parlor", info.creator) :
                     msgs.get(info.matched ? "m.matched_name" : "m.parlor_name", info.creator);
             _name = new BLabel(lbl, "parlor_label");
             _name.setFit(BLabel.Fit.SCALE);

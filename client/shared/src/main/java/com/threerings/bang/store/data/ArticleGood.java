@@ -113,7 +113,7 @@ public class ArticleGood extends Good
                     if (!user.holdsBigShot(qualities[ii+1])) {
                         return false;
                     }
-                    } else if ("rank".equals(qualities[ii])) {
+                } else if ("rank".equals(qualities[ii])) {
                         final String rankRequire = qualities[ii+1];
                         if(rankRequire.equalsIgnoreCase("admin"))
                         {

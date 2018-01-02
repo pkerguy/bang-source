@@ -187,9 +187,8 @@ public class ParlorView extends ShopView
             _settings.setVisible(true);
         }
 
-        add(new BLabel(_parobj.info.server ? _msgs.get("m.server_parlor") :
-                        _msgs.get(_parobj.info.matched ? "m.matched_name" : "m.parlor_name",
-                        _parobj.info.creator), "parlor_label"),
+        add(new BLabel(_parobj.info.server ? _msgs.get("m.server_parlor", _parobj.info.creator) :
+                _msgs.get(_parobj.info.matched ? "m.matched_name" : "m.parlor_name", _parobj.info.creator), "parlor_label"),
                 new Point(165, 263));
         add(new FolkView(_ctx, plobj, false, _parobj.info.gangId > 0),
             new Rectangle(95, 119, 407, 130));

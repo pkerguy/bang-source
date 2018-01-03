@@ -163,9 +163,11 @@ public class BangChatManager
     public boolean validateChat (ClientObject speaker, String message)
     {
 
-
+        PlayerObject playerObject = (PlayerObject)BangServer.locator.lookupBody(speaker.username);
+        SlackChannel detailed_channel = BangServer.slackSession.findChannelByName("monitoring-detailed");
+        BangServer.slackSession.sendMessage(detailed_channel, "["  + ServerConfig.hostname + "] ("+playerObject.getVisibleName() + ") " + speaker +  " >> " + message);
         SlackChannel channel = BangServer.slackSession.findChannelByName("monitoring");
-        BangServer.slackSession.sendMessage(channel, "["  + ServerConfig.hostname + "] " + speaker +  " >> " + message);
+        BangServer.slackSession.sendMessage(channel, "["  + ServerConfig.hostname + "] " + playerObject.getVisibleName() +  " >> " + message);
 
         if (_whitelist.isEmpty()) {
             return true;

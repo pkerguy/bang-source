@@ -4,6 +4,7 @@
 package com.threerings.bang.chat.server;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
@@ -162,6 +163,20 @@ public class BangChatManager
      */
     public boolean validateChat (ClientObject speaker, String message)
     {
+
+        if(!BangServer.slackSession.isConnected())
+        {
+            try {
+                BangServer.slackSession.connect(); // Attempt to reconnect with Slack
+            } catch (IOException e) {
+                return false;
+            }
+        }
+        if(!BangServer.slackSession.isConnected())
+        {
+            // Somehow we could not reconnect to slack fail the message
+            return false;
+        }
 
         PlayerObject playerObject = (PlayerObject)BangServer.locator.lookupBody(speaker.username);
         SlackChannel detailed_channel = BangServer.slackSession.findChannelByName("monitoring-detailed");

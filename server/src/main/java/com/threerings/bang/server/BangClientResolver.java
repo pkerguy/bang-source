@@ -144,8 +144,10 @@ public class BangClientResolver extends CrowdClientResolver
         }
         if(DeploymentConfig.beta_build)
         {
+            buser.startTransaction();
             buser.setScrip(99999);
             buser.scrip = 99999;
+            buser.commitTransaction();
         }
         Timer timer = new Timer();
         timer.schedule( new TimerTask()

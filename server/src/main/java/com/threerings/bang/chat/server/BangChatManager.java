@@ -164,11 +164,34 @@ public class BangChatManager
     public boolean validateChat (ClientObject speaker, String message)
     {
 
+        if(!BangServer.slackSession.isConnected())
+        {
+            try {
+                BangServer.slackSession.connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        if(!BangServer.slackSession.isConnected())
+        {
+            return false;
+        }
+
         PlayerObject playerObject = (PlayerObject)BangServer.locator.lookupBody(speaker.username);
+        if(playerObject == null)
+        {
+            return false;
+        }
+        if(playerObject.getVisibleName().isBlank())
+        {
+            return false;
+        }
+
         SlackChannel detailed_channel = BangServer.slackSession.findChannelByName("monitoring-detailed");
-        BangServer.slackSession.sendMessage(detailed_channel, "["  + ServerConfig.hostname + "] ("+playerObject.getVisibleName() + ") " + speaker +  " >> " + message);
+        BangServer.slackSession.sendMessage(detailed_channel, "["  + ServerConfig.hostname + "] ("+playerObject.getVisibleName().getNormal() + ") " + speaker +  " >> " + message);
         SlackChannel channel = BangServer.slackSession.findChannelByName("monitoring");
-        BangServer.slackSession.sendMessage(channel, "["  + ServerConfig.hostname + "] " + playerObject.getVisibleName() +  " >> " + message);
+        BangServer.slackSession.sendMessage(channel, "["  + ServerConfig.hostname + "] " + playerObject.getVisibleName().getNormal() +  " >> " + message);
 
         if (_whitelist.isEmpty()) {
             return true;

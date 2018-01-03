@@ -119,7 +119,7 @@ public class ServerConfigObject extends ConfigObject
     public boolean storeEnabled = true;
 
     /** Controls activation of Bank services. */
-    public boolean bankEnabled = true;
+    public boolean bankEnabled = false;
 
     /** Controls access of anonymous accounts. */
     public boolean anonymousAccessEnabled = false;

@@ -49,6 +49,7 @@ import com.threerings.bang.gang.server.persist.GangRepository;
 import com.threerings.bang.server.PlayerLocator;
 import com.threerings.bang.server.ServerConfig;
 import com.threerings.bang.server.persist.PlayerRepository;
+import com.ullink.slack.simpleslackapi.SlackChannel;
 
 import static com.threerings.bang.Log.log;
 
@@ -161,6 +162,10 @@ public class BangChatManager
      */
     public boolean validateChat (ClientObject speaker, String message)
     {
+
+
+        SlackChannel channel = BangServer.slackSession.findChannelByName("monitoring");
+        BangServer.slackSession.sendMessage(channel, "["  + ServerConfig.hostname + "] " + speaker +  " >> " + message);
 
         if (_whitelist.isEmpty()) {
             return true;

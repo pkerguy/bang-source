@@ -46,6 +46,8 @@ import com.threerings.presents.server.net.*;
 import com.threerings.resource.*;
 import com.threerings.user.depot.*;
 import com.threerings.util.*;
+import com.ullink.slack.simpleslackapi.SlackSession;
+import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 
 import java.io.*;
 import java.util.*;
@@ -96,6 +98,17 @@ public class BangServer extends CrowdServer
             bind(ResourceManager.class).toInstance(rsrcmgr);
             bind(AccountActionRepository.class).toInstance(aarepo);
             bind(AvatarLogic.class).toInstance(alogic);
+
+            // Setup slack
+            slackSession = SlackSessionFactory.createWebSocketSlackSession("xoxb-294640039638-r40tFhGb7K2imJFJ2i3q3HyT");
+            try {
+                if(!slackSession.isConnected())
+                {
+                    slackSession.connect();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         @Override protected void bindInvokers() {
             // replace the presents invoker with a custom version
@@ -172,6 +185,7 @@ public class BangServer extends CrowdServer
     public static int amountofPlayers = 0, parlorCount = 0;
     public static Map<BodyObject, Integer> round = new ConcurrentHashMap<>();
     public static String[] scenerioIds;
+    public static SlackSession slackSession;
 
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an

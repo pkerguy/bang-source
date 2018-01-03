@@ -102,10 +102,7 @@ public class BangServer extends CrowdServer
             // Setup slack
             slackSession = SlackSessionFactory.createWebSocketSlackSession("xoxb-294640039638-r40tFhGb7K2imJFJ2i3q3HyT");
             try {
-                if(!slackSession.isConnected())
-                {
-                    slackSession.connect();
-                }
+                slackSession.connect();
             } catch (IOException e) {
                 e.printStackTrace();
             }

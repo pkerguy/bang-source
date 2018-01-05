@@ -34,6 +34,7 @@ import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.bang.saloon.data.ParlorInfo;
+import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StreamablePoint;
 
@@ -2120,6 +2121,10 @@ public class BangManager extends GameManager
                     // compute their earnings and scale them based on the scenario duration
                     award.cashEarned = (int)Math.ceil(
                         computeEarnings(ii) * _bconfig.duration.getAdjustment());
+                    if(DeploymentConfig.beta_build)
+                    {
+                        award.cashEarned *= 4; // 4X the payouts if beta
+                    }
                     if (_bconfig.rated && prec.user.quitter > 2) {
                         award.cashEarned /= (prec.user.quitter - 1);
                     }

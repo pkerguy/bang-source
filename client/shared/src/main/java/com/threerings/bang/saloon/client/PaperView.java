@@ -201,6 +201,10 @@ public class PaperView extends BContainer
             log.warning("Failed to create news URL", "base", base, "path", _NEWS_URL, e);
             return;
         }
+
+        if (!news.refreshDocument(force, _newsup)) {
+            setContents(news.getDocument());
+        }
     }
 
     /** Used to asynchronously update the news. */

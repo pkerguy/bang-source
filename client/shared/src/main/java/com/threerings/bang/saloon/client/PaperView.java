@@ -3,7 +3,6 @@
 
 package com.threerings.bang.saloon.client;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.HashMap;
@@ -72,19 +71,11 @@ public class PaperView extends BContainer
             }
         });
 
+        refreshNews(true);
+
         // when the news is loaded; it will display the news tab, but we need to hand set the
         // proper navigation button to selected
         _navi[0].setSelected(true);
-
-        // any time after the first that we enter the saloon during a session, start on the
-        // friendly folks page
-        if (_shownNews) {
-            displayPage(1);
-        } else {
-            // load and display the news page
-            refreshNews(false);
-            _shownNews = true;
-        }
     }
 
     /**
@@ -127,33 +118,32 @@ public class PaperView extends BContainer
         }
 
         switch (_pageNo = pageNo) {
-        case 0:
-            CachedDocument news = _news.get(_ctx.getUserObject().townId);
-            if (news == null) {
+            case 0:
+                CachedDocument news = _news.get(_ctx.getUserObject().townId);
                 refreshNews(false);
-            } else if (KeyInput.get().isKeyDown(Keys.CONTROL_LEFT)) {
-                refreshNews(true);
-            } else {
-                setContents(news.getDocument());
-            }
-            break;
+                if (KeyInput.get().isKeyDown(Keys.CONTROL_LEFT)) {
+                    refreshNews(true);
+                } else {
+                    refreshNews(true);
+                }
+                break;
 
-        case 1:
-            if (_folks.getParent() == null) {
-                _contcont.removeAll();
-                _contcont.add(_folks, BorderLayout.CENTER);
-            }
-            break;
+            case 1:
+                if (_folks.getParent() == null) {
+                    _contcont.removeAll();
+                    _contcont.add(_folks, BorderLayout.CENTER);
+                }
+                break;
 
-        case 2:
-            if (_topscore == null) {
-                _topscore = new TopScoreView(_ctx, _salobj);
-            }
-            if (_topscore.getParent() == null) {
-                _contcont.removeAll();
-                _contcont.add(_topscore, BorderLayout.CENTER);
-            }
-            break;
+            case 2:
+                if (_topscore == null) {
+                    _topscore = new TopScoreView(_ctx, _salobj);
+                }
+                if (_topscore.getParent() == null) {
+                    _contcont.removeAll();
+                    _contcont.add(_topscore, BorderLayout.CENTER);
+                }
+                break;
         }
     }
 
@@ -182,29 +172,17 @@ public class PaperView extends BContainer
     {
         String townId = _ctx.getUserObject().townId;
         CachedDocument news = _news.get(townId);
-        URL base = null;
-        try {
-            base = new URL("https://banghowdy.com/game/");
-        } catch (MalformedURLException e) {
-            base = DeploymentConfig.getDocBaseURL();
+        if (news == null) {
+            try {
+                URL nurl = new URL(new URL("http://banghowdy.com/game/news/"), "index.php");
+                news = new CachedDocument(nurl, NEWS_REFRESH_INTERVAL);
+                _news.put(townId, news);
+            } catch (Exception e) {
+                return;
+            }
         }
-        String _NEWS_URL = "news/index.php";
-        if(DeploymentConfig.beta_build)
-        {
-            _NEWS_URL = "news_beta/index.php";
-        }
-        try {
-            URL nurl = new URL(base, _NEWS_URL);
-            news = new CachedDocument(nurl, NEWS_REFRESH_INTERVAL);
-            _news.put(townId, news);
-        } catch (Exception e) {
-            log.warning("Failed to create news URL", "base", base, "path", _NEWS_URL, e);
-            return;
-        }
-
-        if (!news.refreshDocument(force, _newsup)) {
-            setContents(news.getDocument());
-        }
+        news.refreshDocument(force, _newsup);
+        setContents(news.getDocument());
     }
 
     /** Used to asynchronously update the news. */

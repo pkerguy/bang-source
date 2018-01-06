@@ -3,6 +3,7 @@
 
 package com.threerings.bang.saloon.client;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.HashMap;
@@ -182,14 +183,23 @@ public class PaperView extends BContainer
         String townId = _ctx.getUserObject().townId;
         CachedDocument news = _news.get(townId);
         if (news == null) {
-            URL base = DeploymentConfig.getDocBaseURL();
-            String npath = townId + NEWS_URL;
+            URL base = null;
             try {
-                URL nurl = new URL(base, npath);
+                base = new URL("https://banghowdy.com/game/");
+            } catch (MalformedURLException e) {
+                base = DeploymentConfig.getDocBaseURL();
+            }
+            String _NEWS_URL = "news/index.php";
+            if(DeploymentConfig.beta_build)
+            {
+                _NEWS_URL = "news_beta/index.php";
+            }
+            try {
+                URL nurl = new URL(base, _NEWS_URL);
                 news = new CachedDocument(nurl, NEWS_REFRESH_INTERVAL);
                 _news.put(townId, news);
             } catch (Exception e) {
-                log.warning("Failed to create news URL", "base", base, "path", npath, e);
+                log.warning("Failed to create news URL", "base", base, "path", _NEWS_URL, e);
                 return;
             }
         }

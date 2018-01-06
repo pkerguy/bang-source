@@ -253,14 +253,18 @@ public class ParlorList extends BContainer
             weight += 500;
         } else if (info.type == ParlorInfo.Type.NORMAL) {
             weight += 100;
-        } else if (info.type == ParlorInfo.Type.PARDNERS_ONLY) {
+        } else if (info.type == ParlorInfo.Type.PARDNERS_ONLY && !_ctx.getUserObject().tokens.isSupport()) {
             weight -= 1000;
         }
-        if (info.occupants == 0) {
+        if (info.occupants == 0 && !_ctx.getUserObject().tokens.isSupport()) {
             weight -= 900;
         }
         if (info.server) {
             weight += 5000;
+        }
+        if(info.type == ParlorInfo.Type.SHERIFF)
+        {
+            weight += 4000;
         }
         return weight;
     }

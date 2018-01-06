@@ -19,6 +19,7 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
+import com.sun.tools.javac.code.Type;
 import com.threerings.bang.saloon.data.*;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
@@ -150,7 +151,12 @@ public class SaloonManager extends MatchHostManager
         if (_parlors.containsKey(creator)) {
             throw new InvocationException(ALREADY_HAVE_PARLOR);
         }
-
+        if(type == ParlorInfo.Type.SHERIFF)
+        {
+            Handle modified = new Handle("[OFFICIAL] " + creator);
+            createParlor(modified, type, password, matched, id, false, rl);
+            return;
+        }
         createParlor(creator, type, password, matched, id, false, rl);
     }
 

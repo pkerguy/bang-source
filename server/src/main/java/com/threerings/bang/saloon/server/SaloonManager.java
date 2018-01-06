@@ -19,7 +19,6 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
-import com.sun.tools.javac.code.Type;
 import com.threerings.bang.saloon.data.*;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;

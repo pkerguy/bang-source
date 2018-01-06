@@ -150,12 +150,6 @@ public class SaloonManager extends MatchHostManager
         if (_parlors.containsKey(creator)) {
             throw new InvocationException(ALREADY_HAVE_PARLOR);
         }
-        if(type == ParlorInfo.Type.SHERIFF)
-        {
-            Handle modified = new Handle("[OFFICIAL] " + creator);
-            createParlor(modified, type, password, matched, id, false, rl);
-            return;
-        }
         createParlor(creator, type, password, matched, id, false, rl);
     }
 

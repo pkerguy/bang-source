@@ -262,10 +262,6 @@ public class ParlorList extends BContainer
         if (info.server) {
             weight += 5000;
         }
-        if(info.type == ParlorInfo.Type.SHERIFF)
-        {
-            weight += 4000;
-        }
         return weight;
     }
 

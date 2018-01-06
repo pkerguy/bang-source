@@ -32,7 +32,7 @@ public class DeploymentConfig
     {
         if(beta_build)
         {
-            return 100019;
+            return 100021;
         }
         return 8004; // Change upon each release version
     }

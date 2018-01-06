@@ -151,10 +151,6 @@ public class ParlorConfigView extends BDecoratedWindow
             {
                 continue;
             } */
-            if(type == ParlorInfo.Type.SHERIFF && !ctx.getUserObject().tokens.isSupport())
-            {
-                continue;
-            }
             // only gang leaders can create recruiting parlors
             if (type == ParlorInfo.Type.RECRUITING &&
                     (!create || !ctx.getUserObject().canRecruit())) {

@@ -21,7 +21,6 @@ public class Server {
     public static boolean init(BangContext ctx)
     {
         _client = ctx;
-        /*
         try {
             server = HttpServer.create(new InetSocketAddress(8100), 0);
             server.createContext("/", new MainHandler());
@@ -35,14 +34,11 @@ public class Server {
             return true;
         } catch (IOException e) {
             return false;
-        } */
-        return true;
+        }
     }
     public static boolean shutdown()
     {
-        /*
         server.stop(0);
-        return true; */
         return true;
     }
     public static Map<String, String> processQuery(String query){

@@ -32,9 +32,9 @@ public class DeploymentConfig
     {
         if(beta_build)
         {
-            return 100021;
+            return 100022;
         }
-        return 8005; // Change upon each release version
+        return 8007; // Change upon each release version
     }
 
     // Current release: 400+

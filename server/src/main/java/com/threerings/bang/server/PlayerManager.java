@@ -20,9 +20,11 @@ import com.threerings.bang.avatar.data.Look;
 import com.threerings.bang.avatar.server.persist.LookRepository;
 import com.threerings.bang.client.PlayerService;
 import com.threerings.bang.data.*;
+import com.threerings.bang.game.client.BangService;
 import com.threerings.bang.game.data.*;
 import com.threerings.bang.game.data.card.Forgiven;
 import com.threerings.bang.game.data.effect.*;
+import com.threerings.bang.game.data.piece.Piece;
 import com.threerings.bang.game.data.scenario.PracticeInfo;
 import com.threerings.bang.game.data.scenario.ScenarioInfo;
 import com.threerings.bang.game.server.BangManager;
@@ -1012,7 +1014,7 @@ public class PlayerManager
                             Effect[] values = possibles.values().toArray(new Effect[possibles.size()]);
                             Effect effect = values[new Random().nextInt(values.length)];
                             BangManager bangManager = (BangManager)BangServer.plreg.getPlaceManager(caller.getPlaceOid());
-                            if(bangManager != null)
+                            if(bangManager != null && bangManager.getBangConfig().contentMatch)
                             {
                                 bangManager.deployEffect(-1, effect);
                                 listener.requestFailed("DONE");
@@ -1022,7 +1024,7 @@ public class PlayerManager
                             return;
                         } else {
                             BangManager bangManager = (BangManager)BangServer.plreg.getPlaceManager(caller.getPlaceOid());
-                            if(bangManager != null)
+                            if(bangManager != null && bangManager.getBangConfig().contentMatch)
                             {
                                 HashMap<String, Effect> possibles = new HashMap<String, Effect>();
                                 possibles.put("nukeAll", new AreaServerDamageEffect(-1, 60, 1000, 0 ,0));

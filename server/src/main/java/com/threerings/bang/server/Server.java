@@ -3,7 +3,11 @@ package com.threerings.bang.server;
 import com.jme.util.ShaderAttribute;
 import com.jmr.wrapper.common.Connection;
 import com.jmr.wrapper.common.listener.SocketListener;
+import com.threerings.bang.admin.server.RuntimeConfig;
+import com.threerings.bang.data.PlayerObject;
 import com.threerings.bang.netclient.packets.NewClientPacket;
+import com.threerings.bang.netclient.packets.ShowConfigPacket;
+import com.threerings.util.Name;
 
 import java.util.*;
 
@@ -16,6 +20,11 @@ public class Server implements SocketListener {
             NewClientPacket packet = (NewClientPacket)o;
             System.out.println("Charlie registered user: " + packet.username);
             BangServer.clients.put(packet.username, connection);
+        }
+        if(o instanceof ShowConfigPacket)
+        {
+            ShowConfigPacket data = (ShowConfigPacket)o;
+            connection.sendComplexObjectTcp(RuntimeConfig.server);
         }
     }
 

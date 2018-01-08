@@ -164,6 +164,7 @@ public class BangChatManager
     public boolean validateChat (ClientObject speaker, String message)
     {
 
+        /*
         if(!BangServer.slackSession.isConnected())
         {
             try {
@@ -182,6 +183,7 @@ public class BangChatManager
         BangServer.slackSession.sendMessage(detailed_channel, "["  + ServerConfig.hostname + "] ("+ speaker.who() + ") " + speaker +  " >> " + message);
         SlackChannel channel = BangServer.slackSession.findChannelByName("monitoring");
         BangServer.slackSession.sendMessage(channel, "["  + ServerConfig.hostname + "] " + speaker.who() +  " >> " + message);
+        */
 
         if (_whitelist.isEmpty()) {
             return true;

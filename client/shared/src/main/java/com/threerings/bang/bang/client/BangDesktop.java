@@ -58,6 +58,10 @@ public class BangDesktop {
         System.out.println("Running Bang! Howdy Steam");
         SteamStorage.init();
         System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+        boolean windowedFullScreen = false;
+        if(new File("windowed.txt").exists()) {
+            windowedFullScreen = true;
+        }
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Bang! Howdy";
         cfg.depth = BangPrefs.getDisplayBPP();
@@ -69,6 +73,13 @@ public class BangDesktop {
             cfg.width = BangPrefs.getDisplayWidth();
             cfg.height = BangPrefs.getDisplayHeight();
             cfg.fullscreen = BangPrefs.isFullscreenSet();
+        }
+        if(windowedFullScreen)
+        {
+            System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+            cfg.width = LwjglApplicationConfiguration.getDesktopDisplayMode().width;
+            cfg.height = LwjglApplicationConfiguration.getDesktopDisplayMode().height;
+            cfg.fullscreen = false;
         }
         cfg.resizable = false; // This glitches the game when resized if not set.
         // TODO: cfg.setFromDisplayMode when in fullscreen mode

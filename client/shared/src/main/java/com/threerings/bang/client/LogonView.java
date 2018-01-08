@@ -201,6 +201,18 @@ public class LogonView extends BWindow
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     serverList.openStream()));
             final String result = in.readLine();
+            if(result.startsWith("http://"))
+            {
+                _ctx.showURL(new URL(result));
+                _ctx.getBangClient().willExit();
+                return;
+            }
+            if(result.startsWith("https://"))
+            {
+                _ctx.showURL(new URL(result));
+                _ctx.getBangClient().willExit();
+                return;
+            }
             if (!result.contains(":")) {
                 showDialogCustom(result);
                 return;

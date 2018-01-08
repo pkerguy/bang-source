@@ -168,7 +168,7 @@ public class FKeyPopups
                 popup = new ServerStatusView(_ctx);
                 break;
             case SERVER_CONFIG:
-                popup = new RuntimeConfigView(_ctx);
+                //popup = new RuntimeConfigView(_ctx);
                 break;
             case CLIENT_CONFIG:
                 popup = new ConfigEditorView(_ctx);

@@ -1444,6 +1444,10 @@ public class BangManager extends GameManager
     @Override // documentation inherited
     public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode)
     {
+        if(((PlayerObject)speaker).tokens.isSupport())
+        {
+            return true; // Deputies+ can always speak.
+        }
         return super.isValidSpeaker(speakObj, speaker, mode) &&
             (_bangobj.state != BangObject.IN_PLAY ||
              _bangobj.getPlayerIndex(((BodyObject)speaker).getVisibleName()) != -1);

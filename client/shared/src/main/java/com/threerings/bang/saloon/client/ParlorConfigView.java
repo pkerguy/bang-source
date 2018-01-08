@@ -147,10 +147,10 @@ public class ParlorConfigView extends BDecoratedWindow
         ArrayList<BComboBox.Item> types = new ArrayList<BComboBox.Item>();
         for (ParlorInfo.Type type : ParlorInfo.Type.values()) {
             // only content creators can create Content Creator parlors
-            /*if(type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator())
+            if(type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator())
             {
                 continue;
-            } */
+            }
             // only gang leaders can create recruiting parlors
             if (type == ParlorInfo.Type.RECRUITING &&
                     (!create || !ctx.getUserObject().canRecruit())) {

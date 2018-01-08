@@ -78,13 +78,13 @@ public class CreateParlorDialog extends BDecoratedWindow
                                       SaloonCodes.SALOON_MSGS, "m.create_parlor_failed") {
             protected boolean callService () {
                 ParlorInfo.Type type = (ParlorInfo.Type) _type.getSelectedValue();
-//                if (type == ParlorInfo.Type.CONTENT_CREATOR) {
-//                    _matched.setSelected(false);
-//                    _matched.setEnabled(false);
-//                }
-//                if (type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator()) {
-//                    return false;
-//                }
+                if (type == ParlorInfo.Type.CONTENT_CREATOR) {
+                    _matched.setSelected(false);
+                    _matched.setEnabled(false);
+                }
+                if (type == ParlorInfo.Type.CONTENT_CREATOR && !ctx.getUserObject().getTokens().isContentCreator()) {
+                    return false;
+                }
                 String passwd = type == ParlorInfo.Type.PASSWORD /*|| type == ParlorInfo.Type.CONTENT_CREATOR */ ? _password.getText() : null;
                 if (!_ctx.getUserObject().holdsBadge(Badge.Type.GAMES_PLAYED_1) && _matched.isSelected())
                 {

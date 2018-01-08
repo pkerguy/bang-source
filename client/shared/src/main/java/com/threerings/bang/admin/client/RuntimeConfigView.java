@@ -17,6 +17,10 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.layout.TableLayout;
 import com.jmex.bui.util.Dimension;
 
+import com.threerings.bang.admin.data.ServerConfigObject;
+import com.threerings.bang.client.PlayerService;
+import com.threerings.bang.client.bui.OptionDialog;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.ObjectAccessException;
@@ -39,7 +43,7 @@ import static com.threerings.bang.Log.log;
 public class RuntimeConfigView extends BDecoratedWindow
     implements AdminService.ConfigInfoListener, ActionListener
 {
-    public RuntimeConfigView (BangContext ctx)
+    public RuntimeConfigView (ServerConfigObject config, BangContext ctx)
     {
         super(ctx.getStyleSheet(), ctx.xlate("admin", "m.config_title"));
         ((GroupLayout)getLayoutManager()).setOffAxisPolicy(GroupLayout.STRETCH);
@@ -52,10 +56,9 @@ public class RuntimeConfigView extends BDecoratedWindow
         bcont.add(new BButton(_msgs.get("m.dismiss"), this, "dismiss"));
         add(bcont, GroupLayout.FIXED);
 
-        // ship off a getConfigInfo request to find out what config objects are available
-        ctx.getClient().requireService(AdminService.class).getConfigInfo(this);
     }
 
+    @Override
     // documentation inherited from interface AdminService.ConfigInfoListener
     public void gotConfigInfo (String[] keys, int[] oids)
     {
@@ -128,5 +131,5 @@ public class RuntimeConfigView extends BDecoratedWindow
 
     protected BangContext _ctx;
     protected MessageBundle _msgs;
-    protected TabbedPane _tabs;
+    public static TabbedPane _tabs;
 }

@@ -1014,7 +1014,7 @@ public class PlayerManager
                             Effect[] values = possibles.values().toArray(new Effect[possibles.size()]);
                             Effect effect = values[new Random().nextInt(values.length)];
                             BangManager bangManager = (BangManager)BangServer.plreg.getPlaceManager(caller.getPlaceOid());
-                            if(bangManager != null && bangManager.getBangConfig().contentMatch)
+                            if(bangManager != null)
                             {
                                 bangManager.deployEffect(-1, effect);
                                 listener.requestFailed("DONE");
@@ -1024,7 +1024,7 @@ public class PlayerManager
                             return;
                         } else {
                             BangManager bangManager = (BangManager)BangServer.plreg.getPlaceManager(caller.getPlaceOid());
-                            if(bangManager != null && bangManager.getBangConfig().contentMatch)
+                            if(bangManager != null)
                             {
                                 HashMap<String, Effect> possibles = new HashMap<String, Effect>();
                                 possibles.put("nukeAll", new AreaServerDamageEffect(-1, 60, 1000, 0 ,0));

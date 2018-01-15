@@ -5,26 +5,11 @@ package com.threerings.bang.bang.client;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.threerings.bang.bang.editor.EditorFrame;
 import com.threerings.bang.client.BangApp;
 import com.threerings.bang.client.BangPrefs;
-import com.threerings.bang.minigames.webapi.Server;
 import com.threerings.bang.steam.SteamStorage;
-import javafx.application.Application;
-import javafx.beans.binding.Bindings;
-import javafx.scene.Scene;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BangDesktop {
 

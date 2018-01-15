@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -43,6 +45,10 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Rectangle;
 
+import com.mb3364.twitch.api.Twitch;
+import com.mb3364.twitch.api.auth.Scopes;
+import com.mb3364.twitch.api.handlers.ChannelResponseHandler;
+import com.mb3364.twitch.api.models.Channel;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
@@ -165,6 +171,38 @@ public class TownView extends BWindow
         _admin.add(new BButton("Discord", this, "discord")); // Link resource in game
         //_admin.add(new BButton("Buy Coins", this, "buycoins")); // Ability to buy coins
 
+        /*
+
+        _admin.add(_twitchButton = new BButton("LOADING", this, ""));
+
+        if(ctx.getBangClient().twitch == null)
+        {
+            _twitchButton.setText("Link Twitch");
+            _twitchButton.setAction("twitchLogin");
+        } else if(ctx.getBangClient().twitch.auth().hasAuthenticationError() || !ctx.getBangClient().twitch.auth().hasAccessToken())
+        {
+            _twitchButton.setText("Relink Twitch");
+            _twitchButton.setAction("twitchLogin");
+        } else {
+            _bctx.getBangClient().twitch.channels().get(new ChannelResponseHandler() {
+                @Override
+                public void onFailure(int i, String s, String s1) {
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+
+                }
+
+                @Override
+                public void onSuccess(Channel channel) {
+                    log.info("[DEBUG TWITCH] " + channel.getUrl());
+                }
+            });
+            _twitchButton.setText("Configure Twitch");
+            _twitchButton.setAction("twitchConfig");
+        } */
+
         // if we're an admin add some temporary buttons
         if (user.tokens.isSupport()) {
             //_admin.add(new BButton("Tournaments", this, "tourney")); This isn't a working button at the moment.. Let's just disable it for now.
@@ -265,6 +303,34 @@ public class TownView extends BWindow
             try {
                 _bctx.showURL(new URL("http://discord.gg/yourfunworldstudios"));
             } catch (MalformedURLException e) {}
+        } else if ("twitchLogin".equals(cmd))
+        {
+
+            // Setup the Twitch to the Client
+
+            _bctx.getBangClient().twitch = new Twitch();
+            _bctx.getBangClient().twitch.setClientId("0f38jf54a6xfg33h2jgjrte14n9rp1");
+
+            // Authenticate user with Twitch
+            try {
+                URI callbackUri = new URI("http://127.0.0.1:23522/authorize.html");
+                String authUrl = _bctx.getBangClient().twitch.auth().getAuthenticationUrl(_bctx.getBangClient().twitch.getClientId(), callbackUri, Scopes.USER_READ, Scopes.CHANNEL_READ);
+                _bctx.showURL(new URL(authUrl)); // Lets show them the Auth so they can actually authenticate
+                boolean authSuccess = _bctx.getBangClient().twitch.auth().awaitAccessToken();
+                if(authSuccess)
+                {
+                    log.info("Successfully linked with Twitch");
+                    _twitchButton.setText("Configure Twitch");
+                    _twitchButton.setAction("twitchConfig");
+                } else {
+                    log.info("Failed to authenticate with Twitch");
+                }
+
+            } catch (URISyntaxException| MalformedURLException e) {
+                e.printStackTrace();
+
+            }
+
         }
     }
 
@@ -727,6 +793,7 @@ public class TownView extends BWindow
 
     protected TownBoardView _bview;
     protected BContainer _menu, _admin;
+    protected BButton _twitchButton;
     protected BLabel _tip;
 
     /** Maps prop types to commands. */

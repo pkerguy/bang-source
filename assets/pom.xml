@@ -14,7 +14,7 @@
   <name>Bang Assets</name>
 
   <properties>
-    <towns>frontier_town, indian_post</towns>
+    <towns>frontier_town, indian_post, boom_town</towns>
   </properties>
 
   <dependencies>

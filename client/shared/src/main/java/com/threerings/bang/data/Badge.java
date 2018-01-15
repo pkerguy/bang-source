@@ -51,12 +51,12 @@ public class Badge extends Item
         // games played badges
         GAMES_PLAYED_1 {
             public boolean qualifies (PlayerObject user) {
-                return user.stats.getIntStat(StatType.UNRANKED_GAMES_PLAYED) >= 50;
+                return user.stats.getIntStat(StatType.GAMES_PLAYED) >= 5;
             }
         },
         GAMES_PLAYED_2 {
             public boolean qualifies (PlayerObject user) {
-                return user.stats.getIntStat(StatType.GAMES_PLAYED) >= 25;
+                return user.stats.getIntStat(StatType.GAMES_PLAYED) >= 50;
             }
         },
         GAMES_PLAYED_3 {
@@ -805,6 +805,7 @@ public class Badge extends Item
                 return false;
             }
         },
+
         NEW_YEAR_2018 {
             public boolean qualifies (PlayerObject user) {
                 return false;
@@ -959,7 +960,7 @@ public class Badge extends Item
                     Type.BACKER_TIER2, null, null, null, null,
                     Type.BACKER_TIER3, null, null, null, null,
                     Type.BACKER_TIER4, null, null, null, null,
-
+                    Type.NEW_YEAR_2018, null, null, null, null,
 
             };
 

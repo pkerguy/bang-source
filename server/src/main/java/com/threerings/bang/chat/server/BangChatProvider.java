@@ -40,6 +40,19 @@ public class BangChatProvider extends ChatProvider
                       ChatService.TellListener listener)
         throws InvocationException
     {
+        PlayerObject userObject = (PlayerObject)caller;
+        PlayerObject targetObject = (PlayerObject)BangServer.locator.lookupBody(target);
+        if(!userObject.tokens.isSupport())
+        {
+            if(targetObject.tokens.isSupport()) {
+                if(targetObject.awayMessage != null) {
+                    if (!targetObject.awayMessage.equalsIgnoreCase("off")) {
+                        listener.requestFailed("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
+                        return;
+                    }
+                }
+            }
+        }
         // make sure the message passes the whitelist
         if (_chatmgr.validateChat(caller, message)) {
             super.tell(caller, target, message, listener);
@@ -49,7 +62,7 @@ public class BangChatProvider extends ChatProvider
     @Override // documentation inherited
     public void deliverTell (BodyObject target, UserMessage message)
     {
-        PlayerObject user = (PlayerObject)target;
+        PlayerObject user = (PlayerObject)BangServer.locator.lookupBody(message.speaker);
         user.stats.incrementStat(StatType.CHAT_RECEIVED, 1);
 
         user = (PlayerObject)BangServer.locator.lookupBody(message.speaker);

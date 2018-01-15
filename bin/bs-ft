@@ -7,7 +7,7 @@
 BANG_HOME=`dirname $0`/..
 HOSTNAME=`hostname`
 JARGS=""
-NODE="frontier_town"
+NODE="inferno_frontier"
 
 SERVER_MEMORY=384M
 if [ -f $BANG_HOME/etc/test/server.conf ]; then

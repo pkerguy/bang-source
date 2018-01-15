@@ -316,6 +316,9 @@ public class Match
             }
         }
 
+        // all matched games are no longer rated
+        config.rated = false;
+
         // configure our rounds
         String[] scenIds = ScenarioInfo.selectRandomIds(
                  ServerConfig.townId, _criterion.getDesiredRounds(), pcount, lastScenIds,

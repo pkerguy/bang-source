@@ -68,7 +68,7 @@ public class ParlorConfigView extends BDecoratedWindow
         _type.addListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
                 ParlorInfo.Type type = (ParlorInfo.Type)_type.getSelectedValue();
-                _changePass.setEnabled(type == ParlorInfo.Type.PASSWORD /*|| type == ParlorInfo.Type.CONTENT_CREATOR*/);
+                _changePass.setEnabled(type == ParlorInfo.Type.PASSWORD || type == ParlorInfo.Type.CONTENT_CREATOR);
             }
         });
         _type.addListener(_parconf);

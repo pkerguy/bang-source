@@ -46,9 +46,13 @@ import com.threerings.presents.server.net.*;
 import com.threerings.resource.*;
 import com.threerings.user.depot.*;
 import com.threerings.util.*;
-import com.ullink.slack.simpleslackapi.SlackSession;
-import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
+import javax.security.auth.login.LoginException;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +65,7 @@ import static com.threerings.bang.Log.*;
 public class BangServer extends CrowdServer
 {
     /** Configures dependencies needed by the Bang server. */
-    public static class Module extends CrowdServer.CrowdModule {
+    public static class Module extends CrowdServer.CrowdModule implements EventListener {
         @Override protected void configure () {
             super.configure();
 
@@ -99,14 +103,9 @@ public class BangServer extends CrowdServer
             bind(AccountActionRepository.class).toInstance(aarepo);
             bind(AvatarLogic.class).toInstance(alogic);
 
-            // Setup slack
-            slackSession = SlackSessionFactory.createWebSocketSlackSession("xoxb-294640039638-r40tFhGb7K2imJFJ2i3q3HyT");
-            try {
-                slackSession.connect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            DISCORD.start();
         }
+
         @Override protected void bindInvokers() {
             // replace the presents invoker with a custom version
             bind(Invoker.class).annotatedWith(MainInvoker.class).to(BangInvoker.class);
@@ -182,7 +181,9 @@ public class BangServer extends CrowdServer
     public static int amountofPlayers = 0, parlorCount = 0;
     public static Map<BodyObject, Integer> round = new ConcurrentHashMap<>();
     public static String[] scenerioIds;
-    public static SlackSession slackSession;
+
+    public static DiscordAPIManager DISCORD = new DiscordAPIManager();
+
 
     /**
      * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
@@ -207,6 +208,8 @@ public class BangServer extends CrowdServer
             throw new IllegalStateException(errmsg);
         }
     }
+
+
 
     /**
      * The main entry point for the Bang server.
@@ -375,6 +378,8 @@ public class BangServer extends CrowdServer
         }
 
         log.info("Bang server v" + DeploymentConfig.getVersion() + " initialized.");
+
+        DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
     }
 
     /**
@@ -431,6 +436,9 @@ public class BangServer extends CrowdServer
         _ilog.close();
         _stlog.close();
         _plog.close();
+
+        // shutdown discord API
+        DISCORD.stop();
     }
 
     protected void checkAutoRestart ()

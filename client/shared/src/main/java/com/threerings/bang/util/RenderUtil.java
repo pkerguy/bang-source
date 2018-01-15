@@ -537,8 +537,7 @@ public class RenderUtil
     public static boolean isOutsideFrustum (Spatial spatial)
     {
         for (; spatial != null; spatial = spatial.getParent()) {
-            if (spatial.getLastFrustumIntersection() ==
-                    Camera.OUTSIDE_FRUSTUM) {
+            if (spatial.getLastFrustumIntersection() == Camera.OUTSIDE_FRUSTUM) {
                 return true;
             }
         }

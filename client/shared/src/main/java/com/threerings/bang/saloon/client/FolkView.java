@@ -64,6 +64,9 @@ public class FolkView extends BContainer
     // from interface SetListener
     public void entryAdded (EntryAddedEvent<DSet.Entry> eae)
     {
+
+        BangOccupantInfo check = (BangOccupantInfo)eae.getEntry();
+
         if (PlayerObject.PARDNERS.equals(eae.getName())) {
             PardnerEntry entry = (PardnerEntry) eae.getEntry();
             // if our new pardner is here with us, add to display
@@ -92,6 +95,7 @@ public class FolkView extends BContainer
         } else if (PlaceObject.OCCUPANT_INFO.equals(ere.getName())) {
             FolkCell cell = _folks.get(
                 ((BangOccupantInfo) ere.getOldEntry()).username);
+
             if (cell != null) {
                 removeCell(cell);
             }
@@ -184,6 +188,13 @@ public class FolkView extends BContainer
      */
     protected void maybeInsertCell (BangOccupantInfo info)
     {
+        if(info.awayMessage != null)
+        {
+            if(info.awayMessage.equalsIgnoreCase("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com"))
+            {
+                return;
+            }
+        }
         boolean pard = _user.pardners.containsKey(info.username);
         boolean ff = _user.isFriend(info.playerId);
         if (pard || !_ffOnly || ff) {
@@ -211,6 +222,7 @@ public class FolkView extends BContainer
         }
         for (int ii = 0; ii < _folkList.getComponentCount(); ii ++) {
             FolkCell other = (FolkCell) _folkList.getComponent(ii);
+
             if (cell.compareTo(other) > 0) {
                 continue;
             }

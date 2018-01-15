@@ -32,7 +32,7 @@ done
 for TOWN in $TOWNS; do
     mkdir -p $TARGET/rsrc/bonuses/$TOWN
     find rsrc/bonuses/$TOWN -name 'bonus.properties' | \
-        sed 's:rsrc/bonuses/::g' | sed 's:/bonus.properties::' | sort > \
+        sed 's:rsrc/bonuses/::g'/ | sed 's:/bonus.properties::' | sort > \
         $TARGET/rsrc/bonuses/$TOWN/bonuses.txt
 done
 

@@ -21,16 +21,21 @@ import com.threerings.bang.client.bui.EnablingValidator;
 import com.threerings.bang.client.bui.OptionDialog;
 import com.threerings.bang.client.bui.StatusLabel;
 import com.threerings.bang.data.*;
+import com.threerings.bang.netclient.packets.AwayAdminPacket;
 import com.threerings.bang.netclient.packets.NewClientPacket;
+import com.threerings.bang.netclient.packets.WhoSendAdminPacket;
+import com.threerings.bang.netclient.packets.WhoSendPacket;
 import com.threerings.bang.steam.SteamStorage;
 import com.threerings.bang.util.BangContext;
 import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.SpeakService;
+import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.LogonException;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
@@ -201,18 +206,6 @@ public class LogonView extends BWindow
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     serverList.openStream()));
             final String result = in.readLine();
-            if(result.startsWith("http://"))
-            {
-                _ctx.showURL(new URL(result));
-                _ctx.getBangClient().willExit();
-                return;
-            }
-            if(result.startsWith("https://"))
-            {
-                _ctx.showURL(new URL(result));
-                _ctx.getBangClient().willExit();
-                return;
-            }
             if (!result.contains(":")) {
                 showDialogCustom(result);
                 return;
@@ -231,8 +224,19 @@ public class LogonView extends BWindow
             grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
             grid.add(passwordgrid);
             passwordgrid.add(_password = new BPasswordField());
+            passwordgrid.add(_savepassword = new BCheckBox(null));
+            _savepassword.setTooltipText("Remember Me");
             _password.setPreferredWidth(150);
             _password.addListener(this);
+            _savepassword.addListener(new ActionListener() {
+                public void actionPerformed (ActionEvent event) {
+                   if(!_savepassword.isSelected())
+                   {
+                       BangPrefs.config.remove("password");
+                       _password.setText("");
+                   }
+                }
+            });
             if (!result.contains("&")) {
                 String[] cmdSplit = result.split(":");
                 availableServers.add(cmdSplit[0]);
@@ -358,6 +362,11 @@ public class LogonView extends BWindow
                 if (password == "" || password == null) {
                     log.warning("You didn't enter any password in");
                     return;
+                }
+
+                if(_savepassword.isSelected())
+                {
+                    BangPrefs.config.setValue("password", _password.getText());
                 }
 
                 // try to connect to the town lobby server that this player last accessed
@@ -571,10 +580,118 @@ public class LogonView extends BWindow
             } else {
                 _netclient.getServerConnection().sendTcp(new NewClientPacket(user.username.getNormal()));
             }
+            if(!BangPrefs.config.getValue("password", "").equals(""))
+            {
+                _savepassword.setSelected(true);
+                _password.setText(BangPrefs.config.getValue("password", ""));
+                _logon.setEnabled(true);
+            }
+            if(_savepassword.isSelected())
+            {
+                BangPrefs.config.setValue("password", _password.getText());
+            }
+            MessageBundle msg = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);
+            _ctx.getChatDirector().registerCommandHandler(msg, "who", new ChatDirector.CommandHandler() {
+                public String handleCommand(
+                        SpeakService speaksvc, String command, String args,
+                        String[] history) {
+
+                    if(user.tokens.isSupport() || user.tokens.isAdmin())
+                    {
+                        _netclient.getServerConnection().sendComplexObjectTcp(new WhoSendAdminPacket(_ctx.getUserObject().username.getNormal()));
+                    } else {
+                        _netclient.getServerConnection().sendComplexObjectTcp(new WhoSendPacket());
+                    }
+                    return "success";
+                }
+            });
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
                     user.username.toString());
             if (user.tokens.isSupport() || user.tokens.isAdmin()) {
-                MessageBundle msg = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);
+                _ctx.getChatDirector().registerCommandHandler(msg, "kick", new ChatDirector.CommandHandler() {
+                    public String handleCommand(
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isSupport()) {
+                            return "ACCESS DENIED";
+                        }
+                        Handle _handle = new Handle(args.replaceAll("_", " "));
+                        _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Boot Player", GameMasterDialog.KICK), true, 500);
+                        return "success";
+                    }
+                });
+                _ctx.getChatDirector().registerCommandHandler(msg, "tempban", new ChatDirector.CommandHandler() {
+                    public String handleCommand(
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isSupport()) {
+                            return "ACCESS DENIED";
+                        }
+                        Handle _handle = new Handle(args.replaceAll("_", " "));
+                        _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Tempban Player", GameMasterDialog.TEMP_BAN), true, 500);
+                        return "success";
+                    }
+                });
+                _ctx.getChatDirector().registerCommandHandler(msg, "ban", new ChatDirector.CommandHandler() {
+                    public String handleCommand(
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isSupport()) {
+                            return "ACCESS DENIED";
+                        }
+                        Handle _handle = new Handle(args.replaceAll("_", " "));
+                        _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Permban Player", GameMasterDialog.PERMA_BAN), true, 500);
+                        return "success";
+                    }
+                });
+                _ctx.getChatDirector().registerCommandHandler(msg, "hide", new ChatDirector.CommandHandler() {
+                    public String handleCommand(
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isSupport()) {
+                            return "ACCESS DENIED";
+                        }
+                        switch (args)
+                        {
+                            case "on": {
+                                _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().username.getNormal(), true));
+                                return "Successfully toggled staff status to: ON";
+                            }
+                            case "off": {
+                                _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().username.getNormal(), false));
+                                return "Successfully toggled staff status to: OFF";
+                            }
+                            default: return "Invalid value. Accepted values: on/off";
+                        }
+                    }
+                });
+                _ctx.getChatDirector().registerCommandHandler(msg, "jump", new ChatDirector.CommandHandler() {
+                    public String handleCommand(
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+
+                        if (_ctx.getUserObject() == null) return "NOPE";
+                        if (!_ctx.getUserObject().tokens.isSupport()) {
+                            return "ACCESS DENIED";
+                        }
+                        try {
+                            int placeOid = Integer.parseInt(args);
+                            _ctx.getLocationDirector().moveTo(placeOid);
+                        } catch(Exception ex)
+                        {
+                            return "Invalid usage.";
+                        }
+                        return "success";
+                    }
+                });
                 _ctx.getChatDirector().registerCommandHandler(msg, "watch", new ChatDirector.CommandHandler() {
                     public String handleCommand(
                             SpeakService speaksvc, String command, String args,
@@ -586,7 +703,7 @@ public class LogonView extends BWindow
                         if (StringUtil.isBlank(args)) {
                             return getUsage("Usage: /watch user");
                         }
-                        Handle name = new Handle(args);
+                        Handle name = new Handle(args.replace("_", " "));
                         _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
                                 name, GameMasterDialog.WATCH_GAME, "", 0L,
                                 new InvocationService.ConfirmListener() {
@@ -703,6 +820,7 @@ public class LogonView extends BWindow
 
     protected BTextField _username;
     protected BPasswordField _password;
+    protected BCheckBox _savepassword;
     protected BButton _logon, _action, _account, _anon, registerBtn;
     protected BComboBox serverList;
     protected BIcon _unitIcon;

@@ -71,11 +71,19 @@ public class PaperView extends BContainer
             }
         });
 
-        refreshNews(true);
-
         // when the news is loaded; it will display the news tab, but we need to hand set the
         // proper navigation button to selected
         _navi[0].setSelected(true);
+
+        // any time after the first that we enter the saloon during a session, start on the
+        // friendly folks page
+        if (_shownNews) {
+            displayPage(1);
+        } else {
+            // load and display the news page
+            refreshNews(false);
+            _shownNews = true;
+        }
     }
 
     /**
@@ -118,32 +126,33 @@ public class PaperView extends BContainer
         }
 
         switch (_pageNo = pageNo) {
-            case 0:
-                CachedDocument news = _news.get(_ctx.getUserObject().townId);
+        case 0:
+            CachedDocument news = _news.get(_ctx.getUserObject().townId);
+            if (news == null) {
                 refreshNews(false);
-                if (KeyInput.get().isKeyDown(Keys.CONTROL_LEFT)) {
-                    refreshNews(true);
-                } else {
-                    refreshNews(true);
-                }
-                break;
+            } else if (KeyInput.get().isKeyDown(Keys.CONTROL_LEFT)) {
+                refreshNews(true);
+            } else {
+                setContents(news.getDocument());
+            }
+            break;
 
-            case 1:
-                if (_folks.getParent() == null) {
-                    _contcont.removeAll();
-                    _contcont.add(_folks, BorderLayout.CENTER);
-                }
-                break;
+        case 1:
+            if (_folks.getParent() == null) {
+                _contcont.removeAll();
+                _contcont.add(_folks, BorderLayout.CENTER);
+            }
+            break;
 
-            case 2:
-                if (_topscore == null) {
-                    _topscore = new TopScoreView(_ctx, _salobj);
-                }
-                if (_topscore.getParent() == null) {
-                    _contcont.removeAll();
-                    _contcont.add(_topscore, BorderLayout.CENTER);
-                }
-                break;
+        case 2:
+            if (_topscore == null) {
+                _topscore = new TopScoreView(_ctx, _salobj);
+            }
+            if (_topscore.getParent() == null) {
+                _contcont.removeAll();
+                _contcont.add(_topscore, BorderLayout.CENTER);
+            }
+            break;
         }
     }
 
@@ -173,16 +182,21 @@ public class PaperView extends BContainer
         String townId = _ctx.getUserObject().townId;
         CachedDocument news = _news.get(townId);
         if (news == null) {
+            URL base = DeploymentConfig.getDocBaseURL();
+            String npath = townId + NEWS_URL;
             try {
-                URL nurl = new URL(new URL("http://banghowdy.com/game/news/"), "index.php");
+                URL nurl = new URL(base, npath);
                 news = new CachedDocument(nurl, NEWS_REFRESH_INTERVAL);
                 _news.put(townId, news);
             } catch (Exception e) {
+                log.warning("Failed to create news URL", "base", base, "path", npath, e);
                 return;
             }
         }
-        news.refreshDocument(force, _newsup);
-        setContents(news.getDocument());
+
+        if (!news.refreshDocument(force, _newsup)) {
+            setContents(news.getDocument());
+        }
     }
 
     /** Used to asynchronously update the news. */

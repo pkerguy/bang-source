@@ -12,8 +12,10 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Throttle;
 import com.threerings.bang.admin.client.GameMasterDialog;
+import com.threerings.bang.client.LogonView;
 import com.threerings.bang.client.PlayerService;
 import com.threerings.bang.client.bui.OptionDialog;
+import com.threerings.bang.netclient.packets.RequestUserObjectPacket;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -257,6 +259,10 @@ public class BangChatDirector extends ChatDirector
         PlaceObject plobj = _ctx.getLocationDirector().getPlaceObject();
         if (plobj instanceof BangObject) {
             BangObject bangobj = (BangObject)plobj;
+            if(_ctx.getUserObject().tokens.isSupport())
+            {
+                return null;
+            }
             if (bangobj.state == BangObject.IN_PLAY &&
                     bangobj.getPlayerIndex(_ctx.getUserObject().handle) == -1 && !_ctx.getUserObject().getTokens().isSupport()) {
                 return "e.not_player";

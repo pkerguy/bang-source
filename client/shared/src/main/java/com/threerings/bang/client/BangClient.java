@@ -10,6 +10,7 @@ import com.jme.renderer.*;
 import com.jmex.bui.*;
 import com.jmex.bui.event.*;
 import com.jmex.bui.event.EventListener;
+import com.mb3364.twitch.api.Twitch;
 import com.samskivert.servlet.user.*;
 import com.samskivert.text.*;
 import com.samskivert.util.*;
@@ -1468,6 +1469,7 @@ public class BangClient extends BasicClient
     };
 
     protected BangContextImpl _ctx = new BangContextImpl();
+    protected Twitch twitch;
     protected String _pendingTownId;
 
     protected BangChatDirector _chatdir;
@@ -1512,4 +1514,5 @@ public class BangClient extends BasicClient
     protected static final String[] MEDIUM_DETAIL = {
         "GeForce FX 55", "Radeon 8", "GeForce4 Ti", "RADEON XPRESS 200", "RADEON XPRESS Series"
     };
+
 }

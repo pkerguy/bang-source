@@ -62,7 +62,6 @@ public class CompileModelTask extends Task
         throws BuildException
     {
         String baseDir = getProject().getBaseDir().getPath();
-        baseDir = baseDir.replace('\\', '/');
         for (FileSet fs : _filesets) {
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             File fromDir = fs.getDir(getProject());

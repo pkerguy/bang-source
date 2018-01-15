@@ -21,6 +21,8 @@ public class BangOccupantInfo extends OccupantInfo
     /** The player's gang id. */
     public int gangId;
 
+    public String awayMessage;
+
     /** Creates {@link AvatarInfo} for the supplied player. */
     public static AvatarInfo getAvatar (PlayerObject user)
     {
@@ -36,6 +38,7 @@ public class BangOccupantInfo extends OccupantInfo
         avatar = getAvatar(user);
         playerId = user.playerId;
         gangId = user.gangId;
+        awayMessage = user.awayMessage;
     }
 
     /** Creates a blank instance for unserialization. */

@@ -4,7 +4,6 @@
 package com.threerings.bang.chat.server;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
@@ -28,7 +27,9 @@ import com.samskivert.util.StringUtil;
 import com.threerings.bang.admin.server.BangAdminManager;
 import com.threerings.bang.data.BangTokenRing;
 import com.threerings.bang.server.BangServer;
+import com.threerings.bang.server.DiscordAPIManager;
 import com.threerings.bang.server.persist.PlayerRecord;
+import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.parlor.tourney.data.EntryFee;
 import com.threerings.parlor.tourney.data.Prize;
@@ -50,7 +51,6 @@ import com.threerings.bang.gang.server.persist.GangRepository;
 import com.threerings.bang.server.PlayerLocator;
 import com.threerings.bang.server.ServerConfig;
 import com.threerings.bang.server.persist.PlayerRepository;
-import com.ullink.slack.simpleslackapi.SlackChannel;
 
 import static com.threerings.bang.Log.log;
 
@@ -163,27 +163,8 @@ public class BangChatManager
      */
     public boolean validateChat (ClientObject speaker, String message)
     {
-
-        /*
-        if(!BangServer.slackSession.isConnected())
-        {
-            try {
-                BangServer.slackSession.connect();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        if(!BangServer.slackSession.isConnected())
-        {
-            return false;
-        }
-
-        SlackChannel detailed_channel = BangServer.slackSession.findChannelByName("monitoring-detailed");
-        BangServer.slackSession.sendMessage(detailed_channel, "["  + ServerConfig.hostname + "] ("+ speaker.who() + ") " + speaker +  " >> " + message);
-        SlackChannel channel = BangServer.slackSession.findChannelByName("monitoring");
-        BangServer.slackSession.sendMessage(channel, "["  + ServerConfig.hostname + "] " + speaker.who() +  " >> " + message);
-        */
+        PlayerObject player = (PlayerObject)speaker;
+        BangServer.DISCORD.commit(DiscordAPIManager.MONITORING, "[" + ServerConfig.nodename + "](" + player.getPlaceOid() + ") " + speaker.who() + ": " + message);
 
         if (_whitelist.isEmpty()) {
             return true;

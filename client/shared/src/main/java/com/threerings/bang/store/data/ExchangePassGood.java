@@ -16,7 +16,7 @@ import com.threerings.bang.data.PlayerObject;
 public class ExchangePassGood extends Good
 {
     public static final int COIN_COST = 0;
-    public static final int SCRIP_COST = 12500;
+    public static final int SCRIP_COST = 4000;
 
     /**
      * Creates a good representing the exhange pass.

@@ -8,6 +8,8 @@ import com.threerings.bang.admin.data.ServerConfigObject;
 import com.threerings.bang.client.BangUI;
 import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.bang.netclient.packets.ShowURLPacket;
+import com.threerings.bang.netclient.packets.WhoResponsePacket;
+import com.threerings.bang.netclient.packets.WhoUserResponsePacket;
 import com.threerings.bang.util.BangContext;
 
 import java.lang.reflect.Field;
@@ -29,10 +31,33 @@ public class Client implements SocketListener {
             ShowURLPacket packet = (ShowURLPacket)o;
             _ctx.showURL(packet.url);
         }
-        if(o instanceof ServerConfigObject)
+        if(o instanceof WhoResponsePacket)
         {
-            ServerConfigObject confobj = (ServerConfigObject)o;
-            new RuntimeConfigView(confobj, _ctx);
+            WhoResponsePacket packet = (WhoResponsePacket)o;
+            if(packet.data.isEmpty())
+            {
+                _ctx.getChatDirector().displayInfo(null, "No online users.. There must have been an error.");
+                return;
+            }
+            StringBuilder replyBuilder = new StringBuilder();
+            int loopCount = 0; // I know this is bad but its so we don't add an extra comma at the end of our lists
+            for(WhoUserResponsePacket response : packet.data){
+                loopCount++;
+                replyBuilder.append(response.publicDisplay);
+                if(response.username != null)
+                {
+                    replyBuilder.append("(" + response.username + ")");
+                }
+                if(response.placeOid != -1)
+                {
+                    replyBuilder.append("[" + response.placeOid + "]");
+                }
+                if(loopCount < packet.data.size())
+                {
+                    replyBuilder.append(", ");
+                }
+            }
+            _ctx.getChatDirector().displayInfo(null, "Online Users: " + replyBuilder);
         }
     }
 

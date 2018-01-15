@@ -22,7 +22,7 @@
     <component cclass="male/clothing_front" name="lapels_suit"/>
   </article>
 
-  <article name="male_duster" townId="frontier_town" slot="clothing" scrip="1800" coins="1">
+  <article name="male_duster" townId="frontier_town" slot="clothing" scrip="1800" coins="0">
     <component cclass="male/clothing_back" name="duster"/>
   </article>
 
@@ -49,7 +49,7 @@
     <component cclass="male/clothing_front" name="flask_fringe"/>
   </article>
 
-  <article name="male_poncho" townId="frontier_town" slot="clothing" scrip="2500" coins="1">
+  <article name="male_poncho" townId="frontier_town" slot="clothing" scrip="2500" coins="0">
     <component cclass="male/clothing_back" name="poncho"/>
   </article>
 
@@ -121,7 +121,7 @@
     <component cclass="male/clothing_back" name="mink_shirt"/>
   </article>
 
-  <article name="male_fed_jacket_revolver" townId="indian_post" slot="clothing" scrip="1400" coins="1">
+  <article name="male_fed_jacket_revolver" townId="indian_post" slot="clothing" scrip="1400" coins="0">
     <component cclass="male/clothing_back" name="a_federal_jacket"/>
     <component cclass="male/clothing_front" name="federal_jacket_revolver"/>
   </article>
@@ -131,7 +131,7 @@
     <component cclass="male/clothing_front" name="tlingit_dagger"/>
   </article>
 
-  <article name="male_chillkat_blanket" townId="indian_post" slot="clothing" scrip="1800" coins="1" colors="clothes_p,clothes_s">
+  <article name="male_chillkat_blanket" townId="indian_post" slot="clothing" scrip="1800" coins="0" colors="clothes_p,clothes_s">
     <component cclass="male/clothing_back" name="tlingit_chillkat_blanket"/>
   </article>
 
@@ -225,7 +225,7 @@
   </article>
 
   <!-- male hats: frontier town -->
-  <article name="male_stetson_bare" townId="frontier_town" slot="hat" scrip="1100" coins="1" colors="clothes_p">
+  <article name="male_stetson_bare" townId="frontier_town" slot="hat" scrip="1100" coins="0" colors="clothes_p">
     <component cclass="male/hat" name="stetson"/>
     <component cclass="male/hat_back" name="stetson"/>
   </article>
@@ -364,12 +364,12 @@
     <component cclass="male/hat_back" name="feather_one"/>
   </article>
 
-  <article name="male_feather_two" townId="indian_post" slot="hat" scrip="800" coins="1"
+  <article name="male_feather_two" townId="indian_post" slot="hat" scrip="800" coins="0"
    colors="clothes_p,clothes_s">
     <component cclass="male/hat_back" name="feather_two"/>
   </article>
 
-  <article name="male_buffalo" townId="indian_post" slot="hat" scrip="1000" coins="1"
+  <article name="male_buffalo" townId="indian_post" slot="hat" scrip="1000" coins="0"
    colors="clothes_p,clothes_s">
     <component cclass="male/hat" name="buffalo"/>
     <component cclass="male/hat_back" name="buffalo"/>
@@ -393,7 +393,7 @@
     <component cclass="male/hat_band" name="medallion_buffalo"/>
   </article>
 
-  <article name="male_battered_fox_skull" townId="indian_post" slot="hat" scrip="1800" coins="1"
+  <article name="male_battered_fox_skull" townId="indian_post" slot="hat" scrip="1800" coins="0"
    colors="clothes_p,clothes_t">
     <component cclass="male/hat" name="battered_fox_skull"/>
     <component cclass="male/hat_back" name="battered_fox_skull"/>
@@ -568,7 +568,7 @@
     <component cclass="female/clothing_back" name="striped_vest"/>
   </article>
 
-  <article name="female_duster" townId="frontier_town" slot="clothing" scrip="1750" coins="1">
+  <article name="female_duster" townId="frontier_town" slot="clothing" scrip="1750" coins="0">
     <component cclass="female/clothing_back" name="duster"/>
   </article>
 
@@ -736,6 +736,12 @@
     <component cclass="female/familiar" name="armadillo"/>
   </article>
 
+    <!-- Backer Items -->
+
+    <article name="female_armadillo" townId="frontier_town" slot="familiar" scrip="11500" coins="0" colors="">
+        <component cclass="female/familiar" name="armadillo"/>
+    </article>
+
   <!-- female eye glasses: frontier town -->
   <article name="female_round_glasses" townId="frontier_town" slot="glasses" scrip="1000" coins="0" colors="">
     <component cclass="female/glasses" name="round"/>
@@ -888,7 +894,7 @@
     <component cclass="female/hat_back" name="feather_one"/>
   </article>
 
-  <article name="female_feather_two" townId="indian_post" slot="hat" scrip="800" coins="1" colors="clothes_p,clothes_s">
+  <article name="female_feather_two" townId="indian_post" slot="hat" scrip="800" coins="0" colors="clothes_p,clothes_s">
     <component cclass="female/hat_back" name="feather_two"/>
   </article>
 
@@ -1024,6 +1030,14 @@
   <article name="female_clown" townId="indian_post" slot="makeup" scrip="350" coins="0"
         start="2007-04-01" stop="2007-04-08">
     <component cclass="female/makeup" name="clown"/>
+  </article>
+
+  <article name="female_locust" townId="frontier_town" slot="familiar" scrip="0" coins="0" colors="">
+    <component cclass="male/familiar" name="locust_familiar"/>
+  </article>
+
+  <article name="male_locust" townId="frontier_town" slot="familiar" scrip="0" coins="0" colors="">
+  <component cclass="male/familiar" name="locust_familiar"/>
   </article>
 
 </articles>

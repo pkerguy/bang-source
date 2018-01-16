@@ -142,11 +142,6 @@ public class BangClientResolver extends CrowdClientResolver
             buser.setScrip(0);
             buser.scrip = 0;
         }
-        if(buser.tokens.isSupport())
-        {
-            buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
-            buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
-        }
         Timer timer = new Timer();
         timer.schedule( new TimerTask()
         {

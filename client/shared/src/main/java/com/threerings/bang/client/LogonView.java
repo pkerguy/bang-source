@@ -224,19 +224,8 @@ public class LogonView extends BWindow
             grid.add(new BLabel(_msgs.get("m.password"), "logon_label"));
             grid.add(passwordgrid);
             passwordgrid.add(_password = new BPasswordField());
-            passwordgrid.add(_savepassword = new BCheckBox(null));
-            _savepassword.setTooltipText("Remember Me");
             _password.setPreferredWidth(150);
             _password.addListener(this);
-            _savepassword.addListener(new ActionListener() {
-                public void actionPerformed (ActionEvent event) {
-                   if(!_savepassword.isSelected())
-                   {
-                       BangPrefs.config.remove("password");
-                       _password.setText("");
-                   }
-                }
-            });
             if (!result.contains("&")) {
                 String[] cmdSplit = result.split(":");
                 availableServers.add(cmdSplit[0]);
@@ -362,11 +351,6 @@ public class LogonView extends BWindow
                 if (password == "" || password == null) {
                     log.warning("You didn't enter any password in");
                     return;
-                }
-
-                if(_savepassword.isSelected())
-                {
-                    BangPrefs.config.setValue("password", _password.getText());
                 }
 
                 // try to connect to the town lobby server that this player last accessed
@@ -579,16 +563,6 @@ public class LogonView extends BWindow
                 return;
             } else {
                 _netclient.getServerConnection().sendTcp(new NewClientPacket(user.username.getNormal()));
-            }
-            if(!BangPrefs.config.getValue("password", "").equals(""))
-            {
-                _savepassword.setSelected(true);
-                _password.setText(BangPrefs.config.getValue("password", ""));
-                _logon.setEnabled(true);
-            }
-            if(_savepassword.isSelected())
-            {
-                BangPrefs.config.setValue("password", _password.getText());
             }
             MessageBundle msg = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);
             _ctx.getChatDirector().registerCommandHandler(msg, "who", new ChatDirector.CommandHandler() {
@@ -820,7 +794,6 @@ public class LogonView extends BWindow
 
     protected BTextField _username;
     protected BPasswordField _password;
-    protected BCheckBox _savepassword;
     protected BButton _logon, _action, _account, _anon, registerBtn;
     protected BComboBox serverList;
     protected BIcon _unitIcon;

@@ -521,6 +521,7 @@ public abstract class Scenario
         BangObject bangobj, String bonusName, int x, int y)
     {
         Bonus drop = Bonus.createBonus(BonusConfig.getConfig(bonusName));
+        if(drop == null) return null;
         Point spot = bangobj.board.getOccupiableSpot(x, y, 0, 3, null);
         if (spot == null) {
             log.info("Unable to drop bonus for lack of spot", "x", x, "y", y);

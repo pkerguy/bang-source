@@ -64,9 +64,6 @@ public class FolkView extends BContainer
     // from interface SetListener
     public void entryAdded (EntryAddedEvent<DSet.Entry> eae)
     {
-
-        BangOccupantInfo check = (BangOccupantInfo)eae.getEntry();
-
         if (PlayerObject.PARDNERS.equals(eae.getName())) {
             PardnerEntry entry = (PardnerEntry) eae.getEntry();
             // if our new pardner is here with us, add to display

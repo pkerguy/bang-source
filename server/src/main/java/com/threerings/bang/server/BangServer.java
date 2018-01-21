@@ -82,13 +82,15 @@ public class BangServer extends CrowdServer
                 {
                     case "boards": {
                         isBoardServer = true;
+                        RuntimeConfig.server.setSaloonEnabled(true);
                         RuntimeConfig.server.setBankEnabled(true);
                         RuntimeConfig.server.setFreeIndianPost(true);
                         RuntimeConfig.server.setHideoutEnabled(false);
-                        RuntimeConfig.server.setBarberEnabled(false);
+                        RuntimeConfig.server.setBarberEnabled(true);
                         RuntimeConfig.server.setRanchEnabled(false);
                         RuntimeConfig.server.setOfficeEnabled(false);
                         RuntimeConfig.server.setStoreEnabled(false);
+                        RuntimeConfig.server.setNonAdminsAllowed(true);
                         System.out.println("Set server as a board server");
                         break;
                     }

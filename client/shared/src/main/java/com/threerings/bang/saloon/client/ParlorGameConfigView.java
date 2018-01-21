@@ -405,10 +405,7 @@ public class ParlorGameConfigView extends BContainer
         if (!StringUtil.isBlank(bfile)) {
             String error = null;
             int pcount = config.getCount(Slot.HUMAN) + config.getCount(Slot.TINCAN);
-            File board = new File(
-                BangClient.localDataDir(
-                    "rsrc" + File.separator + "boards" + File.separator +
-                    String.valueOf(pcount)), bfile);
+            File board = new File("boards", bfile);
             if (!board.exists()) {
                 error = "m.board_not_found";
             }
@@ -420,8 +417,7 @@ public class ParlorGameConfigView extends BContainer
             if (error != null) {
                 String msg = MessageBundle.taint(board.getPath());
                 msg = MessageBundle.compose("m.board_load_failed", msg, error);
-                msg = _ctx.xlate(SaloonCodes.SALOON_MSGS, msg);
-                _status.setStatus(msg, true);
+                _ctx.getChatDirector().displayFeedback(SaloonCodes.SALOON_MSGS, msg);
                 return;
             }
         }

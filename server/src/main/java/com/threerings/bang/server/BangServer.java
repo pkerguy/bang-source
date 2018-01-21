@@ -98,6 +98,16 @@ public class BangServer extends CrowdServer
                         System.out.println("Toggled LOGIN to: " + RuntimeConfig.server.nonAdminsAllowed);
                         break;
                     }
+                    case "togglesaloon": {
+                        if(RuntimeConfig.server.saloonEnabled)
+                        {
+                            RuntimeConfig.server.setSaloonEnabled(false);
+                        } else {
+                            RuntimeConfig.server.setSaloonEnabled(true);
+                        }
+                        System.out.println("Toggled Saloon to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        break;
+                    }
                     case "togglegames": {
                         if(RuntimeConfig.server.allowNewGames)
                         {

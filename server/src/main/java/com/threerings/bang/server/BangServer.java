@@ -83,7 +83,6 @@ public class BangServer extends CrowdServer
                         RuntimeConfig.server.setHideoutEnabled(false);
                         RuntimeConfig.server.setBarberEnabled(false);
                         RuntimeConfig.server.setRanchEnabled(false);
-                        RuntimeConfig.server.setSaloonEnabled(false);
                         RuntimeConfig.server.setOfficeEnabled(false);
                         RuntimeConfig.server.setStoreEnabled(false);
                         System.out.println("Set server as a board server");

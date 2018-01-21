@@ -191,7 +191,8 @@ public class ParlorGameConfigView extends BContainer
         pane.setViewportStyleClass("parlor_scenarios");
         ((BorderLayout)pane.getLayoutManager()).setGaps(3, 5);
         scenbox.add(pane, BorderLayout.CENTER);
-        if (_ctx.getUserObject().tokens.isAdmin()) {
+        String specialMode = System.getProperty("special");
+        if (_ctx.getUserObject().tokens.isAdmin() || specialMode != null) {
             scenbox.add(_board = new BTextField(""), BorderLayout.SOUTH);
         }
         main.add(scenbox);

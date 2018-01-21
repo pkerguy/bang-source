@@ -111,21 +111,21 @@ public class BangServer extends CrowdServer
                     }
                     case "reloadboards": {
                         // Create backups of previous data in-case the reload fails
-                        final BoardManager.BoardMap[] backupBoard = _boardmgr._byname;
-                        final HashMap<String,BoardManager.BoardList[]> backupScenerio = _boardmgr._byscenario;
+                        final BoardManager.BoardMap[] backupBoard = BangServer.boardManager._byname;
+                        final HashMap<String,BoardManager.BoardList[]> backupScenerio = BangServer.boardManager._byscenario;
 
                         // Lock people from making new games for now so we have no client errors
                         RuntimeConfig.server.setAllowNewGames(false);
                         // Clear the current boards data
-                        _boardmgr._byname = null;
-                        _boardmgr._byscenario.clear();
+                        BangServer.boardManager._byname = null;
+                        BangServer.boardManager._byscenario.clear();
                         // Load boards again
                         try {
-                            _boardmgr.init();
+                            BangServer.boardManager.init();
                         } catch (PersistenceException e) {
                             e.printStackTrace();
-                            _boardmgr._byname = backupBoard;
-                            _boardmgr._byscenario = backupScenerio;
+                            BangServer.boardManager._byname = backupBoard;
+                            BangServer.boardManager._byscenario = backupScenerio;
                             RuntimeConfig.server.setAllowNewGames(true);
                             System.out.println("Failed to reload boards as described in the above stacktrace. Restored data before the reload!");
                             return;
@@ -245,6 +245,8 @@ public class BangServer extends CrowdServer
 
     /** Contains information about the whole town. */
     public static TownObject townobj;
+
+    public static BoardManager boardManager;
 
     // legacy static Presents services; try not to use these
     public static Invoker invoker;
@@ -392,6 +394,7 @@ public class BangServer extends CrowdServer
         // create our various supporting managers
         playmgr = _playmgr;
         gangmgr = _gangmgr;
+        boardManager = _boardmgr;
         tournmgr = injector.getInstance(BangTourniesManager.class);
         ratingmgr = injector.getInstance(RatingManager.class);
 
@@ -569,7 +572,7 @@ public class BangServer extends CrowdServer
 
     @Inject protected PlayerLocator _locator;
     @Inject protected BangAdminManager _adminmgr;
-    @Inject protected static BoardManager _boardmgr;
+    @Inject protected BoardManager _boardmgr;
     @Inject protected GangManager _gangmgr;
     @Inject protected PlayerManager _playmgr;
     @Inject protected BangPeerManager _peermgr;

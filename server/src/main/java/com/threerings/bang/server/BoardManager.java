@@ -54,6 +54,7 @@ public class BoardManager
     protected void mapBoard (File source) {
         try {
             BoardFile file = BoardFile.loadFrom(source);
+            System.out.println("Board file: " + source.getPath());
             // sanity check boards as creators are known to fuck up
             if (file.players < 2 || file.players > GameCodes.MAX_PLAYERS) {
                 log.warning("Invalid number of players", "players", file.players, "file", file);

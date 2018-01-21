@@ -35,9 +35,25 @@ public class BangDesktop {
             if(args.length == 1) {
                 sudoUser = args[0];
                 System.out.println("WARNING: RUNNING IN SUDO USER MODE!");
+            } else if(args.length == 4)
+            {
+                sudoUser = args[0];
+                System.setProperty("test", "true");
+                System.setProperty("board", args[1]);
+                System.setProperty("players", args[2]);
+                System.setProperty("scenario", args[3]);
             } else {
                 isSudoAllowed = false;
                 System.out.println("WARNING: SUDO USER MODE WAS ENABLED BY ULTIMATELY WAS DISABLED!");
+            }
+        } else {
+            if(args.length == 3)
+            {
+                System.setProperty("test", "true");
+                // Parameters= boardname players scenerioname
+                System.setProperty("board", args[0]);
+                System.setProperty("players", args[1]);
+                System.setProperty("scenario", args[2]);
             }
         }
         System.out.println("Running Bang! Howdy Steam");

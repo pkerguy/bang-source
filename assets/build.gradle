@@ -68,7 +68,8 @@ task genConfigs << {
                configdef: "rsrc/config/media/colordefs.xml")
   // creates the serialized article and aspect catalogs
   ant.confcomp(dest: stagingDir,
-               parser: "com.threerings.bang.avatar.tools.xml.ArticleCatalogParser",
+               parser: "com.threerings.bang.avatar.t" +
+                       "ools.xml.ArticleCatalogParser",
                configdef: "rsrc/avatars/articles.xml")
   ant.confcomp(dest: stagingDir,
                parser: "com.threerings.bang.avatar.tools.xml.AspectCatalogParser",

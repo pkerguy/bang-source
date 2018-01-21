@@ -7,6 +7,7 @@ import com.google.inject.*;
 import com.jmr.wrapper.common.Connection;
 import com.jmr.wrapper.server.Server;
 import com.samskivert.depot.*;
+import com.samskivert.io.PersistenceException;
 import com.samskivert.util.*;
 import com.threerings.admin.server.*;
 import com.threerings.bang.admin.server.*;
@@ -62,8 +63,84 @@ import static com.threerings.bang.Log.*;
 /**
  * Creates and manages all the services needed on the bang server.
  */
-public class BangServer extends CrowdServer
+public class BangServer extends CrowdServer implements Runnable
 {
+
+    public static boolean isBoardServer = false;
+    @Override
+    public void run()
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        while(true)
+        {
+            String command = scanner.nextLine();
+            switch(command.split(" ")[0].toLowerCase())
+            {
+                case "boards": {
+                    RuntimeConfig.server.setBankEnabled(true);
+                    RuntimeConfig.server.setFreeIndianPost(true);
+                    RuntimeConfig.server.setHideoutEnabled(false);
+                    RuntimeConfig.server.setBarberEnabled(false);
+                    RuntimeConfig.server.setRanchEnabled(false);
+                    RuntimeConfig.server.setSaloonEnabled(false);
+                    RuntimeConfig.server.setOfficeEnabled(false);
+                    RuntimeConfig.server.setStoreEnabled(false);
+                    System.out.println("Set server as a board server");
+                    break;
+                }
+                case "togglelogin": {
+                    if(RuntimeConfig.server.nonAdminsAllowed)
+                    {
+                        RuntimeConfig.server.setNonAdminsAllowed(false);
+                    } else {
+                        RuntimeConfig.server.setNonAdminsAllowed(true);
+                    }
+                    System.out.println("Toggled LOGIN to: " + RuntimeConfig.server.nonAdminsAllowed);
+                    break;
+                }
+                case "togglegames": {
+                    if(RuntimeConfig.server.allowNewGames)
+                    {
+                        RuntimeConfig.server.setAllowNewGames(false);
+                    } else {
+                        RuntimeConfig.server.setAllowNewGames(true);
+                    }
+                    System.out.println("Toggled Allow New Games to: " + RuntimeConfig.server.nonAdminsAllowed);
+                    break;
+                }
+                case "reloadboards": {
+                    // Create backups of previous data in-case the reload fails
+                    final BoardManager.BoardMap[] backupBoard = _boardmgr._byname;
+                    final HashMap<String,BoardManager.BoardList[]> backupScenerio = _boardmgr._byscenario;
+
+                    // Lock people from making new games for now so we have no client errors
+                    RuntimeConfig.server.setAllowNewGames(false);
+                    // Clear the current boards data
+                    _boardmgr._byname = null;
+                    _boardmgr._byscenario.clear();
+                    // Load boards again
+                    try {
+                        _boardmgr.init();
+                    } catch (PersistenceException e) {
+                        e.printStackTrace();
+                        _boardmgr._byname = backupBoard;
+                        _boardmgr._byscenario = backupScenerio;
+                        RuntimeConfig.server.setAllowNewGames(true);
+                        System.out.println("Failed to reload boards as described in the above stacktrace. Restored data before the reload!");
+                        return;
+                    }
+                    // Allow making of games again.. We're all done!
+                    RuntimeConfig.server.setAllowNewGames(true);
+                    // Report the dead has been done!
+                    System.out.println("Boards reloaded!");
+                    break;
+                }
+                default: System.out.println("That is an unknown command! Please try again"); break;
+            }
+
+        }
+    }
     /** Configures dependencies needed by the Bang server. */
     public static class Module extends CrowdServer.CrowdModule implements EventListener {
         @Override protected void configure () {
@@ -315,6 +392,7 @@ public class BangServer extends CrowdServer
 
         // now initialize our runtime configuration
         RuntimeConfig.init(omgr, confreg);
+        RuntimeConfig.server.setNonAdminsAllowed(false);
 
         // do the base server initialization
         super.init(injector);
@@ -378,8 +456,10 @@ public class BangServer extends CrowdServer
         }
 
         log.info("Bang server v" + DeploymentConfig.getVersion() + " initialized.");
-
         DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
+        Thread t = new Thread(this);
+        t.start();
+
     }
 
     /**

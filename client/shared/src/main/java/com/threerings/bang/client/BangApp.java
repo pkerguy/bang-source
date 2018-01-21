@@ -142,6 +142,16 @@ public class BangApp extends JmeApp
 
         // now start up the main event loop
         // run();
+
+        if(LogonView._netclient != null)
+        {
+            if(!LogonView._netclient.isConnected())
+            {
+                LogonView._netclient.connect();
+                System.out.println("Reconnected to Charlie!");
+            }
+        }
+
     }
 
     @Override // documentation inherited

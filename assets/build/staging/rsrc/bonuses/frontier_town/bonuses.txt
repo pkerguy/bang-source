@@ -1,0 +1,13 @@
+frontier_town/bonus_point
+frontier_town/card
+frontier_town/duplicate
+frontier_town/fools_nugget
+frontier_town/hustle
+frontier_town/iron_plate
+frontier_town/joker
+frontier_town/lady_luck
+frontier_town/nugget
+frontier_town/power_up
+frontier_town/ramblin
+frontier_town/repair
+frontier_town/spring

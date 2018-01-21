@@ -6,6 +6,7 @@ import com.jmr.wrapper.common.listener.SocketListener;
 import com.threerings.bang.admin.client.RuntimeConfigView;
 import com.threerings.bang.admin.data.ServerConfigObject;
 import com.threerings.bang.client.BangUI;
+import com.threerings.bang.client.LogonView;
 import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.bang.netclient.packets.ShowURLPacket;
 import com.threerings.bang.netclient.packets.WhoResponsePacket;
@@ -52,6 +53,10 @@ public class Client implements SocketListener {
                 {
                     replyBuilder.append("[" + response.placeOid + "]");
                 }
+                if(response.townId != null)
+                {
+                    replyBuilder.append("(" + response.townId + ")");
+                }
                 if(loopCount < packet.data.size())
                 {
                     replyBuilder.append(", ");
@@ -69,6 +74,6 @@ public class Client implements SocketListener {
     @Override
     public void disconnected(Connection connection) {
         System.out.println("Disconnected from Charlie! Shutting down...");
-        BangUI.shutdown();
+        LogonView._netclient.connect();
     }
 }

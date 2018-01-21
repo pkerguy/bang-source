@@ -52,6 +52,7 @@ import com.mb3364.twitch.api.models.Channel;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.admin.client.TournamentDialog;
 import com.threerings.jme.camera.CameraPath;
 import com.threerings.jme.camera.PanPath;
 import com.threerings.jme.sprite.Sprite;
@@ -171,31 +172,31 @@ public class TownView extends BWindow
         _admin.add(new BButton("Discord", this, "discord")); // Link resource in game
         //_admin.add(new BButton("Buy Coins", this, "buycoins")); // Ability to buy coins
 
+        //_admin.add(_twitchButton = new BButton("LOADING", this, ""));
         /*
-
-        _admin.add(_twitchButton = new BButton("LOADING", this, ""));
-
-        if(ctx.getBangClient().twitch == null)
-        {
+        Twitch twitch = ctx.getBangClient().twitch;
+        if (twitch == null) {
             _twitchButton.setText("Link Twitch");
             _twitchButton.setAction("twitchLogin");
-        } else if(ctx.getBangClient().twitch.auth().hasAuthenticationError() || !ctx.getBangClient().twitch.auth().hasAccessToken())
-        {
+        } else if (twitch.auth().hasAuthenticationError() || !twitch.auth().hasAccessToken()) {
             _twitchButton.setText("Relink Twitch");
             _twitchButton.setAction("twitchLogin");
         } else {
-            _bctx.getBangClient().twitch.channels().get(new ChannelResponseHandler() {
+            _twitchButton.setText("");
+
+            twitch.channels().get(new ChannelResponseHandler() {
                 @Override
                 public void onFailure(int i, String s, String s1) {
                 }
 
                 @Override
                 public void onFailure(Throwable throwable) {
-
                 }
 
                 @Override
                 public void onSuccess(Channel channel) {
+                    // TournamentDialog!!111!!1
+
                     log.info("[DEBUG TWITCH] " + channel.getUrl());
                 }
             });

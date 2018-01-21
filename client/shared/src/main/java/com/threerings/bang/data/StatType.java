@@ -115,6 +115,12 @@ public enum StatType implements Stat.Type
     MYSTERY_TWO(new IntStat(), false, false, false, true), // christmas morning game
     MYSTERY_THREE(new IntStat(), false, false, true, true), // new sheriff in town
 
+    // Tower Defense Stats
+
+    TOWERS_DEFENDED(new MaxIntStat(), true, false),
+    DEFENDED_POINTS(new MaxIntStat(), true, false),
+
+
     UNUSED(new IntStat(), false, false);
 
     /** Returns the translation key used by this stat. */

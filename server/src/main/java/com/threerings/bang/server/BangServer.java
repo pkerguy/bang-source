@@ -400,7 +400,6 @@ public class BangServer extends CrowdServer
 
         // now initialize our runtime configuration
         RuntimeConfig.init(omgr, confreg);
-        RuntimeConfig.server.setNonAdminsAllowed(false);
 
         // do the base server initialization
         super.init(injector);

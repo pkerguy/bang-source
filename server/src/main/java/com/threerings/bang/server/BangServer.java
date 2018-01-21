@@ -198,7 +198,7 @@ public class BangServer extends CrowdServer
             bind(AccountActionRepository.class).toInstance(aarepo);
             bind(AvatarLogic.class).toInstance(alogic);
 
-            DISCORD.start();
+            //DISCORD.start();
         }
 
         @Override protected void bindInvokers() {
@@ -279,7 +279,8 @@ public class BangServer extends CrowdServer
     public static Map<BodyObject, Integer> round = new ConcurrentHashMap<>();
     public static String[] scenerioIds;
 
-    public static DiscordAPIManager DISCORD = new DiscordAPIManager();
+    //public static DiscordAPIManager DISCORD = new DiscordAPIManager();
+    //public static DiscordAPIManager DISCORD = new DiscordAPIManager();
 
 
     /**
@@ -476,7 +477,7 @@ public class BangServer extends CrowdServer
         }
 
         log.info("Bang server v" + DeploymentConfig.getVersion() + " initialized.");
-        DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
+        //DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
         Thread t = new Thread(new CommandHandler());
         t.start();
     }
@@ -537,7 +538,7 @@ public class BangServer extends CrowdServer
         _plog.close();
 
         // shutdown discord API
-        DISCORD.stop();
+        //DISCORD.stop();
     }
 
     protected void checkAutoRestart ()

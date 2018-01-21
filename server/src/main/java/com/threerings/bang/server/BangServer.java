@@ -63,86 +63,87 @@ import static com.threerings.bang.Log.*;
 /**
  * Creates and manages all the services needed on the bang server.
  */
-public class BangServer extends CrowdServer implements Runnable
+public class BangServer extends CrowdServer
 {
+    public static class CommandHandler implements Runnable {
 
-    public static boolean isBoardServer = false;
-    @Override
-    public void run()
-    {
-        Scanner scanner = new Scanner(System.in);
-
-        while(true)
+        @Override
+        public void run()
         {
-            String command = scanner.nextLine();
-            switch(command.split(" ")[0].toLowerCase())
+            Scanner scanner = new Scanner(System.in);
+
+            while(true)
             {
-                case "boards": {
-                    RuntimeConfig.server.setBankEnabled(true);
-                    RuntimeConfig.server.setFreeIndianPost(true);
-                    RuntimeConfig.server.setHideoutEnabled(false);
-                    RuntimeConfig.server.setBarberEnabled(false);
-                    RuntimeConfig.server.setRanchEnabled(false);
-                    RuntimeConfig.server.setSaloonEnabled(false);
-                    RuntimeConfig.server.setOfficeEnabled(false);
-                    RuntimeConfig.server.setStoreEnabled(false);
-                    System.out.println("Set server as a board server");
-                    break;
-                }
-                case "togglelogin": {
-                    if(RuntimeConfig.server.nonAdminsAllowed)
-                    {
-                        RuntimeConfig.server.setNonAdminsAllowed(false);
-                    } else {
-                        RuntimeConfig.server.setNonAdminsAllowed(true);
+                String command = scanner.nextLine();
+                switch(command.split(" ")[0].toLowerCase())
+                {
+                    case "boards": {
+                        RuntimeConfig.server.setBankEnabled(true);
+                        RuntimeConfig.server.setFreeIndianPost(true);
+                        RuntimeConfig.server.setHideoutEnabled(false);
+                        RuntimeConfig.server.setBarberEnabled(false);
+                        RuntimeConfig.server.setRanchEnabled(false);
+                        RuntimeConfig.server.setSaloonEnabled(false);
+                        RuntimeConfig.server.setOfficeEnabled(false);
+                        RuntimeConfig.server.setStoreEnabled(false);
+                        System.out.println("Set server as a board server");
+                        break;
                     }
-                    System.out.println("Toggled LOGIN to: " + RuntimeConfig.server.nonAdminsAllowed);
-                    break;
-                }
-                case "togglegames": {
-                    if(RuntimeConfig.server.allowNewGames)
-                    {
+                    case "togglelogin": {
+                        if(RuntimeConfig.server.nonAdminsAllowed)
+                        {
+                            RuntimeConfig.server.setNonAdminsAllowed(false);
+                        } else {
+                            RuntimeConfig.server.setNonAdminsAllowed(true);
+                        }
+                        System.out.println("Toggled LOGIN to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        break;
+                    }
+                    case "togglegames": {
+                        if(RuntimeConfig.server.allowNewGames)
+                        {
+                            RuntimeConfig.server.setAllowNewGames(false);
+                        } else {
+                            RuntimeConfig.server.setAllowNewGames(true);
+                        }
+                        System.out.println("Toggled Allow New Games to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        break;
+                    }
+                    case "reloadboards": {
+                        // Create backups of previous data in-case the reload fails
+                        final BoardManager.BoardMap[] backupBoard = _boardmgr._byname;
+                        final HashMap<String,BoardManager.BoardList[]> backupScenerio = _boardmgr._byscenario;
+
+                        // Lock people from making new games for now so we have no client errors
                         RuntimeConfig.server.setAllowNewGames(false);
-                    } else {
+                        // Clear the current boards data
+                        _boardmgr._byname = null;
+                        _boardmgr._byscenario.clear();
+                        // Load boards again
+                        try {
+                            _boardmgr.init();
+                        } catch (PersistenceException e) {
+                            e.printStackTrace();
+                            _boardmgr._byname = backupBoard;
+                            _boardmgr._byscenario = backupScenerio;
+                            RuntimeConfig.server.setAllowNewGames(true);
+                            System.out.println("Failed to reload boards as described in the above stacktrace. Restored data before the reload!");
+                            return;
+                        }
+                        // Allow making of games again.. We're all done!
                         RuntimeConfig.server.setAllowNewGames(true);
+                        // Report the dead has been done!
+                        System.out.println("Boards reloaded!");
+                        break;
                     }
-                    System.out.println("Toggled Allow New Games to: " + RuntimeConfig.server.nonAdminsAllowed);
-                    break;
+                    case "shutdown": {
+                        System.exit(0);
+                        break;
+                    }
+                    default: System.out.println("That is an unknown command! Please try again"); break;
                 }
-                case "reloadboards": {
-                    // Create backups of previous data in-case the reload fails
-                    final BoardManager.BoardMap[] backupBoard = _boardmgr._byname;
-                    final HashMap<String,BoardManager.BoardList[]> backupScenerio = _boardmgr._byscenario;
 
-                    // Lock people from making new games for now so we have no client errors
-                    RuntimeConfig.server.setAllowNewGames(false);
-                    // Clear the current boards data
-                    _boardmgr._byname = null;
-                    _boardmgr._byscenario.clear();
-                    // Load boards again
-                    try {
-                        _boardmgr.init();
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                        _boardmgr._byname = backupBoard;
-                        _boardmgr._byscenario = backupScenerio;
-                        RuntimeConfig.server.setAllowNewGames(true);
-                        System.out.println("Failed to reload boards as described in the above stacktrace. Restored data before the reload!");
-                        return;
-                    }
-                    // Allow making of games again.. We're all done!
-                    RuntimeConfig.server.setAllowNewGames(true);
-                    // Report the dead has been done!
-                    System.out.println("Boards reloaded!");
-                    break;
-                }
-                case "shutdown": {
-                    System.exit(0);
-                    break;
-                }
-                default: System.out.println("That is an unknown command! Please try again"); break;
             }
-
         }
     }
     /** Configures dependencies needed by the Bang server. */
@@ -461,9 +462,8 @@ public class BangServer extends CrowdServer implements Runnable
 
         log.info("Bang server v" + DeploymentConfig.getVersion() + " initialized.");
         DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
-        Thread t = new Thread(this);
+        Thread t = new Thread(new CommandHandler());
         t.start();
-
     }
 
     /**
@@ -569,7 +569,7 @@ public class BangServer extends CrowdServer implements Runnable
 
     @Inject protected PlayerLocator _locator;
     @Inject protected BangAdminManager _adminmgr;
-    @Inject protected BoardManager _boardmgr;
+    @Inject protected static BoardManager _boardmgr;
     @Inject protected GangManager _gangmgr;
     @Inject protected PlayerManager _playmgr;
     @Inject protected BangPeerManager _peermgr;

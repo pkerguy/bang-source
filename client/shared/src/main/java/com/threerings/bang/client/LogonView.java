@@ -214,6 +214,7 @@ public class LogonView extends BWindow
                 showDialogCustom("The game is currently in maintenance. Please check the Steam announcements and try again later.");
                 return;
             }
+            
 
             if(BangDesktop.isMobileApp)
             {
@@ -244,6 +245,12 @@ public class LogonView extends BWindow
             e.printStackTrace();
             showDialogCustom("An error occurred while attempting to get available servers. Please restart the game.");
             return;
+        }
+        String serverSpecial = System.getProperty("special");
+        if(serverSpecial != null)
+        {
+            availableServers.clear();
+            availableServers.add("BoardTesting");
         }
 
         grid.add(new BLabel("Server Selection", "logon_label"));
@@ -352,6 +359,7 @@ public class LogonView extends BWindow
                     log.warning("You didn't enter any password in");
                     return;
                 }
+
                 // try to connect to the town lobby server that this player last accessed
                 String townId = BangPrefs.getLastTownId(username);
                 // but make sure this town has been activated on this client

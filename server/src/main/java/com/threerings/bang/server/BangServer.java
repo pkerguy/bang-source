@@ -136,6 +136,10 @@ public class BangServer extends CrowdServer implements Runnable
                     System.out.println("Boards reloaded!");
                     break;
                 }
+                case "shutdown": {
+                    System.exit(0);
+                    break;
+                }
                 default: System.out.println("That is an unknown command! Please try again"); break;
             }
 

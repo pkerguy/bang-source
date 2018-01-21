@@ -65,6 +65,9 @@ import static com.threerings.bang.Log.*;
  */
 public class BangServer extends CrowdServer
 {
+
+    public static boolean isBoardServer = false;
+
     public static class CommandHandler implements Runnable {
 
         @Override
@@ -78,6 +81,7 @@ public class BangServer extends CrowdServer
                 switch(command.split(" ")[0].toLowerCase())
                 {
                     case "boards": {
+                        isBoardServer = true;
                         RuntimeConfig.server.setBankEnabled(true);
                         RuntimeConfig.server.setFreeIndianPost(true);
                         RuntimeConfig.server.setHideoutEnabled(false);
@@ -105,7 +109,7 @@ public class BangServer extends CrowdServer
                         } else {
                             RuntimeConfig.server.setSaloonEnabled(true);
                         }
-                        System.out.println("Toggled Saloon to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        System.out.println("Toggled SaloonS to: " + RuntimeConfig.server.nonAdminsAllowed);
                         break;
                     }
                     case "togglegames": {

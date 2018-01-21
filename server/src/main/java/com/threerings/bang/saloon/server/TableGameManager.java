@@ -142,7 +142,7 @@ public class TableGameManager implements TableGameProvider
         _tobj.setGame(game);
 
         // if this player is an admin, allow the board data
-        if (caller.tokens.isAdmin()) {
+        if (caller.tokens.isAdmin() || BangServer.isBoardServer) {
             _bdata = bdata;
         }
 

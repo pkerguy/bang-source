@@ -3,9 +3,12 @@
 
 package com.threerings.bang.server;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.inject.Inject;
+import com.jmr.wrapper.common.Connection;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 
@@ -31,6 +34,12 @@ import static com.threerings.bang.Log.log;
  */
 public class BangSession extends CrowdSession
 {
+    @Override
+    public boolean checkExpired (long now) // Overrides the mechanism that keeps connections open after they logout
+    {
+        if(super.getConnection() == null) return true;
+        return false;
+    }
     @Override // documentation inherited
     public void shutdown ()
     {
@@ -120,7 +129,6 @@ public class BangSession extends CrowdSession
             protected List<String> _rewards;
         });
     }
-
     @Override // documentation inherited
     protected void sessionWillResume ()
     {
@@ -135,9 +143,20 @@ public class BangSession extends CrowdSession
     protected void sessionDidEnd ()
     {
         super.sessionDidEnd();
-
         // clear out our handle to player object registration
         PlayerObject user = (PlayerObject)_clobj;
+        List<String> toRemove = new ArrayList<String>();
+        for(Map.Entry<String, Connection> connected : BangServer.clients.entrySet())
+        {
+            if(connected.getKey().equalsIgnoreCase(user.username.getNormal()))
+            {
+                BangServer.DISCORD.commit(1, user.handle + " has logged off from town " + ServerConfig.townId);
+                System.out.println("Charlie will be removing Charlie Object: " + connected.getKey());
+                toRemove.add(connected.getKey());
+                break;
+            }
+        }
+
         BangServer.locator.clearPlayer(user);
 
         // this session is over, make a note of it
@@ -154,7 +173,6 @@ public class BangSession extends CrowdSession
     protected void recordEndedSession ()
     {
         final PlayerObject user = (PlayerObject)_clobj;
-        BangServer.DISCORD.commit(1, user.handle + " has logged in to town " + ServerConfig.townId);
         String uname = "recordEndedSession:" + user.username;
         BangServer.invoker.postUnit(new Invoker.Unit(uname) {
             public boolean invoke () {

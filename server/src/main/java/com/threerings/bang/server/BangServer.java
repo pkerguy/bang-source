@@ -477,7 +477,9 @@ public class BangServer extends CrowdServer
                 }
             }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
         }
+        log.info("Setting presents server to timeout immediately!");
 
+        log.info("Done setting presents server timeout.");
         log.info("Bang server v" + DeploymentConfig.getVersion() + " initialized.");
         DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
         Thread t = new Thread(new CommandHandler());

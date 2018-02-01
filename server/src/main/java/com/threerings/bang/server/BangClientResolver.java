@@ -24,6 +24,7 @@ import com.threerings.crowd.server.CrowdClientResolver;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 
@@ -131,15 +132,6 @@ public class BangClientResolver extends CrowdClientResolver
             buser.handle = new Handle(player.handle);
         } else {
             buser.handle = new GuestHandle("!!" + username);
-        }
-        BangServer.DISCORD.commit(1, buser.handle + " has logged in to town " + ServerConfig.townId);
-        if(buser.tokens.holdsToken(BangTokenRing.SUPPORT) || buser.tokens.holdsToken(BangTokenRing.ADMIN))
-        {
-            BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + ServerConfig.townId);
-            buser.startTransaction();
-            buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
-            buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
-            buser.commitTransaction();
         }
         buser.isMale = player.isSet(PlayerRecord.IS_MALE_FLAG);
         buser.tokens.setToken(BangTokenRing.ANONYMOUS, player.isSet(PlayerRecord.IS_ANONYMOUS));

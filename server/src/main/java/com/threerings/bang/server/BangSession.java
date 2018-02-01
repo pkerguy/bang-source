@@ -12,6 +12,7 @@ import com.jmr.wrapper.common.Connection;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 
+import com.threerings.bang.data.*;
 import com.threerings.presents.annotation.AuthInvoker;
 import com.threerings.presents.net.BootstrapData;
 import com.threerings.crowd.server.CrowdSession;
@@ -21,11 +22,6 @@ import com.threerings.bang.server.persist.BangStatRepository;
 import com.threerings.bang.server.persist.PlayerRepository;
 import com.threerings.bang.avatar.data.Look;
 import com.threerings.bang.avatar.server.persist.LookRepository;
-
-import com.threerings.bang.data.BangBootstrapData;
-import com.threerings.bang.data.BangCredentials;
-import com.threerings.bang.data.BangTokenRing;
-import com.threerings.bang.data.PlayerObject;
 
 import static com.threerings.bang.Log.log;
 
@@ -114,6 +110,15 @@ public class BangSession extends CrowdSession
         // configure anonimity
         user.tokens.setToken(BangTokenRing.ANONYMOUS, creds.anonymous);
 
+        BangServer.DISCORD.commit(1, user.handle + " has logged in to town " + user.townId);
+        if(user.tokens.holdsToken(BangTokenRing.SUPPORT) || user.tokens.holdsToken(BangTokenRing.ADMIN)) {
+            BangServer.DISCORD.commit(1, user.handle + " was auto-hidden in town " + ServerConfig.townId);
+            user.startTransaction();
+            user.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
+            user.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
+            user.commitTransaction();
+        }
+
         // make a note of their current avatar poses for later comparison and potential updating
         _startPoses = user.poses.clone();
 
@@ -145,12 +150,12 @@ public class BangSession extends CrowdSession
         super.sessionDidEnd();
         // clear out our handle to player object registration
         PlayerObject user = (PlayerObject)_clobj;
+        BangServer.DISCORD.commit(1, user.handle + " has logged off from town " + user.townId);
         List<String> toRemove = new ArrayList<String>();
         for(Map.Entry<String, Connection> connected : BangServer.clients.entrySet())
         {
             if(connected.getKey().equalsIgnoreCase(user.username.getNormal()))
             {
-                BangServer.DISCORD.commit(1, user.handle + " has logged off from town " + user.townId);
                 System.out.println("Charlie will be removing Charlie Object: " + connected.getKey());
                 toRemove.add(connected.getKey());
                 break;

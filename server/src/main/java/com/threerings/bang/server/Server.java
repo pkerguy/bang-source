@@ -65,9 +65,7 @@ public class Server implements SocketListener {
         if(o instanceof AwayAdminPacket)
         {
             AwayAdminPacket packet = (AwayAdminPacket)o;
-            PlayerObject user = BangServer.locator.lookupPlayer(new Handle(packet.adminuser));
-            if(user == null){
-                if(_peermgr.isRunning())
+            if(_peermgr.isRunning())
                 {
                     PeerNode peer = _peermgr.getPlayerPeer(new Handle(packet.adminuser));
                     PlayerObject player = (PlayerObject)peer.getClient().getClientObject();
@@ -83,21 +81,6 @@ public class Server implements SocketListener {
                     player.commitTransaction();
                     peer.clientObjectDidChange(peer.getClient()); // Relay that the object was changed!
                 }
-            }
-            if(user.tokens.isSupport())
-            {
-                user.startTransaction();
-                if(packet.away)
-                {
-                    user.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
-                    user.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
-                } else {
-                    user.awayMessage = null;
-                    user.setAwayMessage(null);
-                }
-                user.commitTransaction();
-            }
-
         }
     }
 

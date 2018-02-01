@@ -208,6 +208,14 @@ public class BangClientResolver extends CrowdClientResolver
                 }
             }
         }
+        if(buser.tokens.isSupport())
+        {
+            BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + ServerConfig.townId);
+            buser.startTransaction();
+            buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
+            buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
+            buser.commitTransaction();
+        }
 
         // load up this player's persistent stats
         List<Stat> stats = _statrepo.loadStats(buser.playerId);
@@ -347,14 +355,6 @@ public class BangClientResolver extends CrowdClientResolver
                     break;
                 }
             }
-        }
-        if(buser.tokens.isSupport())
-        {
-            BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + ServerConfig.townId);
-            buser.startTransaction();
-            buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
-            buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
-            buser.commitTransaction();
         }
     }
 

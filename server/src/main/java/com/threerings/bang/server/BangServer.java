@@ -274,6 +274,7 @@ public class BangServer extends CrowdServer
     public static PlayerLocator locator;
     public static PlaceRegistry plreg;
     public static LocationManager locman;
+    public static BangPeerManager peerManager;
 
     // Statics relating to Tournament data
     public static boolean isTournamentServer = false;
@@ -391,6 +392,7 @@ public class BangServer extends CrowdServer
         }
 
         // set up some legacy static references
+        peerManager = _peermgr;
         invoker = _invoker;
         conmgr = _conmgr;
         clmgr = _clmgr;
@@ -413,6 +415,7 @@ public class BangServer extends CrowdServer
         boardManager = _boardmgr;
         tournmgr = injector.getInstance(BangTourniesManager.class);
         ratingmgr = injector.getInstance(RatingManager.class);
+
 
         // now initialize our runtime configuration
         RuntimeConfig.init(omgr, confreg);

@@ -65,9 +65,9 @@ public class Server implements SocketListener {
         if(o instanceof AwayAdminPacket)
         {
             AwayAdminPacket packet = (AwayAdminPacket)o;
-            if(PlayerManager._peermgr.isRunning())
+            if(BangServer.peerManager.isRunning())
                 {
-                    PeerNode peer = PlayerManager._peermgr.getPlayerPeer(new Handle(packet.adminuser));
+                    PeerNode peer = BangServer.peerManager.getPlayerPeer(new Handle(packet.adminuser));
                     PlayerObject player = (PlayerObject)peer.getClient().getClientObject();
                     player.startTransaction();
                     if(packet.away)
@@ -94,5 +94,6 @@ public class Server implements SocketListener {
     public void disconnected(Connection connection) {
 
     }
+
 
 }

@@ -1988,7 +1988,7 @@ public class PlayerManager
     @Inject protected ResourceManager _rsrcmgr;
     @Inject protected GoodsCatalog _goods;
     @Inject protected ChatHistory _history;
-    @Inject protected static BangPeerManager _peermgr;
+    @Inject protected BangPeerManager _peermgr;
     @Inject protected PardnerRepository _pardrepo;
     @Inject protected ParlorManager _parmgr;
     @Inject protected PosterRepository _postrepo;

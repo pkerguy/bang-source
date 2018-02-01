@@ -28,10 +28,10 @@ public class Server implements SocketListener {
             {
                 buser.handle = new GuestHandle("!!" + packet.username);
             }
-            BangServer.DISCORD.commit(1, buser.handle + " has logged in to town " + ServerConfig.townId);
+            BangServer.DISCORD.commit(1, buser.handle + " has logged in to town " + buser.townId);
             if(buser.tokens.holdsToken(BangTokenRing.SUPPORT) || buser.tokens.holdsToken(BangTokenRing.ADMIN))
             {
-                BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + ServerConfig.townId);
+                BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + buser.townId);
                 buser.startTransaction();
                 buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
                 buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");

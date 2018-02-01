@@ -150,7 +150,7 @@ public class BangSession extends CrowdSession
         {
             if(connected.getKey().equalsIgnoreCase(user.username.getNormal()))
             {
-                BangServer.DISCORD.commit(1, user.handle + " has logged off from town " + ServerConfig.townId);
+                BangServer.DISCORD.commit(1, user.handle + " has logged off from town " + user.townId);
                 System.out.println("Charlie will be removing Charlie Object: " + connected.getKey());
                 toRemove.add(connected.getKey());
                 break;

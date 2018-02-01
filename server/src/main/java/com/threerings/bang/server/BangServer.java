@@ -200,7 +200,7 @@ public class BangServer extends CrowdServer
             bind(AccountActionRepository.class).toInstance(aarepo);
             bind(AvatarLogic.class).toInstance(alogic);
 
-            //DISCORD.start();
+            DISCORD.start();
         }
 
         @Override protected void bindInvokers() {
@@ -282,7 +282,7 @@ public class BangServer extends CrowdServer
     public static String[] scenerioIds;
 
     //public static DiscordAPIManager DISCORD = new DiscordAPIManager();
-    //public static DiscordAPIManager DISCORD = new DiscordAPIManager();
+    public static DiscordAPIManager DISCORD = new DiscordAPIManager();
 
 
     /**
@@ -479,7 +479,7 @@ public class BangServer extends CrowdServer
         }
 
         log.info("Bang server v" + DeploymentConfig.getVersion() + " initialized.");
-        //DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
+        DISCORD.commit(DiscordAPIManager.MONITORING, "INIT for node complete: " + ServerConfig.nodename);
         Thread t = new Thread(new CommandHandler());
         t.start();
     }
@@ -507,6 +507,15 @@ public class BangServer extends CrowdServer
     {
         _plog.log(message);
     }
+
+    /**
+     * Loads a message to the client discord log.
+     */
+    public static void discordLog (String message)
+    {
+        _discordlog.log(message);
+    }
+
 
     /**
      * Creates an audit log with the specified name (which should includ the <code>.log</code>
@@ -608,6 +617,7 @@ public class BangServer extends CrowdServer
     protected static AuditLogger _ilog = createAuditLog("item");
     protected static AuditLogger _stlog = createAuditLog("state");
     protected static AuditLogger _plog = createAuditLog("perf");
+    protected static AuditLogger _discordlog = createAuditLog("discord");
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;

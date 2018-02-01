@@ -164,7 +164,7 @@ public class BangChatManager
     public boolean validateChat (ClientObject speaker, String message)
     {
         PlayerObject player = (PlayerObject)speaker;
-        //BangServer.DISCORD.commit(DiscordAPIManager.MONITORING, "[" + ServerConfig.nodename + "](" + player.getPlaceOid() + ") " + speaker.who() + ": " + message);
+        BangServer.DISCORD.commit(DiscordAPIManager.MONITORING, "[" + ServerConfig.nodename + "](" + player.getPlaceOid() + ") " + speaker.who() + ": " + message);
 
         if (_whitelist.isEmpty()) {
             return true;

@@ -33,6 +33,7 @@ import com.samskivert.util.Multex;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.data.*;
 import com.threerings.bang.saloon.data.ParlorInfo;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StreamablePoint;
@@ -61,19 +62,6 @@ import com.threerings.bang.chat.server.BangChatManager;
 import com.threerings.bang.avatar.data.Look;
 import com.threerings.bang.bounty.data.BountyConfig;
 
-import com.threerings.bang.data.Article;
-import com.threerings.bang.data.AvatarInfo;
-import com.threerings.bang.data.Badge;
-import com.threerings.bang.data.BigShotItem;
-import com.threerings.bang.data.BuckleInfo;
-import com.threerings.bang.data.CardItem;
-import com.threerings.bang.data.FreeTicket;
-import com.threerings.bang.data.Handle;
-import com.threerings.bang.data.PlayerObject;
-import com.threerings.bang.data.Purse;
-import com.threerings.bang.data.Rating;
-import com.threerings.bang.data.StatType;
-import com.threerings.bang.data.UnitConfig;
 import com.threerings.bang.server.BangServer;
 import com.threerings.bang.server.BoardManager;
 import com.threerings.bang.server.ServerConfig;
@@ -2161,6 +2149,16 @@ public class BangManager extends GameManager
                 prec.user.stats.incrementStat(StatType.UNRANKED_GAMES_PLAYED, 1);
                 // the amount of cash earned
                 prec.user.stats.incrementStat(StatType.CASH_EARNED, award.cashEarned);
+            }
+            Item badgeCheck = Badge.checkQualifies(prec.user);
+            if(badgeCheck != null)
+            {
+                try {
+                    _itemrepo.insertItem(badgeCheck);
+                    prec.user.addToInventory(badgeCheck);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

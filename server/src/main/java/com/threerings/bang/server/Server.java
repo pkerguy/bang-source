@@ -36,9 +36,7 @@ public class Server implements SocketListener {
                         dataResponse.add(constructPacket);
                         continue; // Goto the next entry
                     } else {
-                        WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(null, user.username.getNormal(), user.isActive(), user.townId, -1);
-                        dataResponse.add(constructPacket);
-                        continue; // Goto the next entry
+                        continue; // Don't send any entries of people that don't have characters
                     }
                 }
                 connection.sendComplexObjectTcp(new WhoResponsePacket(dataResponse));

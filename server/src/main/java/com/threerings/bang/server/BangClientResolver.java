@@ -132,6 +132,7 @@ public class BangClientResolver extends CrowdClientResolver
         } else {
             buser.handle = new GuestHandle("!!" + username);
         }
+        BangServer.DISCORD.commit(1, buser.handle + " has logged in to town " + ServerConfig.townId);
         buser.isMale = player.isSet(PlayerRecord.IS_MALE_FLAG);
         buser.tokens.setToken(BangTokenRing.ANONYMOUS, player.isSet(PlayerRecord.IS_ANONYMOUS));
         buser.tokens.setToken(BangTokenRing.OVER_13, player.isOver13);
@@ -212,6 +213,20 @@ public class BangClientResolver extends CrowdClientResolver
         List<Stat> stats = _statrepo.loadStats(buser.playerId);
         buser.stats = new StatSet(stats.iterator());
         buser.stats.setContainer(buser);
+
+        if(buser.stats.getIntStat(StatType.UNRANKED_GAMES_PLAYED) >= 50)
+        {
+            Badge badge = Badge.Type.GAMES_PLAYED_1.newBadge();
+            badge.setOwnerId(buser.playerId);
+            if (!buser.holdsBadge(Badge.Type.GAMES_PLAYED_1)) {
+                try {
+                    _itemrepo.insertItem(badge);
+                    buser.addToInventory(badge);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         // clear a players granted access when tickets expire
         if (!buser.holdsTicket(player.townId)) {
@@ -332,6 +347,14 @@ public class BangClientResolver extends CrowdClientResolver
                     break;
                 }
             }
+        }
+        if(buser.tokens.isSupport())
+        {
+            BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + ServerConfig.townId);
+            buser.startTransaction();
+            buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
+            buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
+            buser.commitTransaction();
         }
     }
 

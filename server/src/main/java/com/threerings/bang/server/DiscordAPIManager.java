@@ -90,6 +90,7 @@ public class DiscordAPIManager implements Runnable, EventListener {
             }
 
             if (channel != null) {
+                BangServer.discordLog("[" + channel.getName() + "] " + message.message); // No more chances of deleting the traces in Discord.
                 channel.sendMessage(message.message).queue(msg -> System.out.printf("Sent Message %s\n", msg.getContentDisplay()));
             }
         }

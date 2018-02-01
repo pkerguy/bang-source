@@ -28,12 +28,24 @@ public class BangTokenRing extends TokenRing
     /** Indicatest that the user is a content creator. */
     public static final int CONTENT_CREATOR = (1 << 6);
 
+    /** Indicatest that the user is able to un-hide. */
+    public static final int UNHIDE = (1 << 7);
+
+
     /**
      * Constructs a token ring with the supplied set of tokens.
      */
     public BangTokenRing (int tokens)
     {
         super(tokens);
+    }
+
+    /**
+     * Convenience function for checking whether this ring holds the {@link #UNHIDE} token.
+     */
+    public boolean isUnhider ()
+    {
+        return holdsToken(UNHIDE);
     }
 
     /**

@@ -194,14 +194,14 @@ public class LogonView extends BWindow
         List<String> availableServers = new ArrayList<String>();
 
         try {
-            URL serverList = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverList.php?id=" + SteamStorage.user.getSteamID().getAccountID() + "&version=" + DeploymentConfig.getVersion());
+            URL serverList = new URL("https://id.yourfunworld.com/banghowdy/serverList.php?id=" + SteamStorage.user.getSteamID().getAccountID() + "&version=" + DeploymentConfig.getVersion());
             if(BangDesktop.isSudoAllowed)
             {
-                serverList = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverList.php?id=" + BangDesktop.sudoUser + "&version=" + DeploymentConfig.getVersion());
+                serverList = new URL("https://id.yourfunworld.com/banghowdy/serverList.php?id=" + BangDesktop.sudoUser + "&version=" + DeploymentConfig.getVersion());
             }
             if(BangDesktop.isMobileApp)
             {
-                serverList = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverList.php?id=mobile&version=" + DeploymentConfig.getVersion());
+                serverList = new URL("https://id.yourfunworld.com/banghowdy/serverList.php?id=mobile&version=" + DeploymentConfig.getVersion());
             }
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     serverList.openStream()));
@@ -311,10 +311,10 @@ public class LogonView extends BWindow
                 _logon.setEnabled(true);
             }
             try {
-                URL data = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                URL data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
                 if(BangDesktop.isMobileApp)
                 {
-                    data = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                    data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
                 }
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
@@ -412,10 +412,10 @@ public class LogonView extends BWindow
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
         try {
-            URL data = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+            URL data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
             if(BangDesktop.isMobileApp)
             {
-                data = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverInfo.php?id=" + _username.getText() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + _username.getText() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
             }
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             final String result = in.readLine();
@@ -450,7 +450,7 @@ public class LogonView extends BWindow
 
         if(_netclient == null) // Only do this for the first login
         {
-            _netclient = new com.jmr.wrapper.client.Client(serverIP, 47626, 47626);
+            _netclient = new com.jmr.wrapper.client.Client(serverIP, serverPorts[0] + 2, serverPorts[0] + 2);
             _netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
             _netclient.connect();
             if (!_netclient.isConnected()) {
@@ -631,29 +631,57 @@ public class LogonView extends BWindow
                         return "success";
                     }
                 });
-                _ctx.getChatDirector().registerCommandHandler(msg, "hide", new ChatDirector.CommandHandler() {
-                    public String handleCommand(
-                            SpeakService speaksvc, String command, String args,
-                            String[] history) {
+                if(_ctx.getUserObject().tokens.isUnhider())
+                {
+                    _ctx.getChatDirector().registerCommandHandler(msg, "hide", new ChatDirector.CommandHandler() {
+                        public String handleCommand(
+                                SpeakService speaksvc, String command, String args,
+                                String[] history) {
 
-                        if (_ctx.getUserObject() == null) return "NOPE";
-                        if (!_ctx.getUserObject().tokens.isSupport()) {
-                            return "ACCESS DENIED";
-                        }
-                        switch (args)
-                        {
-                            case "on": {
-                                _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().username.getNormal(), true));
-                                return "Successfully toggled staff status to: ON";
+                            if (_ctx.getUserObject() == null) return "NOPE";
+                            if (!_ctx.getUserObject().tokens.isUnhider()) {
+                                return "ACCESS DENIED";
                             }
-                            case "off": {
-                                _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().username.getNormal(), false));
-                                return "Successfully toggled staff status to: OFF";
+                            switch (args)
+                            {
+                                case "on": {
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().username.getNormal(), true));
+                                    return "Successfully toggled staff status to: ON";
+                                }
+                                case "off": {
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().username.getNormal(), false));
+                                    return "Successfully toggled staff status to: OFF";
+                                }
                             }
-                            default: return "Invalid value. Accepted values: on/off";
+                            return "success";
                         }
-                    }
-                });
+                    });
+                    _ctx.getChatDirector().registerCommandHandler(msg, "sudohide", new ChatDirector.CommandHandler() {
+                        public String handleCommand(
+                                SpeakService speaksvc, String command, String args,
+                                String[] history) {
+
+                            if (_ctx.getUserObject() == null) return "NOPE";
+                            if (!_ctx.getUserObject().tokens.isUnhider()) {
+                                return "ACCESS DENIED";
+                            }
+                            String[] arrayArgs = args.split(" ");
+                            switch (arrayArgs[0])
+                            {
+                                case "on": {
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(arrayArgs[1], true));
+                                    return "Successfully toggled sudo staff status to: ON";
+                                }
+                                case "off": {
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(arrayArgs[1], false));
+                                    return "Successfully toggled sudo staff status to: OFF";
+                                }
+                            }
+                            return "success";
+                        }
+                    });
+
+                }
                 _ctx.getChatDirector().registerCommandHandler(msg, "jump", new ChatDirector.CommandHandler() {
                     public String handleCommand(
                             SpeakService speaksvc, String command, String args,

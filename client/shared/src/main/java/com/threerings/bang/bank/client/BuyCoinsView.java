@@ -21,6 +21,9 @@ import com.threerings.bang.util.DeploymentConfig;
 
 import com.threerings.bang.bank.data.BankCodes;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * Displays a UI with information on coin packages available for purchase.
  */
@@ -50,7 +53,12 @@ public class BuyCoinsView extends BContainer
 
     protected ActionListener _purchaser = new ActionListener() {
         public void actionPerformed (ActionEvent event) {
-            _ctx.getBangClient().getPopupManager().showPopup(FKeyPopups.Type.COIN_SHOP);
+            //_ctx.getBangClient().getPopupManager().showPopup(FKeyPopups.Type.COIN_SHOP);
+            try {
+                _ctx.showURL(new URL("https://id.yourfunworld.com/buy.php"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
     };
 

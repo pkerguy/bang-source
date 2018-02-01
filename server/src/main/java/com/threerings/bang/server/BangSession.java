@@ -154,6 +154,7 @@ public class BangSession extends CrowdSession
     protected void recordEndedSession ()
     {
         final PlayerObject user = (PlayerObject)_clobj;
+        BangServer.DISCORD.commit(1, user.handle + " has logged in to town " + ServerConfig.townId);
         String uname = "recordEndedSession:" + user.username;
         BangServer.invoker.postUnit(new Invoker.Unit(uname) {
             public boolean invoke () {

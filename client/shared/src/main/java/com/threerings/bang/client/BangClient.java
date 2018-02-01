@@ -982,10 +982,10 @@ public class BangClient extends BasicClient
     {
         if (_pendingTownId != null) {
             try {
-                URL data = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                URL data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
                 if(BangDesktop.isMobileApp)
                 {
-                    data = new URL("https://accounting-yourfunworld.herokuapp.com/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                    data = new URL("https://id.yourfunworld.com/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
                 }
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
@@ -1004,6 +1004,10 @@ public class BangClient extends BasicClient
             if (!_ctx.getClient().logon()) {
                 log.warning("Trying to connect to " + _pendingTownId +
                             " but we're already logged on!?");
+            }
+            if(!LogonView._netclient.isConnected())
+            {
+                LogonView._netclient.connect(); // Reconnect if they somehow disconnected.
             }
             _pendingTownId = null;
         }

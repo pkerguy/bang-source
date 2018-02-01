@@ -136,7 +136,7 @@ public class BankView extends ShopView
     {
         PlayerObject user = _ctx.getUserObject();
         String townId = user.townId;
-
+        /*
         _contents.add(new BLabel(new BlankIcon(800, 24), "bank_divider"), new Point(30, 534));
         _contents.add(new BLabel(new ImageIcon(_ctx.loadImage("ui/bank/heading_gold_pass.png"))),
                     new Point(60, 544));
@@ -150,7 +150,7 @@ public class BankView extends ShopView
         if (user.holdsGoldPass(townId)) {
             pass.setEnabled(false);
         }
-        _contents.add(pass, new Point(507, 233));
+        _contents.add(pass, new Point(507, 233)); */
         BContainer cost = new BContainer(GroupLayout.makeHoriz(
                     GroupLayout.CENTER).setOffAxisJustification(GroupLayout.BOTTOM).setGap(10));
         cost.add(new BLabel(_msgs.get("m.only"), "bank_only"));

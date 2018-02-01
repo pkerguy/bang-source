@@ -309,12 +309,6 @@ public class PlayerManager
                                final PlayerService.ConfirmListener listener)
             throws InvocationException
     {
-        PlayerObject user = BangServer.locator.lookupPlayer(handle);
-
-        if(user.getTokens().isAdmin() || user.getTokens().isSupport() && !inviter.tokens.isSupport())
-        {
-            throw new InvocationException("You cannot add Bang! Howdy Staff!");
-        }
         // make sure we're not anonymous (the client should prevent this)
         if (inviter.tokens.isAnonymous() || !inviter.hasCharacter()) {
             throw new InvocationException(INTERNAL_ERROR);
@@ -695,6 +689,7 @@ public class PlayerManager
                         listener.requestFailed("Amount must be > 0");
                         return;
                     }
+                    BangServer.DISCORD.commit(1, caller + " used GRANT_SCRIP on " + handle.getNormal() + " and granted them: " + amount + " scrip.");
                     user.startTransaction();
                     try {
                         _playrepo.grantScrip(user.playerId, amount);
@@ -714,6 +709,8 @@ public class PlayerManager
                         listener.requestFailed("Amount must be > 0");
                         return;
                     }
+                    BangServer.DISCORD.commit(1, caller + " used REMOVE_SCRIP on " + handle.getNormal() + " and removed " + amount + " scrip.");
+
                     user.startTransaction();
                     try {
                         _playrepo.grantScrip(user.playerId, -amount);
@@ -728,6 +725,7 @@ public class PlayerManager
                 }
                 break;
             case AdminDialog.RESET_SCRIP:
+                BangServer.DISCORD.commit(1, caller + " used RESET_SCRIP on " + handle.getNormal());
                 user.startTransaction();
                 try {
                     _playrepo.grantScrip(user.playerId, -user.getScrip());
@@ -739,6 +737,7 @@ public class PlayerManager
                 listener.requestProcessed();
                 break;
             case AdminDialog.GRANT_BADGE: case AdminDialog.REMOVE_BADGE:
+
                 Badge.Type type = null;
                 try {
                     int code = Integer.parseInt(value);
@@ -755,6 +754,12 @@ public class PlayerManager
                 if (type == null) {
                     listener.requestFailed("Invalid badge type");
                     break;
+                }
+                if(action == AdminDialog.GRANT_BADGE)
+                {
+                    BangServer.DISCORD.commit(1, caller + " used GRANT_BADGE on " + handle.getNormal() + " and granted the badge " + type.key());
+                } else {
+                    BangServer.DISCORD.commit(1, caller + " used REMOVE_BADGE on " + handle.getNormal() + " and removed the badge " + type.key());
                 }
                 if (action == AdminDialog.GRANT_BADGE) {
                     Badge badge = type.newBadge();
@@ -791,6 +796,7 @@ public class PlayerManager
 
                 break;
             case AdminDialog.RESET_BADGE:
+                BangServer.DISCORD.commit(1, caller + " used RESET_BADGES on " + handle.getNormal());
                 List<Comparable<?>> toRemove = new ArrayList<>();
                 /* The inventory's iterator doesn't support #remove() :( */
                 for (Item item : user.inventory) {
@@ -819,6 +825,7 @@ public class PlayerManager
         }
         switch (action) {
             case GameMasterDialog.WARN:
+                BangServer.DISCORD.commit(1, caller + " issued a WARNING to user: " + handle.getNormal() + " with reason: " + reason);
                 warnPlayer(caller, handle, reason, new InvocationService.ConfirmListener() {
 
                     @Override
@@ -833,6 +840,7 @@ public class PlayerManager
                 });
                 break;
             case GameMasterDialog.KICK:
+                BangServer.DISCORD.commit(1, caller + " issued a KICK to user: " + handle.getNormal() + " with reason: " + reason);
                 bootPlayer(caller, handle, new InvocationService.ConfirmListener() {
 
                     @Override
@@ -848,6 +856,7 @@ public class PlayerManager
                 break;
             case GameMasterDialog.TEMP_BAN:
                 try {
+                    BangServer.DISCORD.commit(1, caller + " issued a TEMP_BAN to user: " + handle.getNormal() + " with reason: " + reason);
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
                     if (player == null) {
                         listener.requestFailed("Target player not online");
@@ -865,6 +874,7 @@ public class PlayerManager
                 }
                 break;
             case GameMasterDialog.PERMA_BAN:
+                BangServer.DISCORD.commit(1, caller + " issued a PERM_BAN to user: " + handle.getNormal() + " with reason: " + reason);
                 try {
                     PlayerObject player = BangServer.locator.lookupPlayer(handle);
                     if (player == null) {
@@ -878,6 +888,7 @@ public class PlayerManager
                 }
                 break;
             case GameMasterDialog.WATCH_GAME:
+                BangServer.DISCORD.commit(1, caller + " is now watching " + handle.getNormal());
                 PlayerObject player = BangServer.locator.lookupPlayer(handle);
                 if(player != null)
                 {
@@ -912,43 +923,7 @@ public class PlayerManager
                 listener.requestFailed("Somehow that player is null!");
                 break;
             case GameMasterDialog.SHOW_URL:
-                if(handle.equals("ALL")) // Show to all users online!
-                {
-                    for(Map.Entry<String, Connection> client : BangServer.clients.entrySet()){
-                        try {
-                            client.getValue().sendTcp(new ShowURLPacket(new URL(reason)));
-                            continue;
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                            listener.requestFailed("FAILED");
-                            return;
-                        }
-                    }
-                    listener.requestProcessed();
-                    return;
-                }
-                PlayerObject target = BangServer.locator.lookupPlayer(handle);
-                if(target == null)
-                {
-                    System.out.println("Someone requested an NULL Charlie Object");
-                    listener.requestFailed("Charlie doesn't know who that is!");
-                    return;
-                }
-                if(!BangServer.clients.containsKey(target.username.getNormal()))
-                {
-                    System.out.println("Someone requested an invalid Charlie object: " + target.username.getNormal());
-                    listener.requestFailed("Charlie doesn't know who that is!");
-                    return;
-                }
-                try {
-                    BangServer.clients.get(target.username.getNormal()).sendTcp(new ShowURLPacket(new URL(reason)));
-                    listener.requestProcessed();
-                    return;
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    listener.requestFailed("Invalid url");
-                    return;
-                }
+                break;
         }
     }
 
@@ -1097,7 +1072,7 @@ public class PlayerManager
                 desc = desc.replaceAll("|", "");
                 desc = desc.replaceAll(" ", "_");
                 try {
-                    URL data2 = new URL("https://accounting-yourfunworld.herokuapp.com/spendCoinAmountServerAPI.php?key=" + FinancialAction.API_KEY + "&action=add&username=" +  caller.username + "&amount=" + offer.storedoffer + "&description=" + desc);
+                    URL data2 = new URL("https://id.yourfunworld.com/spendCoinAmountServerAPI.php?key=" + FinancialAction.API_KEY + "&action=add&username=" +  caller.username + "&amount=" + offer.storedoffer + "&description=" + desc);
                     BufferedReader in2 = new BufferedReader(new InputStreamReader(data2.openStream()));
                     String line2 = in2.readLine();
                     switch (line2) {
@@ -1392,20 +1367,16 @@ public class PlayerManager
      */
     public void sendPardnerInvite (Handle invitee, Handle inviter, String message)
     {
-        PlayerObject sendUser = BangServer.locator.lookupPlayer(inviter);
         PlayerObject user = BangServer.locator.lookupPlayer(invitee);
         if (user != null) {
-            if(user.getTokens().isAdmin() || user.getTokens().isSupport())
-            {
-                SpeakUtil.sendInfo(sendUser, BangCodes.BANG_MSGS,
-                        "You cannot add Bang! Howdy Staff!");
+            if (!user.awayMessage.equalsIgnoreCase("off")) {
+                SpeakUtil.sendInfo(user, null,
+                        "Access denied. You are unable to add this user.");
                 return;
             }
             sendPardnerInviteLocal(user, inviter, message, new Date());
         } else if (_peermgr.isRunning()) {
-            SpeakUtil.sendInfo(sendUser, BangCodes.BANG_MSGS,
-                    "That user is either offline or not on this server");
-            return;
+            _peermgr.forwardPardnerInvite(invitee, inviter, message);
         }
     }
 
@@ -1461,10 +1432,6 @@ public class PlayerManager
     {
         PlayerObject removerUser = BangServer.locator.lookupPlayer(remover);
         PlayerObject user = BangServer.locator.lookupPlayer(removee);
-        if(removerUser.getTokens().isSupport() || removerUser.getTokens().isAdmin())
-        {
-            return; // Do not let them remove staff.. The staff can remove them but not the other way around
-        }
         if (user != null) {
             removePardnerLocal(user, remover);
         } else if (_peermgr.isRunning()) {

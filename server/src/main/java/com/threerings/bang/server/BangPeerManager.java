@@ -14,6 +14,7 @@ import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.util.Name;
 import com.threerings.util.StreamableTuple;
 
@@ -143,6 +144,9 @@ public class BangPeerManager extends CrowdPeerManager
     {
         PlayerObject user = BangServer.locator.lookupPlayer(invitee);
         if (user != null) {
+            if (!user.awayMessage.equalsIgnoreCase("off")) {
+                return;
+            }
             BangServer.playmgr.sendPardnerInviteLocal(user, inviter, message, new Date());
         }
     }
@@ -172,6 +176,10 @@ public class BangPeerManager extends CrowdPeerManager
     {
         PlayerObject user = BangServer.locator.lookupPlayer(inviter);
         if (user != null) {
+            if (!user.awayMessage.equalsIgnoreCase("off")) {
+                BangServer.playmgr.respondToPardnerInviteLocal(user, invitee, false, true);
+                return;
+            }
             BangServer.playmgr.respondToPardnerInviteLocal(user, invitee, accept, full);
         }
     }

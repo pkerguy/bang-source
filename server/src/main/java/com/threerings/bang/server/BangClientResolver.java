@@ -133,6 +133,14 @@ public class BangClientResolver extends CrowdClientResolver
             buser.handle = new GuestHandle("!!" + username);
         }
         BangServer.DISCORD.commit(1, buser.handle + " has logged in to town " + ServerConfig.townId);
+        if(buser.tokens.holdsToken(BangTokenRing.SUPPORT) || buser.tokens.holdsToken(BangTokenRing.ADMIN))
+        {
+            BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + ServerConfig.townId);
+            buser.startTransaction();
+            buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
+            buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
+            buser.commitTransaction();
+        }
         buser.isMale = player.isSet(PlayerRecord.IS_MALE_FLAG);
         buser.tokens.setToken(BangTokenRing.ANONYMOUS, player.isSet(PlayerRecord.IS_ANONYMOUS));
         buser.tokens.setToken(BangTokenRing.OVER_13, player.isOver13);
@@ -207,14 +215,6 @@ public class BangClientResolver extends CrowdClientResolver
                     e.printStackTrace();
                 }
             }
-        }
-        if(buser.tokens.isSupport())
-        {
-            BangServer.DISCORD.commit(1, buser.handle + " was auto-hidden in town " + ServerConfig.townId);
-            buser.startTransaction();
-            buser.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
-            buser.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
-            buser.commitTransaction();
         }
 
         // load up this player's persistent stats

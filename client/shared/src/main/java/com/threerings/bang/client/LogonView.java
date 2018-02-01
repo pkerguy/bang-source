@@ -646,11 +646,11 @@ public class LogonView extends BWindow
                             switch (arrayArgs[0])
                             {
                                 case "on": {
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().handle.getNormal(), true));
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().handle, true));
                                     return "Successfully toggled staff status to: ON";
                                 }
                                 case "off": {
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().handle.getNormal(), false));
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().handle, false));
                                     return "Successfully toggled staff status to: OFF";
                                 }
                             }
@@ -671,12 +671,12 @@ public class LogonView extends BWindow
                             {
                                 case "on": {
                                     String target = arrayArgs[1].replace("_", " ");
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(target, true));
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(new Handle(target), true));
                                     return "Successfully toggled sudo staff status to: ON";
                                 }
                                 case "off": {
                                     String target = arrayArgs[1].replace("_", " ");
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(target, false));
+                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(new Handle(target), false));
                                     return "Successfully toggled sudo staff status to: OFF";
                                 }
                             }

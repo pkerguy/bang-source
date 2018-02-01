@@ -67,7 +67,8 @@ public class Server implements SocketListener {
             AwayAdminPacket packet = (AwayAdminPacket)o;
             if(BangServer.peerManager.isRunning())
                 {
-                    PeerNode peer = BangServer.peerManager.getPlayerPeer(new Handle(packet.adminuser));
+                    System.out.println(packet.username); // Debugging stuff
+                    PeerNode peer = BangServer.peerManager.getPlayerPeer(packet.username);
                     PlayerObject player = (PlayerObject)peer.getClient().getClientObject();
                     player.startTransaction();
                     if(packet.away)

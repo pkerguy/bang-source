@@ -350,34 +350,10 @@ public class BangPeerManager extends CrowdPeerManager
         // subscribe to server for handle change notifications
         BangServer.locator.addPlayerObserver(new PlayerLocator.PlayerObserver() {
             public void playerLoggedOn (PlayerObject user) {
-                if(user.townId == ServerConfig.townId)
-                {
-                    if(user.handle == null)
-                    {
-                        user.handle = new GuestHandle("!!" + user.username);
-                    }
-                    BangServer.DISCORD.commit(1, user.handle + " has logged in to town " + user.townId);
-                    if(user.tokens.holdsToken(BangTokenRing.SUPPORT) || user.tokens.holdsToken(BangTokenRing.ADMIN))
-                    {
-                        BangServer.DISCORD.commit(1, user.handle + " was auto-hidden in town " + ServerConfig.townId);
-                        user.startTransaction();
-                        user.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
-                        user.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
-                        user.commitTransaction();
-                    }
-                }
                 // no-op
             }
             public void playerLoggedOff (PlayerObject user) {
                 // no-op
-                if(user.townId == ServerConfig.townId)
-                {
-                    if(user.handle == null)
-                    {
-                        user.handle = new GuestHandle("!!" + user.username);
-                    }
-                    BangServer.DISCORD.commit(1, user.handle + " has logged out of town " + user.townId);
-                }
             }
             public void playerChangedHandle (PlayerObject user, Handle oldHandle) {
                 bnodeobj.startTransaction();

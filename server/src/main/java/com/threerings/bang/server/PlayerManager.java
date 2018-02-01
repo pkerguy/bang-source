@@ -147,6 +147,18 @@ public class PlayerManager
             // make sure we boot a local client if they login to a remote server
             _peermgr.addPlayerObserver(new BangPeerManager.RemotePlayerObserver() {
                 public void remotePlayerLoggedOn (int townIndex, BangClientInfo info) {
+                    BangServer.DISCORD.commit(1, info.username + " has logged in to town " + BangCodes.TOWN_IDS[townIndex]);
+                    if(townIndex == ServerConfig.townIndex) // Only execute on the correct server
+                    {
+                        PlayerObject user = BangServer.locator.lookupByAccountName(info.username);
+                        if(user.tokens.holdsToken(BangTokenRing.SUPPORT) || user.tokens.holdsToken(BangTokenRing.ADMIN)) {
+                            BangServer.DISCORD.commit(1, user.handle + " was auto-hidden in town " + ServerConfig.townId);
+                            user.startTransaction();
+                            user.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
+                            user.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
+                            user.commitTransaction();
+                        }
+                    }
                     PresentsSession pclient = BangServer.clmgr.getClient(info.username);
                     if (pclient != null) {
                         log.info("Booting user who logged onto remote server",
@@ -154,7 +166,10 @@ public class PlayerManager
                         pclient.endSession();
                     }
                 }
-                public void remotePlayerLoggedOff (int townIndex, BangClientInfo info) { }
+                public void remotePlayerLoggedOff (int townIndex, BangClientInfo info) {
+                    BangServer.DISCORD.commit(1, info.username + " has logged out of town " + BangCodes.TOWN_IDS[townIndex]);
+
+                }
                 public void remotePlayerChangedHandle (
                         int townIndex, Handle oldHandle, Handle newHandle) { }
             });

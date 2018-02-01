@@ -270,30 +270,11 @@ public class GangHandler
     // documentation inherited from interface PlayerLocator.PlayerObserver
     public void playerLoggedOn (PlayerObject user)
     {
-        if(user.handle == null)
-        {
-            user.handle = new GuestHandle("!!" + user.username);
-        }
-        BangServer.DISCORD.commit(1, user.handle + " has logged in to town " + user.townId);
-        if(user.tokens.holdsToken(BangTokenRing.SUPPORT) || user.tokens.holdsToken(BangTokenRing.ADMIN)) {
-            BangServer.DISCORD.commit(1, user.handle + " was auto-hidden in town " + ServerConfig.townId);
-            user.startTransaction();
-            user.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
-            user.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
-            user.commitTransaction();
-        }
         playerLocationChanged(user.handle, -1, ServerConfig.townIndex);
     }
 
     // documentation inherited from interface PlayerLocator.PlayerObserver
-    public void playerLoggedOff (PlayerObject user)
-    {
-        if (user.handle == null) {
-            user.handle = new GuestHandle("!!" + user.username);
-        }
-        BangServer.DISCORD.commit(1, user.handle + " has logged out of town " + user.townId);
-        playerLocationChanged(user.handle, ServerConfig.townIndex, -1);
-    }
+    public void playerLoggedOff (PlayerObject user) { }
 
     // documentation inherited from interface PlayerLocator.PlayerObserver
     public void playerChangedHandle (PlayerObject user, Handle oldHandle)

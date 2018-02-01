@@ -17,7 +17,7 @@ public class BangDesktop {
     public static String password = "";
     public static String server = "";
 
-    public static boolean isSudoAllowed = false;
+    public static boolean isSudoAllowed = true;
     public static boolean isMobileApp = false;
 
     public static String sudoUser = "UNKNOWN";

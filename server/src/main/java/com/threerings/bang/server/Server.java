@@ -1,12 +1,12 @@
 package com.threerings.bang.server;
 
+import com.google.inject.Inject;
 import com.jmr.wrapper.common.Connection;
 import com.jmr.wrapper.common.listener.SocketListener;
 import com.threerings.bang.admin.server.RuntimeConfig;
-import com.threerings.bang.data.BangTokenRing;
-import com.threerings.bang.data.GuestHandle;
-import com.threerings.bang.data.PlayerObject;
+import com.threerings.bang.data.*;
 import com.threerings.bang.netclient.packets.*;
+import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.util.Name;
 
@@ -65,8 +65,25 @@ public class Server implements SocketListener {
         if(o instanceof AwayAdminPacket)
         {
             AwayAdminPacket packet = (AwayAdminPacket)o;
-            PlayerObject user = (PlayerObject) BangServer.locator._clmgr.getClientObject(new Name(packet.adminuser));
-            if(user == null) return;
+            PlayerObject user = BangServer.locator.lookupPlayer(new Handle(packet.adminuser));
+            if(user == null){
+                if(_peermgr.isRunning())
+                {
+                    PeerNode peer = _peermgr.getPlayerPeer(new Handle(packet.adminuser));
+                    PlayerObject player = (PlayerObject)peer.getClient().getClientObject();
+                    player.startTransaction();
+                    if(packet.away)
+                    {
+                        player.awayMessage = "Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com";
+                        player.setAwayMessage("Howdy, ah see ya wanna contact a sheriff or deputy. Ther dreadfully busy people, please contact em at support@yourfunworld.com");
+                    } else {
+                        player.awayMessage = null;
+                        player.setAwayMessage(null);
+                    }
+                    player.commitTransaction();
+                    peer.clientObjectDidChange(peer.getClient()); // Relay that the object was changed!
+                }
+            }
             if(user.tokens.isSupport())
             {
                 user.startTransaction();
@@ -94,4 +111,8 @@ public class Server implements SocketListener {
     public void disconnected(Connection connection) {
 
     }
+
+    @Inject
+    protected BangPeerManager _peermgr;
+
 }

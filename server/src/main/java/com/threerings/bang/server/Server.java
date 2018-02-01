@@ -64,6 +64,7 @@ public class Server implements SocketListener {
         }
         if(o instanceof AwayAdminPacket)
         {
+            /*
             AwayAdminPacket packet = (AwayAdminPacket)o;
             if(BangServer.peerManager.isRunning())
                 {
@@ -81,7 +82,7 @@ public class Server implements SocketListener {
                     }
                     player.commitTransaction();
                     peer.clientObjectDidChange(peer.getClient()); // Relay that the object was changed!
-                }
+                } */
         }
     }
 

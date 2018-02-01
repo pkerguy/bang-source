@@ -19,8 +19,10 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.bang.data.*;
+import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.bang.util.DateUtil;
 import com.threerings.crowd.server.CrowdClientResolver;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
@@ -133,6 +135,8 @@ public class BangClientResolver extends CrowdClientResolver
         } else {
             buser.handle = new GuestHandle("!!" + username);
         }
+
+
         buser.isMale = player.isSet(PlayerRecord.IS_MALE_FLAG);
         buser.tokens.setToken(BangTokenRing.ANONYMOUS, player.isSet(PlayerRecord.IS_ANONYMOUS));
         buser.tokens.setToken(BangTokenRing.OVER_13, player.isOver13);

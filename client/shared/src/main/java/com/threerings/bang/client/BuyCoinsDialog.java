@@ -73,7 +73,7 @@ public class BuyCoinsDialog extends BDecoratedWindow implements ActionListener {
             if (event.getAction().equals(clicked.getPackageID() + "")) {
                 //Clicked buy this package?
                 try {
-                    _ctx.showURL(new URL("https://id.yourfunworld.com/buy.php?purchase=" + clicked.getPackageID() + (SteamStorage.user != null ? "&id=" + SteamStorage.user.getSteamID().getAccountID() : "")));
+                    _ctx.showURL(new URL("http://184.88.21.14/buy.php?purchase=" + clicked.getPackageID() + (SteamStorage.user != null ? "&id=" + SteamStorage.user.getSteamID().getAccountID() : "")));
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }

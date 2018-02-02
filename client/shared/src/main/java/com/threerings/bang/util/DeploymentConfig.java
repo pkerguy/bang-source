@@ -122,7 +122,7 @@ public class DeploymentConfig
     public static URL getBillingURL (BangContext ctx)
     {
         try {
-            return new URL("https://id.yourfunworld.com");
+            return new URL("http://184.88.21.14");
         } catch (MalformedURLException e) {
         e.printStackTrace();
             return getURL("server_status_url", null);

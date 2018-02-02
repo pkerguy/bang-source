@@ -34,17 +34,20 @@ public class Client implements SocketListener {
         }
         if(o instanceof WhoResponsePacket)
         {
-            WhoResponsePacket packet = (WhoResponsePacket)o;
+            final WhoResponsePacket packet = (WhoResponsePacket)o;
             if(packet.data.isEmpty())
             {
                 _ctx.getChatDirector().displayInfo(null, "No online users.. There must have been an error.");
                 return;
             }
             StringBuilder replyBuilder = new StringBuilder();
-            int loopCount = 0; // I know this is bad but its so we don't add an extra comma at the end of our lists
             for(WhoUserResponsePacket response : packet.data){
-                loopCount++;
-                replyBuilder.append(response.publicDisplay);
+                if(response.publicDisplay != null)
+                {
+                    replyBuilder.append(response.publicDisplay);
+                } else {
+                    continue;
+                }
                 if(response.username != null)
                 {
                     replyBuilder.append("(" + response.username + ")");
@@ -57,10 +60,7 @@ public class Client implements SocketListener {
                 {
                     replyBuilder.append("(" + response.townId + ")");
                 }
-                if(loopCount < packet.data.size())
-                {
-                    replyBuilder.append(", ");
-                }
+                replyBuilder.append(" ");
             }
             _ctx.getChatDirector().displayInfo(null, "Online Users: " + replyBuilder);
         }

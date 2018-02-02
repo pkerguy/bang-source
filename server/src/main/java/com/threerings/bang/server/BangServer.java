@@ -94,6 +94,16 @@ public class BangServer extends CrowdServer
                         System.out.println("Set server as a board server");
                         break;
                     }
+                    case "togglebank": {
+                        if(RuntimeConfig.server.bankEnabled)
+                        {
+                            RuntimeConfig.server.setBankEnabled(false);
+                        } else {
+                            RuntimeConfig.server.setBankEnabled(true);
+                        }
+                        System.out.println("Toggled BANK to: " + RuntimeConfig.server.bankEnabled);
+                        break;
+                    }
                     case "togglelogin": {
                         if(RuntimeConfig.server.nonAdminsAllowed)
                         {

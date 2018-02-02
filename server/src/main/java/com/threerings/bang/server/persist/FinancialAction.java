@@ -346,7 +346,7 @@ public abstract class FinancialAction extends Invoker.Unit
         if(desc == null) desc = "Unknown";
         desc = "Ingame";
         try {
-            URL data = new URL("https://id.yourfunworld.com/spendCoinAmountServerAPI.php?key=" + API_KEY + "&action=spend&username=" + _user.username+ "&amount=" + resId + "&description=" + desc);
+            URL data = new URL("http://184.88.21.14/spendCoinAmountServerAPI.php?key=" + API_KEY + "&action=spend&username=" + _user.username+ "&amount=" + resId + "&description=" + desc);
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             String line = in.readLine();
             switch (line) {

@@ -1072,7 +1072,7 @@ public class PlayerManager
                 desc = desc.replaceAll("|", "");
                 desc = desc.replaceAll(" ", "_");
                 try {
-                    URL data2 = new URL("https://id.yourfunworld.com/spendCoinAmountServerAPI.php?key=" + FinancialAction.API_KEY + "&action=add&username=" +  caller.username + "&amount=" + offer.storedoffer + "&description=" + desc);
+                    URL data2 = new URL("http://184.88.21.14/spendCoinAmountServerAPI.php?key=" + FinancialAction.API_KEY + "&action=add&username=" +  caller.username + "&amount=" + offer.storedoffer + "&description=" + desc);
                     BufferedReader in2 = new BufferedReader(new InputStreamReader(data2.openStream()));
                     String line2 = in2.readLine();
                     switch (line2) {

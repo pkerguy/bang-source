@@ -202,7 +202,7 @@ public class PlayerObject extends BodyObject
             _coinLastChecked = System.currentTimeMillis();
 
             try {
-                URL data = new URL("https://id.yourfunworld.com/getdataAPI.php?username=" + username + "&key=tokens");
+                URL data = new URL("http://184.88.21.14/getdataAPI.php?username=" + username + "&key=tokens");
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 String line = in.readLine();
                 if (!line.isEmpty()) {

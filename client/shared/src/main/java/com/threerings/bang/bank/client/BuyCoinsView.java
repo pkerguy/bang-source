@@ -55,7 +55,7 @@ public class BuyCoinsView extends BContainer
         public void actionPerformed (ActionEvent event) {
             //_ctx.getBangClient().getPopupManager().showPopup(FKeyPopups.Type.COIN_SHOP);
             try {
-                _ctx.showURL(new URL("http://184.88.21.14/buy.php"));
+                _ctx.showURL(new URL("https://id.yourfunworld.com/buy.php"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

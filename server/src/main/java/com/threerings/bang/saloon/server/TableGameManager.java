@@ -311,6 +311,8 @@ public class TableGameManager implements TableGameProvider
         config.players = new Handle[config.plist.size()];
         config.duration = _tobj.game.duration;
         config.speed = _tobj.game.speed;
+        config.rated = false; // back parlor games are never rated
+
         // configure our rounds
         for (int ii = 0; ii < _tobj.game.rounds; ii++) {
             config.addRound(RandomUtil.pickRandom(_tobj.game.scenarios), null, _bdata);

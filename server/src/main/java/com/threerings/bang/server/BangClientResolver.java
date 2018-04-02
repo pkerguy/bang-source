@@ -270,6 +270,11 @@ public class BangClientResolver extends CrowdClientResolver
             }
         }
 
+        if(buser.holdsTicket("boom_town"))
+        {
+            buser.removeFromInventory(buser.getEquivalentItem(new TrainTicket(buser.playerId, 2)).getKey());
+        }
+
         // if we're giving out free access to ITP, give the user a temporary ITP ticket for this
         // session (if they don't already have one)
         int itpidx = BangUtil.getTownIndex(BangCodes.INDIAN_POST);

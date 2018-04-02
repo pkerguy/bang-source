@@ -183,6 +183,25 @@ public class BangServer extends CrowdServer
                                 System.exit(0);
                         break;
                     }
+                    case "config-init": {
+                        RuntimeConfig.server.setBankEnabled(false);
+                        RuntimeConfig.server.setSaloonEnabled(true);
+                        RuntimeConfig.server.setStoreEnabled(true);
+                        RuntimeConfig.server.setOfficeEnabled(true);
+                        RuntimeConfig.server.setRanchEnabled(true);
+                        RuntimeConfig.server.setBarberEnabled(true);
+                        RuntimeConfig.server.setHideoutEnabled(true);
+                        RuntimeConfig.server.setFreeIndianPost(false);
+                        RuntimeConfig.server.setAllowNewGames(true);
+                        RuntimeConfig.server.setNonAdminsAllowed(false);
+                        RuntimeConfig.server.setAnonymousAccessEnabled(true);
+                        RuntimeConfig.server.setArticleRentMultiplier(new float[] { 5f, 12f, 23f, 45f, 110f });
+                        RuntimeConfig.server.setOpenToPublic(true);
+                        RuntimeConfig.server.setNearRankRange(200);
+                        RuntimeConfig.server.setLooseRankRange(400);
+                        RuntimeConfig.server.setSelectPhaseTimeout(180);
+                        break;
+                    }
                     default:  DISCORD.commit(1, "That is an unknown command! Please try again"); break;
                 }
 
@@ -231,29 +250,6 @@ public class BangServer extends CrowdServer
             final int latestINIT = 1; // Change value whenever we forcefully to to reinitialize the DB based Config values (DO NOT DO, but it's there in-case)
 
             DISCORD.start();
-
-            if(RuntimeConfig.server.INIT != latestINIT)
-            {
-                DISCORD.commit(1, "Reinitializing the config in DB to version: " + latestINIT);
-                RuntimeConfig.server.setBankEnabled(false);
-                RuntimeConfig.server.setSaloonEnabled(true);
-                RuntimeConfig.server.setStoreEnabled(true);
-                RuntimeConfig.server.setOfficeEnabled(true);
-                RuntimeConfig.server.setRanchEnabled(true);
-                RuntimeConfig.server.setBarberEnabled(true);
-                RuntimeConfig.server.setHideoutEnabled(true);
-                RuntimeConfig.server.setFreeIndianPost(false);
-                RuntimeConfig.server.setAllowNewGames(true);
-                RuntimeConfig.server.setNonAdminsAllowed(false);
-                RuntimeConfig.server.setAnonymousAccessEnabled(true);
-                RuntimeConfig.server.setArticleRentMultiplier(new float[] { 5f, 12f, 23f, 45f, 110f });
-                RuntimeConfig.server.setOpenToPublic(true);
-                RuntimeConfig.server.setNearRankRange(200);
-                RuntimeConfig.server.setLooseRankRange(400);
-                RuntimeConfig.server.setSelectPhaseTimeout(180);
-                RuntimeConfig.server.setInitVersion(latestINIT);
-                DISCORD.commit(1, "Done");
-            }
         }
 
         @Override protected void bindInvokers() {

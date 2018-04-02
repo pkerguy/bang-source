@@ -20,6 +20,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.SimpleRepository;
 
+import com.threerings.bang.server.BangServer;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 

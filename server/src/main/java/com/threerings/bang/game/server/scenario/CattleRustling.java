@@ -12,6 +12,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.samskivert.util.RandomUtil;
 
+import com.threerings.bang.server.BangServer;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.parlor.game.data.GameAI;
 import com.threerings.stats.data.StatSet;

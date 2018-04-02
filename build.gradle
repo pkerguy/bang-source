@@ -3,9 +3,9 @@ allprojects {
   version = "1.1-SNAPSHOT"
 
   ext {
-    gdxVersion = "1.5.4"
+    gdxVersion = "1.9.8"
     naryaVersion = "1.15"
-    nenyaVersion = "1.7-SNAPSHOT"
+    nenyaVersion = "2.1"
     towns = ["frontier_town", "indian_post"]
     // indicates whether we're building for test or production
     // when "package" target is invoked the deployment will be set to "prod"
@@ -13,6 +13,8 @@ allprojects {
   }
 
   apply plugin: "java"
+  apply plugin: 'maven'
+
   sourceCompatibility = "1.8"; // for example
   targetCompatibility = "1.8"; // defaults to sourceCompatibility
   compileJava {
@@ -24,8 +26,8 @@ allprojects {
     tools
 
     dependencies {
-      compile "com.threerings:nenya:1.7"
-      compile "com.threerings:nenya-tools:1.7"
+      compile "com.threerings:nenya-core:${nenyaVersion}"
+      compile "com.threerings:nenya-tools:${nenyaVersion}"
       compile "com.code-disaster.steamworks4j:steamworks4j:1.6.3-SNAPSHOT"
       tools "com.threerings:narya-tools:${naryaVersion}"
       tools project(":tools")
@@ -46,7 +48,10 @@ allprojects {
       mavenLocal()
       mavenCentral()
       maven {
-        url "https://bitbucket.org/kayaba/nexus_repo16/raw/master/"
+        url "http://devrepo.mckz.org"
+      }
+      maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
       }
       jcenter()
     }

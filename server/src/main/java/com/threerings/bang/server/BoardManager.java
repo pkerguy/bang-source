@@ -57,7 +57,7 @@ public class BoardManager
             System.out.println("Board file: " + source.getPath());
             // sanity check boards as creators are known to fuck up
             if (file.players < 2 || file.players > GameCodes.MAX_PLAYERS) {
-                log.warning("Invalid number of players", "players", file.players, "file", file);
+                BangServer.DISCORD.commit(1, "Invalid number of players", "players", file.players, "file", file);
                 return;
             }
 
@@ -83,7 +83,7 @@ public class BoardManager
                 lists[pidx].add(file);
             }
         } catch (IOException ioe) {
-            log.warning("Error reading board", "file", source, ioe);
+            BangServer.DISCORD.commit(1, "Error reading board", "file", source, ioe);
         }
     }
 
@@ -106,7 +106,7 @@ public class BoardManager
                     choices[ii] = BoardFile.loadFrom(round.bdata);
                     continue;
                 } catch (Exception e) {
-                    log.warning("Failed to load board data", "round", round, e);
+                    BangServer.DISCORD.commit(1, "Failed to load board data", "round", round, e);
                 }
             }
 
@@ -124,7 +124,7 @@ public class BoardManager
             BoardList[] candvec = _byscenario.get(scenario);
             BoardList candidates = (candvec == null) ? null : candvec[players-2];
             if (candidates == null) {
-                log.warning("Aiya! Missing boards", "players", players, "scenario", scenario);
+                BangServer.DISCORD.commit(1, "Aiya! Missing boards", "players", players, "scenario", scenario);
                 continue;
             }
 

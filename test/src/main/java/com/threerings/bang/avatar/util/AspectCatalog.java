@@ -4,7 +4,6 @@
 package com.threerings.bang.avatar.util;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

@@ -312,10 +312,10 @@ public class LogonView extends BWindow
                 _logon.setEnabled(true);
             }
             try {
-                URL data = new URL("http://184.88.21.14/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                URL data = new URL("http://184.88.21.14/banghowdy/serverInfo2.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
                 if(BangDesktop.isMobileApp)
                 {
-                    data = new URL("http://184.88.21.14/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                    data = new URL("http://184.88.21.14/banghowdy/serverInfo2.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
                 }
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
@@ -413,10 +413,10 @@ public class LogonView extends BWindow
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.getVersion()));
 
         try {
-            URL data = new URL("http://184.88.21.14/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+            URL data = new URL("http://184.88.21.14/banghowdy/serverInfo2.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
             if(BangDesktop.isMobileApp)
             {
-                data = new URL("http://184.88.21.14/banghowdy/serverInfo.php?id=" + _username.getText() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
+                data = new URL("http://184.88.21.14/banghowdy/serverInfo2.php?id=" + _username.getText() + "&version=" + DeploymentConfig.getVersion() + "&name=" + serverList.getSelectedItem());
             }
             BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
             final String result = in.readLine();

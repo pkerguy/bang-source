@@ -47,7 +47,7 @@ public class ItemFactory
         // now do the lookup
         Integer type = _classToType.get(itemClass);
         if (type == null) {
-            log.warning("No type for item class!", "class", itemClass.getName());
+            BangServer.DISCORD.commit(1, "No type for item class!", "class", itemClass.getName());
             return -1;
         }
 

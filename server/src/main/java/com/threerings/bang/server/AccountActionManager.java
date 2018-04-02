@@ -96,7 +96,7 @@ public class AccountActionManager
                 handleAccountAction(ba);
             } catch (Throwable t) {
                 itr.remove(); // remove that action from our list
-                log.warning("Failure handling account action, skipping.", "action", ba, t);
+                BangServer.DISCORD.commit(1, "Failure handling account action, skipping.", "action", ba, t);
             }
         }
 
@@ -126,7 +126,7 @@ public class AccountActionManager
             break;
 
         default:
-            log.warning("Unknown account action", "action", aa);
+            BangServer.DISCORD.commit(1, "Unknown account action", "action", aa);
         }
     }
 
@@ -140,7 +140,7 @@ public class AccountActionManager
                 try {
                     _playrepo.disablePlayer(accountName, disabledName);
                 } catch (PersistenceException pe) {
-                    log.warning("Error disabling account", "oname", accountName,
+                    BangServer.DISCORD.commit(1, "Error disabling account", "oname", accountName,
                                 "dname", disabledName, "cause", pe);
                 }
                 return false;

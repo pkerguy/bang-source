@@ -50,7 +50,7 @@ public class RuntimeConfig
                 field.set(null, object);
 
             } catch (Exception e) {
-                log.warning("Failed to set " + key + ": " + e);
+                BangServer.DISCORD.commit(1, "Failed to set " + key + ": " + e);
             }
         }
     }

@@ -159,7 +159,7 @@ public class GangManager
             try {
                 requireGang(mrec.gangId).initPlayer(player);
             } catch (InvocationException e) {
-                log.warning("Gang not loaded to init player", "gangId", mrec.gangId,
+                BangServer.DISCORD.commit(1, "Gang not loaded to init player", "gangId", mrec.gangId,
                             "player", player.who());
             }
         } else if (invites != null) {
@@ -184,7 +184,7 @@ public class GangManager
             pinfo.gang = gangobj.name;
             pinfo.buckle = gangobj.getBuckleInfo();
         } catch (InvocationException e) {
-            log.warning("Gang not loaded to populate player info", "gangId", player.gangId,
+            BangServer.DISCORD.commit(1, "Gang not loaded to populate player info", "gangId", player.gangId,
                         "player", player.who());
         }
     }
@@ -204,7 +204,7 @@ public class GangManager
             info.title = player.gangTitle;
             info.buckle = gangobj.getBuckleInfo();
         } catch (InvocationException e) {
-            log.warning("Gang not loaded to populate poster", "gangId", player.gangId,
+            BangServer.DISCORD.commit(1, "Gang not loaded to populate poster", "gangId", player.gangId,
                         "player", player.who());
         }
     }
@@ -363,7 +363,7 @@ public class GangManager
     {
         GangHandler handler = _names.get(name);
         if (handler == null || handler.getGangObject() == null) {
-            log.warning("Gang not loaded or initialized", "name", name, "handler", handler);
+            BangServer.DISCORD.commit(1, "Gang not loaded or initialized", "name", name, "handler", handler);
             throw new InvocationException(INTERNAL_ERROR);
         }
         return handler.getPeerProvider();
@@ -378,7 +378,7 @@ public class GangManager
     {
         GangHandler handler = _gangs.get(gangId);
         if (handler == null || handler.getGangObject() == null) {
-            log.warning("Gang not loaded or initialized", "gangId", gangId, "handler", handler);
+            BangServer.DISCORD.commit(1, "Gang not loaded or initialized", "gangId", gangId, "handler", handler);
             throw new InvocationException(INTERNAL_ERROR);
         }
         return handler;
@@ -537,7 +537,7 @@ public class GangManager
                 }
             }
             public void handleFailure (Exception cause) {
-                log.warning("Failed to erode gang notorieties", "error", cause);
+                BangServer.DISCORD.commit(1, "Failed to erode gang notorieties", "error", cause);
             }
         });
     }
@@ -562,7 +562,7 @@ public class GangManager
                 }
             }
             public void handleFailure (Exception cause) {
-                log.warning("Failed to sync gang notorieties.", cause);
+                BangServer.DISCORD.commit(1, "Failed to sync gang notorieties.", cause);
             }
 
             protected IntIntMap _notMap;

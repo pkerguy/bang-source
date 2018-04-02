@@ -253,7 +253,7 @@ public class ItemRepository extends SimpleRepository
     {
         if (update("update ITEMS set OWNER_ID = " + newOwnerId +
                    " where ITEM_ID = " + item.getItemId()) == 0) {
-            log.warning("Requested to transfer non-persisted item", "item", item, "to", newOwnerId);
+            BangServer.DISCORD.commit(1, "Requested to transfer non-persisted item", "item", item, "to", newOwnerId);
 
         } else {
             // update the item's ownerId field
@@ -310,7 +310,7 @@ public class ItemRepository extends SimpleRepository
                 Statement stmt = conn.createStatement();
                 try {
                     if (stmt.executeUpdate(query) == 0) {
-                        log.warning("Requested to delete non-persisted item", "item", item,
+                        BangServer.DISCORD.commit(1, "Requested to delete non-persisted item", "item", item,
                                     "why", why);
                     } else {
                         BangServer.itemLog("item_deleted id:" + item.getItemId() + " why:" + why);
@@ -345,7 +345,7 @@ public class ItemRepository extends SimpleRepository
                 try {
                     int deleted = stmt.executeUpdate(query);
                     if (deleted != itemIds.size()) {
-                        log.warning("Multiple item delete funny business", "itemIds", itemIds,
+                        BangServer.DISCORD.commit(1, "Multiple item delete funny business", "itemIds", itemIds,
                                     "deleted", deleted, "query", query);
                     }
 

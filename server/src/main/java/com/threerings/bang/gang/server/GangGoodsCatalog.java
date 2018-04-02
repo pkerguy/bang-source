@@ -148,7 +148,7 @@ public class GangGoodsCatalog
                     BucklePartCatalog.Part part = _alogic.getBucklePartCatalog().getPart(
                         pgood.getPartClass(), pgood.getPartName());
                     if (part == null) {
-                        log.warning("Requested to create buckle part for unknown catalog entry",
+                        BangServer.DISCORD.commit(1, "Requested to create buckle part for unknown catalog entry",
                                     "gang", _gang, "good", _good);
                         throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
                     }

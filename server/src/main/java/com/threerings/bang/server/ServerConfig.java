@@ -74,7 +74,7 @@ public class ServerConfig
                 return clazz;
             }
         } catch (Exception e) {
-            log.warning("Failed to instantiate authenticator", "class", aclass, e);
+            BangServer.DISCORD.commit(1, "Failed to instantiate authenticator", "class", aclass, e);
         }
         return null;
     }
@@ -93,11 +93,11 @@ public class ServerConfig
             // passed by our startup scripts
             nodename = System.getProperty("node");
             if (StringUtil.isBlank(nodename)) {
-                log.warning("Missing 'node' system property. Cannot start.");
+                BangServer.DISCORD.commit(1, "Missing 'node' system property. Cannot start.");
             }
             hostname = System.getProperty("hostname");
             if (StringUtil.isBlank(hostname)) {
-                log.warning("Missing 'hostname' system property. Cannot start.");
+                BangServer.DISCORD.commit(1, "Missing 'hostname' system property. Cannot start.");
             }
             if (StringUtil.isBlank(nodename) || StringUtil.isBlank(hostname)) {
                 System.exit(-1);

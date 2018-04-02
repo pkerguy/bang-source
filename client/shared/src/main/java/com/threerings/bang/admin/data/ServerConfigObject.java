@@ -69,7 +69,11 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>scripToGoldRate</code> field. */
     public static final String GOLD_TO_SCRIP_RATE = "goldToScripRate";
 
+    public static final String INIT_VERSION = "INIT";
+
     // AUTO-GENERATED: FIELDS END
+
+    public int INIT = -1;
 
     /** Whether or not to require insiders or testers. */
     public boolean openToPublic = true;
@@ -134,6 +138,23 @@ public class ServerConfigObject extends ConfigObject
     public float[] articleRentMultiplier = { 2.5f, 6f, 11.5f, 22.5f, 55f };
 
     // AUTO-GENERATED: METHODS START
+
+    /**
+     * Requests that the <code>INIT</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setInitVersion (int value)
+    {
+        int ovalue = this.INIT;
+        requestAttributeChange(
+                INIT_VERSION, value, ovalue);
+        this.INIT = value;
+    }
+
     /**
      * Requests that the <code>openToPublic</code> field be set to the
      * specified value. The local value will be updated immediately and an
@@ -197,6 +218,39 @@ public class ServerConfigObject extends ConfigObject
                 BANK_ENABLED, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.bankEnabled = value;
     }
+
+    /**
+     * Requests that the <code>SCRIP_TO_GOLD_RATE</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setExchangeTo (int newRate)
+    {
+        int ovalue = this.scripToGoldRate;
+        requestAttributeChange(
+                SCRIP_TO_GOLD_RATE, newRate, ovalue);
+        this.scripToGoldRate = newRate;
+    }
+
+    /**
+     * Requests that the <code>GOLD_TO_SCRIP</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setExchangeFrom (int newRate)
+    {
+        int ovalue = this.goldToScripRate;
+        requestAttributeChange(
+                GOLD_TO_SCRIP_RATE, newRate, ovalue);
+        this.goldToScripRate = newRate;
+    }
+
 
     /**
      * Requests that the <code>freeIndianPost</code> field be set to the

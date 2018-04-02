@@ -71,7 +71,7 @@ public class OfficeManager extends ShopManager
 
         final BountyConfig config = BountyConfig.getBounty(bountyId);
         if (config == null) {
-            log.warning("Received request to start unknown bounty", "from", player.who(),
+            BangServer.DISCORD.commit(1, "Received request to start unknown bounty", "from", player.who(),
                         "bounty", bountyId, "game", gameId);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -85,7 +85,7 @@ public class OfficeManager extends ShopManager
             
         // make sure they haven't hacked their client
         if (!config.isAvailable(player)) {
-            log.warning("Player requested to start unavailable bounty", "who", player.who(),
+            BangServer.DISCORD.commit(1, "Player requested to start unavailable bounty", "who", player.who(),
                         "bounty", bountyId);
             throw new InvocationException(ACCESS_DENIED);
         }
@@ -95,7 +95,7 @@ public class OfficeManager extends ShopManager
                     break;
                 } else if (!player.stats.containsValue(StatType.BOUNTY_GAMES_COMPLETED,
                                                        config.getStatKey(game.ident))) {
-                    log.warning("Player tried to play bounty game out of order",
+                    BangServer.DISCORD.commit(1, "Player tried to play bounty game out of order",
                                 "who", player.who(), "bounty", bountyId, "game", gameId);
                     throw new InvocationException(ACCESS_DENIED);
                 }
@@ -118,7 +118,7 @@ public class OfficeManager extends ShopManager
                     _gconfig = (BangConfig)BinaryImporter.getInstance().load(
                         _rsrcmgr.getResource(path));
                 } catch (Exception e) {
-                    log.warning("Failed to load bounty game", "key", key, e);
+                    BangServer.DISCORD.commit(1, "Failed to load bounty game", "key", key, e);
                 }
                 return true;
             }
@@ -172,7 +172,7 @@ public class OfficeManager extends ShopManager
                 try {
                     _bountyrepo.storeCompleters(record);
                 } catch (Exception e) {
-                    log.warning("Failed to store recent completers " + record + ".", e);
+                    BangServer.DISCORD.commit(1, "Failed to store recent completers " + record + ".", e);
                 }
                 return false;
             };
@@ -232,7 +232,7 @@ public class OfficeManager extends ShopManager
             BangManager bangmgr = (BangManager)BangServer.plreg.createPlace(gconfig);
             bangmgr.setBountyConfig(bounty, gameId);
         } catch (InstantiationException ie) {
-            log.warning("Error instantiating bounty game", "for", user.who(), "bounty", bounty,
+            BangServer.DISCORD.commit(1, "Error instantiating bounty game", "for", user.who(), "bounty", bounty,
                         "gconfig", gconfig, ie);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -284,7 +284,7 @@ public class OfficeManager extends ShopManager
                 _offobj.setCompleters(new DSet<RecentCompleters>(_comps));
             }
             public void handleFailure (Exception cause) {
-                log.warning("Failed to load recent completers.", cause);
+                BangServer.DISCORD.commit(1, "Failed to load recent completers.", cause);
                 _offobj.setCompleters(new DSet<RecentCompleters>());
             }
             protected ArrayList<RecentCompleters> _comps = new ArrayList<RecentCompleters>();

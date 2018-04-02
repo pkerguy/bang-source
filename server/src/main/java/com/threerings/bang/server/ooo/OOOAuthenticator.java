@@ -50,7 +50,7 @@ public class OOOAuthenticator extends BangAuthenticator
             _rewardrep = new RewardRepository(_conprov);
 
         } catch (PersistenceException pe) {
-            log.warning("Failed to initialize OOO authenticator.", pe);
+            BangServer.DISCORD.commit(1, "Failed to initialize OOO authenticator.", pe);
         }
     }
 
@@ -89,7 +89,7 @@ public class OOOAuthenticator extends BangAuthenticator
                 break;
 
             default:
-                log.warning("Unhandled checkCanCreate() response code", "ident", machIdent,
+                BangServer.DISCORD.commit(1, "Unhandled checkCanCreate() response code", "ident", machIdent,
                             "rv", rv);
                 return SERVER_ERROR;
             }
@@ -104,14 +104,14 @@ public class OOOAuthenticator extends BangAuthenticator
 
         } catch (InvalidUsernameException iue) {
             // the client shouldn't allow invalid names, so we just give a generic exception here
-            log.warning("User submitted invalid username?", "username", username);
+            BangServer.DISCORD.commit(1, "User submitted invalid username?", "username", username);
             return SERVER_ERROR;
 
         } catch (UserExistsException uee) {
             return NAME_IN_USE;
 
         } catch (PersistenceException pe) {
-            log.warning("Error creating arround", "username", username, "password", password,
+            BangServer.DISCORD.commit(1, "Error creating arround", "username", username, "password", password,
                         "siteId", siteId, "ident", machIdent, pe);
             return SERVER_ERROR;
         }
@@ -134,7 +134,7 @@ public class OOOAuthenticator extends BangAuthenticator
                 }
             }
         } catch (Exception e) {
-            log.warning("Failed to redeem rewards", "who", username, e);
+            BangServer.DISCORD.commit(1, "Failed to redeem rewards", "who", username, e);
         }
         return rdata;
     }
@@ -179,7 +179,7 @@ public class OOOAuthenticator extends BangAuthenticator
         try {
             creds = (BangCredentials) req.getCredentials();
         } catch (ClassCastException cce) {
-            log.warning("Invalid creds " + req.getCredentials() + ".");
+            BangServer.DISCORD.commit(1, "Invalid creds " + req.getCredentials() + ".");
             rdata.code = SERVER_ERROR;
             return;
         }
@@ -187,7 +187,7 @@ public class OOOAuthenticator extends BangAuthenticator
         // check their provided machine identifier
         String username = creds.getUsername().toString();
         if (StringUtil.isBlank(creds.ident)) {
-            log.warning("Received blank ident", "creds", creds);
+            BangServer.DISCORD.commit(1, "Received blank ident", "creds", creds);
             BangServer.generalLog("refusing_spoofed_ident " + username +
                                   " ip:" + conn.getInetAddress());
             rdata.code = SERVER_ERROR;
@@ -304,7 +304,7 @@ public class OOOAuthenticator extends BangAuthenticator
             log.info("Info", "townidx", townidx, "townId", townId, "serverTownIdx", serverTownIdx);
 
             if (townidx < serverTownIdx && !user.isAdmin()) {
-                log.warning("Rejecting access to town server by non-ticket-holder",
+                BangServer.DISCORD.commit(1, "Rejecting access to town server by non-ticket-holder",
                             "who", username, "stownId", ServerConfig.townId, "ptownId", townId);
                 rdata.code = NO_TICKET;
                 return;

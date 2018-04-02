@@ -218,7 +218,7 @@ public class Tutorial extends Scenario
             } else if (add.what.equals("bigshot")) {
                 PlayerObject user = (PlayerObject)_bangmgr.getPlayer(0);
                 if (user == null) {
-                    log.warning("No player in tutorial, can't place Big Shot",
+                    BangServer.DISCORD.commit(1, "No player in tutorial, can't place Big Shot",
                                 "game", _bangobj.which());
                     return false;
                 }
@@ -238,7 +238,7 @@ public class Tutorial extends Scenario
                 piece = Unit.getUnit(bstype);
 
             } else {
-                log.warning("Requested to add unknown piece type " + add + ".");
+                BangServer.DISCORD.commit(1, "Requested to add unknown piece type " + add + ".");
                 return false;
             }
 
@@ -259,12 +259,12 @@ public class Tutorial extends Scenario
             case 1:
                 Piece near = _bangobj.pieces.get(add.location[0]);
                 if (near == null) {
-                    log.warning("Can't add piece near non-existent piece " + add + ".");
+                    BangServer.DISCORD.commit(1, "Can't add piece near non-existent piece " + add + ".");
                     return false;
                 } else {
                     Point spot = _bangobj.board.getOccupiableSpot(near.x, near.y, 2, 4, null);
                     if (spot == null) {
-                        log.warning("Can't find spot near piece", "piece", near, "add", add);
+                        BangServer.DISCORD.commit(1, "Can't find spot near piece", "piece", near, "add", add);
                         return false;
                     } else {
                         piece.position(spot.x, spot.y);
@@ -312,7 +312,7 @@ public class Tutorial extends Scenario
                     }
                 }
                 if (!foundMove && !mua.noWarning) {
-                    log.warning("Unable to locate spot near target", "tut", _config.ident,
+                    BangServer.DISCORD.commit(1, "Unable to locate spot near target", "tut", _config.ident,
                                 "unit", unit, "target", target);
                 }
             }
@@ -321,7 +321,7 @@ public class Tutorial extends Scenario
                 _bangmgr.executeOrder(unit, tx, ty, targetId, true);
             } catch (InvocationException ie) {
                 if (!mua.noWarning) {
-                    log.warning("Unable to execute action " + mua + ":" + ie.getMessage());
+                    BangServer.DISCORD.commit(1, "Unable to execute action " + mua + ":" + ie.getMessage());
                 }
             }
 

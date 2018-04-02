@@ -101,7 +101,7 @@ public class BangSession extends CrowdSession
                 }
             }
         } else {
-            log.warning("Missing or bogus authdata", "who", _authname, "adata", _authdata);
+            BangServer.DISCORD.commit(1, "Missing or bogus authdata", "who", _authname, "adata", _authdata);
         }
 
         // configure the player in the town for this server
@@ -227,7 +227,7 @@ public class BangSession extends CrowdSession
             }
 
         } catch (Exception e) {
-            log.warning("Failed to note ended session", "user", user.who(), e);
+            BangServer.DISCORD.commit(1, "Failed to note ended session", "user", user.who(), e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.threerings.bang.server;
 
+import com.samskivert.util.StringUtil;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -38,6 +39,42 @@ public class DiscordAPIManager implements Runnable, EventListener {
 
     public void commit(int channel, String message) {
         messageQueue.add(new Message(channel, message));
+    }
+
+    public void commit(int channel, Object message, Object... args)
+    {
+        Throwable err = null;
+        int nn = args.length;
+        if (message instanceof Throwable) {
+            err = (Throwable)message;
+            commit(1, err);
+            return;
+        } else if (nn % 2 == 1 && (args[nn - 1] instanceof Throwable)) {
+            err = (Throwable)args[--nn];
+            commit(1, err);
+            return;
+        }
+        String msg = String.valueOf(message);
+        if (nn > 0) {
+            StringBuilder buf = new StringBuilder(msg);
+            if (msg.length() > 0) {
+                buf.append(' ');
+            }
+            buf.append('[');
+            for (int ii = 0; ii < nn; ii += 2) {
+                if (ii > 0) {
+                    buf.append(',').append(' ');
+                }
+                buf.append(args[ii]).append('=');
+                try {
+                    buf.append(StringUtil.toString(args[ii + 1]));
+                } catch (Throwable t) {
+                    buf.append("<toString() failure: ").append(t).append(">");
+                }
+            }
+            msg = buf.append(']').toString();
+        }
+        commit(1, msg);
     }
 
     @Override

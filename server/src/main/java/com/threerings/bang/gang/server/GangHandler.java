@@ -325,7 +325,7 @@ public class GangHandler
                 if (user != null) {
                     _chatprov.deliverTell(user, umsg);
                 } else {
-                    log.warning("Member mistakenly marked as online", "member", member);
+                    BangServer.DISCORD.commit(1, "Member mistakenly marked as online", "member", member);
                 }
             }
         }
@@ -390,7 +390,7 @@ public class GangHandler
         if (entry != null) {
             initPlayer(user, entry);
         } else {
-            log.warning("User not in gang", "gang", this, "who", user.who());
+            BangServer.DISCORD.commit(1, "User not in gang", "gang", this, "who", user.who());
         }
     }
 
@@ -598,7 +598,7 @@ public class GangHandler
                 }
             }
             public void handleFailure (Exception cause) {
-                log.warning("Failed to grant aces", "gang", GangHandler.this, "handle", handle,
+                BangServer.DISCORD.commit(1, "Failed to grant aces", "gang", GangHandler.this, "handle", handle,
                             "aces", aces, "error", cause);
             }
         });
@@ -710,7 +710,7 @@ public class GangHandler
         // make sure they're in the gang and can recruit
         final GangMemberEntry entry = verifyInGang(handle);
         if (entry.rank < RECRUITER_RANK) {
-            log.warning("Member cannot recruit", "gang", this, "member", entry);
+            BangServer.DISCORD.commit(1, "Member cannot recruit", "gang", this, "member", entry);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -857,11 +857,11 @@ public class GangHandler
             int itemId = opart.getItemId();
             Item item = _gangobj.inventory.get(itemId);
             if (!opart.isEquivalent(item)) {
-                log.warning("Invalid part for buckle", "gang", this, "handle", handle,
+                BangServer.DISCORD.commit(1, "Invalid part for buckle", "gang", this, "handle", handle,
                             "opart", opart, "npart", item);
                 throw new InvocationException(INTERNAL_ERROR);
             } else if (IntListUtil.contains(partIds, itemId)) {
-                log.warning("Duplicate part in buckle", "gang", this, "handle", handle,
+                BangServer.DISCORD.commit(1, "Duplicate part in buckle", "gang", this, "handle", handle,
                             "parts", StringUtil.toString(parts));
                 throw new InvocationException(INTERNAL_ERROR);
             }
@@ -872,7 +872,7 @@ public class GangHandler
                 parts[ii] = null;
             } else if (Math.abs(npart.getX()) > AvatarLogic.BUCKLE_WIDTH / 2 ||
                     Math.abs(npart.getY()) > AvatarLogic.BUCKLE_HEIGHT / 2) {
-                log.warning("Invalid buckle part coordinates", "gang", this, "handle", handle,
+                BangServer.DISCORD.commit(1, "Invalid buckle part coordinates", "gang", this, "handle", handle,
                             "part", npart);
                 throw new InvocationException(INTERNAL_ERROR);
             } else {
@@ -889,13 +889,13 @@ public class GangHandler
         for (int ii = 0; ii < ccounts.length; ii++) {
             AvatarLogic.PartClass pclass = AvatarLogic.BUCKLE_PARTS[ii];
             if (!pclass.isOptional() && ccounts[ii] < 1) {
-                log.warning("Buckle missing required part", "gang", this, "handle", handle,
+                BangServer.DISCORD.commit(1, "Buckle missing required part", "gang", this, "handle", handle,
                             "parts", StringUtil.toString(parts), "pclass", pclass.name);
                 throw new InvocationException(INTERNAL_ERROR);
             }
             int max = (pclass.isMultiple() ? _gangobj.getMaxBuckleIcons() : 1);
             if (ccounts[ii] > max) {
-                log.warning("Buckle has more than allowed number of parts", "gang", this,
+                BangServer.DISCORD.commit(1, "Buckle has more than allowed number of parts", "gang", this,
                             "handle", handle, "parts", StringUtil.toString(parts),
                             "pclass", pclass.name, "max", max);
                 throw new InvocationException(INTERNAL_ERROR);
@@ -1049,7 +1049,7 @@ public class GangHandler
             // make sure is comes from this server or a peer
             verifyLocalOrPeer(caller);
         } catch (InvocationException ie) {
-            log.warning("Grant scrip request received from illegal caller.", "caller", caller,
+            BangServer.DISCORD.commit(1, "Grant scrip request received from illegal caller.", "caller", caller,
                         "ie", ie);
         }
 
@@ -1060,7 +1060,7 @@ public class GangHandler
                     _gangrepo.grantScrip(_gangId, scrip);
                     return true;
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to grant scrip to gang", "id", _gangId, "amount", scrip, pe);
+                    BangServer.DISCORD.commit(1, "Failed to grant scrip to gang", "id", _gangId, "amount", scrip, pe);
                     return false;
                 }
             }
@@ -1078,7 +1078,7 @@ public class GangHandler
             // make sure is comes from this server or a peer
             verifyLocalOrPeer(caller);
         } catch (InvocationException ie) {
-            log.warning("Update Coins request received from illegal caller.", "caller", caller,
+            BangServer.DISCORD.commit(1, "Update Coins request received from illegal caller.", "caller", caller,
                         "ie", ie);
         }
 
@@ -1091,7 +1091,7 @@ public class GangHandler
                 _gangobj.setCoins(_coins);
             }
             public void handleFailure (Exception err) {
-                log.warning("Error updating gang coin count.", "id", _gangId, err);
+                BangServer.DISCORD.commit(1, "Error updating gang coin count.", "id", _gangId, err);
             }
             protected int _coins;
         });
@@ -1160,7 +1160,7 @@ public class GangHandler
                     // this should never happen, because the only thing that can cause this is if
                     // we fail to transfer the coins, and we won't be transferring any coins to the
                     // last guy out the door
-                    log.warning("Gang cannot be resurrected for rollback",
+                    BangServer.DISCORD.commit(1, "Gang cannot be resurrected for rollback",
                                 "gang", GangHandler.this, "leaver", target);
                 } else {
                     _gangrepo.insertMember(new GangMemberRecord(
@@ -1354,7 +1354,7 @@ public class GangHandler
             catarts[ii] = _alogic.getArticleCatalog().getArticle(oart.article);
             if (catarts[ii] == null || catarts[ii].qualifier != null ||
                     catarts[ii].start != null || catarts[ii].stop != null) {
-                log.warning("Invalid article requested for outfit", "who", handle,
+                BangServer.DISCORD.commit(1, "Invalid article requested for outfit", "who", handle,
                             "article", oart.article);
                 throw new InvocationException(INTERNAL_ERROR);
             }
@@ -1510,7 +1510,7 @@ public class GangHandler
             // make sure it comes from this server or a peer
             verifyLocalOrPeer(caller);
         } catch (InvocationException ie) {
-            log.warning("Failed to log completed trade.", "ie", ie);
+            BangServer.DISCORD.commit(1, "Failed to log completed trade.", "ie", ie);
             return;
         }
 
@@ -1530,7 +1530,7 @@ public class GangHandler
 
             public void handleResult () {
                 if (_error != null) {
-                    log.warning("Failed to log completed trade.", "error", _error);
+                    BangServer.DISCORD.commit(1, "Failed to log completed trade.", "error", _error);
                 } else {
                     GangMemberEntry leader = _gangobj.members.get(new Handle(member));
                     _gangobj.updateMembers(leader);
@@ -1675,7 +1675,7 @@ public class GangHandler
                 }
             }
             public void handleFailure (Exception cause) {
-                log.warning("Failed to deliver gang items to new member", "gang", GangHandler.this,
+                BangServer.DISCORD.commit(1, "Failed to deliver gang items to new member", "gang", GangHandler.this,
                             "user", user.who(), "error", cause);
             }
         });
@@ -1761,7 +1761,7 @@ public class GangHandler
         throws InvocationException
     {
         if (caller instanceof PlayerObject) {
-            log.warning("Player tried to access gang peer service", "who", caller.who());
+            BangServer.DISCORD.commit(1, "Player tried to access gang peer service", "who", caller.who());
             throw new InvocationException(INTERNAL_ERROR);
         }
     }
@@ -1781,7 +1781,7 @@ public class GangHandler
         }
         GangMemberEntry changer = verifyIsLeader(handle);
         if (!changee.canChangeStatus(changer)) {
-            log.warning("User cannot change member", "changer", changer, "changee", changee);
+            BangServer.DISCORD.commit(1, "User cannot change member", "changer", changer, "changee", changee);
             throw new InvocationException(INTERNAL_ERROR);
         }
         return changee;
@@ -1798,7 +1798,7 @@ public class GangHandler
     {
         GangMemberEntry entry = verifyInGang(handle);
         if (entry.rank != LEADER_RANK) {
-            log.warning("User not leader", "entry", entry, "gang", this);
+            BangServer.DISCORD.commit(1, "User not leader", "entry", entry, "gang", this);
             throw new InvocationException(INTERNAL_ERROR);
         }
         if (LEADER_LEVEL_WAITS[entry.leaderLevel] > 0 &&
@@ -1826,7 +1826,7 @@ public class GangHandler
     {
         GangMemberEntry entry = _gangobj.members.get(handle);
         if (entry == null) {
-            log.warning("User not in gang", "handle", handle, "gang", this);
+            BangServer.DISCORD.commit(1, "User not in gang", "handle", handle, "gang", this);
             throw new InvocationException(INTERNAL_ERROR);
         }
         return entry;
@@ -2224,7 +2224,7 @@ public class GangHandler
                 }
                 public void requestFailed (Exception cause) {
                     _releasing = null;
-                    log.warning("Failed to release lock", "handler", this, "error", cause);
+                    BangServer.DISCORD.commit(1, "Failed to release lock", "handler", this, "error", cause);
                     maybeScheduleUnload();
                 }
             });
@@ -2238,7 +2238,7 @@ public class GangHandler
         _nodeName = nodeName;
         _client = _peermgr.getPeerClient(nodeName);
         if (_client == null) {
-            log.warning("Not connected to peer that holds gang lock?!", "node", nodeName,
+            BangServer.DISCORD.commit(1, "Not connected to peer that holds gang lock?!", "node", nodeName,
                         "gangId", _gangId);
             initFailed(new InvocationException(INTERNAL_ERROR));
             return;
@@ -2311,7 +2311,7 @@ public class GangHandler
      */
     protected void initFailed (Exception cause)
     {
-        log.warning("Failed to initialize gang", "handler", this, "error", cause);
+        BangServer.DISCORD.commit(1, "Failed to initialize gang", "handler", this, "error", cause);
         _listeners.requestFailed(cause);
         _gangmgr.unmapGang(_gangId, null);
     }
@@ -2334,7 +2334,7 @@ public class GangHandler
         // this will happen so quickly that no one will notice
         for (GangMemberEntry member : _gangobj.members) {
             if (_locator.lookupPlayer(member.playerId) != null) {
-                log.warning("Proxied gang vanished while members still online", "gang", this);
+                BangServer.DISCORD.commit(1, "Proxied gang vanished while members still online", "gang", this);
                 _gangmgr.resolveGang(_gangId);
                 return;
             }
@@ -2407,7 +2407,7 @@ public class GangHandler
                 _gangobj.setAvatar(_avatar);
             }
             public void handleFailure (Exception cause) {
-                log.warning("Failed to load senior leader avatar", "gang", GangHandler.this,
+                BangServer.DISCORD.commit(1, "Failed to load senior leader avatar", "gang", GangHandler.this,
                             "leader", leader, "error", cause);
             }
             protected AvatarInfo _avatar;

@@ -81,7 +81,7 @@ public class BangAdminManager extends AdminManager
     public void scheduleReboot (PlayerObject user, int minutes)
     {
         if (!user.tokens.isSupport()) {
-            log.warning("Got reboot schedule request from non-admin/support", "who", user.who());
+            BangServer.DISCORD.commit(1, "Got reboot schedule request from non-admin/support", "who", user.who());
             return;
         }
         scheduleReboot(minutes, user.who());

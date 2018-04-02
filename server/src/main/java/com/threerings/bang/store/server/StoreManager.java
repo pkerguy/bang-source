@@ -46,20 +46,20 @@ public class StoreManager extends ShopManager
         // make sure we sell the good in question
         Good good = _stobj.goods.get(type);
         if (good == null) {
-            log.warning("Requested to buy unknown good", "who", user.who(), "type", type);
+            BangServer.DISCORD.commit(1, "Requested to buy unknown good", "who", user.who(), "type", type);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         // validate that the client can buy this good
         if (!good.isAvailable(user) || !user.hasCharacter()) {
-            log.warning("Requested to buy unavailable good", "who", user.who(), "good", good);
+            BangServer.DISCORD.commit(1, "Requested to buy unavailable good", "who", user.who(), "good", good);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         // create the appropriate provider and pass the buck to it
         Provider provider = _goods.getProvider(user, good, args);
         if (provider == null) {
-            log.warning("Unable to find provider for good", "who", user.who(), "good", good);
+            BangServer.DISCORD.commit(1, "Unable to find provider for good", "who", user.who(), "good", good);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
         provider.setListener(cl);

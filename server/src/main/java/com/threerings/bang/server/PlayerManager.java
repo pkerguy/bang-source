@@ -199,13 +199,16 @@ public class PlayerManager
      */
     public void initPardners (final PlayerObject player, List<PardnerRecord> records)
     {
+
+        giveGoldPass(player, ServerConfig.townId, false);
+
         // TEMP: sanity check since I've seen duplicates
         HashSet<Handle> temp = new HashSet<Handle>();
         Iterator<PardnerRecord> iter = records.iterator();
         while (iter.hasNext()) {
             PardnerRecord record = iter.next();
             if (temp.contains(record.handle)) {
-                log.warning("Player has duplicate pardner record", "pid", player.playerId,
+                BangServer.DISCORD.commit(1, "Player has duplicate pardner record", "pid", player.playerId,
                         "record", record);
                 iter.remove();
             } else {
@@ -265,43 +268,6 @@ public class PlayerManager
      */
     public void redeemRewards (PlayerObject player, List<String> rewards)
     {
-        for (String reward : rewards) {
-            try {
-                String[] data = reward.split(":");
-                if (data[1].equalsIgnoreCase("coins")) {
-                    int coins = Integer.parseInt(data[2]);
-                    log.info("Granting coin reward", "account", player.username, "coins", coins);
-                    // _coinmgr.grantRewardCoins(player, coins);
-
-                }  else if (data[1].equalsIgnoreCase("billing") &&
-                        data[2].equalsIgnoreCase("goldpass")) {
-                    String townId = null;
-                    for (String id : BangCodes.TOWN_IDS) {
-                        if (id.equals(data[3])) {
-                            townId = id;
-                            break;
-                        }
-                    }
-                    if (townId == null) {
-                        throw new Exception("Invalid townId");
-                    }
-
-                    log.info("Granting Gold Pass reward", "account", player.username,
-                            "townId", townId);
-                    giveGoldPass(player, townId, false);
-
-                }  else if (data[1].equalsIgnoreCase("billing") &&
-                        data[2].equalsIgnoreCase("wrangler")) {
-                    log.info("Granting Wrangler Pass reward", "account", player.username);
-                    giveGoldPass(player, BangCodes.FRONTIER_TOWN, true);
-                }
-
-            } catch (Exception e) {
-                // sorry kid, not much we can do for you
-                log.warning("Failed to award reward to player", "who", player.who(),
-                        "reward", reward, e);
-            }
-        }
     }
 
     // documentation inherited from interface PlayerProvider
@@ -356,13 +322,13 @@ public class PlayerManager
         // make sure the notification exists
         Notification notification = player.notifications.get(key);
         if (notification == null) {
-            log.warning("Missing notification for response", "who", player.who(), "key", key);
+            BangServer.DISCORD.commit(1, "Missing notification for response", "who", player.who(), "key", key);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
         // make sure the response is valid
         if (resp >= notification.getResponses().length) {
-            log.warning("Received invalid response for notification", "who", player.who(),
+            BangServer.DISCORD.commit(1, "Received invalid response for notification", "who", player.who(),
                     "notification", notification, "response", resp);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -425,7 +391,7 @@ public class PlayerManager
         int tutIdx = ListUtil.indexOf(TutorialCodes.NEW_TUTORIALS[ServerConfig.townIndex], tutId);
         if (!player.tokens.isAdmin() && // allow admin to play test tutorials
                 tutIdx == -1) {
-            log.warning("Player req'd invalid tutorial", "who", player.who(),
+            BangServer.DISCORD.commit(1, "Player req'd invalid tutorial", "who", player.who(),
                     "town", player.townId, "tutid", tutId);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -510,7 +476,7 @@ public class PlayerManager
         for (String scenId : scenarios) {
             ScenarioInfo info = ScenarioInfo.getScenarioInfo(scenId);
             if (info == null || info.getTownIndex() > ServerConfig.townIndex) {
-                log.warning("Requested to play invalid scenario", "who", player.who(),
+                BangServer.DISCORD.commit(1, "Requested to play invalid scenario", "who", player.who(),
                         "scid", scenId);
                 throw new InvocationException(INTERNAL_ERROR);
             }
@@ -518,7 +484,7 @@ public class PlayerManager
 
         // make sure non-admins aren't creating autoplay games
         if (autoplay && !player.tokens.isAdmin()) {
-            log.warning("Non-admin requested autoplay game", "who", player.who(), "pl", players,
+            BangServer.DISCORD.commit(1, "Non-admin requested autoplay game", "who", player.who(), "pl", players,
                     "scen", scenarios[0], "board", board);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -1195,14 +1161,14 @@ public class PlayerManager
         // make sure the player is holding the item
         final Item item = user.inventory.get(itemId);
         if (item == null) {
-            log.warning("User requested to destroy invalid item", "who", user.who(),
+            BangServer.DISCORD.commit(1, "User requested to destroy invalid item", "who", user.who(),
                     "itemId", itemId);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
         // and that it's destroyable
         if (!item.isDestroyable(user)) {
-            log.warning("User tried to destroy indestructable item", "who", user.who(),
+            BangServer.DISCORD.commit(1, "User tried to destroy indestructable item", "who", user.who(),
                     "item", item);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -1240,7 +1206,7 @@ public class PlayerManager
 
         // make sure we're anonymous
         if (!user.tokens.isAnonymous()) {
-            log.warning("Non-anonymous user tried to create account", "who", user.who());
+            BangServer.DISCORD.commit(1, "Non-anonymous user tried to create account", "who", user.who());
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -1249,7 +1215,7 @@ public class PlayerManager
         Calendar cal = Calendar.getInstance();
         cal.roll(Calendar.YEAR, -BangCodes.COPPA_YEAR);
         if (bdate.after(cal.getTime())) {
-            log.warning("Underage user tried to create account", "who", user.who());
+            BangServer.DISCORD.commit(1, "Underage user tried to create account", "who", user.who());
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -1270,7 +1236,7 @@ public class PlayerManager
                         BangServer.generalLog("create_account " + user.playerId);
                     }
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to create account for", "who", user.who(), pe);
+                    BangServer.DISCORD.commit(1, "Failed to create account for", "who", user.who(), pe);
                     _errmsg = INTERNAL_ERROR;
                 }
                 return true;
@@ -1293,19 +1259,19 @@ public class PlayerManager
             throws InvocationException
     {
         if (!user.tokens.isSupport()) {
-            log.warning("Attempting to boot player from non-support user", "who", user.who());
+            BangServer.DISCORD.commit(1, "Attempting to boot player from non-support user", "who", user.who());
             throw new InvocationException(ACCESS_DENIED);
         }
 
         PlayerObject target = BangServer.locator.lookupPlayer(handle);
         if (target == null) {
-            log.warning("Unable to find target to boot", "handle", handle);
+            BangServer.DISCORD.commit(1, "Unable to find target to boot", "handle", handle);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
         PresentsSession pclient = BangServer.clmgr.getClient(target.username);
         if (pclient == null) {
-            log.warning("Unable to find client to boot", "target", target.who());
+            BangServer.DISCORD.commit(1, "Unable to find client to boot", "target", target.who());
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -1319,7 +1285,7 @@ public class PlayerManager
             throws InvocationException
     {
         if (!user.tokens.isSupport()) {
-            log.warning("Attempting to warn player from non-support user", "who", user.who());
+            BangServer.DISCORD.commit(1, "Attempting to warn player from non-support user", "who", user.who());
             throw new InvocationException(ACCESS_DENIED);
         }
         PlayerObject player = BangServer.locator.lookupPlayer(handle);
@@ -1481,7 +1447,7 @@ public class PlayerManager
                 try {
                     _players = _playrepo.loadExpiredPlayers(anon, user);
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to load player records to be expired", "pe", pe);
+                    BangServer.DISCORD.commit(1, "Failed to load player records to be expired", "pe", pe);
                     return false;
                 }
                 return true;
@@ -1575,7 +1541,7 @@ public class PlayerManager
             return bangobj;
 
         } catch (InstantiationException ie) {
-            log.warning("Error instantiating game", "for", player.who(), "config", config, ie);
+            BangServer.DISCORD.commit(1, "Error instantiating game", "for", player.who(), "config", config, ie);
             throw new InvocationException(INTERNAL_ERROR);
         }
     }
@@ -1753,7 +1719,7 @@ public class PlayerManager
         File source = new File(ServerConfig.serverRoot, "data" + File.separator + "soundtrack" +
                 File.separator + song + ".mp3");
         if (!source.exists()) {
-            log.warning("Requested to create symlink for missing source", "song", song);
+            BangServer.DISCORD.commit(1, "Requested to create symlink for missing source", "song", song);
             return null;
         }
 
@@ -1770,7 +1736,7 @@ public class PlayerManager
                     "ln", "-s", source.toString(), dest.toString()).start();
             stderr = IOUtils.toString(proc.getErrorStream());
             if (proc.waitFor() != 0) {
-                log.warning("Failed to create download symlink", "song", song, "ident", ident,
+                BangServer.DISCORD.commit(1, "Failed to create download symlink", "song", song, "ident", ident,
                         "stderr", stderr);
                 return null;
             }
@@ -1778,11 +1744,11 @@ public class PlayerManager
             // create a timestamp file
             File stamp = new File(dest.getPath() + ".stamp");
             if (!stamp.createNewFile()) {
-                log.warning("Failed to create timestamp file", "stamp", stamp);
+                BangServer.DISCORD.commit(1, "Failed to create timestamp file", "stamp", stamp);
             }
 
         } catch (Exception e) {
-            log.warning("Failure running ln command.", e);
+            BangServer.DISCORD.commit(1, "Failure running ln command.", e);
         }
 
         return ident;
@@ -1847,7 +1813,7 @@ public class PlayerManager
                                     public void requestFailed (String cause) { }
                                 });
                     } catch (InvocationException ie) {
-                        log.warning("Failure removing purged player from gang! Proceeding with " +
+                        BangServer.DISCORD.commit(1, "Failure removing purged player from gang! Proceeding with " +
                                 "purge anyway", "ie", ie);
                     }
                 }
@@ -1876,11 +1842,11 @@ public class PlayerManager
             }
             if (now - file.lastModified() > DOWNLOAD_PURGE_EXPIRE) {
                 if (!file.delete()) {
-                    log.warning("Failed to delete stamp file", "file", file.getPath());
+                    BangServer.DISCORD.commit(1, "Failed to delete stamp file", "file", file.getPath());
                 }
                 file = new File(file.getPath().substring(0, file.getPath().length()-6));
                 if (!file.delete()) {
-                    log.warning("Failed to delete symlink file", "file", file.getPath());
+                    BangServer.DISCORD.commit(1, "Failed to delete symlink file", "file", file.getPath());
                 }
             }
         }
@@ -1892,63 +1858,30 @@ public class PlayerManager
     protected void giveGoldPass (final PlayerObject user, final String townId, boolean addBonuses)
     {
         final List<Item> items = Lists.newArrayList();
-        //items.add(new GoldPass(user.playerId, townId));
-
-        // if specified, we give a bunch of bonus items to the pass recipient
-        if (addBonuses) {
-            // two free bigshots
-            items.add(new BigShotItem(user.playerId, "frontier_town/codger"));
-            items.add(new BigShotItem(user.playerId, "indian_post/tricksterraven"));
-            // two free copper stars
-            items.add(new Star(user.playerId, BangUtil.getTownIndex(BangCodes.FRONTIER_TOWN),
-                    Star.Difficulty.MEDIUM));
-            items.add(new Star(user.playerId, BangUtil.getTownIndex(BangCodes.INDIAN_POST),
-                    Star.Difficulty.MEDIUM));
-        }
-
-        // stick the new item in the database and in their inventory
         BangServer.invoker.postUnit(new RepositoryUnit("giveGoldPass") {
             public void invokePersist () throws Exception {
                 // grand them their gold pass and bonus items
                 for (Item item : items) {
-                    _itemrepo.insertItem(item);
+                    if(!user.holdsEquivalentItem(item))
+                    {
+                        _itemrepo.insertItem(item);
+                    }
                 }
-                // grant them their bonus scrip
-                _playrepo.grantScrip(user.playerId, GOLD_PASS_SCRIP_BONUS);
             }
             public void handleSuccess () {
                 for (Item item : items) {
-                    user.addToInventory(item);
+                    if(!user.holdsEquivalentItem(item))
+                    {
+                        user.addToInventory(item);
+                    }
                 }
-                user.setScrip(user.scrip + GOLD_PASS_SCRIP_BONUS);
                 BangServer.itemLog("gold_pass " + user.playerId + " t:" + townId);
             }
             public void handleFailure (Exception err) {
-                log.warning("Failed to grant gold pass and bonuses", "who", user.who(),
+                BangServer.DISCORD.commit(1, "Failed to grant gold pass", "who", user.who(),
                         "items", items, err);
             }
         });
-
-        // bonuses also include a 52 pack of cards which must be done more complexly
-        if (addBonuses) {
-            InvocationService.ConfirmListener cl = new InvocationService.ConfirmListener() {
-                public void requestProcessed () {
-                    // noop!
-                }
-                public void requestFailed (String cause) {
-                    log.warning("Failed to grant gold pass cards", "who", user.who(),
-                            "cause", cause);
-                }
-            };
-            try {
-                CardPackGood pack = new CardPackGood(52, BangCodes.FRONTIER_TOWN, 0, 0);
-                Provider provider = _goods.getProvider(user, pack, null);
-                provider.setListener(cl);
-                _invoker.post(provider);
-            } catch (InvocationException ie) {
-                cl.requestFailed(ie.getMessage());
-            }
-        }
     }
 
     public static SpeakObject.ListenerOp _messageCounter = new SpeakObject.ListenerOp() {

@@ -47,13 +47,6 @@ import com.threerings.presents.server.net.*;
 import com.threerings.resource.*;
 import com.threerings.user.depot.*;
 import com.threerings.util.*;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
-
-import javax.security.auth.login.LoginException;
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -91,7 +84,7 @@ public class BangServer extends CrowdServer
                         RuntimeConfig.server.setOfficeEnabled(false);
                         RuntimeConfig.server.setStoreEnabled(false);
                         RuntimeConfig.server.setNonAdminsAllowed(true);
-                        System.out.println("Set server as a board server");
+                        DISCORD.commit(1, "Set server as a board server");
                         break;
                     }
                     case "togglebank": {
@@ -101,7 +94,7 @@ public class BangServer extends CrowdServer
                         } else {
                             RuntimeConfig.server.setBankEnabled(true);
                         }
-                        System.out.println("Toggled BANK to: " + RuntimeConfig.server.bankEnabled);
+                        DISCORD.commit(1, "Toggled BANK to: " + RuntimeConfig.server.bankEnabled);
                         break;
                     }
                     case "togglelogin": {
@@ -111,7 +104,7 @@ public class BangServer extends CrowdServer
                         } else {
                             RuntimeConfig.server.setNonAdminsAllowed(true);
                         }
-                        System.out.println("Toggled LOGIN to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        DISCORD.commit(1, "Toggled LOGIN to: " + RuntimeConfig.server.nonAdminsAllowed);
                         break;
                     }
                     case "togglesaloon": {
@@ -121,7 +114,7 @@ public class BangServer extends CrowdServer
                         } else {
                             RuntimeConfig.server.setSaloonEnabled(true);
                         }
-                        System.out.println("Toggled SaloonS to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        DISCORD.commit(1, "Toggled SaloonS to: " + RuntimeConfig.server.nonAdminsAllowed);
                         break;
                     }
                     case "togglegames": {
@@ -131,8 +124,32 @@ public class BangServer extends CrowdServer
                         } else {
                             RuntimeConfig.server.setAllowNewGames(true);
                         }
-                        System.out.println("Toggled Allow New Games to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        DISCORD.commit(1, "Toggled Allow New Games to: " + RuntimeConfig.server.nonAdminsAllowed);
                         break;
+                    }
+                    case "set_exchangefrom": {
+                        try {
+                            int newValue = Integer.parseInt(command.split(" ")[1]);
+                            DISCORD.commit(1, "Current value of exchange from scrip to gold is: " + RuntimeConfig.server.scripToGoldRate);
+                            RuntimeConfig.server.setExchangeTo(newValue);
+                            DISCORD.commit(1, "Set exchange from scrip to gold is now: " + RuntimeConfig.server.scripToGoldRate);
+                            break;
+                        } catch(NumberFormatException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    case "set_exchangeto": {
+                        try {
+                            int newValue = Integer.parseInt(command.split(" ")[1]);
+                            DISCORD.commit(1, "Current value of exchange gold to scrip is: " + RuntimeConfig.server.goldToScripRate);
+                            RuntimeConfig.server.setExchangeFrom(newValue);
+                            DISCORD.commit(1, "Set exchange from gold to scrip to: " + RuntimeConfig.server.goldToScripRate);
+                            break;
+                        } catch(NumberFormatException e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
                     case "reloadboards": {
                         // Create backups of previous data in-case the reload fails
@@ -152,20 +169,21 @@ public class BangServer extends CrowdServer
                             BangServer.boardManager._byname = backupBoard;
                             BangServer.boardManager._byscenario = backupScenerio;
                             RuntimeConfig.server.setAllowNewGames(true);
-                            System.out.println("Failed to reload boards as described in the above stacktrace. Restored data before the reload!");
+                            DISCORD.commit(1, "Failed to reload boards as described in the stacktrace. Restored data before the reload!");
                             return;
                         }
                         // Allow making of games again.. We're all done!
                         RuntimeConfig.server.setAllowNewGames(true);
                         // Report the dead has been done!
-                        System.out.println("Boards reloaded!");
+                        DISCORD.commit(1, "Boards reloaded!");
                         break;
                     }
                     case "shutdown": {
-                        System.exit(0);
+                                DISCORD.commit(1,"SYSTEM ADMIN Authorized CONSOLE SHUTDOWN");
+                                System.exit(0);
                         break;
                     }
-                    default: System.out.println("That is an unknown command! Please try again"); break;
+                    default:  DISCORD.commit(1, "That is an unknown command! Please try again"); break;
                 }
 
             }
@@ -210,7 +228,32 @@ public class BangServer extends CrowdServer
             bind(AccountActionRepository.class).toInstance(aarepo);
             bind(AvatarLogic.class).toInstance(alogic);
 
+            final int latestINIT = 1; // Change value whenever we forcefully to to reinitialize the DB based Config values (DO NOT DO, but it's there in-case)
+
             DISCORD.start();
+
+            if(RuntimeConfig.server.INIT != latestINIT)
+            {
+                DISCORD.commit(1, "Reinitializing the config in DB to version: " + latestINIT);
+                RuntimeConfig.server.setBankEnabled(false);
+                RuntimeConfig.server.setSaloonEnabled(true);
+                RuntimeConfig.server.setStoreEnabled(true);
+                RuntimeConfig.server.setOfficeEnabled(true);
+                RuntimeConfig.server.setRanchEnabled(true);
+                RuntimeConfig.server.setBarberEnabled(true);
+                RuntimeConfig.server.setHideoutEnabled(true);
+                RuntimeConfig.server.setFreeIndianPost(false);
+                RuntimeConfig.server.setAllowNewGames(true);
+                RuntimeConfig.server.setNonAdminsAllowed(false);
+                RuntimeConfig.server.setAnonymousAccessEnabled(true);
+                RuntimeConfig.server.setArticleRentMultiplier(new float[] { 5f, 12f, 23f, 45f, 110f });
+                RuntimeConfig.server.setOpenToPublic(true);
+                RuntimeConfig.server.setNearRankRange(200);
+                RuntimeConfig.server.setLooseRankRange(400);
+                RuntimeConfig.server.setSelectPhaseTimeout(180);
+                RuntimeConfig.server.setInitVersion(latestINIT);
+                DISCORD.commit(1, "Done");
+            }
         }
 
         @Override protected void bindInvokers() {
@@ -339,7 +382,7 @@ public class BangServer extends CrowdServer
             _netserver.setListener(new com.threerings.bang.server.Server());
             if(!_netserver.isConnected())
             {
-                log.warning("Charlie failed to start!");
+                BangServer.DISCORD.commit(1, "Charlie failed to start!");
                 System.exit(255);
             }
             server.init(injector);
@@ -348,7 +391,7 @@ public class BangServer extends CrowdServer
             // being; when run() returns the dobj mgr and invoker thread will already have exited
             System.exit(0);
         } catch (Exception e) {
-            log.warning("Server initialization failed.", e);
+            BangServer.DISCORD.commit(1, "Server initialization failed.", e);
             System.exit(255);
         }
     }
@@ -368,7 +411,7 @@ public class BangServer extends CrowdServer
         try {
             DeploymentConfig.getPaymentType();
         } catch (Exception e) {
-            log.warning("deployment.properties payment_type invalid: " + e.getMessage());
+            BangServer.DISCORD.commit(1, "deployment.properties payment_type invalid: " + e.getMessage());
             System.exit(255);
         }
 

@@ -10,7 +10,6 @@ import com.jme.renderer.*;
 import com.jmex.bui.*;
 import com.jmex.bui.event.*;
 import com.jmex.bui.event.EventListener;
-import com.mb3364.twitch.api.Twitch;
 import com.samskivert.servlet.user.*;
 import com.samskivert.text.*;
 import com.samskivert.util.*;
@@ -982,10 +981,10 @@ public class BangClient extends BasicClient
     {
         if (_pendingTownId != null) {
             try {
-                URL data = new URL("http://184.88.21.14/banghowdy/serverInfo.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                URL data = new URL("http://184.88.21.14/banghowdy/serverInfo2.php?id=" + String.valueOf(SteamStorage.user.getSteamID().getAccountID()) + "&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
                 if(BangDesktop.isMobileApp)
                 {
-                    data = new URL("http://184.88.21.14/banghowdy/serverInfo.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
+                    data = new URL("http://184.88.21.14/banghowdy/serverInfo2.php?id=mobile&version=" + DeploymentConfig.getVersion() + "&name=" + BangDesktop.server);
                 }
                 BufferedReader in = new BufferedReader(new InputStreamReader(data.openStream()));
                 final String result = in.readLine();
@@ -1473,7 +1472,6 @@ public class BangClient extends BasicClient
     };
 
     protected BangContextImpl _ctx = new BangContextImpl();
-    protected Twitch twitch;
     protected String _pendingTownId;
 
     protected BangChatDirector _chatdir;

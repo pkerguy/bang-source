@@ -277,7 +277,7 @@ public class BangUI
                 // getdown has already unpacked our resources, so we can load these images straight
                 // from the filesystem (this method gets called before the resource manager and
                 // image cache are set up, otherwise we'd use them)
-                BufferedImage bicon = ImageIO.read(BangUtil.getResourceFile(path));
+                BufferedImage bicon = ImageIO.read(BangUtil.getResourceInput(path));
                 Image icon = ImageCache.createImage(bicon, false);
                 icons[ii] = icon.getData();
             } catch (Exception e) {

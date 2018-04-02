@@ -3,13 +3,12 @@
 
 package com.threerings.bang.avatar.util;
 
-import java.io.Serializable;
+import com.samskivert.util.RandomUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-
-import com.samskivert.util.RandomUtil;
 
 /**
  * Contains metadata on each of our buckle parts.

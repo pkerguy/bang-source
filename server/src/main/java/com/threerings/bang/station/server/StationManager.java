@@ -57,14 +57,14 @@ public class StationManager extends ShopManager
 
         // sanity check
         if (ticketTownIdx == -1) {
-            log.warning("Player tried to buy ticket but they have them all", "who", user.who());
+            BangServer.DISCORD.commit(1, "Player tried to buy ticket but they have them all", "who", user.who());
             throw new InvocationException(INTERNAL_ERROR);
         }
 
         // create the ticket and make sure no funny business is afoot
         TrainTicket ticket = new TrainTicket(user.playerId, ticketTownIdx);
         if (ticket.getCoinCost(user) < 0 && !user.tokens.isAdmin()) {
-            log.warning("Rejecting request to buy unavailable ticket", "who", user.who(),
+            BangServer.DISCORD.commit(1, "Rejecting request to buy unavailable ticket", "who", user.who(),
                         "ticket", ticket);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -90,7 +90,7 @@ public class StationManager extends ShopManager
         final FreeTicket finalTicket = ticket;
 
         if (ticket == null) {
-            log.warning("Player tried to activate non-existant free ticket", "who", user.who());
+            BangServer.DISCORD.commit(1, "Player tried to activate non-existant free ticket", "who", user.who());
             throw new InvocationException(INTERNAL_ERROR);
         }
 

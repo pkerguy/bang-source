@@ -94,7 +94,7 @@ public class HomesteadDelegate extends ScenarioDelegate
                 owners[unclaimed.owner] = ii;
 
             } else {
-                log.warning("Unable to find starting homestead for player",
+                BangServer.DISCORD.commit(1, "Unable to find starting homestead for player",
                             "board", _bangmgr.getBoardInfo(), "start", start);
                 break;
             }

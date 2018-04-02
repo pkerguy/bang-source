@@ -246,7 +246,7 @@ public abstract class MatchHostManager extends ShopManager
                 try {
                     ParlorManager parmgr =  _salmgr._parlors.get(match.players[0].handle);
                     if (parmgr == null) {
-                        log.warning("Choked creating game due to unable to get who created the original parlor!");
+                        BangServer.DISCORD.commit(1, "Choked creating game due to unable to get who created the original parlor!");
                     } else {
                         if(parmgr._parobj.info.type == ParlorInfo.Type.CONTENT_CREATOR)
                         {
@@ -256,7 +256,7 @@ public abstract class MatchHostManager extends ShopManager
                     BangManager mgr = (BangManager)BangServer.plreg.createPlace(config);
                     match.startingMatch(mgr.getPlaceObject());
                 } catch (Exception e) {
-                    log.warning("Choked creating game " + config + ".", e);
+                    BangServer.DISCORD.commit(1, "Choked creating game " + config + ".", e);
                 }
                 clearMatch(match);
             }

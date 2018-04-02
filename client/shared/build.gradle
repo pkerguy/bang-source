@@ -1,6 +1,45 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+  }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+
+sourceSets {
+  main {
+    resources {
+      srcDirs "src/main/resources"
+    }
+  }
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven {
+    url "http://devrepo.mckz.org/"
+  }
+  maven {
+    url "https://oss.sonatype.org/content/repositories/snapshots"
+  }
+  jcenter()
+}
+
+shadowJar {
+  baseName = 'LoaderClient-2.0'
+  classifier = null
+  version = null
+}
+
 dependencies {
   compile project(":app")
   compile "com.samskivert:samskivert:1.9"
+  compile "com.threerings:nenya-core:${nenyaVersion}"
   compile "com.threerings:narya:${naryaVersion}"
   compile "com.threerings:vilya:1.6"
   compile "com.threerings:getdown:1.4"
@@ -12,10 +51,10 @@ dependencies {
           classifier: "natives-desktop"
   compile "javax.mail:mail:1.4.5"
   compile "javax.activation:activation:1.1.1"
-  compile "com.mb3364:TwitchAPI:1.0"
   compile "com.jmr:NitroNet:1.0"
   compile "org.quartz-scheduler:quartz:2.2.1"
   compile "org.quartz-scheduler:quartz-jobs:2.2.1"
+  compile "com.yourfunworldstudios:BangHowdyLoader:2.1.0"
 
   testCompile "junit:junit:4.8.1"
 }

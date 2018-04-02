@@ -45,10 +45,6 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Rectangle;
 
-import com.mb3364.twitch.api.Twitch;
-import com.mb3364.twitch.api.auth.Scopes;
-import com.mb3364.twitch.api.handlers.ChannelResponseHandler;
-import com.mb3364.twitch.api.models.Channel;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
@@ -117,8 +113,7 @@ public class TownView extends BWindow
         Properties props = new Properties();
         String mpath = "rsrc/menu/" + townId + "/menu.properties";
         try {
-            ClassLoader loader = getClass().getClassLoader();
-            props.load(loader.getResourceAsStream(mpath));
+            props.load(BangUtil.getResourceInput(mpath));
         } catch (Exception e) {
             log.warning("Failed to load menu properties", "path", mpath, e);
         }
@@ -304,34 +299,6 @@ public class TownView extends BWindow
             try {
                 _bctx.showURL(new URL("http://discord.gg/yourfunworldstudios"));
             } catch (MalformedURLException e) {}
-        } else if ("twitchLogin".equals(cmd))
-        {
-
-            // Setup the Twitch to the Client
-
-            _bctx.getBangClient().twitch = new Twitch();
-            _bctx.getBangClient().twitch.setClientId("0f38jf54a6xfg33h2jgjrte14n9rp1");
-
-            // Authenticate user with Twitch
-            try {
-                URI callbackUri = new URI("http://127.0.0.1:23522/authorize.html");
-                String authUrl = _bctx.getBangClient().twitch.auth().getAuthenticationUrl(_bctx.getBangClient().twitch.getClientId(), callbackUri, Scopes.USER_READ, Scopes.CHANNEL_READ);
-                _bctx.showURL(new URL(authUrl)); // Lets show them the Auth so they can actually authenticate
-                boolean authSuccess = _bctx.getBangClient().twitch.auth().awaitAccessToken();
-                if(authSuccess)
-                {
-                    log.info("Successfully linked with Twitch");
-                    _twitchButton.setText("Configure Twitch");
-                    _twitchButton.setAction("twitchConfig");
-                } else {
-                    log.info("Failed to authenticate with Twitch");
-                }
-
-            } catch (URISyntaxException| MalformedURLException e) {
-                e.printStackTrace();
-
-            }
-
         }
     }
 

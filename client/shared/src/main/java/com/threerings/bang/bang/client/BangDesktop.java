@@ -3,6 +3,7 @@
 
 package com.threerings.bang.bang.client;
 
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.threerings.bang.client.BangApp;
@@ -10,6 +11,7 @@ import com.threerings.bang.client.BangPrefs;
 import com.threerings.bang.steam.SteamStorage;
 
 import java.io.File;
+
 
 public class BangDesktop {
 
@@ -22,38 +24,11 @@ public class BangDesktop {
 
     public static String sudoUser = "UNKNOWN";
 
-    private static class Option {
-        String flag, opt;
-        public Option(String flag, String opt) { this.flag = flag; this.opt = opt; }
-    }
-
-    private static String OS = System.getProperty("os.name").toLowerCase();
-
     public static void main(String[] args) {
-        if(isSudoAllowed)
-        {
-            if(args.length == 1) {
-                sudoUser = args[0];
-                System.out.println("WARNING: RUNNING IN SUDO USER MODE!");
-            } else if(args.length == 4)
-            {
-                sudoUser = args[0];
-                System.setProperty("test", "true");
-                System.setProperty("board", args[1]);
-                System.setProperty("players", args[2]);
-                System.setProperty("scenario", args[3]);
-            } else {
-                isSudoAllowed = false;
-                System.out.println("WARNING: SUDO USER MODE WAS ENABLED BY ULTIMATELY WAS DISABLED!");
-            }
-        } else {
-            if (args.length == 1 && args[0].equalsIgnoreCase("special")) {
-                System.setProperty("special", "true");
-            }
-        }
+
         System.out.println("Running Bang! Howdy Steam");
         SteamStorage.init();
-        System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
+        //System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
         boolean windowedFullScreen = false;
         if(new File("windowed.txt").exists()) {
             windowedFullScreen = true;
@@ -81,5 +56,12 @@ public class BangDesktop {
         // TODO: cfg.setFromDisplayMode when in fullscreen mode
         new LwjglApplication(new BangApp(), cfg);
     }
+
+    private static class Option {
+        String flag, opt;
+        public Option(String flag, String opt) { this.flag = flag; this.opt = opt; }
+    }
+
+    private static String OS = System.getProperty("os.name").toLowerCase();
 
 }

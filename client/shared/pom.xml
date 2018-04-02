@@ -32,8 +32,8 @@
     </dependency>
     <dependency>
       <groupId>com.threerings</groupId>
-      <artifactId>nenya</artifactId>
-      <version>${nenya.version}</version>
+      <artifactId>nenya-core</artifactId>
+      <version>1.8</version>
     </dependency>
     <dependency>
       <groupId>com.threerings</groupId>

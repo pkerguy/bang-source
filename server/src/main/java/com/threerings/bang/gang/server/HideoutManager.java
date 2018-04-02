@@ -127,14 +127,14 @@ public class HideoutManager extends MatchHostManager
         // make sure we sell the good in question
         GangGood good = (GangGood)_hobj.goods.get(type);
         if (good == null) {
-            log.warning("Requested to buy unknown good", "gang", gang, "handle", handle,
+            BangServer.DISCORD.commit(1, "Requested to buy unknown good", "gang", gang, "handle", handle,
                         "type", type);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
         // validate that the client can buy this good
         if (!good.isAvailable(gang.getGangObject())) {
-            log.warning("Requested to buy unavailable good", "gang", gang, "handle", handle,
+            BangServer.DISCORD.commit(1, "Requested to buy unavailable good", "gang", gang, "handle", handle,
                         "good", good);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -143,7 +143,7 @@ public class HideoutManager extends MatchHostManager
         GangGoodProvider provider = _goods.getProvider(
             gang.getGangObject(), handle, admin, good, args);
         if (provider == null) {
-            log.warning("Unable to find provider for good", "gang", gang, "handle", handle,
+            BangServer.DISCORD.commit(1, "Unable to find provider for good", "gang", gang, "handle", handle,
                         "good", good);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -160,14 +160,14 @@ public class HideoutManager extends MatchHostManager
         // make sure we sell the good in question
         RentalGood good = (RentalGood)_hobj.rentalGoods.get(type);
         if (good == null) {
-            log.warning("Requested to rent unknown good", "gang", gang, "handle", handle,
+            BangServer.DISCORD.commit(1, "Requested to rent unknown good", "gang", gang, "handle", handle,
                         "type", type);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
         // validate that the client can rent this good
         if (!good.isAvailable(gang.getGangObject())) {
-            log.warning("Requested to rent unavailable good", "gang", gang, "handle", handle,
+            BangServer.DISCORD.commit(1, "Requested to rent unavailable good", "gang", gang, "handle", handle,
                         "good", good);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -176,7 +176,7 @@ public class HideoutManager extends MatchHostManager
         GangGoodProvider provider = _rentalGoods.getProvider(
             gang.getGangObject(), handle, admin, good, args);
         if (provider == null) {
-            log.warning("Unable to find provider for good", "gang", gang, "handle", handle,
+            BangServer.DISCORD.commit(1, "Unable to find provider for good", "gang", gang, "handle", handle,
                         "good", good);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -199,7 +199,7 @@ public class HideoutManager extends MatchHostManager
 
         // make sure they're not already in a gang
         if (user.gangId > 0) {
-            log.warning("Player tried to form a gang when already in one", "who", user.who(),
+            BangServer.DISCORD.commit(1, "Player tried to form a gang when already in one", "who", user.who(),
                         "gangId", user.gangId);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -211,7 +211,7 @@ public class HideoutManager extends MatchHostManager
 
         // make sure the suffix is in the approved set
         if (!NameFactory.getCreator().getGangSuffixes().contains(suffix)) {
-            log.warning("Tried to form gang with invalid suffix", "who", user.who(),
+            BangServer.DISCORD.commit(1, "Tried to form gang with invalid suffix", "who", user.who(),
                         "suffix", suffix);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -249,11 +249,11 @@ public class HideoutManager extends MatchHostManager
 
         // make sure the entries are valid
         if (statement == null || statement.length() > MAX_STATEMENT_LENGTH) {
-            log.warning("Invalid statement", "who", user.who(), "statement", statement);
+            BangServer.DISCORD.commit(1, "Invalid statement", "who", user.who(), "statement", statement);
             throw new InvocationException(INTERNAL_ERROR);
         }
         if (url == null || url.length() > MAX_URL_LENGTH) {
-            log.warning("Invalid URL", "who", user.who(), "url", url);
+            BangServer.DISCORD.commit(1, "Invalid URL", "who", user.who(), "url", url);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -283,7 +283,7 @@ public class HideoutManager extends MatchHostManager
 
         // make sure the amounts are positive and that at least one is nonzero
         if (scrip < 0 || coins < 0 || scrip + coins == 0) {
-            log.warning("Player tried to donate invalid amounts", "who", user.who(),
+            BangServer.DISCORD.commit(1, "Player tried to donate invalid amounts", "who", user.who(),
                         "scrip", scrip, "coins", coins);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -313,7 +313,7 @@ public class HideoutManager extends MatchHostManager
 
         // make sure it's a valid rank
         if (rank < 0 || rank >= RANK_COUNT) {
-            log.warning("Tried to change member to invalid rank", "who", user.who(),
+            BangServer.DISCORD.commit(1, "Tried to change member to invalid rank", "who", user.who(),
                         "target", handle, "rank", rank);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -332,7 +332,7 @@ public class HideoutManager extends MatchHostManager
 
         // make sure it's a valid rank
         if (title < 0 || title > TITLES_COUNT) {
-            log.warning("Tried to change member to invalid title", "who", user.who(),
+            BangServer.DISCORD.commit(1, "Tried to change member to invalid title", "who", user.who(),
                         "target", handle, "title", title);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -351,7 +351,7 @@ public class HideoutManager extends MatchHostManager
 
         // make sure the offset is valid
         if (offset < 0) {
-            log.warning("Invalid history entry offset", "who", user.who(), "offset", offset);
+            BangServer.DISCORD.commit(1, "Invalid history entry offset", "who", user.who(), "offset", offset);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -449,7 +449,7 @@ public class HideoutManager extends MatchHostManager
 
         // make sure the message is under the length limit
         if (message.length() > MAX_BROADCAST_LENGTH) {
-            log.warning("Overlong broadcast message", "who", user.who(), "message", message);
+            BangServer.DISCORD.commit(1, "Overlong broadcast message", "who", user.who(), "message", message);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -523,7 +523,7 @@ public class HideoutManager extends MatchHostManager
                 _hobj.setGangs(new DSet<GangEntry>(result.iterator()));
             }
             public void requestFailed (Exception cause) {
-                log.warning("Failed to load gang list", "error", cause);
+                BangServer.DISCORD.commit(1, "Failed to load gang list", "error", cause);
             }
         });
 
@@ -634,7 +634,7 @@ public class HideoutManager extends MatchHostManager
                     return true;
 
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to load top-ranked gangs.", pe);
+                    BangServer.DISCORD.commit(1, "Failed to load top-ranked gangs.", pe);
                     return false;
                 }
             }

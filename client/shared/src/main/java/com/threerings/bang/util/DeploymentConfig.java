@@ -32,9 +32,9 @@ public class DeploymentConfig
     {
         if(beta_build)
         {
-            return 100023;
+            return 100024;
         }
-        return 8009; // Change upon each release version
+        return 8010; // Change upon each release version
     }
 
     // Current release: 400+
@@ -142,8 +142,7 @@ public class DeploymentConfig
      */
     public static PaymentType getPaymentType ()
     {
-        return Enum.valueOf(
-            PaymentType.class, "COINS");
+        return PaymentType.ONETIME;
     }
 
     /**
@@ -151,7 +150,7 @@ public class DeploymentConfig
      */
     public static boolean usesCoins ()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -159,7 +158,7 @@ public class DeploymentConfig
      */
     public static boolean usesOneTime ()
     {
-        return false;
+        return true;
     } // TODO: MAKE OUR OWN COIN SYSTEM
 
     /** Helper function for getting URL properties. */

@@ -21,10 +21,6 @@ import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.layout.TableLayout;
 
-import com.mb3364.twitch.api.Twitch;
-import com.mb3364.twitch.api.auth.Scopes;
-import com.mb3364.twitch.api.handlers.UserResponseHandler;
-import com.mb3364.twitch.api.models.User;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 

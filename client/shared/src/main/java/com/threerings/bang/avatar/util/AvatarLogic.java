@@ -3,9 +3,10 @@
 
 package com.threerings.bang.avatar.util;
 
-import java.awt.Point;
+import java.awt.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -18,8 +19,10 @@ import com.samskivert.util.StringUtil;
 import com.threerings.media.image.ColorPository;
 import com.threerings.media.image.ColorPository.ColorRecord;
 import com.threerings.media.image.Colorization;
+import com.threerings.media.image.tools.xml.ColorPositoryParser;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.resource.ResourceManager;
+import com.threerings.tools.xml.CompiledConfigParser;
 import com.threerings.util.CompiledConfig;
 
 import com.threerings.cast.CharacterComponent;
@@ -333,13 +336,44 @@ public class AvatarLogic
         throws IOException
     {
         _crepo = crepo;
-        _pository = ColorPository.loadColorPository(rsrcmgr);
+        ColorConstraints.init();
+
+        //_pository = ColorPository.loadColorPository(rsrcmgr);
+//        CompiledConfigParser parser = new ColorPositoryParser();
+//
+//        Serializable config = null;
+//        try {
+//            // parse it on up
+//            config = parser.parseConfig(BangUtil.getResourceInput("rsrc/colordefs.xml"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
+//        ColorPositoryParser colorParser = new ColorPositoryParser();
+//        try {
+//            // parse it on up
+//            System.out.println("Loading Color Repository");
+//            _pository = (ColorPository)colorParser.parseConfig(BangUtil.getResourceInput("rsrc/colordefs.xml"));
+//            System.out.println("Loaded successfully!");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.exit(0);
+//        }
+
+//        _aspcat = (AspectCatalog)CompiledConfig.loadConfig(
+//            rsrcmgr.getResource(AspectCatalog.CONFIG_PATH));
+//        _artcat = (ArticleCatalog)CompiledConfig.loadConfig(
+//            rsrcmgr.getResource(ArticleCatalog.CONFIG_PATH));
+//        _partcat = (BucklePartCatalog)CompiledConfig.loadConfig(
+//            rsrcmgr.getResource(BucklePartCatalog.CONFIG_PATH));
+
+        _pository = (ColorPository)CompiledConfig.loadConfig(BangUtil.getResourceInput("rsrc/config/media/colordefs.dat"));
         _aspcat = (AspectCatalog)CompiledConfig.loadConfig(
-            rsrcmgr.getResource(AspectCatalog.CONFIG_PATH));
+            BangUtil.getResourceInput(AspectCatalog.CONFIG_PATH));
         _artcat = (ArticleCatalog)CompiledConfig.loadConfig(
-            rsrcmgr.getResource(ArticleCatalog.CONFIG_PATH));
+                BangUtil.getResourceInput(ArticleCatalog.CONFIG_PATH));
         _partcat = (BucklePartCatalog)CompiledConfig.loadConfig(
-            rsrcmgr.getResource(BucklePartCatalog.CONFIG_PATH));
+                BangUtil.getResourceInput(BucklePartCatalog.CONFIG_PATH));
     }
 
     /**
@@ -380,6 +414,7 @@ public class AvatarLogic
      */
     public CharacterDescriptor decodeAvatar (int[] avatar)
     {
+
         // decode the skin and hair colorizations
         _globals[0] = _pository.getColorization(SKIN, decodeSkin(avatar[0]));
         _globals[1] = _pository.getColorization(HAIR, decodeHair(avatar[0]));

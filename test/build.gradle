@@ -1,0 +1,22 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.3'
+  }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+dependencies {
+
+  compile "com.yourfunworldstudios:BangHowdyLoader:2.1.0"
+  compile "com.threerings:nenya-core:${nenyaVersion}"
+}
+
+shadowJar {
+  baseName = 'banglib'
+  classifier = null
+  version = null
+}

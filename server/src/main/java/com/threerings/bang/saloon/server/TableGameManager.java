@@ -327,7 +327,7 @@ public class TableGameManager implements TableGameProvider
             case HUMAN:
                 PlayerObject user = (PlayerObject)BangServer.omgr.getObject(_tobj.playerOids[pidx]);
                 if (user == null) {
-                    log.warning("Zoiks! Missing player for table game", "game", _tobj.game,
+                    BangServer.DISCORD.commit(1, "Zoiks! Missing player for table game", "game", _tobj.game,
                                 "oid", _tobj.playerOids[pidx]);
                     // clear our now non-existant player from the match
                     clearPlayer(_tobj.playerOids[pidx]);
@@ -362,7 +362,7 @@ public class TableGameManager implements TableGameProvider
             BangManager mgr = (BangManager)BangServer.plreg.createPlace(config);
             startingGame(mgr.getPlaceObject());
         } catch (Exception e) {
-            log.warning("Choked creating game " + config + ".", e);
+            BangServer.DISCORD.commit(1, "Choked creating game " + config + ".", e);
         }
 
         // and clear out our parlor bits

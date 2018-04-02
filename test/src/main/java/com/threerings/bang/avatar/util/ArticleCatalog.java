@@ -3,15 +3,14 @@
 
 package com.threerings.bang.avatar.util;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Contains metadata on the various avatar articles.

@@ -10,6 +10,7 @@ import java.util.Iterator;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.RandomUtil;
 
+import com.threerings.bang.util.BangUtil;
 import com.threerings.media.image.ColorPository.ClassRecord;
 import com.threerings.media.image.ColorPository.ColorRecord;
 import com.threerings.media.image.ColorPository;
@@ -49,6 +50,7 @@ public class ColorConstraints
     public static ArrayList<ColorRecord> getAvailableColors (
         ColorPository pository, String colorClass, DObject entity)
     {
+
         ArrayList<ColorRecord> colors = new ArrayList<ColorRecord>();
         ClassRecord clrec = pository.getClassRecord(colorClass);
         if (clrec == null) {
@@ -151,11 +153,11 @@ public class ColorConstraints
     protected static HashMap<String,HashMap<String,Predicate<DObject>>>
         _preds = new HashMap<String,HashMap<String,Predicate<DObject>>>();
 
-    static {
-        HashMap<String,Predicate<DObject>> preds;
+    public static HashMap<String,Predicate<DObject>> preds;
 
+    public static void init() {
         _preds.put("hair", preds =
-            new HashMap<String,Predicate<DObject>>());
+                new HashMap<String,Predicate<DObject>>());
         preds.put("black", new Starter());
         preds.put("blonde", new Starter());
         preds.put("brown", new Starter());
@@ -179,7 +181,7 @@ public class ColorConstraints
         preds.put("violet", new HoldsBadge(Badge.Type.GAMES_PLAYED_2));
 
         _preds.put("skin", preds =
-            new HashMap<String,Predicate<DObject>>());
+                new HashMap<String,Predicate<DObject>>());
         preds.put("darkest", new Starter());
         preds.put("warm_dark", new Starter());
         preds.put("dark", new Starter());
@@ -192,7 +194,7 @@ public class ColorConstraints
         preds.put("pasty", new Starter());
 
         _preds.put("iris_t",
-            preds = new HashMap<String,Predicate<DObject>>());
+                preds = new HashMap<String,Predicate<DObject>>());
         preds.put("beige", new Starter());
         preds.put("blue", new Starter());
         preds.put("brown", new Starter());
@@ -209,7 +211,7 @@ public class ColorConstraints
         preds.put("red", new HoldsBadge(Badge.Type.UNITS_KILLED_3));
 
         _preds.put("makeup_p",
-            preds = new HashMap<String,Predicate<DObject>>());
+                preds = new HashMap<String,Predicate<DObject>>());
         _preds.put("makeup_s", preds);
         preds.put("aqua", new Normal());
         preds.put("black", new Normal());
@@ -231,7 +233,7 @@ public class ColorConstraints
         preds.put("yellow", new Normal());
 
         _preds.put("clothes_p",
-            preds = new HashMap<String,Predicate<DObject>>());
+                preds = new HashMap<String,Predicate<DObject>>());
         _preds.put("clothes_s", preds);
         _preds.put("clothes_t", preds);
 
@@ -265,13 +267,13 @@ public class ColorConstraints
         preds.put("violet", new HoldsBadge(Badge.Type.DUDS_BOUGHT_2));
 
         _preds.put("familiar_p",
-            preds = new HashMap<String,Predicate<DObject>>());
+                preds = new HashMap<String,Predicate<DObject>>());
         _preds.put("familiar_s", preds);
         _preds.put("familiar_t", preds);
 
         // TODO: figure out requirements for these
         _preds.put("buckle_p",
-            preds = new HashMap<String,Predicate<DObject>>());
+                preds = new HashMap<String,Predicate<DObject>>());
         _preds.put("buckle_back_p", preds);
         _preds.put("buckle_back_s", preds);
 
@@ -366,4 +368,5 @@ public class ColorConstraints
         preds.put("violet", new Normal());
         preds.put("grey", new Normal());
     }
+
 }

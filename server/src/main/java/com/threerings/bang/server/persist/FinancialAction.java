@@ -80,7 +80,7 @@ public abstract class FinancialAction extends Invoker.Unit
                 if (DeploymentConfig.usesCoins() && _coinCost > 0) {
                     // finally "spend" our reserved coins
                     if (!spendCoinsNow(_coinCost)) {
-                        log.warning("Failed to spend coin reservation " + this, "resid", _coinres);
+                        BangServer.DISCORD.commit(1, "Failed to spend coin reservation " + this, "resid", _coinres);
                         fail(BangCodes.E_INSUFFICIENT_COINS);
                         return true;
                     }
@@ -94,7 +94,7 @@ public abstract class FinancialAction extends Invoker.Unit
 
 
         } catch (Exception e) {
-            log.warning("Financial action failed " + this, e);
+            BangServer.DISCORD.commit(1, "Financial action failed " + this, e);
             fail(BangCodes.INTERNAL_ERROR);
         }
 
@@ -212,10 +212,10 @@ public abstract class FinancialAction extends Invoker.Unit
         //     // return the coin reservation
         //     try {
         //         if (!_coinmgr.getCoinRepository().returnReservation(_coinres)) {
-        //             log.warning("Failed to return coins " + this + ".");
+        //             BangServer.DISCORD.commit(1, "Failed to return coins " + this + ".");
         //         }
         //     } catch (Exception e) {
-        //         log.warning("Failed to return coins " + this, e);
+        //         BangServer.DISCORD.commit(1, "Failed to return coins " + this, e);
         //     }
         // }
 
@@ -223,7 +223,7 @@ public abstract class FinancialAction extends Invoker.Unit
             try {
                 grantCash();
             } catch (PersistenceException pe) {
-                log.warning("Failed to return cash " + this, pe);
+                BangServer.DISCORD.commit(1, "Failed to return cash " + this, pe);
             }
         }
 
@@ -231,7 +231,7 @@ public abstract class FinancialAction extends Invoker.Unit
             try {
                 rollbackPersistentAction();
             } catch (PersistenceException pe) {
-                log.warning("Failed to rollback action " + this, pe);
+                BangServer.DISCORD.commit(1, "Failed to rollback action " + this, pe);
             }
         }
     }

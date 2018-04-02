@@ -185,7 +185,7 @@ public class PlayerRepository extends JORARepository
                 try {
                     int mods = stmt.executeUpdate(query);
                     if (mods != 1) {
-                        log.warning("Failed to config player", "query", query, "mods", mods);
+                        BangServer.DISCORD.commit(1, "Failed to config player", "query", query, "mods", mods);
                         return Boolean.FALSE;
                     }
 
@@ -317,7 +317,7 @@ public class PlayerRepository extends JORARepository
             break;
 
         default:
-            log.warning("Attempt to disable player account resulted in weirdness",
+            BangServer.DISCORD.commit(1, "Attempt to disable player account resulted in weirdness",
                         "aname", accountName, "dname", disabledName, "mods", mods);
             break;
         }
@@ -495,7 +495,7 @@ public class PlayerRepository extends JORARepository
             throw new PersistenceException("Scrip " + type + " modified zero rows [where=" + where +
                                            ", amount=" + amount + "]");
         } else if (mods > 1) {
-            log.warning("Scrip " + type + " modified multiple rows", "where", where,
+            BangServer.DISCORD.commit(1, "Scrip " + type + " modified multiple rows", "where", where,
                         "amount", amount, "mods", mods);
         }
     }

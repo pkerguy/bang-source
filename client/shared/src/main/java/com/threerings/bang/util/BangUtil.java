@@ -3,12 +3,9 @@
 
 package com.threerings.bang.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -19,6 +16,7 @@ import com.samskivert.util.ListUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.bang.data.BangCodes;
+import com.threerings.getdown.launcher.GetdownApp;
 
 import static com.threerings.bang.Log.log;
 
@@ -33,14 +31,21 @@ public class BangUtil
      * contain / as a file separator and that will be converted to the OS's
      * file separator prior to lookup.
      */
-    public static File getResourceFile (String path)
+    public static InputStream getResourceInput (String path)
     {
         path = path.replace("/", File.separator);
-        String appdir = System.getProperty("appdir");
-        if (!StringUtil.isBlank(appdir)) {
-            path = appdir + File.separator + path;
+        File currentJavaJarFile = new File(GetdownApp.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
+        String currentRootDirectoryPath = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "");
+        currentRootDirectoryPath = currentRootDirectoryPath.replaceAll("%20", " ");
+        System.out.println("Loading #2... " + currentRootDirectoryPath + path);
+        try {
+            return new FileInputStream(currentRootDirectoryPath + path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
-        return new File(path);
+        return null;
     }
 
     /**
@@ -55,7 +60,8 @@ public class BangUtil
     {
         ArrayList<String> lines = new ArrayList<String>();
         BufferedReader bin = null;
-        InputStream in = getResourceAsStream(path);
+        //InputStream in = getResourceAsStream(path);
+        InputStream in = getResourceInput(path);
         try {
             if (in != null) {
                 bin = new BufferedReader(new InputStreamReader(in));
@@ -105,7 +111,7 @@ public class BangUtil
         ArrayList<String> lines = new ArrayList<String>();
         for (String townId : BangCodes.TOWN_IDS) {
             String tpath = path.replace("TOWN", townId);
-            InputStream in = getResourceAsStream(tpath);
+            InputStream in = getResourceInput(tpath);
             if (in == null) {
                 continue;
             }
@@ -138,8 +144,7 @@ public class BangUtil
             return props;
         }
         history.add(path);
-
-        InputStream in = getResourceAsStream(path);
+        InputStream in = getResourceInput( path);
         try {
             if (in != null) {
                 props.load(in);
@@ -171,29 +176,6 @@ public class BangUtil
         }
 
         return props;
-    }
-
-    /**
-     * Locates a resource, either via the classpath or from a resource file and
-     * returns an input stream to its contents. Returns null if the resource
-     * could not be found.
-     */
-    protected static InputStream getResourceAsStream (String path)
-    {
-        try {
-            InputStream in =
-                BangUtil.class.getClassLoader().getResourceAsStream(path);
-            if (in != null) {
-                return in;
-            }
-            File file = getResourceFile(path);
-            if (file.exists()) {
-                return new FileInputStream(file);
-            }
-        } catch (Exception e) {
-            log.warning("Failed to look up resource", "path", path, e);
-        }
-        return null;
     }
 
     /**

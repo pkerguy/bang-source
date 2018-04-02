@@ -295,10 +295,10 @@ public class BangManager extends GameManager
         throws InvocationException
     {
         if (!_bangobj.occupants.contains(user.getOid())) {
-            log.warning("Rejecting request for board by non-occupant", "who", user.who());
+            BangServer.DISCORD.commit(1, "Rejecting request for board by non-occupant", "who", user.who());
             throw new InvocationException(INTERNAL_ERROR);
         } else if (_bangobj.board == null) {
-            log.warning("Rejecting request for non-existent board", "who", user.who());
+            BangServer.DISCORD.commit(1, "Rejecting request for non-existent board", "who", user.who());
             throw new InvocationException(INTERNAL_ERROR);
         }
         listener.requestProcessed(_rounds[_bangobj.roundId].board.toData());
@@ -309,7 +309,7 @@ public class BangManager extends GameManager
     {
         int pidx = getPlayerIndex(user.getVisibleName());
         if (pidx == -1) {
-            log.warning("Request to select team by non-player", "who", user.who());
+            BangServer.DISCORD.commit(1, "Request to select team by non-player", "who", user.who());
             return;
         }
 
@@ -342,7 +342,7 @@ public class BangManager extends GameManager
                 // TODO: get pissy if they try to use the same card twice
                 Card card = item.getCard();
                 if (!card.isPlayable(_bangobj, ServerConfig.townId)) {
-                    log.warning("Rejecting request to use nonplayable card", "who", user.who(),
+                    BangServer.DISCORD.commit(1, "Rejecting request to use nonplayable card", "who", user.who(),
                                 "card", card);
                     continue;
                 }
@@ -357,7 +357,7 @@ public class BangManager extends GameManager
         if (bigShotId == -1) {
             String bstype = _bconfig.plist.get(pidx).bigShot;
             if (bstype == null) {
-                log.warning("No default bigshot specified", "who", user.who());
+                BangServer.DISCORD.commit(1, "No default bigshot specified", "who", user.who());
                 return;
             }
             bsunit = new BigShotItem(-1, bstype);
@@ -387,7 +387,7 @@ public class BangManager extends GameManager
         int pidx = getPlayerIndex(user.getVisibleName());
 
         if (!isActivePlayer(pidx)) {
-            log.warning("Rejecting order from inactive player", "pidx", pidx);
+            BangServer.DISCORD.commit(1, "Rejecting order from inactive player", "pidx", pidx);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -399,7 +399,7 @@ public class BangManager extends GameManager
             throw new InvocationException(MOVER_NO_LONGER_VALID);
         }
         if (!(piece instanceof Unit)) {
-            log.warning("Rejecting illegal move request", "who", user.who(), "piece", piece);
+            BangServer.DISCORD.commit(1, "Rejecting illegal move request", "who", user.who(), "piece", piece);
             throw new InvocationException(INTERNAL_ERROR);
         }
 
@@ -459,7 +459,7 @@ public class BangManager extends GameManager
 
         int pidx = getPlayerIndex(user.getVisibleName());
         if (card.owner != pidx || !isActivePlayer(pidx)) {
-            log.warning("Rejecting invalid card request", "who", user.who(), "sid", cardId,
+            BangServer.DISCORD.commit(1, "Rejecting invalid card request", "who", user.who(), "sid", cardId,
                         "card", card);
             throw new InvocationException(INTERNAL_ERROR);
         }
@@ -605,7 +605,7 @@ public class BangManager extends GameManager
 
                     // apply the shot effect
                     if (!deployEffect(unit.owner, effect)) {
-                        log.warning("Failed to deploy shot effect", "unit", unit, "move", x+"/"+y,
+                        BangServer.DISCORD.commit(1, "Failed to deploy shot effect", "unit", unit, "move", x+"/"+y,
                                     "target", target, "dam1", dam1, "dam2", dam2+ "].");
                     } else if (unit.owner != -1) {
                         _bangobj.stats[unit.owner].incrementStat(StatType.SHOTS_FIRED, 1);
@@ -796,7 +796,7 @@ public class BangManager extends GameManager
             break;
 
         default:
-            log.warning("Unable to start next phase", "game", where(), "state", state);
+            BangServer.DISCORD.commit(1, "Unable to start next phase", "game", where(), "state", state);
             Thread.dumpStack();
             break;
         }
@@ -1108,7 +1108,7 @@ public class BangManager extends GameManager
         // make sure we have a board at all
         final RoundRecord round = _rounds[_bangobj.roundId];
         if (round.board == null) {
-            log.warning("Missing board, cannot start round", "where", where());
+            BangServer.DISCORD.commit(1, "Missing board, cannot start round", "where", where());
             cancelGame();
             return;
         }
@@ -1138,7 +1138,7 @@ public class BangManager extends GameManager
                     (Class<Scenario>)Class.forName(sclass);
                 _scenario = _injector.getInstance(sclazz);
             } catch (Exception e) {
-                log.warning("Failed to instantiate scenario class: " + sclass, e);
+                BangServer.DISCORD.commit(1, "Failed to instantiate scenario class: " + sclass, e);
                 cancelGame();
                 return;
             }
@@ -1171,7 +1171,7 @@ public class BangManager extends GameManager
             // sanity check our pieces
             if (p.x < 0 || p.x >= _bangobj.board.getWidth() ||
                 p.y < 0 || p.y >= _bangobj.board.getHeight()) {
-                log.warning("Out of bounds piece " + p + ".");
+                BangServer.DISCORD.commit(1, "Out of bounds piece " + p + ".");
             } else {
                 pieces.add((Piece)p.clone());
             }
@@ -1190,7 +1190,7 @@ public class BangManager extends GameManager
         }
         // if we lack sufficient numbers, freak out
         if (starts.size() < getPlayerSlots()) {
-            log.warning("Board has insufficient start spots", "game", where(),
+            BangServer.DISCORD.commit(1, "Board has insufficient start spots", "game", where(),
                         "need", getPlayerSlots());
             cancelGame();
             return;
@@ -1375,7 +1375,7 @@ public class BangManager extends GameManager
                     if (config == null || config.scripCost < 0 || !config.hasAccess(user) ||
                             config.rank != UnitConfig.Rank.NORMAL ||
                             ServerConfig.townIndex < BangUtil.getTownIndex(config.getTownId())) {
-                        log.warning("Player requested to purchase illegal unit", "who", user.who(),
+                        BangServer.DISCORD.commit(1, "Player requested to purchase illegal unit", "who", user.who(),
                                     "unit", config.type);
                         units[ii] = null;
                         continue;
@@ -1488,7 +1488,7 @@ public class BangManager extends GameManager
             break;
 
         default:
-            log.warning("checkStartNextPhase() called during invalid phase!", "where", where(),
+            BangServer.DISCORD.commit(1, "checkStartNextPhase() called during invalid phase!", "where", where(),
                         "state", _bangobj.state);
             break;
         }
@@ -1536,7 +1536,7 @@ public class BangManager extends GameManager
                 _rounds[_bangobj.roundId].duration = _bangobj.duration;
 
             } catch (InvocationException ie) {
-                log.warning("Scenario initialization failed", "game", where(), "scen", _scenario,
+                BangServer.DISCORD.commit(1, "Scenario initialization failed", "game", where(), "scen", _scenario,
                             "error", ie.getMessage());
                 SpeakUtil.sendAttention(_bangobj, GAME_MSGS, ie.getMessage());
                 // TODO: cancel the round (or let the scenario cancel it on the first tick?)
@@ -2140,7 +2140,7 @@ public class BangManager extends GameManager
                 try {
                     recordStats(prec.user, ii, award, gameSecs/60, allRoundsCoop);
                 } catch (Throwable t) {
-                    log.warning("Failed to record stats", "who", _bangobj.players[ii], "idx", ii,
+                    BangServer.DISCORD.commit(1, "Failed to record stats", "who", _bangobj.players[ii], "idx", ii,
                                 "award", award, t);
                 }
 
@@ -2948,7 +2948,7 @@ public class BangManager extends GameManager
             BangServer.generalLog(buf.toString());
 
         } catch (Throwable t) {
-            log.warning("Failed to log game data.", t);
+            BangServer.DISCORD.commit(1, "Failed to log game data.", t);
         }
     }
 
@@ -2966,7 +2966,7 @@ public class BangManager extends GameManager
                     BangServer.gangmgr.requireGangPeerProvider(prec.gangId).grantAces(
                         null, prec.user.handle, award.acesEarned);
                 } catch (InvocationException e) {
-                    log.warning("Gang not available to grant aces", "gangId", prec.gangId,
+                    BangServer.DISCORD.commit(1, "Gang not available to grant aces", "gangId", prec.gangId,
                                 "handle", prec.user.handle, "aces", award.acesEarned,
                                 "seconds", gameSecs);
                 }
@@ -2987,7 +2987,7 @@ public class BangManager extends GameManager
                         try {
                             _playrepo.grantScrip(prec.playerId, award.cashEarned);
                         } catch (PersistenceException pe) {
-                            log.warning("Failed to award scrip", "who", prec.playerId,
+                            BangServer.DISCORD.commit(1, "Failed to award scrip", "who", prec.playerId,
                                         "scrip", award.cashEarned, pe);
                         }
                     }
@@ -3001,7 +3001,7 @@ public class BangManager extends GameManager
                                 _itemrepo.updateItem(award.item);
                             }
                         } catch (PersistenceException pe) {
-                            log.warning("Failed to store item " + award.item, pe);
+                            BangServer.DISCORD.commit(1, "Failed to store item " + award.item, pe);
                         }
                     }
 
@@ -3010,7 +3010,7 @@ public class BangManager extends GameManager
                         try {
                             _itemrepo.insertItem(_tickets[pidx]);
                         } catch (PersistenceException pe) {
-                            log.warning("Failed to store ticket " + _tickets[pidx], pe);
+                            BangServer.DISCORD.commit(1, "Failed to store ticket " + _tickets[pidx], pe);
                         }
                     }
 
@@ -3023,7 +3023,7 @@ public class BangManager extends GameManager
                         try {
                             _ratingrepo.updateRatings(prec.playerId, ratings);
                         } catch (PersistenceException pe) {
-                            log.warning("Failed to persist ratings", "pid", prec.playerId,
+                            BangServer.DISCORD.commit(1, "Failed to persist ratings", "pid", prec.playerId,
                                         "ratings", StringUtil.toString(ratings), pe);
                         }
                     }
@@ -3082,7 +3082,7 @@ public class BangManager extends GameManager
                     try {
                         _itemrepo.updateItem(scard.item);
                     } catch (PersistenceException pe) {
-                        log.warning("Failed to update played card", "item", scard.item, pe);
+                        BangServer.DISCORD.commit(1, "Failed to update played card", "item", scard.item, pe);
                     }
                 }
                 for (StartingCard scard : removals) {
@@ -3092,7 +3092,7 @@ public class BangManager extends GameManager
                             _itemrepo.deleteItem(scard.item, "played_last_card");
                         }
                     } catch (PersistenceException pe) {
-                        log.warning("Failed to delete played card", "item", scard.item, pe);
+                        BangServer.DISCORD.commit(1, "Failed to delete played card", "item", scard.item, pe);
                     }
                 }
                 return true;
@@ -3184,7 +3184,7 @@ public class BangManager extends GameManager
             // sanity check, though I think this bug is fixed
             Object obj = _bangobj.pieces.get(unit.pieceId);
             if (obj != null && !(obj instanceof Unit)) {
-                log.warning("Our unit became a non-unit!?", "where", where(), "unit", unit,
+                BangServer.DISCORD.commit(1, "Our unit became a non-unit!?", "where", where(), "unit", unit,
                             "nunit", obj);
                 return INTERNAL_ERROR;
             }
@@ -3306,7 +3306,7 @@ public class BangManager extends GameManager
                     plogic.init(BangManager.this, piece);
                     _pLogics.put(piece.pieceId, plogic);
                 } catch (Exception e) {
-                    log.warning("Failed to create piece logic", "piece", piece,
+                    BangServer.DISCORD.commit(1, "Failed to create piece logic", "piece", piece,
                                 "class", pieceLogic, e);
                 }
             }

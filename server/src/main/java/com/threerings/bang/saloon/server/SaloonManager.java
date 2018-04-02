@@ -92,7 +92,7 @@ public class SaloonManager extends MatchHostManager
                     return true;
 
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to load top-ranked players.", pe);
+                    BangServer.DISCORD.commit(1, "Failed to load top-ranked players.", pe);
                     return false;
                 }
             }
@@ -137,7 +137,7 @@ public class SaloonManager extends MatchHostManager
         int id = -1;
         if (type == ParlorInfo.Type.RECRUITING) {
             if (!user.canRecruit()) {
-                log.warning("Non-recruiter tried to create recruiting parlor", "who", user.who());
+                BangServer.DISCORD.commit(1, "Non-recruiter tried to create recruiting parlor", "who", user.who());
                 throw new InvocationException(INTERNAL_ERROR);
             }
             creator = BangServer.gangmgr.requireGang(user.gangId).getGangObject().name;
@@ -261,7 +261,7 @@ public class SaloonManager extends MatchHostManager
             }
 
         } catch (Exception e) {
-            log.warning("Failed to create parlor " + info + ".", e);
+            BangServer.DISCORD.commit(1, "Failed to create parlor " + info + ".", e);
             if (rl != null) {
                 rl.requestFailed(INTERNAL_ERROR);
             }
@@ -290,7 +290,7 @@ public class SaloonManager extends MatchHostManager
             }
 
         } catch (Exception e) {
-            log.warning("Failed to create parlor " + info + ".", e);
+            BangServer.DISCORD.commit(1, "Failed to create parlor " + info + ".", e);
             if (rl != null) {
                 rl.requestFailed(INTERNAL_ERROR);
             }
@@ -329,7 +329,7 @@ public class SaloonManager extends MatchHostManager
                 commitList();
             }
             public void requestFailed (Exception cause) {
-                log.warning("Failed to obtain top-ranked player snapshot", "list", list, cause);
+                BangServer.DISCORD.commit(1, "Failed to obtain top-ranked player snapshot", "list", list, cause);
                 // ah well, we'll have no avatar
                 commitList();
             }

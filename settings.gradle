@@ -1,1 +1,1 @@
-include 'app', 'assets', 'bui', 'client/shared', 'jme', 'server', 'tools'
+include 'app', 'assets', 'bui', 'client/shared', 'jme', 'server', 'tools', 'test'

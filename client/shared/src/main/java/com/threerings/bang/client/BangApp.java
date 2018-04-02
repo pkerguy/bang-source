@@ -101,9 +101,6 @@ public class BangApp extends JmeApp
         // configure our debug log
         configureLog("bang.log");
 
-        // set up our application icons
-        BangUI.configIcons();
-
         try {
             checkJavaVersion();
         } catch (Throwable t) {

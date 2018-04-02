@@ -115,7 +115,7 @@ public class RatingManager
                     log.info("Recalculating rankings...");
                     _ratingrepo.calculateRanks(null);
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to recalculate ranks.", pe);
+                    BangServer.DISCORD.commit(1, "Failed to recalculate ranks.", pe);
                 }
                 return false;
             }
@@ -128,7 +128,7 @@ public class RatingManager
 //                     log.info("Recalculating weekly rankings...");
 //                     _ratingrepo.calculateRanks(week);
 //                 } catch (PersistenceException pe) {
-//                     log.warning("Failed to recalculate weekly ranks", "week", week, pe);
+//                     BangServer.DISCORD.commit(1, "Failed to recalculate weekly ranks", "week", week, pe);
 //                 }
 //                 return false;
 //             }
@@ -153,7 +153,7 @@ public class RatingManager
                 try {
                     _ratingrepo.deleteRatings(week);
                 } catch (PersistenceException pe) {
-                    log.warning("Failed to purge weekly ratings", "week", week, pe);
+                    BangServer.DISCORD.commit(1, "Failed to purge weekly ratings", "week", week, pe);
                 }
                 return false;
             }
@@ -220,7 +220,7 @@ public class RatingManager
                     }
                     _rankLevels = newMap;
                 } catch (PersistenceException pe) {
-                    log.warning("Failure while reloading rank data", pe);
+                    BangServer.DISCORD.commit(1, "Failure while reloading rank data", pe);
                 }
                 return false;
             }
@@ -262,7 +262,7 @@ public class RatingManager
                     try {
                         _ratingrepo.storeScoreTracker(keys[ii], tilers[ii]);
                     } catch (PersistenceException pe) {
-                        log.warning("Error storing perf dist", "scenario", keys[ii].scenario,
+                        BangServer.DISCORD.commit(1, "Error storing perf dist", "scenario", keys[ii].scenario,
                                     "players", keys[ii].players, "error", pe);
                     }
                 }

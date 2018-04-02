@@ -183,7 +183,7 @@ public abstract class Scenario
             try {
                 validate = delegate.tick(bangobj, tick) || validate;
             } catch (Exception e) {
-                log.warning("Delegate choked on tick", "game", _bangmgr.where(), "tick", tick,
+                BangServer.DISCORD.commit(1, "Delegate choked on tick", "game", _bangmgr.where(), "tick", tick,
                             "delegate", delegate, e);
             }
         }

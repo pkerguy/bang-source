@@ -90,7 +90,7 @@ public class BangChatManager
             try {
                 InputStream din = getClass().getClassLoader().getResourceAsStream(dict);
                 if (din == null) {
-                    log.warning("Missing whitelist dictionary", "path", dict);
+                    BangServer.DISCORD.commit(1, "Missing whitelist dictionary", "path", dict);
                     continue;
                 }
                 BufferedReader bin = new BufferedReader(new InputStreamReader(din));
@@ -99,7 +99,7 @@ public class BangChatManager
                     _whitelist.add(word);
                 }
             } catch (Exception e) {
-                log.warning("Failed to read whitelist dictionary", "dict", dict, e);
+                BangServer.DISCORD.commit(1, "Failed to read whitelist dictionary", "dict", dict, e);
             }
         }
 
@@ -116,7 +116,7 @@ public class BangChatManager
             addWhitelistWords(_playrepo.loadNameWords());
             addWhitelistWords(_gangrepo.loadNameWords());
         } catch (PersistenceException pe) {
-            log.warning("Failed to load name words for whitelist.", pe);
+            BangServer.DISCORD.commit(1, "Failed to load name words for whitelist.", pe);
         }
 
         log.info("Chat system using whitelist", "size", _whitelist.size());

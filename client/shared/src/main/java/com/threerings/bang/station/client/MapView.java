@@ -149,7 +149,7 @@ public class MapView extends BContainer
     protected static final Rectangle[] TOWN_RECTS = {
         new Rectangle(37, 149, 142, 119),
         new Rectangle(236, 396, 183, 71),
-        new Rectangle(250, 135, 183, 71),
+        //new Rectangle(250, 135, 183, 71),
     };
 
     protected static final Rectangle[] TBUT_RECTS = {
@@ -159,6 +159,6 @@ public class MapView extends BContainer
         // pixels to cover the gap; we'd expand it only up and bottom align everything except that
         // turns out not to be possible without giant fiasco thanks to the way we handle hovering
         new Rectangle(276, 354-23, 88, 19+2*23),
-        new Rectangle(291, 61-23, 88, 19+2*23),
+        //new Rectangle(291, 61-23, 88, 19+2*23),
     };
 }

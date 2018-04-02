@@ -9,6 +9,7 @@ import java.util.HashMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.bang.server.BangServer;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 

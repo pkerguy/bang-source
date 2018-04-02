@@ -28,6 +28,7 @@ import com.threerings.bang.game.data.BangAI;
 import com.threerings.bang.game.data.BangObject;
 import com.threerings.bang.game.server.ai.AILogic;
 import com.threerings.bang.game.util.PointSet;
+import com.threerings.bang.server.BangServer;
 
 import static com.threerings.bang.Log.log;
 

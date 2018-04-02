@@ -20,6 +20,7 @@ import com.threerings.bang.game.data.piece.Bonus;
 import com.threerings.bang.game.data.piece.Piece;
 import com.threerings.bang.game.data.piece.TreeBed;
 import com.threerings.bang.game.data.piece.Unit;
+import com.threerings.bang.server.BangServer;
 
 import static com.threerings.bang.Log.log;
 

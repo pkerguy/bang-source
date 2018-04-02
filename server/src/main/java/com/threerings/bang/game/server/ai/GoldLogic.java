@@ -16,6 +16,7 @@ import com.threerings.bang.game.data.piece.PieceCodes;
 import com.threerings.bang.game.data.piece.Teleporter;
 import com.threerings.bang.game.data.piece.Unit;
 import com.threerings.bang.game.util.PointSet;
+import com.threerings.bang.server.BangServer;
 
 import static com.threerings.bang.Log.*;
 

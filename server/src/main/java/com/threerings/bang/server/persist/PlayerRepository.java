@@ -30,6 +30,7 @@ import com.samskivert.jdbc.JORARepository;
 import com.samskivert.jdbc.jora.FieldMask;
 import com.samskivert.jdbc.jora.Table;
 
+import com.threerings.bang.server.BangServer;
 import com.threerings.util.Name;
 
 import com.threerings.bang.avatar.data.Look;

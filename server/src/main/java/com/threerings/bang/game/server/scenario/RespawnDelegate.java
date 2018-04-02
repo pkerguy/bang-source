@@ -18,6 +18,7 @@ import com.threerings.bang.game.data.effect.ResurrectEffect;
 import com.threerings.bang.game.data.piece.Piece;
 import com.threerings.bang.game.data.piece.Revolutionary;
 import com.threerings.bang.game.data.piece.Unit;
+import com.threerings.bang.server.BangServer;
 
 import static com.threerings.bang.Log.log;
 

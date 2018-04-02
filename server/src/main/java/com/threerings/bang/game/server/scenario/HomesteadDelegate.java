@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.QuickSort;
 
+import com.threerings.bang.server.BangServer;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.bang.data.StatType;

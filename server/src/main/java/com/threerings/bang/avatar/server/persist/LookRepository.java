@@ -24,6 +24,7 @@ import com.samskivert.jdbc.SimpleRepository;
 
 import com.threerings.bang.avatar.data.Look;
 import com.threerings.bang.data.AvatarInfo;
+import com.threerings.bang.server.BangServer;
 
 import static com.threerings.bang.Log.log;
 

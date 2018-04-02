@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Lifecycle;
+import com.threerings.bang.server.BangServer;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.crowd.chat.server.ChatProvider;

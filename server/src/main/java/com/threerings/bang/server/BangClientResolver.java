@@ -280,8 +280,10 @@ public class BangClientResolver extends CrowdClientResolver
             for (String bounty : BountyConfig.getBountyIds(ServerConfig.townId, btype)) {
                 if (!buser.stats.containsValue(StatType.BOUNTIES_COMPLETED, bounty)) {
                     BountyConfig.Reward breward = BountyConfig.getBounty(bounty).reward;
+                    if(breward.articles == null || breward.articles.length == 0) continue;
                     for(Article articles : breward.articles)
                     {
+                        if(articles == null) continue;
                         if(articles.canBeOwned(buser))
                         {
                             buser.addToInventory(articles);

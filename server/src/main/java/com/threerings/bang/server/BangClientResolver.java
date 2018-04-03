@@ -18,6 +18,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
+import com.threerings.bang.bounty.data.BountyConfig;
 import com.threerings.bang.data.*;
 import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.bang.util.DateUtil;
@@ -274,6 +275,21 @@ public class BangClientResolver extends CrowdClientResolver
         {
             buser.removeFromInventory(buser.getEquivalentItem(new TrainTicket(buser.playerId, 2)).getKey());
         }
+        for(BountyConfig.Type btype : BountyConfig.Type.values())
+        {
+            for (String bounty : BountyConfig.getBountyIds(ServerConfig.townId, btype)) {
+                if (!buser.stats.containsValue(StatType.BOUNTIES_COMPLETED, bounty)) {
+                    BountyConfig.Reward breward = BountyConfig.getBounty(bounty).reward;
+                    for(Article articles : breward.articles)
+                    {
+                        if(articles.canBeOwned(buser))
+                        {
+                            buser.addToInventory(articles);
+                        }
+                    }
+                }
+            }
+        }
 
         // if we're giving out free access to ITP, give the user a temporary ITP ticket for this
         // session (if they don't already have one)
@@ -298,7 +314,7 @@ public class BangClientResolver extends CrowdClientResolver
         for (Look look : modified) {
             _lookrepo.updateLook(buser.playerId, look);
         }
-        buser.looks = new DSet<Look>(looks);
+        buser.looks = new DSet<Look>(modified); //looks
 
         // configure their chosen poses
         buser.poses = new String[Look.POSE_COUNT];

@@ -286,7 +286,9 @@ public class BangClientResolver extends CrowdClientResolver
                         if(articles == null) continue;
                         if(articles.canBeOwned(buser))
                         {
-                            buser.addToInventory(articles);
+                            if(!buser.holdsEquivalentItem(articles)) {
+                                buser.addToInventory(articles);
+                            }
                         }
                     }
                 }

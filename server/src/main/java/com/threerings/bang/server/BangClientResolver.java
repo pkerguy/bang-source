@@ -259,6 +259,20 @@ public class BangClientResolver extends CrowdClientResolver
             }
         }
 
+        // If they have a boom town ticket.. Remove it (For staff glitch fixing)
+        for (Item item : items) {
+            if (!(item instanceof TrainTicket)) {
+                continue;
+            }
+            TrainTicket ticket = (TrainTicket)item;
+            if(ticket.getTownId().equalsIgnoreCase("BOOM_TOWN"))
+            {
+                BangServer.DISCORD.commit(1, buser.playerId + "(player id) had an improper ticket.. BOOM_TOWN.. This have been fixed.");
+                _itemrepo.deleteItem(item, "ACCESS DENIED");
+                buser.removeFromInventory(item.getKey());
+            }
+        }
+
         // give out a free ticket if a player qualified but never successfully made it to ITP
         if (DeploymentConfig.usesCoins() && noFreeTicket && player.nextTown == null &&
             buser.stats.containsValue(StatType.FREE_TICKETS, BangCodes.INDIAN_POST) &&
@@ -268,30 +282,6 @@ public class BangClientResolver extends CrowdClientResolver
             if (ticket != null) {
                 _itemrepo.insertItem(ticket);
                 buser.addToInventory(ticket);
-            }
-        }
-
-        if(buser.holdsTicket("boom_town"))
-        {
-            buser.removeFromInventory(buser.getEquivalentItem(new TrainTicket(buser.playerId, 2)).getKey());
-        }
-        for(BountyConfig.Type btype : BountyConfig.Type.values())
-        {
-            for (String bounty : BountyConfig.getBountyIds(ServerConfig.townId, btype)) {
-                if (!buser.stats.containsValue(StatType.BOUNTIES_COMPLETED, bounty)) {
-                    BountyConfig.Reward breward = BountyConfig.getBounty(bounty).reward;
-                    if(breward.articles == null || breward.articles.length == 0) continue;
-                    for(Article articles : breward.articles)
-                    {
-                        if(articles == null) continue;
-                        if(articles.canBeOwned(buser))
-                        {
-                            if(!buser.holdsEquivalentItem(articles)) {
-                                buser.addToInventory(articles);
-                            }
-                        }
-                    }
-                }
             }
         }
 

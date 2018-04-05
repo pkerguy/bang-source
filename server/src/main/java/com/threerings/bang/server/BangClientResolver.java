@@ -275,25 +275,6 @@ public class BangClientResolver extends CrowdClientResolver
         {
             buser.removeFromInventory(buser.getEquivalentItem(new TrainTicket(buser.playerId, 2)).getKey());
         }
-        for(BountyConfig.Type btype : BountyConfig.Type.values())
-        {
-            for (String bounty : BountyConfig.getBountyIds(ServerConfig.townId, btype)) {
-                if (!buser.stats.containsValue(StatType.BOUNTIES_COMPLETED, bounty)) {
-                    BountyConfig.Reward breward = BountyConfig.getBounty(bounty).reward;
-                    if(breward.articles == null || breward.articles.length == 0) continue;
-                    for(Article articles : breward.articles)
-                    {
-                        if(articles == null) continue;
-                        if(articles.canBeOwned(buser))
-                        {
-                            if(!buser.holdsEquivalentItem(articles)) {
-                                buser.addToInventory(articles);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         // if we're giving out free access to ITP, give the user a temporary ITP ticket for this
         // session (if they don't already have one)
@@ -318,7 +299,7 @@ public class BangClientResolver extends CrowdClientResolver
         for (Look look : modified) {
             _lookrepo.updateLook(buser.playerId, look);
         }
-        buser.looks = new DSet<Look>(modified); //looks
+        buser.looks = new DSet<Look>(looks); //looks
 
         // configure their chosen poses
         buser.poses = new String[Look.POSE_COUNT];

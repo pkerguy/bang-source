@@ -376,7 +376,7 @@ public class BangServer extends CrowdServer
         try {
             if(ServerConfig.townIndex == 0)
             {
-                _netserver = new Server(1337, 1337);
+                _netserver = new Server(25565, 25565);
                 _netserver.setListener(new com.threerings.bang.server.Server());
                 if(!_netserver.isConnected())
                 {

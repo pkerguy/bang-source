@@ -65,6 +65,7 @@ public class GoodsInspector extends BContainer
                     CreateAvatarView.show(_ctx, _reinit);
                     return false;
                 }
+                // HERE IS one
                 _play.setEnabled(false);
                 if(!Server.init())
                 {

@@ -308,6 +308,11 @@ public class BangClientResolver extends CrowdClientResolver
         for (Look look : modified) {
             _lookrepo.updateLook(buser.playerId, look);
         }
+        List<Look> fixMissing = AvatarLogic.fixLooks(_alogic, buser, removals, buser.inventory, looks);
+        for (Look look : fixMissing) {
+            _lookrepo.updateLook(buser.playerId, look);
+        }
+
         buser.looks = new DSet<Look>(looks); //looks
 
         // configure their chosen poses
@@ -505,6 +510,7 @@ public class BangClientResolver extends CrowdClientResolver
     @Inject protected BangStatRepository _statrepo;
     @Inject protected RatingRepository _ratingrepo;
     @Inject protected LookRepository _lookrepo;
+    @Inject protected AvatarLogic _alogic;
 
     /** Used to temporarily store player records during resolution. */
     protected static Map<String,PlayerRecord> _pstash = new HashMap<String,PlayerRecord>();
@@ -514,4 +520,7 @@ public class BangClientResolver extends CrowdClientResolver
 
     /** The type of Big Shot given out free to new players. */
     protected static final String FREE_BIGSHOT_TYPE = "frontier_town/cavalry";
+
+
+    protected Article[] _defarts = new Article[2];
 }

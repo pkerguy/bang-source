@@ -258,6 +258,19 @@ public class PlayerPopupMenu extends BPopupMenu
         // add an item for viewing their wanted poster
         addMenuItem(new BMenuItem(msgs.get("m.pm_view_poster"), "view_poster"));
 
+        if(self.handle.equals(_handle)) // Let Admins do things to their own accounts too
+        {
+            if (self.tokens.isAdmin()) {
+                addMenuItem(new BMenuItem("Grant Scrip", "admin_scrip"));
+                addMenuItem(new BMenuItem("Remove Scrip", "admin_removescrip"));
+                addMenuItem(new BMenuItem("RESET Scrip", "admin_resetscrip"));
+                addMenuItem(new BMenuItem("Grant Badge", "admin_grantbadge"));
+                addMenuItem(new BMenuItem("Remove Badge", "admin_removebadge"));
+                addMenuItem(new BMenuItem("RESET Badge", "admin_resetbadge"));
+
+            }
+        }
+
         // stop here if this is us or we're anonymous
         if (self.tokens.isAnonymous() || self.handle.equals(_handle)){
             return;

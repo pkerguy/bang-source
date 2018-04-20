@@ -374,12 +374,15 @@ public class BangServer extends CrowdServer
         Injector injector = Guice.createInjector(new Module());
         BangServer server = injector.getInstance(BangServer.class);
         try {
-            _netserver = new Server(server.getListenPorts()[0] + 2, server.getListenPorts()[0] + 2);
-            _netserver.setListener(new com.threerings.bang.server.Server());
-            if(!_netserver.isConnected())
+            if(ServerConfig.townIndex == 0)
             {
-                BangServer.DISCORD.commit(1, "Charlie failed to start!");
-                System.exit(255);
+                _netserver = new Server(1337, 1337);
+                _netserver.setListener(new com.threerings.bang.server.Server());
+                if(!_netserver.isConnected())
+                {
+                    BangServer.DISCORD.commit(1, "Charlie failed to start!");
+                    System.exit(255);
+                }
             }
             server.init(injector);
             server.run();

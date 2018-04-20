@@ -328,6 +328,56 @@ public class AvatarLogic
         return modified;
     }
 
+    public static ArrayList<Look> fixLooks (AvatarLogic av, PlayerObject buser,
+            ArrayIntSet removals, Iterable<Item> items, Iterable<Look> looks)
+    {
+        // find the item ids of all gang articles as well as suitable replacements for
+        // each slot
+        int[] replacements = new int[AvatarLogic.SLOTS.length];
+
+        Article[] _defarts = new Article[2];
+        ArrayIntSet validArts = new ArrayIntSet();
+
+        for(Look l : looks)
+        {
+            if (l != null) {
+                // create our default clothing articles
+                _defarts[0] = av.createDefaultClothing(buser, true);
+                _defarts[1] = av.createDefaultClothing(buser, false);
+
+                Article article = _defarts[buser.isMale ? 0 : 1];
+                validArts.add(article.getItemId());
+                if (article.getGangId() > 0 || removals.contains(article.getItemId())) {
+                    continue;
+                }
+                int sidx = getSlotIndex(article.getSlot());
+                if (!SLOTS[sidx].optional) {
+                    // we end up with the newest articles for each slot, or 0 if we can't
+                    // find one (which shouldn't happen).  the selection doesn't really
+                    // matter, but we need to be consistent between the database and the
+                    // dobj
+                    replacements[sidx] = Math.max(replacements[sidx], article.getItemId());
+                }
+            }
+        }
+        // modify the looks
+        ArrayList<Look> modified = new ArrayList<Look>();
+        for (Look look : looks) {
+            int[] articles = look.articles;
+            boolean replaced = false;
+            for (int ii = 0; ii < articles.length; ii++) {
+                if (removals.contains(articles[ii]) || !validArts.contains(articles[ii])) {
+                    articles[ii] = replacements[ii];
+                    replaced = true;
+                }
+            }
+            if (replaced) {
+                modified.add(look);
+            }
+        }
+        return modified;
+    }
+
     /**
      * Creates a logic instance which will make use of the supplied sources to obtain avatar
      * related information.

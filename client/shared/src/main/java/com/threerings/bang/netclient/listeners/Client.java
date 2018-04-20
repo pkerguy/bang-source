@@ -42,25 +42,23 @@ public class Client implements SocketListener {
             }
             StringBuilder replyBuilder = new StringBuilder();
             for(WhoUserResponsePacket response : packet.data){
-                if(response.publicDisplay != null)
-                {
-                    replyBuilder.append(response.publicDisplay);
-                } else {
-                    continue;
-                }
-                if(response.username != null)
-                {
-                    replyBuilder.append("(" + response.username + ")");
-                }
-                if(response.placeOid != -1)
-                {
-                    replyBuilder.append("[" + response.placeOid + "]");
-                }
-                if(response.townId != null)
-                {
-                    replyBuilder.append("(" + response.townId + ")");
-                }
-                replyBuilder.append(" ");
+                try {
+                    if (response.publicDisplay != null) {
+                        replyBuilder.append(response.publicDisplay);
+                    } else {
+                        continue;
+                    }
+                    if (response.username != null) {
+                        replyBuilder.append("(" + response.username + ")");
+                    }
+                    if (response.placeOid != -1) {
+                        replyBuilder.append("[" + response.placeOid + "]");
+                    }
+                    if (response.townId != null) {
+                        replyBuilder.append("(" + response.townId + ")");
+                    }
+                    replyBuilder.append(" ");
+                } catch(Exception ignore) {} // Makes it skip that user if for some reason an exception is thrown rather than messing with the whole response
             }
             _ctx.getChatDirector().displayInfo(null, "Online Users: " + replyBuilder);
         }

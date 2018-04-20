@@ -451,7 +451,7 @@ public class LogonView extends BWindow
 
         if(_netclient == null) // Only do this for the first login
         {
-            _netclient = new com.jmr.wrapper.client.Client(serverIP, serverPorts[0] + 2, serverPorts[0] + 2);
+            _netclient = new com.jmr.wrapper.client.Client(serverIP, 1337,1337);
             _netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
             _netclient.connect();
             if (!_netclient.isConnected()) {

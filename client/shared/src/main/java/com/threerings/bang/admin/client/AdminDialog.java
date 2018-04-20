@@ -36,8 +36,7 @@ public class AdminDialog extends SteelWindow
             RESET_SCRIP = 2,
             GRANT_BADGE = 3,
             REMOVE_BADGE = 4,
-            RESET_BADGE = 5,
-            GET_CONFIG = 6;
+            RESET_BADGE = 5;
 
     /** The width to hint when laying out this window. */
     public static final int WIDTH_HINT = 875;

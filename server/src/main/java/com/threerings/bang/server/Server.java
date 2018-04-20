@@ -34,7 +34,7 @@ public class Server implements SocketListener {
                         continue; // Don't show staff
                     }
                     if (user.hasCharacter()) {
-                        WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(null, user.getVisibleName().getNormal(), user.isActive(), user.townId, -1);
+                        WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(null, user.getVisibleName().getNormal(), user.isActive(), ServerConfig.townId, -1);
                         dataResponse.add(constructPacket);
                         continue; // Goto the next entry
                     } else {
@@ -51,11 +51,11 @@ public class Server implements SocketListener {
                 PlayerObject user = (PlayerObject) BangServer.locator._clmgr.getClientObject(new Name(s.getKey()));
                 if(user == null) continue;
                 if (user.hasCharacter()) {
-                    WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(user.username.getNormal(), user.getVisibleName().getNormal(), user.isActive(), user.townId, user.getPlaceOid());
+                    WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(user.username.getNormal(), user.getVisibleName().getNormal(), user.isActive(), ServerConfig.townId, user.getPlaceOid());
                     dataResponse.add(constructPacket);
                     continue; // Goto the next entry
                 } else {
-                    WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(user.username.getNormal(), user.username.getNormal(), user.isActive(), user.townId, user.getPlaceOid());
+                    WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(user.username.getNormal(), user.username.getNormal(), user.isActive(), ServerConfig.townId, user.getPlaceOid());
                     dataResponse.add(constructPacket);
                     continue; // Goto the next entry
                 }

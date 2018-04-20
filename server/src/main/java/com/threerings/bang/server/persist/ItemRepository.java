@@ -241,7 +241,7 @@ public class ItemRepository extends SimpleRepository
 //                }
 //            }
 //        });
-        return false;
+        return true;
     }
 
     /**

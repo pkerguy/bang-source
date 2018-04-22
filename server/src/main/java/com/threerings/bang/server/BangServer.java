@@ -23,6 +23,7 @@ import com.threerings.bang.chat.server.*;
 import com.threerings.bang.data.*;
 import com.threerings.bang.gang.data.*;
 import com.threerings.bang.gang.server.*;
+import com.threerings.bang.netclient.packets.ClientStoragePacket;
 import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.bang.ranch.data.*;
 import com.threerings.bang.ranch.server.*;
@@ -661,7 +662,7 @@ public class BangServer extends CrowdServer
     @Inject protected BangChatManager _chatmgr;
     @Inject protected BangReportManager _repmgr;
 
-    public static HashMap<String, NewClientPacket> clients = new HashMap<>();
+    public static HashMap<String, ClientStoragePacket> clients = new HashMap<>();
 
     // need to inject this guy here as he's otherwise not referenced until the office manager is
     // created which is too late in our initialization for safe repository creation

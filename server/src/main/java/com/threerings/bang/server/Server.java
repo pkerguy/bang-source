@@ -22,13 +22,13 @@ public class Server implements SocketListener {
         {
             NewClientPacket packet = (NewClientPacket)o;
             System.out.println("Charlie registered user: " + packet.username);
-            BangServer.clients.put(packet.username, packet);
+            BangServer.clients.put(packet.username, new ClientStoragePacket(packet.username));
             BangServer.clients.get(packet.username).setConnection(connection);
         }
         if(o instanceof WhoSendPacket)
         {
                 ArrayList<WhoUserResponsePacket> dataResponse = new ArrayList<WhoUserResponsePacket>();
-                for(Map.Entry<String, NewClientPacket> s : BangServer.clients.entrySet()) {
+                for(Map.Entry<String, ClientStoragePacket> s : BangServer.clients.entrySet()) {
                     Tuple<BangClientInfo,Integer> remote = BangServer.peerManager.locateRemotePlayer(s.getValue().handle);
                     if(remote == null) continue;
                     if (remote.left.avatar != null) {
@@ -55,7 +55,7 @@ public class Server implements SocketListener {
         {
             ArrayList<WhoUserResponsePacket> dataResponse = new ArrayList<WhoUserResponsePacket>();
             WhoSendAdminPacket adminPacket = (WhoSendAdminPacket)o;
-            for(Map.Entry<String, NewClientPacket> s : BangServer.clients.entrySet()) {
+            for(Map.Entry<String, ClientStoragePacket> s : BangServer.clients.entrySet()) {
                 Tuple<BangClientInfo,Integer> remote = BangServer.peerManager.locateRemotePlayer(s.getValue().handle);
                 if(remote == null) continue;
                 if (remote.left.avatar != null) {

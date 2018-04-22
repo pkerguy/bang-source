@@ -340,7 +340,7 @@ public class AvatarLogic
 
         for(Look l : looks)
         {
-            if (l != null) {
+            if (l != null || l.articles.length == 0 || l.aspects.length == 0) {
                 // create our default clothing articles
                 _defarts[0] = av.createDefaultClothing(buser, true);
                 _defarts[1] = av.createDefaultClothing(buser, false);

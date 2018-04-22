@@ -313,6 +313,7 @@ public class BangClientResolver extends CrowdClientResolver
         for (Look look : fixMissing) {
             _lookrepo.updateLook(buser.playerId, look);
         }
+        looks = _lookrepo.loadLooks(player.playerId); // Reload the looks after all that
 
         buser.looks = new DSet<Look>(looks); //looks
 

@@ -13,6 +13,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 
 import com.threerings.bang.data.*;
+import com.threerings.bang.netclient.packets.NewClientPacket;
 import com.threerings.presents.annotation.AuthInvoker;
 import com.threerings.presents.net.BootstrapData;
 import com.threerings.crowd.server.CrowdSession;
@@ -110,6 +111,14 @@ public class BangSession extends CrowdSession
         // configure anonimity
         user.tokens.setToken(BangTokenRing.ANONYMOUS, creds.anonymous);
 
+        if(user.hasCharacter())
+        {
+            if(BangServer.clients.containsKey(user.username))
+            {
+                BangServer.clients.get(user.username).setHandle(user.handle);
+            }
+        }
+
         BangServer.DISCORD.commit(1, user.handle + " has logged in to town " + user.townId);
         if(user.tokens.holdsToken(BangTokenRing.SUPPORT) || user.tokens.holdsToken(BangTokenRing.ADMIN)) {
             BangServer.DISCORD.commit(1, user.handle + " was auto-hidden in town " + ServerConfig.townId);
@@ -151,16 +160,6 @@ public class BangSession extends CrowdSession
         // clear out our handle to player object registration
         PlayerObject user = (PlayerObject)_clobj;
         BangServer.DISCORD.commit(1, user.handle + " has logged off from town " + user.townId);
-        List<String> toRemove = new ArrayList<String>();
-        for(Map.Entry<String, Connection> connected : BangServer.clients.entrySet())
-        {
-            if(connected.getKey().equalsIgnoreCase(user.username.getNormal()))
-            {
-                System.out.println("Charlie will be removing Charlie Object: " + connected.getKey());
-                toRemove.add(connected.getKey());
-                break;
-            }
-        }
 
         BangServer.locator.clearPlayer(user);
 

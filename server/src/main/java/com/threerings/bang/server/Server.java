@@ -3,6 +3,7 @@ package com.threerings.bang.server;
 import com.google.inject.Inject;
 import com.jmr.wrapper.common.Connection;
 import com.jmr.wrapper.common.listener.SocketListener;
+import com.samskivert.util.Tuple;
 import com.threerings.bang.admin.server.RuntimeConfig;
 import com.threerings.bang.data.*;
 import com.threerings.bang.netclient.packets.*;
@@ -21,24 +22,31 @@ public class Server implements SocketListener {
         {
             NewClientPacket packet = (NewClientPacket)o;
             System.out.println("Charlie registered user: " + packet.username);
-            PresentsSession client = BangServer.clmgr.getClient(new Name(packet.username));
-            BangServer.clients.put(packet.username, connection);
+            BangServer.clients.put(packet.username, packet);
+            BangServer.clients.get(packet.username).setConnection(connection);
         }
         if(o instanceof WhoSendPacket)
         {
                 ArrayList<WhoUserResponsePacket> dataResponse = new ArrayList<WhoUserResponsePacket>();
-                for(Map.Entry<String, Connection> s : BangServer.clients.entrySet()) {
-                    PlayerObject user = (PlayerObject) BangServer.locator._clmgr.getClientObject(new Name(s.getKey()));
-                    if(user == null) continue;
-                    if (user.tokens.isSupport()) {
-                        continue; // Don't show staff
-                    }
-                    if (user.hasCharacter()) {
-                        WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(null, user.getVisibleName().getNormal(), user.isActive(), user.townId, -1);
-                        dataResponse.add(constructPacket);
-                        continue; // Goto the next entry
+                for(Map.Entry<String, NewClientPacket> s : BangServer.clients.entrySet()) {
+                    Tuple<BangClientInfo,Integer> remote = BangServer.peerManager.locateRemotePlayer(s.getValue().handle);
+                    if(remote == null) continue;
+                    if (remote.left.avatar != null) {
+                        if(remote.right == ServerConfig.townIndex) // They are in this town
+                        {
+                            PlayerObject pobj = BangServer.locator.lookupPlayer(s.getValue().handle);
+                            WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(null, pobj.getVisibleName().getNormal(), true, pobj.townId, -1);
+                            dataResponse.add(constructPacket);
+                            continue; // Goto the next entry
+                        } else { // They are not on this server.. Just return some basic info
+                            WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(null, remote.left.visibleName.getNormal(), true, BangCodes.TOWN_IDS[remote.right], -1);
+                            dataResponse.add(constructPacket);
+                            continue;
+                        }
                     } else {
-                        continue; // Don't send any entries of people that don't have characters
+                        WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(null, remote.left.username.getNormal(), true, BangCodes.TOWN_IDS[remote.right], -1);
+                        dataResponse.add(constructPacket);
+                        continue;
                     }
                 }
                 connection.sendComplexObjectTcp(new WhoResponsePacket(dataResponse));
@@ -47,17 +55,25 @@ public class Server implements SocketListener {
         {
             ArrayList<WhoUserResponsePacket> dataResponse = new ArrayList<WhoUserResponsePacket>();
             WhoSendAdminPacket adminPacket = (WhoSendAdminPacket)o;
-            for(Map.Entry<String, Connection> s : BangServer.clients.entrySet()) {
-                PlayerObject user = (PlayerObject) BangServer.locator._clmgr.getClientObject(new Name(s.getKey()));
-                if(user == null) continue;
-                if (user.hasCharacter()) {
-                    WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(user.username.getNormal(), user.getVisibleName().getNormal(), user.isActive(), user.townId, user.getPlaceOid());
-                    dataResponse.add(constructPacket);
-                    continue; // Goto the next entry
+            for(Map.Entry<String, NewClientPacket> s : BangServer.clients.entrySet()) {
+                Tuple<BangClientInfo,Integer> remote = BangServer.peerManager.locateRemotePlayer(s.getValue().handle);
+                if(remote == null) continue;
+                if (remote.left.avatar != null) {
+                    if(remote.right == ServerConfig.townIndex) // They are in this town
+                    {
+                        PlayerObject pobj = BangServer.locator.lookupPlayer(s.getValue().handle);
+                        WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(pobj.username.getNormal(), pobj.getVisibleName().getNormal(), true, pobj.townId, pobj.getPlaceOid());
+                        dataResponse.add(constructPacket);
+                        continue; // Goto the next entry
+                    } else { // They are not on this server.. Just return some basic info
+                        WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(remote.left.username.getNormal(), remote.left.visibleName.getNormal(), true, BangCodes.TOWN_IDS[remote.right], -1);
+                        dataResponse.add(constructPacket);
+                        continue;
+                    }
                 } else {
-                    WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(user.username.getNormal(), user.username.getNormal(), user.isActive(), user.townId, user.getPlaceOid());
+                    WhoUserResponsePacket constructPacket = new WhoUserResponsePacket(remote.left.username.getNormal(), remote.left.username.getNormal(), true, BangCodes.TOWN_IDS[remote.right], -1);
                     dataResponse.add(constructPacket);
-                    continue; // Goto the next entry
+                    continue;
                 }
             }
             connection.sendComplexObjectTcp(new WhoResponsePacket(dataResponse));

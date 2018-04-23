@@ -132,7 +132,7 @@ public class Look extends SimpleStreamableObject
 
         if(articles == null)
         {
-            articles = new int[10]; // 10 is my safe number
+            articles = new int[5]; // 5 is the correct number
         }
         // gracefully deal with old article arrays in case we add new slots
         if (articles != null && articles.length <= idx) {

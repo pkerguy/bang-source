@@ -340,7 +340,16 @@ public class AvatarLogic
 
         for(Look l : looks)
         {
-            if (l != null || l.articles.length == 0 || l.aspects.length == 0) {
+            System.out.println(l);
+            if(l != null)
+            {
+                System.out.println(l.modified);
+                System.out.println(l.articles.length);
+                System.out.println(l.articles.length == 0);
+                System.out.println(l.aspects.length);
+                System.out.println(l.aspects.length == 0);
+            }
+            if (l == null) {
                 // create our default clothing articles
                 _defarts[0] = av.createDefaultClothing(buser, true);
                 _defarts[1] = av.createDefaultClothing(buser, false);

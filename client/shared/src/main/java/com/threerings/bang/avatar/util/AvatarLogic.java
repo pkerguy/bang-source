@@ -350,10 +350,10 @@ public class AvatarLogic
             ArrayList<Look> mods = new ArrayList<Look>();
             insertLook.aspects = pickRandomAspectswithFrontier(buser.isMale ? false : true, buser);
             insertLook.setArticle(article);
+            buser.addToInventory(article);
             mods.add(insertLook);
-            System.out.println("Return a modified look!");
+            System.out.println("Return a modified look! Size is: " + mods.size());
             return mods;
-
         }
 
         for(Look l : looks)

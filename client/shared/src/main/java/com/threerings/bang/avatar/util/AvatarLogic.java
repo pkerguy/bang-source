@@ -348,7 +348,7 @@ public class AvatarLogic
 
             Article article = _defarts[buser.isMale ? 0 : 1];
             ArrayList<Look> mods = new ArrayList<Look>();
-            insertLook.aspects = pickRandomAspects(buser.isMale ? false : true, buser);
+            insertLook.aspects = pickRandomAspectswithFrontier(buser.isMale ? false : true, buser);
             insertLook.setArticle(article);
             mods.add(insertLook);
             System.out.println("Return a modified look!");
@@ -704,6 +704,54 @@ public class AvatarLogic
         cost[1] = user.holdsGoldPass(user.townId) ? 0 : coins;
         return look;
     }
+    /**
+     * Picks a set of random aspects from the set available to the given player with a frontier_town town id!
+     */
+    public int[] pickRandomAspectswithFrontier (boolean male, PlayerObject user)
+    {
+        String gender = male ? "male/" : "female/";
+        ArrayIntSet compids = new ArrayIntSet();
+        for (Aspect aspect : ASPECTS) {
+            if ((aspect.maleOnly && !male) || aspect.optional) {
+                continue;
+            }
+
+            ArrayList<AspectCatalog.Aspect> catasps = new ArrayList<AspectCatalog.Aspect>();
+            for (AspectCatalog.Aspect catasp : _aspcat.getAspects(gender + aspect.name)) {
+                if (catasp.scrip <= AvatarCodes.MAX_STARTER_COST && catasp.coins == 0 &&
+                        BangUtil.getTownIndex(catasp.townId) <= 0) {
+                    catasps.add(catasp);
+                }
+            }
+
+            AspectCatalog.Aspect catasp = RandomUtil.pickRandom(catasps);
+            for (String cclass : aspect.classes) {
+                try {
+                    CharacterComponent ccomp = _crepo.getComponent(gender + cclass, catasp.name);
+                    int compmask = ccomp.componentId;
+                    for (String color : ccomp.componentClass.colors) {
+                        if (color.equals(HAIR) || color.equals(SKIN)) {
+                            continue;
+                        }
+                        compmask |= composeZation(color,
+                                ColorConstraints.pickRandomColor(_pository, color, user).colorId);
+                    }
+                    compids.add(compmask);
+
+                } catch (NoSuchComponentException nsce) {
+                    // no problem, some of these are optional
+                }
+            }
+        }
+
+        int[] aspects = new int[compids.size()+1];
+        int hair = ColorConstraints.pickRandomColor(_pository, HAIR, user).colorId,
+                skin = ColorConstraints.pickRandomColor(_pository, SKIN, user).colorId;
+        aspects[0] = (hair << 5) | skin;
+        compids.toIntArray(aspects, 1);
+        return aspects;
+    }
+
 
     /**
      * Picks a set of random aspects from the set available to the given player.

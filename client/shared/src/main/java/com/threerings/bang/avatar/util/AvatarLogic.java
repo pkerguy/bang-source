@@ -328,7 +328,7 @@ public class AvatarLogic
         return modified;
     }
 
-    public static ArrayList<Look> fixLooks (AvatarLogic av, PlayerObject buser,
+    public ArrayList<Look> fixLooks (AvatarLogic av, PlayerObject buser,
             ArrayIntSet removals, Iterable<Item> items, Iterable<Look> looks)
     {
         // find the item ids of all gang articles as well as suitable replacements for
@@ -347,17 +347,9 @@ public class AvatarLogic
             _defarts[1] = av.createDefaultClothing(buser, false);
 
             Article article = _defarts[buser.isMale ? 0 : 1];
-            validArts.add(article.getItemId());
-            int sidx = getSlotIndex(article.getSlot());
-            if (!SLOTS[sidx].optional) {
-                // we end up with the newest articles for each slot, or 0 if we can't
-                // find one (which shouldn't happen).  the selection doesn't really
-                // matter, but we need to be consistent between the database and the
-                // dobj
-                replacements[sidx] = Math.max(replacements[sidx], article.getItemId());
-                insertLook.articles[sidx] = article.getItemId();
-            }
             ArrayList<Look> mods = new ArrayList<Look>();
+            insertLook.aspects = pickRandomAspects(buser.isMale ? false : true, buser);
+            insertLook.setArticle(article);
             mods.add(insertLook);
             System.out.println("Return a modified look!");
             return mods;

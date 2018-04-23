@@ -131,7 +131,7 @@ public class Look extends SimpleStreamableObject
         }
 
         // gracefully deal with old article arrays in case we add new slots
-        if (articles.length <= idx) {
+        if (articles != null && articles.length <= idx) {
             int[] narticles = new int[AvatarLogic.SLOTS.length];
             System.arraycopy(articles, 0, narticles, 0, articles.length);
             articles = narticles;

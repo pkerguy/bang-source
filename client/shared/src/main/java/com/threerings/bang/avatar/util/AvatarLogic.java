@@ -338,6 +338,32 @@ public class AvatarLogic
         Article[] _defarts = new Article[2];
         ArrayIntSet validArts = new ArrayIntSet();
 
+        if(looks.spliterator().getExactSizeIfKnown() == 0)
+        {
+            System.out.println("NO LOOKS!");
+            Look insertLook = new Look();
+            // create our default clothing articles
+            _defarts[0] = av.createDefaultClothing(buser, true);
+            _defarts[1] = av.createDefaultClothing(buser, false);
+
+            Article article = _defarts[buser.isMale ? 0 : 1];
+            validArts.add(article.getItemId());
+            int sidx = getSlotIndex(article.getSlot());
+            if (!SLOTS[sidx].optional) {
+                // we end up with the newest articles for each slot, or 0 if we can't
+                // find one (which shouldn't happen).  the selection doesn't really
+                // matter, but we need to be consistent between the database and the
+                // dobj
+                replacements[sidx] = Math.max(replacements[sidx], article.getItemId());
+                insertLook.articles[sidx] = article.getItemId();
+            }
+            ArrayList<Look> mods = new ArrayList<Look>();
+            mods.add(insertLook);
+            System.out.println("Return a modified look!");
+            return mods;
+
+        }
+
         for(Look l : looks)
         {
             System.out.println(l);

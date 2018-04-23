@@ -348,6 +348,7 @@ public class AvatarLogic
 
             Article article = _defarts[buser.isMale ? 0 : 1];
             ArrayList<Look> mods = new ArrayList<Look>();
+            insertLook.name = "FIXED";
             insertLook.aspects = pickRandomAspectswithFrontier(buser.isMale ? false : true, buser);
             insertLook.setArticle(article);
             buser.addToInventory(article);

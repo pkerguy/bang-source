@@ -130,6 +130,10 @@ public class Look extends SimpleStreamableObject
             return;
         }
 
+        if(articles == null)
+        {
+            articles = new int[10]; // 10 is my safe number
+        }
         // gracefully deal with old article arrays in case we add new slots
         if (articles != null && articles.length <= idx) {
             int[] narticles = new int[AvatarLogic.SLOTS.length];

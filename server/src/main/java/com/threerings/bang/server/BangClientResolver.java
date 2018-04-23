@@ -310,10 +310,13 @@ public class BangClientResolver extends CrowdClientResolver
             BangServer.DISCORD.commit(1, "Player " + buser.username + " has been updated with a LOOK STRIP!");
             _lookrepo.updateLook(buser.playerId, look);
         }
-        List<Look> fixMissing = _alogic.fixLooks(_alogic, buser, removals, buser.inventory, looks);
-        for (Look look : fixMissing) {
-            BangServer.DISCORD.commit(1, "Player " + buser.username + " has been updated with a LOOK FIX!");
-            _lookrepo.updateLook(buser.playerId, look);
+        if(buser.hasCharacter())
+        {
+            List<Look> fixMissing = _alogic.fixLooks(_alogic, buser, removals, buser.inventory, looks);
+            for (Look look : fixMissing) {
+                BangServer.DISCORD.commit(1, "Player " + buser.username + " has been updated with a LOOK FIX!");
+                _lookrepo.updateLook(buser.playerId, look);
+            }
         }
         looks = _lookrepo.loadLooks(player.playerId); // Reload the looks after all that
 

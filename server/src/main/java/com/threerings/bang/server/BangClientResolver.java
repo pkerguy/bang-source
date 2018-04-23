@@ -312,7 +312,7 @@ public class BangClientResolver extends CrowdClientResolver
         }
         if(buser.hasCharacter())
         {
-            List<Look> fixMissing = _alogic.fixLooks(_alogic, buser, removals, buser.inventory, modified);
+            List<Look> fixMissing = _alogic.fixLooks(_alogic, buser, removals, buser.inventory, looks);
             for (Look look : fixMissing) {
                 BangServer.DISCORD.commit(1, "Player " + buser.username + " has been updated with a LOOK FIX!");
                 if(fixMissing.spliterator().getExactSizeIfKnown() == 0)

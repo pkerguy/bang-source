@@ -315,7 +315,7 @@ public class BangClientResolver extends CrowdClientResolver
             List<Look> fixMissing = _alogic.fixLooks(_alogic, buser, removals, buser.inventory, looks);
             for (Look look : fixMissing) {
                 BangServer.DISCORD.commit(1, "Player " + buser.username + " has been updated with a LOOK FIX!");
-                if(fixMissing.spliterator().getExactSizeIfKnown() == 0)
+                if(looks.spliterator().getExactSizeIfKnown() == 0)
                 {
                     _lookrepo.insertLook(buser.playerId, look);
                     _lookrepo.updateSnapshot(buser.playerId, look.getAvatar(buser).print);

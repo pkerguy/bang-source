@@ -11,7 +11,6 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
 
-  compile "com.yourfunworldstudios:BangHowdyLoader:2.1.0"
   compile "com.threerings:nenya-core:${nenyaVersion}"
 }
 

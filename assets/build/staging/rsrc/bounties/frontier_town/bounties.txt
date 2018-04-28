@@ -1,4 +1,3 @@
-frontier_town/most_wanted/extreme/billy_the_kid
 frontier_town/most_wanted/extreme/crackshot_maude
 frontier_town/most_wanted/extreme/los_calavera
 frontier_town/most_wanted/extreme/mecha_moo

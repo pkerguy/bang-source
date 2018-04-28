@@ -305,25 +305,44 @@ public class BangClientResolver extends CrowdClientResolver
 
         // load up this player's avatar looks and modify any looks that have now expired articles
         List<Look> looks = _lookrepo.loadLooks(player.playerId);
+        if(buser.hasCharacter())
+        {
+            if(looks.size() == 0)
+            {
+                BangServer.DISCORD.commit(1, "Player " + buser.username + " has a LOOk issue. Resetting character!");
+                buser.setHandle(new Handle(buser.username + "_OLD")); // Change their old handle to use an old value
+                final Handle handleNew = new GuestHandle("!!" + username);
+                buser.setHandle(handleNew);
+                throw new Exception("User has been updated. Please re-login.");
+            }
+            if(looks.size() > 0)
+            {
+                boolean resetNeeded = false;
+                for(Look l : looks)
+                {
+                    if(l.articles.length == 0)
+                    {
+                        resetNeeded = true;
+                    }
+                    if(l.aspects.length == 0)
+                    {
+                        resetNeeded = true;
+                    }
+                }
+                if(resetNeeded)
+                {
+                    BangServer.DISCORD.commit(1, "Player " + buser.username + " has a LOOk issue. Resetting character!");
+                    buser.setHandle(new Handle(buser.username + "_OLD")); // Change their old handle to use an old value
+                    final Handle handleNew = new GuestHandle("!!" + username);
+                    buser.setHandle(handleNew);
+                    throw new Exception("User has been updated. Please re-login.");
+                }
+            }
+        }
         List<Look> modified = AvatarLogic.stripLooks(removals, buser.inventory, looks);
         for (Look look : modified) {
             BangServer.DISCORD.commit(1, "Player " + buser.username + " has been updated with a LOOK STRIP!");
             _lookrepo.updateLook(buser.playerId, look);
-        }
-        if(buser.hasCharacter())
-        {
-            List<Look> fixMissing = _alogic.fixLooks(_alogic, buser, removals, buser.inventory, looks);
-            for (Look look : fixMissing) {
-                BangServer.DISCORD.commit(1, "Player " + buser.username + " has been updated with a LOOK FIX!");
-                if(looks.spliterator().getExactSizeIfKnown() == 0)
-                {
-                    _lookrepo.insertLook(buser.playerId, look);
-                    _lookrepo.updateSnapshot(buser.playerId, look.getAvatar(buser).print);
-                    buser.addToLooks(look);
-                } else {
-                    _lookrepo.updateLook(buser.playerId, look);
-                }
-            }
         }
         looks = _lookrepo.loadLooks(player.playerId); // Reload the looks after all that
 

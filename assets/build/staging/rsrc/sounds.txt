@@ -107,7 +107,6 @@ rsrc/sounds/music/indian_post/scenario_fg.ogg
 rsrc/sounds/music/indian_post/scenario_tb.ogg
 rsrc/sounds/music/indian_post/scenario_wa.ogg
 rsrc/sounds/music/indian_post/town.ogg
-rsrc/sounds/music/theme.ogg
 rsrc/units/boom_town/forklift/move.ogg
 rsrc/units/boom_town/forklift/shoot2.ogg
 rsrc/units/boom_town/forklift/shooting.ogg

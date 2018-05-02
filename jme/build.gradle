@@ -1,4 +1,18 @@
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://id.yourfunworld.com"
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+    jcenter()
+}
+
 dependencies {
+    compile "com.threerings:nenya-core:2.3"
+    compile "com.threerings:nenya-tools:2.3"
   compile "com.badlogicgames.gdx:gdx:${gdxVersion}"
   // TEMP: pull in LWJGL directly until we rewrite everything to use GDX
   compile ("org.lwjgl.lwjgl:lwjgl:2.9.2") {

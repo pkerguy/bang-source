@@ -6,15 +6,18 @@ package com.threerings.bang.util;
 import java.io.*;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.zip.CRC32;
+import java.nio.file.FileSystem;
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.ListUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.data.BangCodes;
 import com.threerings.getdown.launcher.GetdownApp;
 
@@ -33,19 +36,18 @@ public class BangUtil
      */
     public static InputStream getResourceInput (String path)
     {
-        path = path.replace("/", File.separator);
-        File currentJavaJarFile = new File(GetdownApp.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
-        String currentRootDirectoryPath = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "");
-        currentRootDirectoryPath = currentRootDirectoryPath.replaceAll("%20", " ");
-        //System.out.println("Loading #2... " + currentRootDirectoryPath + path);
-        try {
-            return new FileInputStream(currentRootDirectoryPath + path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        try (FileSystem fileSystem = BangDesktop.dataFiles) { // see above
+
+            // obtain a path to our file in our encrypted file system
+            Path pathFile = fileSystem.getPath(path);
+            return new FileInputStream(pathFile.toFile());
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
             System.exit(0);
+            return null;
         }
-        return null;
     }
 
     /**

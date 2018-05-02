@@ -20,7 +20,7 @@ public class SoundUtil
     {
         String[] sounds = BangUtil.resourceToStrings("rsrc/sounds.txt");
         for (int ii = 0; ii < sounds.length; ii++) {
-            System.out.println("Registering sound: " + sounds[ii]);
+            //System.out.println("Registering sound: " + sounds[ii]);
             _sounds.add(sounds[ii]);
         }
     }

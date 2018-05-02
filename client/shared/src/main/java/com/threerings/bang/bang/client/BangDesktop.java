@@ -9,12 +9,20 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.threerings.bang.client.BangApp;
 import com.threerings.bang.client.BangPrefs;
 import com.threerings.bang.steam.SteamStorage;
+import com.threerings.bang.util.DeploymentConfig;
+import org.cryptomator.cryptofs.CryptoFileSystemProperties;
+import org.cryptomator.cryptofs.CryptoFileSystemProvider;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class BangDesktop {
 
+    public static FileSystem dataFiles;
     public static String username = "";
     public static String password = "";
     public static String server = "";
@@ -26,6 +34,26 @@ public class BangDesktop {
 
     public static void main(String[] args) {
 
+        System.out.println("Setting up environment");
+        String phraseKey = "QeJTqwqXjpxvnOIQPFdfnnOeGgVUGuapSFFAQvaVwVgcsd9UyK";
+        Path storageLocation = Paths.get("data");
+        if(DeploymentConfig.beta_build)
+        {
+            phraseKey = "14l5R8m71U3138c800177D6U3691I1zi3275rbg24hY1Z1yK7L"; // The beta phrase key is different!
+            storageLocation = Paths.get("beta_data");
+        }
+        try {
+            dataFiles = CryptoFileSystemProvider.newFileSystem(
+                    storageLocation,
+                    CryptoFileSystemProperties.cryptoFileSystemProperties()
+                            .withPassphrase(phraseKey)
+                            .withFlags(CryptoFileSystemProperties.FileSystemFlags.READONLY)
+                            .build());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return;
+        }
         System.out.println("Running Bang! Howdy Steam");
         SteamStorage.init();
         //System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());

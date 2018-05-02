@@ -5,7 +5,7 @@ allprojects {
   ext {
     gdxVersion = "1.9.8"
     naryaVersion = "1.15"
-    nenyaVersion = "2.1"
+    nenyaVersion = "2.3"
     towns = ["frontier_town", "indian_post"]
     // indicates whether we're building for test or production
     // when "package" target is invoked the deployment will be set to "prod"
@@ -48,7 +48,7 @@ allprojects {
       mavenLocal()
       mavenCentral()
       maven {
-        url "http://devrepo.mckz.org"
+        url "https://id.yourfunworld.com"
       }
       maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"

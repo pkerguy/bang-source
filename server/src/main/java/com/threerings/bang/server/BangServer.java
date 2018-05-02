@@ -14,6 +14,7 @@ import com.threerings.bang.admin.server.*;
 import com.threerings.bang.avatar.data.*;
 import com.threerings.bang.avatar.server.*;
 import com.threerings.bang.avatar.util.*;
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.bank.data.BankConfig;
 import com.threerings.bang.bank.server.BankManager;
 import com.threerings.bang.bounty.data.*;
@@ -216,7 +217,7 @@ public class BangServer extends CrowdServer
             bind(BodyLocator.class).to(PlayerLocator.class);
             bind(ConfigRegistry.class).to(BangConfigRegistry.class);
             // bang dependencies
-            ResourceManager rsrcmgr = new ResourceManager("rsrc");
+            ResourceManager rsrcmgr = new ResourceManager("rsrc", BangDesktop.password);
             AccountActionRepository aarepo = new AccountActionRepository(pctx);
             AvatarLogic alogic;
             try {

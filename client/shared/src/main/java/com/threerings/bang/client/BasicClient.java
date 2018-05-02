@@ -24,6 +24,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
@@ -126,7 +127,7 @@ public class BasicClient
         _client.setRunQueue(rqueue);
 
         // these manage local client resources
-        _rsrcmgr = new ResourceManager("rsrc");
+        _rsrcmgr = new ResourceManager("rsrc", BangDesktop.password);
         System.out.println(_rsrcmgr.getResourcePath(new File(".")));
         _rsrcmgr.activateResourceProtocol();
         _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);

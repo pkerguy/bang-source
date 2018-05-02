@@ -6,6 +6,7 @@ package com.threerings.bang.avatar.tools;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.resource.ResourceManager;
 import com.threerings.util.CompiledConfig;
 
@@ -21,7 +22,7 @@ public class SummarizeAspects extends SummarizeMetadata
     public static void main (String[] args)
         throws IOException
     {
-        ResourceManager rmgr = new ResourceManager("rsrc");
+        ResourceManager rmgr = new ResourceManager("rsrc", BangDesktop.password);
         rmgr.initBundles(null, "config/resource/manager.properties", null);
         AspectCatalog aspcat = (AspectCatalog)CompiledConfig.loadConfig(
             rmgr.getResource(AspectCatalog.CONFIG_PATH));

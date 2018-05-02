@@ -1432,9 +1432,24 @@ public class BangClient extends BasicClient
                 goTo(Shop.SALOON);
 
             } else {
-                if (E_CREATE_HANDLE.equals(reason)) {
+                if(E_NOT_PREMIUM.equals("reason"))
+                {
+                    _ctx.getChatDirector().displayFeedback(BangCodes.BANG_MSGS, reason);
+                    try {
+                        _ctx.showURL(new URL("https://id.yourfunworld.com/buy.php"));
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    resetTownView();
+                    return;
+                }
+                else if (E_CREATE_HANDLE.equals(reason)) {
                     _headingTo = placeId;
                     CreateAvatarView.show(_ctx);
+                } else if (reason.startsWith(E_FIX_HANDLE))
+                {
+                    _headingTo = placeId;
+                    FixAvatarView.show(_ctx);
                 } else if (reason.startsWith(E_SIGN_UP)) {
                     String[] bits = MessageUtil.decompose(reason);
                     String customMsg = (bits.length > 1) ? "m.account_info_" + bits[1] : null;

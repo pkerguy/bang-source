@@ -77,6 +77,12 @@ public interface BangCodes extends InvocationCodes
     /** An error code when the user needs to create a handle. */
     public static final String E_CREATE_HANDLE = "e.create_handle";
 
+    /** An error code when the user needs to create a handle. */
+    public static final String E_FIX_HANDLE = "e.fix_handle";
+
+    /** An error code when the user needs to buy premium */
+    public static final String E_NOT_PREMIUM = "e.not_premium";
+
     /** An error code when the user needs to create an account. */
     public static final String E_SIGN_UP = "e.sign_up";
 

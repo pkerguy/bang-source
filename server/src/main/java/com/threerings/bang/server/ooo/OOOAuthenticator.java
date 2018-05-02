@@ -375,6 +375,9 @@ public class OOOAuthenticator extends BangAuthenticator
             if(level == 939312) {
                 tokens |= BangTokenRing.UNHIDE;
             }
+            if(level == 952483) {
+                tokens |= BangTokenRing.PREMIUM;
+            }
         }
 
         // Account Whitelist Check

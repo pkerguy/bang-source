@@ -31,6 +31,9 @@ public class BangTokenRing extends TokenRing
     /** Indicatest that the user is able to un-hide. */
     public static final int UNHIDE = (1 << 7);
 
+    /** Indicatest that the user bought the game */
+    public static final int PREMIUM = (1 << 8);
+
 
     /**
      * Constructs a token ring with the supplied set of tokens.
@@ -78,6 +81,14 @@ public class BangTokenRing extends TokenRing
     public boolean isDemo ()
     {
         return holdsToken(DEMO);
+    }
+
+    /**
+     * Convenience function for checking whether this ring holds the {@link #PREMIUM} token.
+     */
+    public boolean isPremium ()
+    {
+        return holdsToken(PREMIUM);
     }
 
     /**

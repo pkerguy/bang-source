@@ -573,23 +573,23 @@ public class LogonView extends BWindow
                 _netclient.getServerConnection().sendTcp(new NewClientPacket(user.username.getNormal()));
             }
             MessageBundle msg = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);
-            _ctx.getChatDirector().registerCommandHandler(msg, "who", new ChatDirector.CommandHandler() {
-                public String handleCommand(
-                        SpeakService speaksvc, String command, String args,
-                        String[] history) {
-
-                    if(user.tokens.isSupport() || user.tokens.isAdmin())
-                    {
-                        _netclient.getServerConnection().sendComplexObjectTcp(new WhoSendAdminPacket(_ctx.getUserObject().username.getNormal()));
-                    } else {
-                        _netclient.getServerConnection().sendComplexObjectTcp(new WhoSendPacket());
-                    }
-                    return "success";
-                }
-            });
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
                     user.username.toString());
             if (user.tokens.isSupport() || user.tokens.isAdmin()) {
+                _ctx.getChatDirector().registerCommandHandler(msg, "who", new ChatDirector.CommandHandler() {
+                    public String handleCommand(
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+
+                        if(user.tokens.isSupport() || user.tokens.isAdmin())
+                        {
+                            _netclient.getServerConnection().sendComplexObjectTcp(new WhoSendAdminPacket(_ctx.getUserObject().username.getNormal()));
+                        } else {
+                            return "ACCESS DENIED";
+                        }
+                        return "success";
+                    }
+                });
                 _ctx.getChatDirector().registerCommandHandler(msg, "kick", new ChatDirector.CommandHandler() {
                     public String handleCommand(
                             SpeakService speaksvc, String command, String args,

@@ -237,6 +237,75 @@ public class BarberManager extends ShopManager
     {
         final PlayerObject user = requireShopEnabled(caller);
 
+        if(user.hasCharacter()) // We're running a fix on the character's looks ONLY
+        {
+            int[] cost = new int[2];
+            final Look look = _alogic.createLook(user, config, cost);
+            // validate the starter article colorizations
+            int czp = AvatarLogic.decodePrimary(zations);
+            int czs = AvatarLogic.decodeSecondary(zations);
+            int czt = AvatarLogic.decodeTertiary(zations);
+            ColorPository cpos = _alogic.getColorPository();
+            if (!ColorConstraints.isValidColor(cpos, "clothes_p", czp, user) ||
+                    !ColorConstraints.isValidColor(cpos, "clothes_s", czs, user) ||
+                    !ColorConstraints.isValidColor(cpos, "clothes_t", czt, user)) {
+                BangServer.DISCORD.commit(1, "Tried to create avatar with invalid default article colorizations",
+                        "who", user.who(), "look", look, "zations", zations);
+                throw new InvocationException(INTERNAL_ERROR);
+            }
+
+            // create their default clothing article, we'll fill in its item id after we've inserted
+            // the article into the database
+            look.articles = new int[AvatarLogic.SLOTS.length];
+            final Article article = _alogic.createDefaultClothing(user, isMale, zations);
+            if (article == null) {
+                throw new InvocationException(INTERNAL_ERROR); // an error will have been logged
+            }
+
+            // the client should prevent selection of non-starter components, but we check on the
+            // server because we can't trust those bastards
+            int maxScrip = AvatarCodes.BASE_LOOK_SCRIP_COST;
+            // allow up to the MAX_STARTER_COST for each aspect; this isn't precisely correct, but it
+            // doesn't leave too much room for hackery
+            maxScrip += AvatarCodes.MAX_STARTER_COST * config.aspects.length;
+            if (cost[0] > maxScrip || cost[1] > AvatarCodes.BASE_LOOK_COIN_COST) {
+                BangServer.DISCORD.commit(1, "Tried to create avatar with a non-zero cost look", "who", user.who(),
+                        "look", look, "scrip", cost[0], "coin", cost[1]);
+                throw new InvocationException(INTERNAL_ERROR);
+            }
+
+            // compute an avatar snapshot from their starter look
+            final AvatarInfo avatar = look.getAvatar(
+                    user.who(), DSet.newDSet(Collections.<Item>singleton(article)));
+
+            // do the deed!
+            _invoker.postUnit(new PersistingUnit("createAvatar", cl) {
+                public void invokePersistent () throws Exception {
+                    // insert their default clothing article into the database
+                    _itemrepo.insertItem(article);
+
+                    // and fill its assigned item id into their default look
+                    for (int ii = 0; ii < look.articles.length; ii++) {
+                        if (AvatarLogic.SLOTS[ii].name.equals(article.getSlot())) {
+                            look.articles[ii] = article.getItemId();
+                        }
+                    }
+
+                    // insert their default look into the database and update their snapshot
+                    _lookrepo.insertLook(user.playerId, look);
+                    _lookrepo.updateSnapshot(user.playerId, avatar.print);
+                }
+
+                public void handleSuccess () {
+                    user.addToLooks(look);
+                    user.addToInventory(article);
+                    BangServer.locator.updatePlayer(user, handle);
+                    super.handleSuccess(); // tell our confirm listener we're all done
+                }
+            });
+            return;
+        }
+
         // sanity check
         if (user.hasCharacter() && user.getLook(Look.Pose.DEFAULT) != null) {
             BangServer.DISCORD.commit(1, "User tried to recreate avatar", "who", user.who(), "handle", handle);
@@ -263,8 +332,8 @@ public class BarberManager extends ShopManager
         int czt = AvatarLogic.decodeTertiary(zations);
         ColorPository cpos = _alogic.getColorPository();
         if (!ColorConstraints.isValidColor(cpos, "clothes_p", czp, user) ||
-            !ColorConstraints.isValidColor(cpos, "clothes_s", czs, user) ||
-            !ColorConstraints.isValidColor(cpos, "clothes_t", czt, user)) {
+                !ColorConstraints.isValidColor(cpos, "clothes_s", czs, user) ||
+                !ColorConstraints.isValidColor(cpos, "clothes_t", czt, user)) {
             BangServer.DISCORD.commit(1, "Tried to create avatar with invalid default article colorizations",
                         "who", user.who(), "look", look, "zations", zations);
             throw new InvocationException(INTERNAL_ERROR);

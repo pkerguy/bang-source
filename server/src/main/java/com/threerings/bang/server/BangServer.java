@@ -116,7 +116,7 @@ public class BangServer extends CrowdServer
                         } else {
                             RuntimeConfig.server.setSaloonEnabled(true);
                         }
-                        DISCORD.commit(1, "Toggled SaloonS to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        DISCORD.commit(1, "Toggled SaloonS to: " + RuntimeConfig.server.saloonEnabled);
                         break;
                     }
                     case "togglegames": {
@@ -126,33 +126,33 @@ public class BangServer extends CrowdServer
                         } else {
                             RuntimeConfig.server.setAllowNewGames(true);
                         }
-                        DISCORD.commit(1, "Toggled Allow New Games to: " + RuntimeConfig.server.nonAdminsAllowed);
+                        DISCORD.commit(1, "Toggled Allow New Games to: " + RuntimeConfig.server.allowNewGames);
                         break;
                     }
-                    case "set_exchangefrom": {
-                        try {
-                            int newValue = Integer.parseInt(command.split(" ")[1]);
-                            DISCORD.commit(1, "Current value of exchange from scrip to gold is: " + RuntimeConfig.server.scripToGoldRate);
-                            RuntimeConfig.server.setExchangeTo(newValue);
-                            DISCORD.commit(1, "Set exchange from scrip to gold is now: " + RuntimeConfig.server.scripToGoldRate);
-                            break;
-                        } catch(NumberFormatException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                    case "set_exchangeto": {
-                        try {
-                            int newValue = Integer.parseInt(command.split(" ")[1]);
-                            DISCORD.commit(1, "Current value of exchange gold to scrip is: " + RuntimeConfig.server.goldToScripRate);
-                            RuntimeConfig.server.setExchangeFrom(newValue);
-                            DISCORD.commit(1, "Set exchange from gold to scrip to: " + RuntimeConfig.server.goldToScripRate);
-                            break;
-                        } catch(NumberFormatException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
+//                    case "set_exchangefrom": {
+//                        try {
+//                            int newValue = Integer.parseInt(command.split(" ")[1]);
+//                            DISCORD.commit(1, "Current value of exchange from scrip to gold is: " + RuntimeConfig.server.scripToGoldRate);
+//                            RuntimeConfig.server.setExchangeTo(newValue);
+//                            DISCORD.commit(1, "Set exchange from scrip to gold is now: " + RuntimeConfig.server.scripToGoldRate);
+//                            break;
+//                        } catch(NumberFormatException e)
+//                        {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    case "set_exchangeto": {
+//                        try {
+//                            int newValue = Integer.parseInt(command.split(" ")[1]);
+//                            DISCORD.commit(1, "Current value of exchange gold to scrip is: " + RuntimeConfig.server.goldToScripRate);
+//                            RuntimeConfig.server.setExchangeFrom(newValue);
+//                            DISCORD.commit(1, "Set exchange from gold to scrip to: " + RuntimeConfig.server.goldToScripRate);
+//                            break;
+//                        } catch(NumberFormatException e)
+//                        {
+//                            e.printStackTrace();
+//                        }
+//                    }
                     case "reloadboards": {
                         // Create backups of previous data in-case the reload fails
                         final BoardManager.BoardMap[] backupBoard = BangServer.boardManager._byname;
@@ -185,26 +185,7 @@ public class BangServer extends CrowdServer
                                 System.exit(0);
                         break;
                     }
-                    case "config-init": {
-                        RuntimeConfig.server.setBankEnabled(false);
-                        RuntimeConfig.server.setSaloonEnabled(true);
-                        RuntimeConfig.server.setStoreEnabled(true);
-                        RuntimeConfig.server.setOfficeEnabled(true);
-                        RuntimeConfig.server.setRanchEnabled(true);
-                        RuntimeConfig.server.setBarberEnabled(true);
-                        RuntimeConfig.server.setHideoutEnabled(true);
-                        RuntimeConfig.server.setFreeIndianPost(false);
-                        RuntimeConfig.server.setAllowNewGames(true);
-                        RuntimeConfig.server.setNonAdminsAllowed(false);
-                        RuntimeConfig.server.setAnonymousAccessEnabled(true);
-                        RuntimeConfig.server.setArticleRentMultiplier(new float[] { 5f, 12f, 23f, 45f, 110f });
-                        RuntimeConfig.server.setOpenToPublic(true);
-                        RuntimeConfig.server.setNearRankRange(200);
-                        RuntimeConfig.server.setLooseRankRange(400);
-                        RuntimeConfig.server.setSelectPhaseTimeout(180);
-                        break;
-                    }
-                    default:  DISCORD.commit(1, "That is an unknown command! Please try again"); break;
+                    default: break;
                 }
 
             }

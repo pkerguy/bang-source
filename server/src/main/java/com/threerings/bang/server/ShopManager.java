@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 
 import com.google.inject.Inject;
 
+import com.threerings.bang.avatar.data.Look;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.data.ClientObject;
@@ -35,6 +36,13 @@ public abstract class ShopManager extends PlaceManager
         if (!checkShopEnabled(user)) {
             return disabledMessage();
         }
+        if(!user.tokens.isPremium() && !user.tokens.isSupport())
+        {
+            if(getIdent() == "saloon" || getIdent() == "hideout")
+            {
+                return BangCodes.E_NOT_PREMIUM;
+            }
+        }
 
         String msg = null;
         if (!allowAnonymous() && user.tokens.isAnonymous()) {
@@ -43,6 +51,32 @@ public abstract class ShopManager extends PlaceManager
             msg = BangCodes.E_CREATE_HANDLE;
         } else if (!allowUnder13() && !user.tokens.isOver13()) {
             msg = BangCodes.E_UNDER_13;
+        }
+        if(user.hasCharacter())
+        {
+            if(user.looks == null)
+            {
+                msg = BangCodes.E_FIX_HANDLE;
+            }
+            if(user.looks.isEmpty())
+            {
+                msg = BangCodes.E_FIX_HANDLE;
+            }
+            if(user.looks.size() == 0)
+            {
+                msg = BangCodes.E_FIX_HANDLE;
+            }
+            for(Look l : user.looks)
+            {
+                if(l.aspects.length == 0)
+                {
+                    msg = BangCodes.E_FIX_HANDLE;
+                }
+                if(l.articles.length == 0)
+                {
+                    msg = BangCodes.E_FIX_HANDLE;
+                }
+            }
         }
         return msg;
     }

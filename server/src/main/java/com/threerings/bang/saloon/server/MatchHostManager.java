@@ -248,10 +248,6 @@ public abstract class MatchHostManager extends ShopManager
                     if (parmgr == null) {
                         BangServer.DISCORD.commit(1, "Choked creating game due to unable to get who created the original parlor!");
                     } else {
-                        if(parmgr._parobj.info.type == ParlorInfo.Type.CONTENT_CREATOR)
-                        {
-                            config.contentMatch = true; // Set as a content creator match.
-                        }
                     }
                     BangManager mgr = (BangManager)BangServer.plreg.createPlace(config);
                     match.startingMatch(mgr.getPlaceObject());

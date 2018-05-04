@@ -489,7 +489,7 @@ public class BangServer extends CrowdServer
         if (node != null && ServerConfig.sharedSecret != null && System.getProperty("server_port") != null) {
             log.info("Running in cluster mode as node '" + ServerConfig.nodename + "'.");
             _peermgr.init(ServerConfig.nodename, ServerConfig.sharedSecret,
-                          ServerConfig.hostname, ServerConfig.publicHostname, Integer.parseInt(System.getProperty("server_port")));
+                          ServerConfig.hostname, ServerConfig.publicHostname, DeploymentConfig.getServerPorts(ServerConfig.townId)[0]);
         }
 
         // set up our authenticator

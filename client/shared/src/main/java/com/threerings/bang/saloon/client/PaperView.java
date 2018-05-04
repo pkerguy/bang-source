@@ -184,6 +184,10 @@ public class PaperView extends BContainer
         if (news == null) {
             URL base = DeploymentConfig.getDocBaseURL();
             String npath = townId + NEWS_URL;
+            if(DeploymentConfig.beta_build)
+            {
+                npath = "https://wiki.banghowdy.com/wiki/Beta_News?action=raw";
+            }
             try {
                 URL nurl = new URL(base, npath);
                 news = new CachedDocument(nurl, NEWS_REFRESH_INTERVAL);

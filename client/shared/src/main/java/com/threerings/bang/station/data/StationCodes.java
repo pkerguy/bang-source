@@ -26,7 +26,7 @@ public interface StationCodes extends InvocationCodes
     public static final int[] TICKET_COINS = {
         0, // frontier_town
         0, // indian_post
-        -1, // 20, // boom_town (uncomment to enable sale)
+        0, // 20, // boom_town (uncomment to enable sale)
         -1, // 20, // ghost_town
         -1, // 20, // city_of_gold
     };

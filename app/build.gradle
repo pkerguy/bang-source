@@ -12,8 +12,8 @@ repositories {
 
 dependencies {
   compile project(":bui")
-  compile "com.threerings:nenya-core:2.3"
-  compile "com.threerings:nenya-tools:2.3"
+  compile "com.threerings:nenya-core:2.1"
+  compile "com.threerings:nenya-tools:2.1"
   compile "com.threerings:narya:${naryaVersion}"
 
   // these are only for tools, so we don't export them as depends

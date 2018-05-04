@@ -67,9 +67,9 @@ public class DeploymentConfig
      */
     public static int[] getServerPorts (String townId)
     {
-        if(System.getProperty("server_port") != null)
+        if(System.getProperty("server_ports") != null)
         {
-            return new int[] {Integer.parseInt(System.getProperty("server_port"))};
+            return new int[] {Integer.parseInt(System.getProperty("server_ports"))};
         }
         int[] ports = config.getValue("server_ports", Client.DEFAULT_SERVER_PORTS);
         return config.getValue(townId + ".server_ports", ports);

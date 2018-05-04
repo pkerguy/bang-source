@@ -6,8 +6,8 @@
 # units, etc.
 
 CWD=`dirname $0`
-TARGET=$1
-TOWNS=`echo $2 | sed 's/,/ /g'`
+TARGET="build/staging"
+TOWNS="frontier_town indian_post boom_town"
 
 # Update our list of sounds
 find rsrc -name '*.ogg' > $TARGET/rsrc/sounds.txt

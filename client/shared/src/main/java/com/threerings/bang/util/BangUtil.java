@@ -41,7 +41,7 @@ public class BangUtil
         String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
         String currentRootDirectoryPath = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "");
         currentRootDirectoryPath = currentRootDirectoryPath.replaceAll("%20", " ");
-        //System.out.println("Loading #2... " + currentRootDirectoryPath + path);
+        System.out.println("Loading #2... " + currentRootDirectoryPath + path);
         try {
             return new FileInputStream(currentRootDirectoryPath + path);
         } catch (FileNotFoundException e) {

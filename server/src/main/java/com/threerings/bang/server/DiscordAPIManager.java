@@ -25,6 +25,7 @@ public class DiscordAPIManager implements Runnable, EventListener {
     private boolean running;
 
     void start() {
+        if(DeploymentConfig.beta_build) return;
         if (thread == null) {
             running = true;
             (thread = new Thread(this)).setDaemon(true);
@@ -44,6 +45,7 @@ public class DiscordAPIManager implements Runnable, EventListener {
 
     public void commit(int channel, Object message, Object... args)
     {
+        if(DeploymentConfig.beta_build) return;
         Throwable err = null;
         int nn = args.length;
         if (message instanceof Throwable) {

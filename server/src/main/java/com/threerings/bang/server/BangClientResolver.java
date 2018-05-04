@@ -260,20 +260,6 @@ public class BangClientResolver extends CrowdClientResolver
             }
         }
 
-        // If they have a boom town ticket.. Remove it (For staff glitch fixing)
-        for (Item item : items) {
-            if (!(item instanceof TrainTicket)) {
-                continue;
-            }
-            TrainTicket ticket = (TrainTicket)item;
-            if(ticket.getTownId().equalsIgnoreCase("BOOM_TOWN"))
-            {
-                BangServer.DISCORD.commit(1, buser.playerId + "(player id) had an improper ticket.. BOOM_TOWN.. This have been fixed.");
-                _itemrepo.deleteItem(item, "ACCESS DENIED");
-                buser.removeFromInventory(item.getKey());
-            }
-        }
-
         // give out a free ticket if a player qualified but never successfully made it to ITP
         if (DeploymentConfig.usesCoins() && noFreeTicket && player.nextTown == null &&
             buser.stats.containsValue(StatType.FREE_TICKETS, BangCodes.INDIAN_POST) &&

@@ -113,7 +113,6 @@ public class BangUtil
     {
         ArrayList<String> lines = new ArrayList<String>();
         for (String townId : BangCodes.TOWN_IDS) {
-            if(townId.equalsIgnoreCase("boom_town")) continue;
             String tpath = path.replace("TOWN", townId);
             InputStream in = getResourceInput(tpath);
             if (in == null) {

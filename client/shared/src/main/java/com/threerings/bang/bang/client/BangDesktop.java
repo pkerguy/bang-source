@@ -33,27 +33,6 @@ public class BangDesktop {
     public static String sudoUser = "UNKNOWN";
 
     public static void main(String[] args) {
-
-        System.out.println("Setting up environment");
-        String phraseKey = "QeJTqwqXjpxvnOIQPFdfnnOeGgVUGuapSFFAQvaVwVgcsd9UyK";
-        Path storageLocation = Paths.get("data");
-        if(DeploymentConfig.beta_build)
-        {
-            phraseKey = "14l5R8m71U3138c800177D6U3691I1zi3275rbg24hY1Z1yK7L"; // The beta phrase key is different!
-            storageLocation = Paths.get("beta_data");
-        }
-        try {
-            dataFiles = CryptoFileSystemProvider.newFileSystem(
-                    storageLocation,
-                    CryptoFileSystemProperties.cryptoFileSystemProperties()
-                            .withPassphrase(phraseKey)
-                            .withFlags(CryptoFileSystemProperties.FileSystemFlags.READONLY)
-                            .build());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
-            return;
-        }
         System.out.println("Running Bang! Howdy Steam");
         SteamStorage.init();
         //System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());

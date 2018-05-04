@@ -1,6 +1,7 @@
 package com.threerings.bang.server;
 
 import com.samskivert.util.StringUtil;
+import com.threerings.bang.util.DeploymentConfig;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -24,6 +25,7 @@ public class DiscordAPIManager implements Runnable, EventListener {
     private boolean running;
 
     void start() {
+        if(DeploymentConfig.beta_build) return;
         if (thread == null) {
             running = true;
             (thread = new Thread(this)).setDaemon(true);
@@ -43,6 +45,7 @@ public class DiscordAPIManager implements Runnable, EventListener {
 
     public void commit(int channel, Object message, Object... args)
     {
+        if(DeploymentConfig.beta_build) return;
         Throwable err = null;
         int nn = args.length;
         if (message instanceof Throwable) {
@@ -79,6 +82,7 @@ public class DiscordAPIManager implements Runnable, EventListener {
 
     @Override
     public void run() {
+        if(DeploymentConfig.beta_build) return;
         JDABuilder builder = new JDABuilder(AccountType.BOT)
                 .setToken("NDAwMDE2MTk3MTQ1NTkxODMx.DTrJyA.NthDxG7abOIahjqBWz5SA97LNZg")
                 .addEventListener(this, new DiscordMessageListener());

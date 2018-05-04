@@ -486,10 +486,10 @@ public class BangServer extends CrowdServer
 
         // if we have a shared secret, assume we're running in a cluster
         String node = System.getProperty("node");
-        if (node != null && ServerConfig.sharedSecret != null) {
+        if (node != null && ServerConfig.sharedSecret != null && System.getProperty("server_port") != null) {
             log.info("Running in cluster mode as node '" + ServerConfig.nodename + "'.");
             _peermgr.init(ServerConfig.nodename, ServerConfig.sharedSecret,
-                          ServerConfig.hostname, ServerConfig.publicHostname, getListenPorts()[0]);
+                          ServerConfig.hostname, ServerConfig.publicHostname, Integer.parseInt(System.getProperty("server_port")));
         }
 
         // set up our authenticator

@@ -364,7 +364,7 @@ public class BangServer extends CrowdServer
                 _netserver.setListener(new com.threerings.bang.server.Server());
                 if(!_netserver.isConnected())
                 {
-                    BangServer.DISCORD.commit(1, "Charlie failed to start!");
+                    System.out.println( "Charlie failed to start!");
                     System.exit(255);
                 }
             }
@@ -374,7 +374,8 @@ public class BangServer extends CrowdServer
             // being; when run() returns the dobj mgr and invoker thread will already have exited
             System.exit(0);
         } catch (Exception e) {
-            BangServer.DISCORD.commit(1, "Server initialization failed.", e);
+            System.out.println("Server initialization failed.");
+            e.printStackTrace();
             System.exit(255);
         }
     }
@@ -394,7 +395,7 @@ public class BangServer extends CrowdServer
         try {
             DeploymentConfig.getPaymentType();
         } catch (Exception e) {
-            BangServer.DISCORD.commit(1, "deployment.properties payment_type invalid: " + e.getMessage());
+            System.out.println("deployment.properties payment_type invalid: " + e.getMessage());
             System.exit(255);
         }
 
@@ -486,7 +487,8 @@ public class BangServer extends CrowdServer
 
         // if we have a shared secret, assume we're running in a cluster
         String node = System.getProperty("node");
-        if (node != null && ServerConfig.sharedSecret != null && System.getProperty("server_ports") != null) {
+        System.out.println("Got here");
+        if (node != null && ServerConfig.sharedSecret != null) {
             log.info("Running in cluster mode as node '" + ServerConfig.nodename + "'.");
             _peermgr.init(ServerConfig.nodename, ServerConfig.sharedSecret,
                           ServerConfig.hostname, ServerConfig.publicHostname, DeploymentConfig.getServerPorts(ServerConfig.townId)[0]);

@@ -445,7 +445,7 @@ public class BangServer extends CrowdServer
 
         // initialize our depot repositories; running all of our schema and data migrations
         _perCtx.init("bangdb", _conprov, null);
-        _perCtx.initializeRepositories(true);
+        //_perCtx.initializeRepositories(true);
 
         // create our various supporting managers
         playmgr = _playmgr;

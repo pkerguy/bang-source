@@ -444,7 +444,7 @@ public class BangServer extends CrowdServer
         ConfigRegistry confreg = new DatabaseConfigRegistry(perCtx, invoker, ServerConfig.nodename);
 
         // initialize our depot repositories; running all of our schema and data migrations
-        _perCtx.init("bangdb", _conprov, null);
+        //_perCtx.init("bangdb", _conprov, null);
         //_perCtx.initializeRepositories(true);
 
         // create our various supporting managers

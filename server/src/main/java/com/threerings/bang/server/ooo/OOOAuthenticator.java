@@ -449,13 +449,7 @@ public class OOOAuthenticator extends BangAuthenticator
             rdata.code = BANNED + (prec != null && prec.warning != null ? prec.warning : "");
             return;
         }
-
-        if(DeploymentConfig.beta_build && !isInsider)
-        {
-            log.info("Rejecting non-insider account", "who", username);
-            rdata.code = BANNED + "This account doesn't have backer status.. Access denied.";
-            return;
-        }
+        
         if (prec != null && prec.banExpires != null) {
             if (prec.banExpires.getTime() == 0) {
                 log.info("Rejecting perm banned account", "who", username);

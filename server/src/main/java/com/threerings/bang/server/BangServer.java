@@ -372,6 +372,7 @@ public class BangServer extends CrowdServer
             server.run();
             // annoyingly some background threads are hanging, so stick a fork in them for the time
             // being; when run() returns the dobj mgr and invoker thread will already have exited
+            System.out.println("Server exiting...");
             System.exit(0);
         } catch (Exception e) {
             System.out.println("Server initialization failed.");

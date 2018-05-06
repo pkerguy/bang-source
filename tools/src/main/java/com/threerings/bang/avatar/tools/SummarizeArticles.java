@@ -23,7 +23,7 @@ public class SummarizeArticles extends SummarizeMetadata
     public static void main (String[] args)
         throws IOException
     {
-        ResourceManager rmgr = new ResourceManager("rsrc", BangDesktop.password);
+        ResourceManager rmgr = new ResourceManager("rsrc");
         rmgr.initBundles(null, "config/resource/manager.properties", null);
         ArticleCatalog artcat = (ArticleCatalog)CompiledConfig.loadConfig(
             rmgr.getResource(ArticleCatalog.CONFIG_PATH));

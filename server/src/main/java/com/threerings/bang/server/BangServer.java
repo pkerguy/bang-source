@@ -217,7 +217,7 @@ public class BangServer extends CrowdServer
             bind(BodyLocator.class).to(PlayerLocator.class);
             bind(ConfigRegistry.class).to(BangConfigRegistry.class);
             // bang dependencies
-            ResourceManager rsrcmgr = new ResourceManager("rsrc", BangDesktop.password);
+            ResourceManager rsrcmgr = new ResourceManager("rsrc");
             AccountActionRepository aarepo = new AccountActionRepository(pctx);
             AvatarLogic alogic;
             try {

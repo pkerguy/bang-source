@@ -127,7 +127,7 @@ public class BasicClient
         _client.setRunQueue(rqueue);
 
         // these manage local client resources
-        _rsrcmgr = new ResourceManager("rsrc", BangDesktop.password);
+        _rsrcmgr = new ResourceManager("rsrc");
         System.out.println(_rsrcmgr.getResourcePath(new File(".")));
         _rsrcmgr.activateResourceProtocol();
         _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);

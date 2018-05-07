@@ -35,6 +35,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.bang.data.*;
 import com.threerings.bang.saloon.data.ParlorInfo;
+import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StreamablePoint;
 
@@ -2159,6 +2160,15 @@ public class BangManager extends GameManager
                 } catch (PersistenceException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+
+        if(DeploymentConfig.beta_build)
+        {
+            for(Award alter : awards)
+            {
+                alter.acesEarned *= 4;
+                alter.cashEarned *= 4;
             }
         }
 

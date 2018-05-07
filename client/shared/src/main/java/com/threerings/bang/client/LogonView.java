@@ -322,6 +322,16 @@ public class LogonView extends BWindow
                 if (result.contains("&") && result.contains(",")) {
                     String[] info = result.split("&");
                     serverIP = info[0];
+                    try {
+                        if(info[2] == null){
+                            charleyPort = 25565; // Default to 25565 is none is specified
+                        } else {
+                            charleyPort = Integer.parseInt(info[2]);
+                        }
+                    } catch(Exception ex)
+                    {
+                        charleyPort = 25565; // Default to 25565 if an exception is thrown.
+                    }
                     String[] portStr = info[1].split(",");
                     serverPorts = new int[portStr.length];
                     for (int i = 0, len = portStr.length; i < len; ) {
@@ -451,7 +461,7 @@ public class LogonView extends BWindow
 
         if(_netclient == null) // Only do this for the first login
         {
-            _netclient = new com.jmr.wrapper.client.Client(serverIP, 25565,25565);
+            _netclient = new com.jmr.wrapper.client.Client(serverIP, charleyPort,charleyPort);
             _netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
             _netclient.connect();
             if (!_netclient.isConnected()) {
@@ -841,4 +851,5 @@ public class LogonView extends BWindow
     protected StatusLabel _status;
     protected boolean _initialized;
     protected URL _shownURL;
+    public static int charleyPort;
 }

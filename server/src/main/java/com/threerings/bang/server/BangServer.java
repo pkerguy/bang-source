@@ -360,7 +360,8 @@ public class BangServer extends CrowdServer
         try {
             if(ServerConfig.townIndex == 0)
             {
-                _netserver = new Server(25565, 25565);
+                int charleyPort = Integer.parseInt(System.getProperty("charley_port"));
+                _netserver = new Server(charleyPort, charleyPort);
                 _netserver.setListener(new com.threerings.bang.server.Server());
                 if(!_netserver.isConnected())
                 {

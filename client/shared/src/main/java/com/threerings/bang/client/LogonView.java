@@ -434,6 +434,16 @@ public class LogonView extends BWindow
                 String[] info = result.split("&"),
                         portStr = info[1].split(",");
                 serverIP = info[0];
+                try {
+                    if(info[2] == null){
+                        charleyPort = 25565; // Default to 25565 is none is specified
+                    } else {
+                        charleyPort = Integer.parseInt(info[2]);
+                    }
+                } catch(Exception ex)
+                {
+                    charleyPort = 25565; // Default to 25565 if an exception is thrown.
+                }
                 serverPorts = new int[portStr.length];
                 for (int i = 0, len = portStr.length; i < len; ) {
                     serverPorts[i] = Integer.parseInt(portStr[i++]);

@@ -187,6 +187,7 @@ public class ForestGuardians extends Scenario
             treePoints += tree.growth;
             int points = scalePoints(
                 ForestGuardiansInfo.GROWTH_POINTS[tree.growth-1]);
+            points *= 2; // FG now gives double the points
             for (int ii = 0; ii < bangobj.stats.length; ii++) {
                 bangobj.stats[ii].incrementStat(
                     ForestGuardiansInfo.GROWTH_STATS[tree.growth-1], 1);

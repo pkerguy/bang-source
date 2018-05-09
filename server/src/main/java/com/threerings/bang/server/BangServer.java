@@ -30,6 +30,7 @@ import com.threerings.bang.ranch.data.*;
 import com.threerings.bang.ranch.server.*;
 import com.threerings.bang.saloon.data.*;
 import com.threerings.bang.saloon.server.*;
+import com.threerings.bang.server.persist.PlayerRepository;
 import com.threerings.bang.station.data.*;
 import com.threerings.bang.station.server.*;
 import com.threerings.bang.store.data.*;
@@ -288,6 +289,8 @@ public class BangServer extends CrowdServer
 
     public static BankManager bankManager;
 
+    public static PlayerRepository playerRepository;
+
     /** Manages tracking and discouraging of misbehaving players. */
     public static NaughtyPlayerManager npmgr = new NaughtyPlayerManager();
 
@@ -486,6 +489,7 @@ public class BangServer extends CrowdServer
         hideoutmgr = (HideoutManager)plreg.createPlace(new HideoutConfig());
         officemgr = (OfficeManager)plreg.createPlace(new OfficeConfig());
         bankManager = (BankManager) plreg.createPlace(new BankConfig());
+        playerRepository = _playrepo;
 
         // if we have a shared secret, assume we're running in a cluster
         String node = System.getProperty("node");
@@ -647,6 +651,8 @@ public class BangServer extends CrowdServer
     @Inject protected BangPeerManager _peermgr;
     @Inject protected BangChatManager _chatmgr;
     @Inject protected BangReportManager _repmgr;
+    @Inject protected PlayerRepository _playrepo;
+
 
     public static HashMap<String, ClientStoragePacket> clients = new HashMap<>();
 

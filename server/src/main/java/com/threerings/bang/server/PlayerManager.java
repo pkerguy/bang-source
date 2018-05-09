@@ -1284,7 +1284,7 @@ public class PlayerManager
                             PlayerService.ConfirmListener listener)
             throws InvocationException
     {
-        if (!user.tokens.isSupport()) {
+        if (!user.tokens.isSupport() || user == null) {
             BangServer.DISCORD.commit(1, "Attempting to warn player from non-support user", "who", user.who());
             throw new InvocationException(ACCESS_DENIED);
         }

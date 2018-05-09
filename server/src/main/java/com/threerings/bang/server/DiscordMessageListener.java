@@ -3,6 +3,7 @@ package com.threerings.bang.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.Invoker;
 import com.threerings.bang.admin.data.StatusObject;
 import com.threerings.bang.admin.server.BangAdminManager;
 import com.threerings.bang.admin.server.RuntimeConfig;
@@ -86,53 +87,49 @@ public class DiscordMessageListener extends ListenerAdapter {
                         System.exit(0);
                         break;
                     }
-                    case "reboot": {
-                        if (!event.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
-                            DISCORD.commit(1, "Access denied.");
-                            return;
-                        }
-                        if (cmdRaw[2] == null) {
-                            DISCORD.commit(1, "Please correct your usage.");
-                            return;
-                        }
-                        try {
-                            long time = Long.parseLong(cmdRaw[2]);
-                            _rebmgr.scheduleReboot(time, event.getAuthor().getId());
-                        } catch (Exception ex) {
-                            DISCORD.commit(1, "Error with time specified!");
-                        }
-                    }
                     case "warn": {
                         PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                        try {
-                            StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new StringBuilder();
                             for (int i = 3; i < cmdRaw.length; ++i) {
                                 sb.append(cmdRaw[i]).append(' ');
                             }
-                            _playrepo.setWarning(player.username.getNormal(), sb.toString());
-                        } catch (PersistenceException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                        DISCORD.commit(1, "Successfully warned player!");
+                            BangServer.invoker.postUnit(new Invoker.Unit() {
+                                                            public boolean invoke() {
+                                                                try {
+                                                                    BangServer.playerRepository.setWarning(player.username.getNormal(), sb.toString());
+                                                                    DISCORD.commit(1, "Successfully warned player!");
+                                                                    return true;
+                                                                } catch (PersistenceException e) {
+                                                                    e.printStackTrace();
+                                                                    DISCORD.commit(1, "Failed to warn player!");
+                                                                    return false;
+                                                                }
+                                                            }
+                                                        });
                     }
                     case "kwarn": {
                         PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                        try {
-                            StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new StringBuilder();
                             for (int i = 3; i < cmdRaw.length; ++i) {
                                 sb.append(cmdRaw[i]).append(' ');
                             }
-                            _playrepo.setWarning(player.username.getNormal(), sb.toString());
+                            BangServer.invoker.postUnit(new Invoker.Unit() {
+                                public boolean invoke() {
+                                    try {
+                                        BangServer.playerRepository.setWarning(player.username.getNormal(), sb.toString());
+                                        DISCORD.commit(1, "Successfully warned player!");
+                                        return true;
+                                    } catch (PersistenceException e) {
+                                        e.printStackTrace();
+                                        DISCORD.commit(1, "Failed to warn player!");
+                                        return false;
+                                    }
+                                }
+                            });
                             PresentsSession pclient = BangServer.clmgr.getClient(player.username);
                             if (pclient != null) {
                                 pclient.endSession();
                             }
-                        } catch (PersistenceException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                        DISCORD.commit(1, "Successfully warned player!");
                     }
                     case "tempban": {
                         if (cmdRaw.length < 5) {
@@ -140,23 +137,28 @@ public class DiscordMessageListener extends ListenerAdapter {
                             return;
                         }
                         PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                        try {
-                            long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
+                        long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
                             StringBuilder sb = new StringBuilder();
                             for (int i = 5; i < cmdRaw.length; ++i) {
                                 sb.append(cmdRaw[i]).append(' ');
                             }
-                            _playrepo.setTempBan(player.username.getNormal(), Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
+                        BangServer.invoker.postUnit(new Invoker.Unit() {
+                            public boolean invoke() {
+                                try {
+                                    BangServer.playerRepository.setTempBan(player.username.getNormal(), Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
+                                    DISCORD.commit(1, "Successfully temp-banned player!");
+                                    return true;
+                                } catch (PersistenceException e) {
+                                    e.printStackTrace();
+                                    DISCORD.commit(1, "Failed to temp-ban player!");
+                                    return false;
+                                }
+                            }
+                        });
                             PresentsSession pclient = BangServer.clmgr.getClient(player.username);
                             if (pclient != null) {
                                 pclient.endSession();
                             }
-                        } catch (PersistenceException e) {
-                            e.printStackTrace();
-                            DISCORD.commit(1, "Something went wrong while trying to temporally ban that player.");
-                            return;
-                        }
-                        DISCORD.commit(1, "Successfully warned player!");
                     }
                     case "ban": {
                         if (cmdRaw.length < 5) {
@@ -164,23 +166,28 @@ public class DiscordMessageListener extends ListenerAdapter {
                             return;
                         }
                         PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                        try {
-                            long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
+                        long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
                             StringBuilder sb = new StringBuilder();
                             for (int i = 5; i < cmdRaw.length; ++i) {
                                 sb.append(cmdRaw[i]).append(' ');
                             }
-                            _playrepo.setTempBan(player.username.getNormal(), new Timestamp(0), sb.toString());
+                            BangServer.invoker.postUnit(new Invoker.Unit() {
+                                public boolean invoke() {
+                                    try {
+                                        BangServer.playerRepository.setTempBan(player.username.getNormal(), Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
+                                        DISCORD.commit(1, "Successfully banned player!");
+                                        return true;
+                                    } catch (PersistenceException e) {
+                                        e.printStackTrace();
+                                        DISCORD.commit(1, "Failed to ban player!");
+                                        return false;
+                                    }
+                                }
+                            });
                             PresentsSession pclient = BangServer.clmgr.getClient(player.username);
                             if (pclient != null) {
                                 pclient.endSession();
                             }
-                        } catch (PersistenceException e) {
-                            e.printStackTrace();
-                            DISCORD.commit(1, "Something went wrong while trying to temporally ban that player.");
-                            return;
-                        }
-                        DISCORD.commit(1, "Successfully warned player!");
                     }
                 }
             }
@@ -254,8 +261,6 @@ public class DiscordMessageListener extends ListenerAdapter {
         }
         return sec;
     }
-
-    @Inject protected PlayerRepository _playrepo;
     @Inject protected BangRebootManager _rebmgr;
 
 

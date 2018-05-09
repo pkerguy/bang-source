@@ -7,6 +7,7 @@ import com.threerings.bang.admin.data.StatusObject;
 import com.threerings.bang.admin.server.BangAdminManager;
 import com.threerings.bang.admin.server.RuntimeConfig;
 import com.threerings.bang.data.BangCodes;
+import com.threerings.bang.data.Handle;
 import com.threerings.bang.data.PlayerObject;
 import com.threerings.bang.server.persist.PlayerRepository;
 import com.threerings.bang.util.DeploymentConfig;
@@ -102,7 +103,7 @@ public class DiscordMessageListener extends ListenerAdapter {
                         }
                     }
                     case "warn": {
-                        PlayerObject player = BangServer.locator.lookupByAccountName(new Name(cmdRaw[2]));
+                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         try {
                             StringBuilder sb = new StringBuilder();
                             for (int i = 3; i < cmdRaw.length; ++i) {
@@ -116,7 +117,7 @@ public class DiscordMessageListener extends ListenerAdapter {
                         DISCORD.commit(1, "Successfully warned player!");
                     }
                     case "kwarn": {
-                        PlayerObject player = BangServer.locator.lookupByAccountName(new Name(cmdRaw[2]));
+                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         try {
                             StringBuilder sb = new StringBuilder();
                             for (int i = 3; i < cmdRaw.length; ++i) {
@@ -138,7 +139,7 @@ public class DiscordMessageListener extends ListenerAdapter {
                             DISCORD.commit(1, "Please check your usage.");
                             return;
                         }
-                        PlayerObject player = BangServer.locator.lookupByAccountName(new Name(cmdRaw[2]));
+                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         try {
                             long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
                             StringBuilder sb = new StringBuilder();
@@ -162,7 +163,7 @@ public class DiscordMessageListener extends ListenerAdapter {
                             DISCORD.commit(1, "Please check your usage.");
                             return;
                         }
-                        PlayerObject player = BangServer.locator.lookupByAccountName(new Name(cmdRaw[2]));
+                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         try {
                             long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
                             StringBuilder sb = new StringBuilder();

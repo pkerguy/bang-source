@@ -1,2 +1,3 @@
-screen -S "frontier_town" -dm ./bs-ft
-screen -S "indian_post" -dm ./bs-itp
+screen -S "inferno_ft" -dm ./bs-ft
+screen -S "inferno_itp" -dm ./bs-itp
+screen -S "inferno_boom" -dm ./bs-boom

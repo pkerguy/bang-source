@@ -33,4 +33,4 @@ done
 
 CLASS=com.threerings.bang.server.BangServer
 exec $BANG_HOME/bin/bangjava -server -Djava.awt.headless=true -mx$SERVER_MEMORY \
-  -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true -Dserver_ports=30000 -Dcharley_port=25566 $JARGS $CLASS
+  -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true -Dserver_ports=30000 -Dcharley_port=26000 $JARGS $CLASS

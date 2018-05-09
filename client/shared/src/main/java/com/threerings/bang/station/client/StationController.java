@@ -125,31 +125,7 @@ public class StationController extends PlaceController
 
     protected void activateTown (final String townId)
     {
-        // warn the user that we're going to download data, then do so
-        OptionDialog.ResponseReceiver rr = new OptionDialog.ResponseReceiver() {
-            public void resultPosted (int button, Object result) {
-                try {
-                    if (!BangClient.activateTown(_ctx, townId)) {
-                        // hrm, already activated? well OK...
-                        takeTrain(townId);
-                    }
-                } catch (IOException ioe) {
-                    String msg = ioe.getMessage();
-                    if (msg == null) {
-                        msg = "Unknown error";
-                    }
-                    if (!msg.startsWith("m.")) {
-                        msg = MessageBundle.taint(msg);
-                    }
-                    msg = MessageBundle.compose("m.activation_failed", msg);
-                    _view.status.setStatus(StationCodes.STATION_MSGS, msg, true);
-                }
-            }
-        };
-        String msg = MessageBundle.qualify(BangCodes.BANG_MSGS, "m." + townId);
-        msg = MessageBundle.compose("m.need_town_bundles", msg);
-        OptionDialog.showConfirmDialog(
-            _ctx, StationCodes.STATION_MSGS, msg, new String[] { "m.ok" }, rr);
+        takeTrain(townId);
     }
 
     protected BangContext _ctx;

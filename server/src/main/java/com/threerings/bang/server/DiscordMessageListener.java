@@ -88,7 +88,6 @@ public class DiscordMessageListener extends ListenerAdapter {
                         break;
                     }
                     case "warn": {
-                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         StringBuilder sb = new StringBuilder();
                             for (int i = 3; i < cmdRaw.length; ++i) {
                                 sb.append(cmdRaw[i]).append(' ');
@@ -96,6 +95,7 @@ public class DiscordMessageListener extends ListenerAdapter {
                             BangServer.invoker.postUnit(new Invoker.Unit() {
                                                             public boolean invoke() {
                                                                 try {
+                                                                    PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                                                                     BangServer.playerRepository.setWarning(player.username.getNormal(), sb.toString());
                                                                     DISCORD.commit(1, "Successfully warned player!");
                                                                     return true;
@@ -108,7 +108,6 @@ public class DiscordMessageListener extends ListenerAdapter {
                                                         });
                     }
                     case "kwarn": {
-                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         StringBuilder sb = new StringBuilder();
                             for (int i = 3; i < cmdRaw.length; ++i) {
                                 sb.append(cmdRaw[i]).append(' ');
@@ -116,7 +115,12 @@ public class DiscordMessageListener extends ListenerAdapter {
                             BangServer.invoker.postUnit(new Invoker.Unit() {
                                 public boolean invoke() {
                                     try {
+                                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                                         BangServer.playerRepository.setWarning(player.username.getNormal(), sb.toString());
+                                        PresentsSession pclient = BangServer.clmgr.getClient(player.username);
+                                        if (pclient != null) {
+                                            pclient.endSession();
+                                        }
                                         DISCORD.commit(1, "Successfully warned player!");
                                         return true;
                                     } catch (PersistenceException e) {
@@ -126,17 +130,12 @@ public class DiscordMessageListener extends ListenerAdapter {
                                     }
                                 }
                             });
-                            PresentsSession pclient = BangServer.clmgr.getClient(player.username);
-                            if (pclient != null) {
-                                pclient.endSession();
-                            }
                     }
                     case "tempban": {
                         if (cmdRaw.length < 5) {
                             DISCORD.commit(1, "Please check your usage.");
                             return;
                         }
-                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
                             StringBuilder sb = new StringBuilder();
                             for (int i = 5; i < cmdRaw.length; ++i) {
@@ -145,7 +144,12 @@ public class DiscordMessageListener extends ListenerAdapter {
                         BangServer.invoker.postUnit(new Invoker.Unit() {
                             public boolean invoke() {
                                 try {
+                                    PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                                     BangServer.playerRepository.setTempBan(player.username.getNormal(), Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
+                                    PresentsSession pclient = BangServer.clmgr.getClient(player.username);
+                                    if (pclient != null) {
+                                        pclient.endSession();
+                                    }
                                     DISCORD.commit(1, "Successfully temp-banned player!");
                                     return true;
                                 } catch (PersistenceException e) {
@@ -155,17 +159,12 @@ public class DiscordMessageListener extends ListenerAdapter {
                                 }
                             }
                         });
-                            PresentsSession pclient = BangServer.clmgr.getClient(player.username);
-                            if (pclient != null) {
-                                pclient.endSession();
-                            }
                     }
                     case "ban": {
                         if (cmdRaw.length < 5) {
                             DISCORD.commit(1, "Please check your usage.");
                             return;
                         }
-                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                         long time = parseTimeSpec(cmdRaw[3], cmdRaw[4]);
                             StringBuilder sb = new StringBuilder();
                             for (int i = 5; i < cmdRaw.length; ++i) {
@@ -174,7 +173,12 @@ public class DiscordMessageListener extends ListenerAdapter {
                             BangServer.invoker.postUnit(new Invoker.Unit() {
                                 public boolean invoke() {
                                     try {
+                                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
                                         BangServer.playerRepository.setTempBan(player.username.getNormal(), Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
+                                        PresentsSession pclient = BangServer.clmgr.getClient(player.username);
+                                        if (pclient != null) {
+                                            pclient.endSession();
+                                        }
                                         DISCORD.commit(1, "Successfully banned player!");
                                         return true;
                                     } catch (PersistenceException e) {
@@ -184,10 +188,6 @@ public class DiscordMessageListener extends ListenerAdapter {
                                     }
                                 }
                             });
-                            PresentsSession pclient = BangServer.clmgr.getClient(player.username);
-                            if (pclient != null) {
-                                pclient.endSession();
-                            }
                     }
                 }
             }

@@ -12,7 +12,7 @@ umask 002
 # set up our java arguments
 JAVA_ARGS="-Dno_unpack_resources=true \
     -Dbang.home=$BANG_HOME \
-    -Dresource_dir=$BANG_HOME/assets/build/staging/rsrc \
+    -Dresource_dir=$BANG_HOME/build/server/rsrc \
     -Drsrc_cache_dir=/tmp"
 
 JARS="server"

@@ -7,7 +7,7 @@
 BANG_HOME=`dirname $0`/..
 HOSTNAME=`hostname`
 JARGS=""
-NODE="frontier_town"
+NODE="boom_town"
 
 SERVER_MEMORY=384M
 if [ -f $BANG_HOME/etc/test/server.conf ]; then
@@ -33,4 +33,4 @@ done
 
 CLASS=com.threerings.bang.server.BangServer
 exec $BANG_HOME/bin/bangjava -server -Djava.awt.headless=true -mx$SERVER_MEMORY \
-  -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true -Dserver_ports=30000 -Dcharley_port=25566 $JARGS $CLASS
+  -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true -Dserver_ports=30002 -Dcharley_port=25566 $JARGS $CLASS

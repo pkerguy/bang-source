@@ -95,8 +95,7 @@ public class DiscordMessageListener extends ListenerAdapter {
                             BangServer.invoker.postUnit(new Invoker.Unit() {
                                                             public boolean invoke() {
                                                                 try {
-                                                                    PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                                                                    BangServer.playerRepository.setWarning(player.username.getNormal(), sb.toString());
+                                                                    BangServer.playerRepository.setWarning(cmdRaw[2], sb.toString());
                                                                     DISCORD.commit(1, "Successfully warned player!");
                                                                     return true;
                                                                 } catch (PersistenceException e) {
@@ -115,9 +114,8 @@ public class DiscordMessageListener extends ListenerAdapter {
                             BangServer.invoker.postUnit(new Invoker.Unit() {
                                 public boolean invoke() {
                                     try {
-                                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                                        BangServer.playerRepository.setWarning(player.username.getNormal(), sb.toString());
-                                        PresentsSession pclient = BangServer.clmgr.getClient(player.username);
+                                        BangServer.playerRepository.setWarning(cmdRaw[2], sb.toString());
+                                        PresentsSession pclient = BangServer.clmgr.getClient(new Name(cmdRaw[2]));
                                         if (pclient != null) {
                                             pclient.endSession();
                                         }
@@ -144,9 +142,8 @@ public class DiscordMessageListener extends ListenerAdapter {
                         BangServer.invoker.postUnit(new Invoker.Unit() {
                             public boolean invoke() {
                                 try {
-                                    PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                                    BangServer.playerRepository.setTempBan(player.username.getNormal(), Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
-                                    PresentsSession pclient = BangServer.clmgr.getClient(player.username);
+                                    BangServer.playerRepository.setTempBan(cmdRaw[2], Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
+                                    PresentsSession pclient = BangServer.clmgr.getClient(new Name(cmdRaw[2]));
                                     if (pclient != null) {
                                         pclient.endSession();
                                     }
@@ -173,9 +170,8 @@ public class DiscordMessageListener extends ListenerAdapter {
                             BangServer.invoker.postUnit(new Invoker.Unit() {
                                 public boolean invoke() {
                                     try {
-                                        PlayerObject player = BangServer.locator.lookupPlayer(new Handle(cmdRaw[2]));
-                                        BangServer.playerRepository.setTempBan(player.username.getNormal(), Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
-                                        PresentsSession pclient = BangServer.clmgr.getClient(player.username);
+                                        BangServer.playerRepository.setTempBan(cmdRaw[2], Timestamp.from(Instant.ofEpochSecond(time)), sb.toString());
+                                        PresentsSession pclient = BangServer.clmgr.getClient(new Name(cmdRaw[2]));
                                         if (pclient != null) {
                                             pclient.endSession();
                                         }

@@ -76,6 +76,16 @@ public class DeploymentConfig
     }
 
     /**
+     * Returns the port on which we should connect to the specified town server with a supplied range of ports.
+     *
+     * @see #getServerHost
+     */
+    public static int[] getServerPorts (int[] range)
+    {
+        return range;
+    }
+
+    /**
      * Returns the URL from which HTML content is loaded.
      */
     public static URL getDocBaseURL ()

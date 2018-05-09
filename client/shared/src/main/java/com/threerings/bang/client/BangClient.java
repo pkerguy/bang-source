@@ -992,7 +992,24 @@ public class BangClient extends BasicClient
                 {
                     String[] info = result.split("&");
                     String[] portStr = info[1].split(",");
-                    _ctx.getClient().setServer(info[0], DeploymentConfig.getServerPorts(_pendingTownId));
+                    int[] numbers = new int[portStr.length];
+                    int index = 0;
+                    for(int i = 0;i < portStr.length;i++)
+                    {
+                        try
+                        {
+                            numbers[index] = Integer.parseInt(portStr[i]);
+                            index++;
+                        }
+                        catch (NumberFormatException nfe)
+                        {
+                            nfe.printStackTrace();
+                            return;
+                        }
+                    }
+                    numbers = Arrays.copyOf(numbers, index);
+                    int[] portToConnect = new int [numbers[BangUtil.getTownIndex(_pendingTownId)]];
+                    _ctx.getClient().setServer(info[0], DeploymentConfig.getServerPorts(portToConnect));
                 } else {
                     log.warning("Failed to grab server data in clientDidClear()");
                     return;

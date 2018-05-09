@@ -433,6 +433,7 @@ public class LogonView extends BWindow
             if (result.contains("&") && result.contains(",")) {
                 String[] info = result.split("&"),
                         portStr = info[1].split(",");
+                int[] numbers = new int[portStr.length];
                 serverIP = info[0];
                 try {
                     if(info[2] == null){
@@ -444,10 +445,44 @@ public class LogonView extends BWindow
                 {
                     charleyPort = 25565; // Default to 25565 if an exception is thrown.
                 }
-                serverPorts = new int[portStr.length];
-                for (int i = 0, len = portStr.length; i < len; ) {
-                    serverPorts[i] = Integer.parseInt(portStr[i++]);
+                int index = 0;
+                for(int i = 0;i < portStr.length;i++)
+                {
+                    try
+                    {
+                        numbers[index] = Integer.parseInt(portStr[i]);
+                        index++;
+                    }
+                    catch (NumberFormatException nfe)
+                    {
+                        nfe.printStackTrace();
+                        return;
+                    }
                 }
+                numbers = Arrays.copyOf(numbers, index);
+                BangDesktop.server = (String) serverList.getSelectedItem();
+                _ctx.getClient().setServer(serverIP, numbers);
+
+                // configure the client with the supplied credentials
+                _ctx.getClient().setCredentials(
+                        _ctx.getBangClient().createCredentials(new Name(username), password));
+
+                // Begin NetClient Code
+
+                if(_netclient == null) // Only do this for the first login
+                {
+                    _netclient = new com.jmr.wrapper.client.Client(serverIP, charleyPort,charleyPort);
+                    _netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
+                    _netclient.connect();
+                    if (!_netclient.isConnected()) {
+                        showDialog("Failed to connect to Charlie service... Please try again!");
+                        return;
+                    }
+                }
+                // End NetClient Code
+
+                // now we can log on
+                _ctx.getClient().logon();
 
             } else {
                 showDialog(result);
@@ -459,30 +494,6 @@ public class LogonView extends BWindow
             showDialog("An error occurred while retrieving that server's info");
             return;
         }
-
-        BangDesktop.server = (String) serverList.getSelectedItem();
-        _ctx.getClient().setServer(serverIP, serverPorts);
-
-        // configure the client with the supplied credentials
-        _ctx.getClient().setCredentials(
-                _ctx.getBangClient().createCredentials(new Name(username), password));
-
-        // Begin NetClient Code
-
-        if(_netclient == null) // Only do this for the first login
-        {
-            _netclient = new com.jmr.wrapper.client.Client(serverIP, charleyPort,charleyPort);
-            _netclient.setListener(new com.threerings.bang.netclient.listeners.Client(_ctx));
-            _netclient.connect();
-            if (!_netclient.isConnected()) {
-                showDialog("Failed to connect to Charlie service... Please try again!");
-                return;
-            }
-        }
-        // End NetClient Code
-
-        // now we can log on
-        _ctx.getClient().logon();
     }
 
     // documentation inherited from interface BasicClient.InitObserver

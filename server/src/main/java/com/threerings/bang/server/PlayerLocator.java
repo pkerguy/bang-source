@@ -3,6 +3,7 @@
 
 package com.threerings.bang.server;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -89,6 +90,20 @@ public class PlayerLocator extends BodyLocator
     {
         _omgr.requireEventThread();
         return _players.get(handle);
+    }
+
+    /**
+     * Returns the an array of players for the specified user if they are online currently, empty array otherwise
+     */
+    public ArrayList<PlayerObject> allPlayers ()
+    {
+        ArrayList<PlayerObject> results = new ArrayList<PlayerObject>();
+        _omgr.requireEventThread();
+        for(Map.Entry<Handle, PlayerObject> p : _players.entrySet())
+        {
+            results.add(p.getValue());
+        }
+        return results;
     }
 
     /**

@@ -649,13 +649,34 @@ public class PlayerManager
             case TunnelData.WHO_INFO:
 
                 try {
-                    ArrayList<BangClientInfo> bangClients = BangServer.peerManager.getAllOnline();
+                    ArrayList<Name> alreadyProcessed = new ArrayList<Name>();
+                    ArrayList<PlayerObject> bangClientsLocal = BangServer.locator.allPlayers();
+                    ArrayList<BangClientInfo> bangClientsRemote = BangServer.peerManager.getAllOnline();
                     StringBuilder replyBuilder = new StringBuilder();
 
                     if (!caller.getTokens().isSupport()) {
 
-                        for(BangClientInfo clientInfo : bangClients)
+                        for(PlayerObject playerObject : bangClientsLocal)
                         {
+                            alreadyProcessed.add(playerObject.username);
+                            if(playerObject.getTokens().isAdmin() || playerObject.getTokens().isSupport())
+                            {
+                                continue; // Don't let non staff see online staff
+                            } else {
+                                if (playerObject.hasCharacter()) {
+                                    replyBuilder.append(playerObject.getVisibleName().getNormal());
+                                } else {
+                                    continue; // Don't let them see people who haven't made a character as they have no purpose
+                                }
+                                if (playerObject.townId != null) {
+                                    replyBuilder.append("(" + playerObject.townId + ")");
+                                }
+                                replyBuilder.append(" ");
+                            }
+                        }
+                        for(BangClientInfo clientInfo : bangClientsRemote)
+                        {
+                            if(alreadyProcessed.contains(clientInfo.username)) continue; // We already processed this! Somehow we got a duplicate?
                             PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
                             if(lookupPlayer.getTokens().isAdmin() || lookupPlayer.getTokens().isSupport())
                             {
@@ -674,23 +695,35 @@ public class PlayerManager
                         }
 
                     } else {
-                        for(BangClientInfo clientInfo : bangClients)
+                        for(PlayerObject playerObject : bangClientsLocal)
                         {
-                            PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
-                            if (lookupPlayer.hasCharacter()) {
-                                    replyBuilder.append(lookupPlayer.getVisibleName().getNormal());
+                            alreadyProcessed.add(playerObject.username);
+                            if (playerObject.hasCharacter()) {
+                                    replyBuilder.append(playerObject.getVisibleName().getNormal());
                                 } else {
                                     continue; // Don't let them see people who haven't made a character as they have no purpose
                                 }
-                                replyBuilder.append("(" + lookupPlayer.username.getNormal() + ")");
-                                if (lookupPlayer.getPlaceOid() != -1) {
-                                    replyBuilder.append("[" + lookupPlayer.getPlaceOid() + "]");
-                                }
-                                if (lookupPlayer.townId != null) {
-                                    replyBuilder.append("(" + lookupPlayer.townId + ")");
+                                if (playerObject.townId != null) {
+                                    replyBuilder.append("(" + playerObject.townId + ")");
                                 }
                                 replyBuilder.append(" ");
+                        }
+                        for(BangClientInfo clientInfo : bangClientsRemote)
+                        {
+                            if(alreadyProcessed.contains(clientInfo.username)) continue; // We already processed this! Somehow we got a duplicate?
+                            PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
+                            if (lookupPlayer.hasCharacter()) {
+                                replyBuilder.append(lookupPlayer.getVisibleName().getNormal());
                             }
+                            replyBuilder.append("(" + lookupPlayer.username.getNormal() + ")");
+                            if (lookupPlayer.getPlaceOid() != -1) {
+                                replyBuilder.append("[" + lookupPlayer.getPlaceOid() + "]");
+                            }
+                            if (lookupPlayer.townId != null) {
+                                replyBuilder.append("(" + lookupPlayer.townId + ")");
+                            }
+                            replyBuilder.append(" ");
+                        }
                     }
                     listener.requestFailed(replyBuilder.toString());
                 } catch(Exception ex)

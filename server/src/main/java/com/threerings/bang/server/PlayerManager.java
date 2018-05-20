@@ -668,10 +668,6 @@ public class PlayerManager
                                 } else {
                                     continue; // Don't let them see people who haven't made a character as they have no purpose
                                 }
-                                replyBuilder.append("(" + playerObject.username.getNormal() + ")");
-                                if (playerObject.getPlaceOid() != -1) {
-                                    replyBuilder.append("[" + playerObject.getPlaceOid() + "]");
-                                }
                                 if (playerObject.townId != null) {
                                     replyBuilder.append("(" + playerObject.townId + ")");
                                 }
@@ -706,6 +702,10 @@ public class PlayerManager
                                     replyBuilder.append(playerObject.getVisibleName().getNormal());
                                 } else {
                                     continue; // Don't let them see people who haven't made a character as they have no purpose
+                                }
+                                replyBuilder.append("(" + playerObject.username.getNormal() + ")");
+                                if (playerObject.getPlaceOid() != -1) {
+                                    replyBuilder.append("[" + playerObject.getPlaceOid() + "]");
                                 }
                                 if (playerObject.townId != null) {
                                     replyBuilder.append("(" + playerObject.townId + ")");

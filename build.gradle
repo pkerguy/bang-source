@@ -3,7 +3,7 @@ allprojects {
   version = "1.1-SNAPSHOT"
 
   ext {
-    gdxVersion = "1.9.8"
+    gdxVersion = "1.5.4"
     naryaVersion = "1.15"
     nenyaVersion = "2.1"
     towns = ["frontier_town", "indian_post", "boom_town"]

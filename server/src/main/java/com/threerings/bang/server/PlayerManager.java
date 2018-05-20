@@ -677,11 +677,7 @@ public class PlayerManager
                         for(BangClientInfo clientInfo : bangClients)
                         {
                             PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
-                            if(lookupPlayer.getTokens().isAdmin() || lookupPlayer.getTokens().isSupport())
-                            {
-                                continue; // Don't let non staff see online staff
-                            } else {
-                                if (lookupPlayer.hasCharacter()) {
+                            if (lookupPlayer.hasCharacter()) {
                                     replyBuilder.append(lookupPlayer.getVisibleName().getNormal());
                                 } else {
                                     continue; // Don't let them see people who haven't made a character as they have no purpose
@@ -695,7 +691,6 @@ public class PlayerManager
                                 }
                                 replyBuilder.append(" ");
                             }
-                        }
                     }
                     listener.requestFailed(replyBuilder.toString());
                 } catch(Exception ex)

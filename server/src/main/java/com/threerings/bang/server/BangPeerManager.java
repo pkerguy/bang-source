@@ -3,6 +3,7 @@
 
 package com.threerings.bang.server;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
@@ -119,6 +120,42 @@ public class BangPeerManager extends CrowdPeerManager
         }
         return null;
     }
+
+
+    /**
+     * Returns information of all players currently logged onto one of our peer servers (including this one?)
+     *
+     * @return The player list in PeerNode form
+     */
+    public ArrayList<PeerNode> getAllPeers()
+    {
+        ArrayList<PeerNode> result = new ArrayList<PeerNode>();
+        for (PeerNode peer : _peers.values()) {
+            result.add(peer);
+        }
+        return result;
+    }
+
+    /**
+     * Returns information of all players currently logged onto one of our peer servers (including this one?)
+     *
+     * @return The player list in BangClientInfo form
+     */
+    public ArrayList<BangClientInfo> getAllOnline()
+    {
+        ArrayList<BangClientInfo> result = new ArrayList<BangClientInfo>();
+        for (PeerNode peer : _peers.values()) {
+            for(ClientInfo rawinfo : peer.nodeobj.clients)
+            {
+                BangClientInfo info = (BangClientInfo)rawinfo;
+                if (info != null) {
+                    result.add(info);
+                }
+            }
+        }
+        return result;
+    }
+
 
     /**
      * Requests to deliver the a pardner invite to a player if he's logged into one of our peer

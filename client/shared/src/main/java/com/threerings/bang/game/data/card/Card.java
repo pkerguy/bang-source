@@ -6,6 +6,7 @@ package com.threerings.bang.game.data.card;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import com.samskivert.util.RandomUtil;
 

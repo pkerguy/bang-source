@@ -16,15 +16,13 @@ import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.threerings.bang.admin.client.GameMasterDialog;
+import com.threerings.bang.admin.data.TunnelData;
 import com.threerings.bang.bang.client.BangDesktop;
 import com.threerings.bang.client.bui.EnablingValidator;
 import com.threerings.bang.client.bui.OptionDialog;
 import com.threerings.bang.client.bui.StatusLabel;
 import com.threerings.bang.data.*;
-import com.threerings.bang.netclient.packets.AwayAdminPacket;
-import com.threerings.bang.netclient.packets.NewClientPacket;
-import com.threerings.bang.netclient.packets.WhoSendAdminPacket;
-import com.threerings.bang.netclient.packets.WhoSendPacket;
+import com.threerings.bang.netclient.packets.*;
 import com.threerings.bang.steam.SteamStorage;
 import com.threerings.bang.util.BangContext;
 import com.threerings.bang.util.DeploymentConfig;
@@ -606,21 +604,32 @@ public class LogonView extends BWindow
             MessageBundle msg = _ctx.getMessageManager().getBundle(BangCodes.CHAT_MSGS);
             BangPrefs.config.setValue(user.tokens.isAnonymous() ? "anonymous" : "username",
                     user.username.toString());
-            if (user.tokens.isSupport() || user.tokens.isAdmin()) {
-                _ctx.getChatDirector().registerCommandHandler(msg, "who", new ChatDirector.CommandHandler() {
-                    public String handleCommand(
-                            SpeakService speaksvc, String command, String args,
-                            String[] history) {
 
-                        if(user.tokens.isSupport() || user.tokens.isAdmin())
-                        {
-                            _netclient.getServerConnection().sendComplexObjectTcp(new WhoSendAdminPacket(_ctx.getUserObject().username.getNormal()));
-                        } else {
-                            return "ACCESS DENIED";
-                        }
-                        return "success";
-                    }
-                });
+            _ctx.getChatDirector().registerCommandHandler(msg, "who", new ChatDirector.CommandHandler() {
+                public String handleCommand(
+                        SpeakService speaksvc, String command, String args,
+                        String[] history) {
+
+                    _ctx.getClient().requireService(PlayerService.class).tunnelAction(
+                            user.handle, TunnelData.WHO_INFO, "",
+                            new InvocationService.ConfirmListener() {
+                                @Override
+                                public void requestProcessed() {
+                                    OptionDialog.showConfirmDialog(
+                                            _ctx, null, "Failed!", new String[]{"m.ok"}, (button, result) -> {
+                                                // Automatically dismisses the dialog so nothing needed to be done here
+                                            });
+                                }
+
+                                @Override
+                                public void requestFailed(String cause) {
+                                    _ctx.getChatDirector().displayInfo(null, "Online Users: " + cause);
+                                }
+                            });
+                    return "success";
+                }
+            });
+            if (user.tokens.isSupport() || user.tokens.isAdmin()) {
                 _ctx.getChatDirector().registerCommandHandler(msg, "kick", new ChatDirector.CommandHandler() {
                     public String handleCommand(
                             SpeakService speaksvc, String command, String args,
@@ -632,6 +641,20 @@ public class LogonView extends BWindow
                         }
                         Handle _handle = new Handle(args.replaceAll("_", " "));
                         _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Boot Player", GameMasterDialog.KICK), true, 500);
+                        return "success";
+                    }
+                });
+                _ctx.getChatDirector().registerCommandHandler(msg, "jump", new ChatDirector.CommandHandler() {
+                    public String handleCommand(
+                            SpeakService speaksvc, String command, String args,
+                            String[] history) {
+
+                        try {
+                            int placeOid = Integer.parseInt(args);
+                            _ctx.getLocationDirector().moveTo(placeOid);
+                        } catch(Exception ex) {
+                            return "ERROR.. Exception pulled!";
+                        }
                         return "success";
                     }
                 });
@@ -660,79 +683,6 @@ public class LogonView extends BWindow
                         }
                         Handle _handle = new Handle(args.replaceAll("_", " "));
                         _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Permban Player", GameMasterDialog.PERMA_BAN), true, 500);
-                        return "success";
-                    }
-                });
-                if(_ctx.getUserObject().tokens.isUnhider())
-                {
-                    _ctx.getChatDirector().registerCommandHandler(msg, "hide", new ChatDirector.CommandHandler() {
-                        public String handleCommand(
-                                SpeakService speaksvc, String command, String args,
-                                String[] history) {
-
-                            if (_ctx.getUserObject() == null) return "NOPE";
-                            if (!_ctx.getUserObject().tokens.isUnhider()) {
-                                return "ACCESS DENIED";
-                            }
-                            String[] arrayArgs = args.split(" ");
-                            switch (arrayArgs[0])
-                            {
-                                case "on": {
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().handle, true));
-                                    return "Successfully toggled staff status to: ON";
-                                }
-                                case "off": {
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(_ctx.getUserObject().handle, false));
-                                    return "Successfully toggled staff status to: OFF";
-                                }
-                            }
-                            return "success";
-                        }
-                    });
-                    _ctx.getChatDirector().registerCommandHandler(msg, "sudohide", new ChatDirector.CommandHandler() {
-                        public String handleCommand(
-                                SpeakService speaksvc, String command, String args,
-                                String[] history) {
-
-                            if (_ctx.getUserObject() == null) return "NOPE";
-                            if (!_ctx.getUserObject().tokens.isUnhider()) {
-                                return "ACCESS DENIED";
-                            }
-                            String[] arrayArgs = args.split(" ");
-                            switch (arrayArgs[0])
-                            {
-                                case "on": {
-                                    String target = arrayArgs[1].replace("_", " ");
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(new Handle(target), true));
-                                    return "Successfully toggled sudo staff status to: ON";
-                                }
-                                case "off": {
-                                    String target = arrayArgs[1].replace("_", " ");
-                                    _netclient.getServerConnection().sendComplexObjectTcp(new AwayAdminPacket(new Handle(target), false));
-                                    return "Successfully toggled sudo staff status to: OFF";
-                                }
-                            }
-                            return "success";
-                        }
-                    });
-
-                }
-                _ctx.getChatDirector().registerCommandHandler(msg, "jump", new ChatDirector.CommandHandler() {
-                    public String handleCommand(
-                            SpeakService speaksvc, String command, String args,
-                            String[] history) {
-
-                        if (_ctx.getUserObject() == null) return "NOPE";
-                        if (!_ctx.getUserObject().tokens.isSupport()) {
-                            return "ACCESS DENIED";
-                        }
-                        try {
-                            int placeOid = Integer.parseInt(args);
-                            _ctx.getLocationDirector().moveTo(placeOid);
-                        } catch(Exception ex)
-                        {
-                            return "Invalid usage.";
-                        }
                         return "success";
                     }
                 });
@@ -768,38 +718,6 @@ public class LogonView extends BWindow
                                             _ctx.getChatDirector().displayFeedback(null, "NumberFormatException error.");
                                             return;
                                         }
-                                    }
-                                });
-                        return "success";
-                    }
-                });
-                _ctx.getChatDirector().registerCommandHandler(msg, "showurl", new ChatDirector.CommandHandler() {
-                    public String handleCommand(
-                            SpeakService speaksvc, String command, String args,
-                            String[] history) {
-                        if (_ctx.getUserObject() == null) return "NOPE";
-                        if (!_ctx.getUserObject().tokens.isAdmin()) {
-                            return "ACCESS DENIED";
-                        }
-                        if (StringUtil.isBlank(args)) {
-                            return getUsage("Ask Kayaba!");
-                        }
-                        String[] commandArgs = args.split(" ");
-                        if (commandArgs.length != 2) {
-                            return getUsage("Ask Kayaba!");
-                        }
-                        Handle name = new Handle(commandArgs[0].replaceAll("_", " "));
-                        _ctx.getClient().requireService(PlayerService.class).gameMasterAction(
-                                name, GameMasterDialog.SHOW_URL, commandArgs[1], 0L,
-                                new InvocationService.ConfirmListener() {
-                                    @Override
-                                    public void requestProcessed() {
-                                        _ctx.getChatDirector().displayFeedback(null, "An error occurred performing that command!");
-                                    }
-
-                                    @Override
-                                    public void requestFailed(String cause) {
-
                                     }
                                 });
                         return "success";

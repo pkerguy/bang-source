@@ -24,9 +24,9 @@ import com.threerings.bang.data.PlayerObject;
 public interface PlayerProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link PlayerService#adminAction} request.
+     * Handles a {@link PlayerService#tunnelAction} request.
      */
-    void adminAction (PlayerObject caller, Handle arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
+    void tunnelAction (PlayerObject caller, Handle arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**

@@ -11,6 +11,7 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.text.IntegerDocument;
 import com.jmex.bui.util.Dimension;
 import com.samskivert.util.StringUtil;
+import com.threerings.bang.admin.data.TunnelData;
 import com.threerings.bang.client.BangUI;
 import com.threerings.bang.client.PlayerService;
 import com.threerings.bang.client.bui.OptionDialog;
@@ -18,6 +19,7 @@ import com.threerings.bang.client.bui.SteelWindow;
 import com.threerings.bang.data.Badge;
 import com.threerings.bang.data.BangCodes;
 import com.threerings.bang.data.Handle;
+import com.threerings.bang.game.data.card.Card;
 import com.threerings.bang.tourney.client.TourneyListView;
 import com.threerings.bang.tourney.data.TourneyListingEntry;
 import com.threerings.bang.util.BangContext;
@@ -30,13 +32,6 @@ import com.threerings.util.MessageBundle;
 public class AdminDialog extends SteelWindow
         implements ActionListener
 {
-    public static final int
-            GRANT_SCRIP = 0,
-            REMOVE_SCRIP = 1,
-            RESET_SCRIP = 2,
-            GRANT_BADGE = 3,
-            REMOVE_BADGE = 4,
-            RESET_BADGE = 5;
 
     /** The width to hint when laying out this window. */
     public static final int WIDTH_HINT = 875;
@@ -67,8 +62,9 @@ public class AdminDialog extends SteelWindow
 
     public void showDialog ()
     {
+        BLabel label;
         switch (_action) {
-            case GRANT_SCRIP: case REMOVE_SCRIP:
+            case TunnelData.GRANT_SCRIP: case TunnelData.REMOVE_SCRIP:
                 add(3, new BLabel(_numberLabel));
                 BTextField field = new BTextField("0", BangUI.TEXT_FIELD_MAX_LENGTH);
                 add(4, _valueField = field, GroupLayout.FIXED);
@@ -77,10 +73,7 @@ public class AdminDialog extends SteelWindow
                 field.setDocument(new IntegerDocument(true));
                 field.requestFocus();
                 break;
-            case GRANT_BADGE: case REMOVE_BADGE:
-
-                BLabel label;
-
+            case TunnelData.GRANT_BADGE: case TunnelData.REMOVE_BADGE:
                 add(3, new BLabel(_numberLabel));
                 add(4, label = new BLabel("No Badge Selected"));
                 add(5, _badgeList = new BadgeList(new Dimension(450, 325), label), GroupLayout.FIXED);
@@ -102,10 +95,10 @@ public class AdminDialog extends SteelWindow
             case "execute":
                 if(_badgeList == null || _badgeList.getSelected() == null)
                 {
-                    if(_action == GRANT_SCRIP)
+                    if(_action == TunnelData.GRANT_SCRIP)
                     {
                         BTextField field = (BTextField)_valueField;
-                        _ctx.getClient().requireService(PlayerService.class).adminAction(
+                        _ctx.getClient().requireService(PlayerService.class).tunnelAction(
                                 _handle, 0, field.getText(),
                                 new InvocationService.ConfirmListener() {
                                     @Override
@@ -132,10 +125,10 @@ public class AdminDialog extends SteelWindow
                                 });
                         return;
                     }
-                    if(_action == REMOVE_SCRIP)
+                    if(_action == TunnelData.REMOVE_SCRIP)
                     {
                         BTextField field = (BTextField)_valueField;
-                        _ctx.getClient().requireService(PlayerService.class).adminAction(
+                        _ctx.getClient().requireService(PlayerService.class).tunnelAction(
                                 _handle, 1, field.getText(),
                                 new InvocationService.ConfirmListener() {
                                     @Override
@@ -163,9 +156,9 @@ public class AdminDialog extends SteelWindow
                         return;
                     }
                 }
-                if(_action == RESET_SCRIP)
+                if(_action == TunnelData.RESET_SCRIP)
                 {
-                    _ctx.getClient().requireService(PlayerService.class).adminAction(
+                    _ctx.getClient().requireService(PlayerService.class).tunnelAction(
                             _handle, 2, "",
                             new InvocationService.ConfirmListener() {
                                 @Override
@@ -199,7 +192,7 @@ public class AdminDialog extends SteelWindow
                     return;
                 }
 
-                _ctx.getClient().requireService(PlayerService.class).adminAction(
+                _ctx.getClient().requireService(PlayerService.class).tunnelAction(
                         _handle, _action, String.valueOf(valueText.getCode()),
                         new InvocationService.ConfirmListener() {
                             @Override

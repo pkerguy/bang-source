@@ -174,7 +174,7 @@ public class PlayerPopupMenu extends BPopupMenu
                 OptionDialog.showConfirmDialog(
                         _ctx, null, "This will set their scrip to 0!", new String[]{"m.ok", "m.cancel"}, (button, result) -> {
                             if (button == 0) {
-                                _ctx.getClient().requireService(PlayerService.class).adminAction(
+                                _ctx.getClient().requireService(PlayerService.class).tunnelAction(
                                         _handle, AdminDialog.RESET_SCRIP, "",
                                         new InvocationService.ConfirmListener() {
                                             @Override
@@ -211,7 +211,7 @@ public class PlayerPopupMenu extends BPopupMenu
                 OptionDialog.showConfirmDialog(
                         _ctx, null, "This will remove all of their badges!", new String[]{"m.ok", "m.cancel"}, (button, result) -> {
                             if (button == 0) {
-                                _ctx.getClient().requireService(PlayerService.class).adminAction(
+                                _ctx.getClient().requireService(PlayerService.class).tunnelAction(
                                         _handle, AdminDialog.RESET_BADGE, "",
                                         new InvocationService.ConfirmListener() {
                                             @Override

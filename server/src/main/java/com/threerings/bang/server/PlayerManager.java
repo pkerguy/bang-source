@@ -15,6 +15,7 @@ import com.threerings.bang.admin.client.AdminDialog;
 import com.threerings.bang.admin.client.GameMasterDialog;
 import com.threerings.bang.admin.data.BuyOffer;
 import com.threerings.bang.admin.data.SellOffer;
+import com.threerings.bang.admin.data.TunnelData;
 import com.threerings.bang.admin.server.RuntimeConfig;
 import com.threerings.bang.avatar.data.Look;
 import com.threerings.bang.avatar.server.persist.LookRepository;
@@ -22,6 +23,7 @@ import com.threerings.bang.client.PlayerService;
 import com.threerings.bang.data.*;
 import com.threerings.bang.game.client.BangService;
 import com.threerings.bang.game.data.*;
+import com.threerings.bang.game.data.card.Card;
 import com.threerings.bang.game.data.card.Forgiven;
 import com.threerings.bang.game.data.effect.*;
 import com.threerings.bang.game.data.piece.Piece;
@@ -637,18 +639,76 @@ public class PlayerManager
     }
 
     // from interface PlayerProvider
-    public void adminAction(PlayerObject caller, Handle handle, int action, String value, InvocationService.ConfirmListener listener) throws InvocationException {
-        if (!caller.getTokens().isAdmin()) {
-            listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
-            return;
-        }
+    public void tunnelAction(PlayerObject caller, Handle handle, int action, String value, InvocationService.ConfirmListener listener) throws InvocationException {
         PlayerObject user = BangServer.locator.lookupPlayer(handle);
         if (user == null) {
             listener.requestFailed("Target player not online");
             return;
         }
         switch (action) {
-            case AdminDialog.GRANT_SCRIP:
+            case TunnelData.WHO_INFO:
+
+                try {
+                    ArrayList<BangClientInfo> bangClients = BangServer.peerManager.getAllOnline();
+                    StringBuilder replyBuilder = new StringBuilder();
+
+                    if (!caller.getTokens().isSupport()) {
+
+                        for(BangClientInfo clientInfo : bangClients)
+                        {
+                            PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
+                            if(lookupPlayer.getTokens().isAdmin() || lookupPlayer.getTokens().isSupport())
+                            {
+                                continue; // Don't let non staff see online staff
+                            } else {
+                                if (lookupPlayer.hasCharacter()) {
+                                    replyBuilder.append(lookupPlayer.getVisibleName().getNormal());
+                                } else {
+                                    continue; // Don't let them see people who haven't made a character as they have no purpose
+                                }
+                                if (lookupPlayer.townId != null) {
+                                    replyBuilder.append("(" + lookupPlayer.townId + ")");
+                                }
+                                replyBuilder.append(" ");
+                            }
+                        }
+
+                    } else {
+                        for(BangClientInfo clientInfo : bangClients)
+                        {
+                            PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
+                            if(lookupPlayer.getTokens().isAdmin() || lookupPlayer.getTokens().isSupport())
+                            {
+                                continue; // Don't let non staff see online staff
+                            } else {
+                                if (lookupPlayer.hasCharacter()) {
+                                    replyBuilder.append(lookupPlayer.getVisibleName().getNormal());
+                                } else {
+                                    continue; // Don't let them see people who haven't made a character as they have no purpose
+                                }
+                                replyBuilder.append("(" + lookupPlayer.username.getNormal() + ")");
+                                if (lookupPlayer.getPlaceOid() != -1) {
+                                    replyBuilder.append("[" + lookupPlayer.getPlaceOid() + "]");
+                                }
+                                if (lookupPlayer.townId != null) {
+                                    replyBuilder.append("(" + lookupPlayer.townId + ")");
+                                }
+                                replyBuilder.append(" ");
+                            }
+                        }
+                    }
+                    listener.requestFailed(replyBuilder.toString());
+                } catch(Exception ex)
+                {
+                    listener.requestProcessed();
+                    ex.printStackTrace();
+                }
+                break;
+            case TunnelData.GRANT_SCRIP:
+                if (!caller.getTokens().isAdmin()) {
+                    listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
+                    return;
+                }
                 int amount;
                 try {
                     if ((amount = Integer.parseInt(value)) <= 0) {
@@ -669,7 +729,11 @@ public class PlayerManager
                     listener.requestFailed("Invalid Amount");
                 }
                 break;
-            case AdminDialog.REMOVE_SCRIP:
+            case TunnelData.REMOVE_SCRIP:
+                if (!caller.getTokens().isAdmin()) {
+                    listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
+                    return;
+                }
                 try {
                     if ((amount = Integer.parseInt(value)) <= 0) {
                         listener.requestFailed("Amount must be > 0");
@@ -690,7 +754,11 @@ public class PlayerManager
                     listener.requestFailed("Invalid Amount");
                 }
                 break;
-            case AdminDialog.RESET_SCRIP:
+            case TunnelData.RESET_SCRIP:
+                if (!caller.getTokens().isAdmin()) {
+                    listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
+                    return;
+                }
                 BangServer.DISCORD.commit(1, caller + " used RESET_SCRIP on " + handle.getNormal());
                 user.startTransaction();
                 try {
@@ -702,8 +770,11 @@ public class PlayerManager
                 user.commitTransaction();
                 listener.requestProcessed();
                 break;
-            case AdminDialog.GRANT_BADGE: case AdminDialog.REMOVE_BADGE:
-
+            case TunnelData.GRANT_BADGE: case TunnelData.REMOVE_BADGE:
+                if (!caller.getTokens().isAdmin()) {
+                    listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
+                    return;
+                }
                 Badge.Type type = null;
                 try {
                     int code = Integer.parseInt(value);
@@ -721,13 +792,13 @@ public class PlayerManager
                     listener.requestFailed("Invalid badge type");
                     break;
                 }
-                if(action == AdminDialog.GRANT_BADGE)
+                if(action == TunnelData.GRANT_BADGE)
                 {
                     BangServer.DISCORD.commit(1, caller + " used GRANT_BADGE on " + handle.getNormal() + " and granted the badge " + type.key());
                 } else {
                     BangServer.DISCORD.commit(1, caller + " used REMOVE_BADGE on " + handle.getNormal() + " and removed the badge " + type.key());
                 }
-                if (action == AdminDialog.GRANT_BADGE) {
+                if (action == TunnelData.GRANT_BADGE) {
                     Badge badge = type.newBadge();
                     badge.setOwnerId(user.playerId);
                     if (user.inventory.contains(badge)) {
@@ -761,7 +832,11 @@ public class PlayerManager
                 listener.requestProcessed();
 
                 break;
-            case AdminDialog.RESET_BADGE:
+            case TunnelData.RESET_BADGE:
+                if (!caller.getTokens().isAdmin()) {
+                    listener.requestFailed("You need to be a Bang! Howdy administrator for this.");
+                    return;
+                }
                 BangServer.DISCORD.commit(1, caller + " used RESET_BADGES on " + handle.getNormal());
                 List<Comparable<?>> toRemove = new ArrayList<>();
                 /* The inventory's iterator doesn't support #remove() :( */

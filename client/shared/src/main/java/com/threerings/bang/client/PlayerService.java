@@ -98,9 +98,9 @@ public interface PlayerService extends InvocationService<PlayerObject>
     public void bootPlayer (Handle handle, ConfirmListener listener);
 
     /**
-     * Performs an admin action
+     * Performs an tunneling action
      */
-    public void adminAction (Handle handle, int action, String value, ConfirmListener listener);
+    public void tunnelAction (Handle handle, int action, String value, ConfirmListener listener);
 
     /**
      * Performs a game master action

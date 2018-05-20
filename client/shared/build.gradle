@@ -39,8 +39,9 @@ shadowJar {
 dependencies {
   compile project(":app")
   compile "com.samskivert:samskivert:1.9"
-  compile "com.threerings:nenya-core:${nenyaVersion}"
-  compile "com.threerings:narya:${naryaVersion}"
+    compile "com.threerings:nenya-core:2.1"
+    compile "com.threerings:nenya-tools:2.1"
+    compile "com.threerings:narya:${naryaVersion}"
   compile "com.threerings:vilya:1.6"
   compile "com.threerings:getdown:1.4"
   compile "com.threerings:ooo-util:1.4.1"

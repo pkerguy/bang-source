@@ -26,14 +26,14 @@ public class PlayerMarshaller extends InvocationMarshaller<PlayerObject>
     implements PlayerService
 {
     /** The method id used to dispatch {@link #tunnelAction} requests. */
-    public static final int ADMIN_ACTION = 1;
+    public static final int TUNNEL_ACTION = 1;
 
     // from interface PlayerService
     public void tunnelAction (Handle arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
     {
         InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
         listener4.listener = arg4;
-        sendRequest(ADMIN_ACTION, new Object[] {
+        sendRequest(TUNNEL_ACTION, new Object[] {
             arg1, Integer.valueOf(arg2), arg3, listener4
         });
     }

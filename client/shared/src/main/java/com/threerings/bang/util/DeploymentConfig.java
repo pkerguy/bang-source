@@ -82,7 +82,7 @@ public class DeploymentConfig
      */
     public static int[] getServerPorts (int range)
     {
-        return new int[] {Integer.parseInt(System.getProperty("server_ports")), Integer.parseInt(System.getProperty("server_ports")), Integer.parseInt(System.getProperty("server_ports"))};
+        return new int[] {range, range, range};
     }
 
     /**

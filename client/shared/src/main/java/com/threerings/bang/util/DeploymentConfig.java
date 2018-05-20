@@ -32,7 +32,7 @@ public class DeploymentConfig
     {
         if(beta_build)
         {
-            return 100028;
+            return 100029;
         }
         return 8016; // Change upon each release version
     }
@@ -80,9 +80,9 @@ public class DeploymentConfig
      *
      * @see #getServerHost
      */
-    public static int[] getServerPorts (int[] range)
+    public static int[] getServerPorts (int range)
     {
-        return range;
+        return new int[] {Integer.parseInt(System.getProperty("server_ports")), Integer.parseInt(System.getProperty("server_ports")), Integer.parseInt(System.getProperty("server_ports"))};
     }
 
     /**

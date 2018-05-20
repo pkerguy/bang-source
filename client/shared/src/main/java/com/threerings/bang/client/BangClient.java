@@ -1008,7 +1008,7 @@ public class BangClient extends BasicClient
                         }
                     }
                     numbers = Arrays.copyOf(numbers, index);
-                    int[] portToConnect = new int [numbers[BangUtil.getTownIndex(_pendingTownId)]];
+                    int portToConnect = numbers[BangUtil.getTownIndex(_pendingTownId)];
                     _ctx.getClient().setServer(info[0], DeploymentConfig.getServerPorts(portToConnect));
                 } else {
                     log.warning("Failed to grab server data in clientDidClear()");

@@ -22,7 +22,7 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven {
-    url "https://id.yourfunworld.com"
+    url "https://devrepo.mckz.org"
   }
   maven {
     url "https://oss.sonatype.org/content/repositories/snapshots"

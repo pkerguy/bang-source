@@ -11,6 +11,7 @@ import com.jmex.bui.event.MouseEvent;
 
 import com.threerings.bang.admin.client.AdminDialog;
 import com.threerings.bang.admin.client.GameMasterDialog;
+import com.threerings.bang.admin.data.TunnelData;
 import com.threerings.bang.data.*;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.util.MessageBundle;
@@ -165,17 +166,17 @@ public class PlayerPopupMenu extends BPopupMenu
                 _ctx.getBangClient().displayPopup(new GameMasterDialog(_ctx, _handle, "Permban Player", GameMasterDialog.PERMA_BAN), true, 500);
                 break;
             case "admin_scrip":
-                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Grant Scrip", "Scrip:", AdminDialog.GRANT_SCRIP), true, 500);
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Grant Scrip", "Scrip:", TunnelData.GRANT_SCRIP), true, 500);
                 break;
             case "admin_removescrip":
-                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Remove Scrip", "Scrip:", AdminDialog.REMOVE_SCRIP), true, 500);
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Remove Scrip", "Scrip:", TunnelData.REMOVE_SCRIP), true, 500);
                 break;
             case "admin_resetscrip":
                 OptionDialog.showConfirmDialog(
                         _ctx, null, "This will set their scrip to 0!", new String[]{"m.ok", "m.cancel"}, (button, result) -> {
                             if (button == 0) {
                                 _ctx.getClient().requireService(PlayerService.class).tunnelAction(
-                                        _handle, AdminDialog.RESET_SCRIP, "",
+                                        _handle, TunnelData.RESET_SCRIP, "",
                                         new InvocationService.ConfirmListener() {
                                             @Override
                                             public void requestProcessed() {
@@ -201,10 +202,10 @@ public class PlayerPopupMenu extends BPopupMenu
                         });
                 break;
             case "admin_grantbadge":
-                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Grant Badge", "Badge:", AdminDialog.GRANT_BADGE), true, 500);
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Grant Badge", "Badge:", TunnelData.GRANT_BADGE), true, 500);
                 break;
             case "admin_removebadge":
-                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Remove Badge", "Badge:", AdminDialog.REMOVE_BADGE), true, 500);
+                _ctx.getBangClient().displayPopup(new AdminDialog(_ctx, _handle, "Remove Badge", "Badge:", TunnelData.REMOVE_BADGE), true, 500);
                 break;
             case "admin_resetbadge":
 
@@ -212,7 +213,7 @@ public class PlayerPopupMenu extends BPopupMenu
                         _ctx, null, "This will remove all of their badges!", new String[]{"m.ok", "m.cancel"}, (button, result) -> {
                             if (button == 0) {
                                 _ctx.getClient().requireService(PlayerService.class).tunnelAction(
-                                        _handle, AdminDialog.RESET_BADGE, "",
+                                        _handle, TunnelData.RESET_BADGE, "",
                                         new InvocationService.ConfirmListener() {
                                             @Override
                                             public void requestProcessed() {

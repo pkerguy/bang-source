@@ -153,6 +153,7 @@ public class BangPeerManager extends CrowdPeerManager
                 }
             }
         }
+
         return result;
     }
 

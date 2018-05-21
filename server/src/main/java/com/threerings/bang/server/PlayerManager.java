@@ -58,6 +58,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.util.PersistingUnit;
@@ -674,25 +675,6 @@ public class PlayerManager
                                 replyBuilder.append(" ");
                             }
                         }
-                        for(BangClientInfo clientInfo : bangClientsRemote)
-                        {
-                            if(alreadyProcessed.contains(clientInfo.username)) continue; // We already processed this! Somehow we got a duplicate?
-                            PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
-                            if(lookupPlayer.getTokens().isAdmin() || lookupPlayer.getTokens().isSupport())
-                            {
-                                continue; // Don't let non staff see online staff
-                            } else {
-                                if (lookupPlayer.hasCharacter()) {
-                                    replyBuilder.append(lookupPlayer.getVisibleName().getNormal());
-                                } else {
-                                    continue; // Don't let them see people who haven't made a character as they have no purpose
-                                }
-                                if (lookupPlayer.townId != null) {
-                                    replyBuilder.append("(" + lookupPlayer.townId + ")");
-                                }
-                                replyBuilder.append(" ");
-                            }
-                        }
 
                     } else {
                         for(PlayerObject playerObject : bangClientsLocal)
@@ -715,16 +697,13 @@ public class PlayerManager
                         for(BangClientInfo clientInfo : bangClientsRemote)
                         {
                             if(alreadyProcessed.contains(clientInfo.username)) continue; // We already processed this! Somehow we got a duplicate?
-                            PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
-                            if (lookupPlayer.hasCharacter()) {
-                                replyBuilder.append(lookupPlayer.getVisibleName().getNormal());
-                            }
-                            replyBuilder.append("(" + lookupPlayer.username.getNormal() + ")");
-                            if (lookupPlayer.getPlaceOid() != -1) {
-                                replyBuilder.append("[" + lookupPlayer.getPlaceOid() + "]");
-                            }
-                            if (lookupPlayer.townId != null) {
-                                replyBuilder.append("(" + lookupPlayer.townId + ")");
+                            //PlayerObject lookupPlayer = BangServer.locator.lookupByAccountName(clientInfo.username);
+                            replyBuilder.append(clientInfo.visibleName);
+                            replyBuilder.append("(" + clientInfo.username.getNormal() + ")");
+                            PeerNode node = BangServer.peerManager.getPlayerPeer(new Handle(clientInfo.visibleName.getNormal()));
+                            if(node != null)
+                            {
+                                replyBuilder.append("(" + node.nodeobj.nodeName + ")");
                             }
                             replyBuilder.append(" ");
                         }

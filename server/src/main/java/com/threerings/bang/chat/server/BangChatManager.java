@@ -26,11 +26,13 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.bang.admin.server.BangAdminManager;
 import com.threerings.bang.data.BangTokenRing;
+import com.threerings.bang.game.server.BangManager;
 import com.threerings.bang.server.BangServer;
 import com.threerings.bang.server.DiscordAPIManager;
 import com.threerings.bang.server.persist.PlayerRecord;
 import com.threerings.bang.util.DeploymentConfig;
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.parlor.game.data.GameAI;
 import com.threerings.parlor.tourney.data.EntryFee;
 import com.threerings.parlor.tourney.data.Prize;
 import com.threerings.parlor.tourney.data.TourneyConfig;
@@ -164,6 +166,40 @@ public class BangChatManager
     public boolean validateChat (ClientObject speaker, String message)
     {
         PlayerObject player = (PlayerObject)speaker;
+
+        if(player.getTokens().isAdmin() && message.startsWith("@"))
+        {
+            BangManager _bangmgr = (BangManager)BangServer.plreg.getPlaceManager(((PlayerObject) speaker).getPlaceOid());
+            String[] args = message.split("@")[1].split(" ");
+            System.out.println(args[0]);
+            switch(args[0]) // Get @<THIS>
+            {
+                case "adjust_ai_skill":
+                {
+                    int skill = 0;
+                    try {
+                        skill = Integer.parseInt(args[1]);
+                    } catch (Exception ex)
+                    {
+                        SpeakUtil.sendInfo(
+                                speaker, BangCodes.CHAT_MSGS,
+                                "Invalid skill level supplied.");
+                        return false;
+                    }
+                    for(GameAI ai :_bangmgr.getBangConfig().ais)
+                    {
+                        if(ai == null) continue; // What if the AI is null??
+                        ai.skill = skill;
+                    }
+                    SpeakUtil.sendInfo(
+                            speaker, BangCodes.CHAT_MSGS,
+                            "DONE THE DEED.");
+                }
+            }
+            return false; // Don't send this debug to the chat :(
+        }
+
+
         BangServer.DISCORD.commit(DiscordAPIManager.MONITORING, "[" + ServerConfig.nodename + "](" + player.getPlaceOid() + ") " + speaker.who() + ": " + message);
 
         if (_whitelist.isEmpty()) {

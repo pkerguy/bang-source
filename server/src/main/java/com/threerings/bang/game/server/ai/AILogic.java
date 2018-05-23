@@ -15,6 +15,7 @@ import com.threerings.bang.data.UnitConfig;
 
 import com.threerings.bang.game.data.BangAI;
 import com.threerings.bang.game.data.BangObject;
+import com.threerings.bang.game.data.card.Card;
 import com.threerings.bang.game.data.piece.Counter;
 import com.threerings.bang.game.data.piece.Piece;
 import com.threerings.bang.game.data.piece.Unit;
@@ -49,6 +50,21 @@ public abstract class AILogic extends PieceLogic
     public String[] getCardTypes ()
     {
         return null;
+    }
+
+    public Card[] getAICards()
+    {
+        return (Card[])_bangobj.getPlayerCards(_pidx).toArray();
+    }
+
+    public Card[] findCardMatch(String id)
+    {
+        ArrayList<Card> results = new ArrayList<Card>();
+        for(Card c : getAICards())
+        {
+            if(c.getType().equalsIgnoreCase(id)) results.add(c);
+        }
+        return (Card[])results.toArray();
     }
 
     /**

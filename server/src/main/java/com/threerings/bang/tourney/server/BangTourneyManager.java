@@ -3,6 +3,8 @@
 
 package com.threerings.bang.tourney.server;
 
+import com.threerings.bang.tourney.data.BangTourneyConfig;
+import com.threerings.bang.tourney.data.TourneyListingEntry;
 import com.threerings.util.Name;
 
 import com.threerings.presents.server.InvocationException;
@@ -13,8 +15,6 @@ import com.threerings.parlor.tourney.data.TourneyConfig;
 import com.threerings.parlor.tourney.server.TourneyManager;
 
 import com.threerings.bang.server.BangServer;
-import com.threerings.bang.tourney.data.TourneyListingEntry;
-import com.threerings.bang.tourney.data.BangTourneyConfig;
 
 /**
  * Manages running an individual tournament.

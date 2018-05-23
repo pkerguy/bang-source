@@ -9,13 +9,12 @@ import com.jmex.bui.BLabel;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 
+import com.threerings.bang.tourney.data.TourneyListingEntry;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.bang.data.BangCodes;
 
 import com.threerings.bang.util.BangContext;
-
-import com.threerings.bang.tourney.data.TourneyListingEntry;
 
 import com.threerings.parlor.tourney.data.Participant;
 import com.threerings.parlor.tourney.data.TourneyObject;

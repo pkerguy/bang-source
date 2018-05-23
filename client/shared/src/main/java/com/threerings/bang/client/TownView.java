@@ -165,7 +165,10 @@ public class TownView extends BWindow
         add(_admin = GroupLayout.makeHBox(GroupLayout.CENTER));
 
         _admin.add(new BButton("Discord", this, "discord")); // Link resource in game
-        //_admin.add(new BButton("Buy Coins", this, "buycoins")); // Ability to buy coins
+        if(!user.getTokens().isPremium())
+        {
+            _admin.add(new BButton("Buy Premium", this, "buypremium")); // Ability to buy coins
+        }
 
         //_admin.add(_twitchButton = new BButton("LOADING", this, ""));
         /*
@@ -298,6 +301,10 @@ public class TownView extends BWindow
         } else if ("discord".equals(cmd)) {
             try {
                 _bctx.showURL(new URL("http://discord.gg/yourfunworldstudios"));
+            } catch (MalformedURLException e) {}
+        } else if ("buypremium".equals(cmd)) {
+            try {
+                _bctx.showURL(new URL("https://id.yourfunworld.com/buy.php"));
             } catch (MalformedURLException e) {}
         }
     }

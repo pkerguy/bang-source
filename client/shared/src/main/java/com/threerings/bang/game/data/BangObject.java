@@ -5,6 +5,7 @@ package com.threerings.bang.game.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.samskivert.util.ArrayIntSet;
@@ -304,6 +305,14 @@ public class BangObject extends GameObject
 
     /** Contains information on all available cards. */
     public ModifiableDSet<Card> cards = new ModifiableDSet<Card>();
+
+    public ArrayList<Card> getPlayerCards(int pid)
+    {
+        ArrayList<Card> results = new ArrayList<Card>();
+        Card[] data = (Card[])cards.toArrayList().stream().filter(c -> c.owner == pid).toArray();
+        Collections.addAll(results, data);
+        return results;
+    }
 
     /** A field we use to broadcast applied effects. */
     public Effect effect;

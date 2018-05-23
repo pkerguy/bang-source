@@ -24,7 +24,6 @@ import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.bang.util.BangContext;
 import com.threerings.bang.data.BangCodes;
 import com.threerings.bang.tourney.data.BangTourneyCodes;
-import com.threerings.bang.tourney.data.BangTourneyConfig;
 import com.threerings.bang.client.bui.StatusLabel;
 
 import com.threerings.parlor.tourney.client.TourniesService;
@@ -89,28 +88,30 @@ public class TourneyConfigView extends BDecoratedWindow
 
     protected void createTourney ()
     {
-        BangTourneyConfig config = new BangTourneyConfig();
-        config.desc = _desc.getText();
-        if (StringUtil.isBlank(config.desc)) {
-            _statusLabel.setStatus(_msgs.get("m.no_desc"), true);
-            return;
-        }
+        // Rewrite this code.. It's ThreeRings Garbage :(
 
-        // disable the create button to prevent double-clicks
-        _createBtn.setEnabled(false);
-        _statusLabel.setStatus(_msgs.get("m.creating_tourney"), false);
-
-        ResultListener rl = new ResultListener() {
-            public void requestProcessed (Object result) {
-                _ctx.getBangClient().clearPopup(TourneyConfigView.this, true);
-            }
-            public void requestFailed (String cause) {
-                _statusLabel.setStatus(_msgs.get(cause), true);
-                _createBtn.setEnabled(true);
-            }
-        };
-
-        _ctx.getClient().requireService(TourniesService.class).createTourney(config, rl);
+//        BangTourneyConfig config = new BangTourneyConfig();
+//        config.desc = _desc.getText();
+//        if (StringUtil.isBlank(config.desc)) {
+//            _statusLabel.setStatus(_msgs.get("m.no_desc"), true);
+//            return;
+//        }
+//
+//        // disable the create button to prevent double-clicks
+//        _createBtn.setEnabled(false);
+//        _statusLabel.setStatus(_msgs.get("m.creating_tourney"), false);
+//
+//        ResultListener rl = new ResultListener() {
+//            public void requestProcessed (Object result) {
+//                _ctx.getBangClient().clearPopup(TourneyConfigView.this, true);
+//            }
+//            public void requestFailed (String cause) {
+//                _statusLabel.setStatus(_msgs.get(cause), true);
+//                _createBtn.setEnabled(true);
+//            }
+//        };
+//
+//        _ctx.getClient().requireService(TourniesService.class).createTourney(config, rl);
     }
 
     protected BangContext _ctx;

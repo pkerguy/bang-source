@@ -17,6 +17,6 @@ dependencies {
   compile "com.threerings:narya:${naryaVersion}"
 
   // these are only for tools, so we don't export them as depends
-  provided "org.apache.ant:ant:1.7.1"
-  provided "commons-digester:commons-digester:1.8"
+  compile "org.apache.ant:ant:1.7.1"
+  compile "commons-digester:commons-digester:1.8"
 }

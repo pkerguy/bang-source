@@ -23,7 +23,7 @@ public class DeploymentConfig
     /** Contains our deployment version information. */
     public static Config build = new Config("build");
 
-    public static final boolean beta_build = true;
+    public static final boolean beta_build = false;
 
     /**
      * Returns the version associated with this build of the deployment's code.
@@ -34,7 +34,7 @@ public class DeploymentConfig
         {
             return 100029;
         }
-        return 8016; // Change upon each release version
+        return 8017; // Change upon each release version
     }
 
     // Current release: 400+

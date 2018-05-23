@@ -36,13 +36,13 @@ public abstract class ShopManager extends PlaceManager
         if (!checkShopEnabled(user)) {
             return disabledMessage();
         }
-        if(!user.tokens.isPremium() && !user.tokens.isSupport())
-        {
-            if(getIdent() == "saloon" || getIdent() == "hideout")
-            {
-                return BangCodes.E_NOT_PREMIUM;
-            }
-        }
+//        if(!user.tokens.isPremium() && !user.tokens.isSupport())
+//        {
+//            if(getIdent() == "saloon" || getIdent() == "hideout")
+//            {
+//                return BangCodes.E_NOT_PREMIUM;
+//            }
+//        }
 
         String msg = null;
         if (!allowAnonymous() && user.tokens.isAnonymous()) {

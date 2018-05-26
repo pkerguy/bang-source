@@ -1,0 +1,7 @@
+job 1:
+  stage: shadowJar
+  script:
+    - bash gradlew shadowJar
+    - cp -rf client/build/libs/LoaderClient-2.0.jar steam/content/LoaderClient-2.0.jar
+    - cd steam
+    - sh publish.sh

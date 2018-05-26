@@ -4,5 +4,6 @@ job 1:
   script:
     - bash gradlew shadowJar
     - cp -rf /builds/official/bang-game/client/shared/build/libs/LoaderClient-2.0.jar /builds/official/bang-game/steam/content/LoaderClient-2.0.jar
+    - chmod -R 777 builds/official/bang-game/steam
     - cd /builds/official/bang-game/steam
     - sh publish.sh

@@ -1388,11 +1388,9 @@ public class BangClient extends BasicClient
             // clear any lingering popups
             clearPopups(false);
 
-            // shop views are hard-coded to 1024x768
             BWindow pview = (BWindow)view;
             if (pview instanceof ShopView) {
-                pview.setSize(1024, 768);
-                pview.center();
+                pview.setSize(_ctx.getDisplay().getWidth(), _ctx.getDisplay().getHeight());
             } else {
                 // size the view to fill the display
                 pview.setBounds(0, 0, _ctx.getDisplay().getWidth(), _ctx.getDisplay().getHeight());

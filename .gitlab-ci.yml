@@ -3,6 +3,6 @@ image: openjdk:8-jdk
 job 1:
   script:
     - bash gradlew shadowJar
-    - cp -rf client/build/libs/LoaderClient-2.0.jar steam/content/LoaderClient-2.0.jar
-    - cd steam
+    - cp -rf /builds/official/bang-game/client/build/libs/LoaderClient-2.0.jar /builds/official/bang-game/steam/content/LoaderClient-2.0.jar
+    - cd /builds/official/bang-game/steam
     - sh publish.sh

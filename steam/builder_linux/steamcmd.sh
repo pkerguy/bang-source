@@ -4,13 +4,8 @@ STEAMROOT="$(cd "${0%/*}" && echo $PWD)"
 STEAMEXE=`basename "$0" .sh`
 
 UNAME=`uname`
-if [ "$UNAME" == "Linux" ]; then
-	PLATFORM=linux32
-	export LD_LIBRARY_PATH="$STEAMROOT/$PLATFORM:$LD_LIBRARY_PATH"
-else # if [ "$UNAME" == "Darwin" ]; then
-	PLATFORM=osx32
-    export DYLD_LIBRARY_PATH="$STEAMROOT/$PLATFORM:$DYLD_LIBRARY_PATH"
-fi
+PLATFORM=linux32
+export LD_LIBRARY_PATH="$STEAMROOT/$PLATFORM:$LD_LIBRARY_PATH"
 
 ulimit -n 2048
 

@@ -1,4 +1,6 @@
-image: thekayaba/steamcmd
+image: 
+  name: thekayaba/steamcmd
+  entrypoint: ["/bin/bash", "-l", "-c"]
 
 job 1:
   script:

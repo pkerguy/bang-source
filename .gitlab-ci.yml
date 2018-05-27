@@ -1,4 +1,4 @@
-image: docker pull thekayaba/steamcmd
+image: thekayaba/steamcmd
 
 job 1:
   script:

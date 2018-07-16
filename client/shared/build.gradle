@@ -1,14 +1,5 @@
-buildscript {
-  repositories {
-    jcenter()
-  }
-  dependencies {
-    classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
-  }
-}
-
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
+apply plugin: 'maven'
 
 sourceSets {
   main {
@@ -30,34 +21,28 @@ repositories {
   jcenter()
 }
 
-shadowJar {
-  baseName = 'LoaderClient-2.0'
-  classifier = null
-  version = null
-}
-
 dependencies {
-  compile project(":app")
-  compile "com.samskivert:samskivert:1.9"
+    compile project(":app")
+    compile "com.samskivert:samskivert:1.9"
     compile "com.threerings:nenya-core:2.1"
     compile "com.threerings:nenya-tools:2.1"
     compile "com.threerings:narya:${naryaVersion}"
-  compile "com.threerings:vilya:1.6"
-  compile "com.threerings:getdown:1.4"
-  compile "com.threerings:ooo-util:1.4.1"
-  compile "commons-io:commons-io:1.4"
-  compile "org.jcraft:jorbis:0.0.17"
-  compile "com.badlogicgames.gdx:gdx-backend-lwjgl:${gdxVersion}"
-  compile group: "com.badlogicgames.gdx", name: "gdx-platform", version: gdxVersion,
+    compile "com.threerings:vilya:1.6"
+    compile "com.threerings:getdown:1.4"
+    compile "com.threerings:ooo-util:1.4.1"
+    compile "commons-io:commons-io:1.4"
+    compile "org.jcraft:jorbis:0.0.17"
+    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:${gdxVersion}"
+    compile group: "com.badlogicgames.gdx", name: "gdx-platform", version: gdxVersion,
           classifier: "natives-desktop"
-  compile "javax.mail:mail:1.4.5"
-  compile "javax.activation:activation:1.1.1"
-  compile "com.jmr:NitroNet:1.0"
-  compile "org.quartz-scheduler:quartz:2.2.1"
-  compile "org.quartz-scheduler:quartz-jobs:2.2.1"
-  compile 'org.cryptomator:cryptofs:1.5.2'
-  
-  testCompile "junit:junit:4.8.1"
+    compile "javax.mail:mail:1.4.5"
+    compile "javax.activation:activation:1.1.1"
+    compile "com.jmr:NitroNet:1.0"
+    compile "org.quartz-scheduler:quartz:2.2.1"
+    compile "org.quartz-scheduler:quartz-jobs:2.2.1"
+    compile 'org.cryptomator:cryptofs:1.5.2'
+    compile fileTree(dir: '../../lib', include: '*.jar')
+    testCompile "junit:junit:4.8.1"
 }
 
 task copyConfig (type: Copy) {
@@ -71,6 +56,25 @@ task deploy (type: Sync) {
   from jar
   from configurations.runtime
   into project.file("../../build/client")
+}
+
+task writeNewPom << {
+  pom {
+    project {
+      groupId 'org.example'
+      artifactId 'test'
+      version '1.0.0'
+
+      inceptionYear '2008'
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+    }
+  }.writeTo("$buildDir/newpom.xml")
 }
 
 

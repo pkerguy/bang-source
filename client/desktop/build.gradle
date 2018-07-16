@@ -1,0 +1,70 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+  }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+
+sourceSets {
+  main {
+    resources {
+      srcDirs "src/main/resources"
+    }
+  }
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven {
+    url "https://devrepo.mckz.org"
+  }
+  maven {
+    url "https://oss.sonatype.org/content/repositories/snapshots"
+  }
+  jcenter()
+}
+
+shadowJar {
+  baseName = 'client'
+  classifier = null
+  version = null
+}
+
+dependencies {
+  compile project(":app")
+  compile project(":client/shared")
+  compile fileTree(dir: 'lib', include: '*.jar')
+  
+  testCompile "junit:junit:4.8.1"
+}
+
+task copyConfig (type: Copy) {
+  from "../../etc/${deployment}"
+  into sourceSets.main.output.classesDir
+  include "deployment.properties"
+}
+processResources.dependsOn "copyConfig"
+
+task deploy (type: Sync) {
+  from jar
+  from configurations.runtime
+  into project.file("../../build/client")
+}
+
+
+task genService << {
+  ant.taskdef(classpath: configurations.tools.asPath,
+              resource: "com/threerings/presents/tools.properties")
+
+  ant.path(id: "classpath", location: configurations.compile.asPath)
+  ant.genservice(header: "../../lib/SOURCE_HEADER",
+                 classpathref: "classpath") {
+    fileset(dir: "src/main/java", includes: "**/*Service.java")
+  }
+}

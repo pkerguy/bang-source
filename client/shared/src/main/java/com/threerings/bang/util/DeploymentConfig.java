@@ -36,6 +36,14 @@ public class DeploymentConfig
         }
         return 8016; // Change upon each release version
     }
+    public static final String getMasterIP()
+    {
+        return "localhost";
+    }
+    public static final int getMasterPort()
+    {
+        return 25565;
+    }
 
     // Current release: 400+
     // Current beta release: 10000+

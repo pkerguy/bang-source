@@ -17,8 +17,11 @@ import com.threerings.jme.*;
 import com.threerings.jme.camera.*;
 import com.threerings.presents.client.*;
 import com.threerings.util.*;
+import com.yourfunworldstudios.nexusnet.BaseConfig;
+import com.yourfunworldstudios.nexusnet.NexusClient;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.util.logging.*;
 
 import static com.threerings.bang.Log.*;
@@ -117,6 +120,9 @@ public class BangApp extends JmeApp
         // if (_profiling) {
         //     displayStatistics(true);
         // }
+
+        // Initialize NexusNet
+
 
         // initialize our client instance
         _client = new BangClient();

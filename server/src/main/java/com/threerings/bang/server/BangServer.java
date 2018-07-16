@@ -51,7 +51,14 @@ import com.threerings.presents.server.net.*;
 import com.threerings.resource.*;
 import com.threerings.user.depot.*;
 import com.threerings.util.*;
+import com.yourfunworldstudios.nexusnet.BaseConfig;
+import com.yourfunworldstudios.nexusnet.NexusClient;
+import com.yourfunworldstudios.nexusnet.NexusServer;
+import com.yourfunworldstudios.nexusnet.packets.PopupPacket;
+import com.yourfunworldstudios.nexusnet.packets.handler.APIHandler;
+
 import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -353,36 +360,37 @@ public class BangServer extends CrowdServer
      */
     public static void main (String[] args)
     {
-        // // if we're on the dev server, up our long invoker warning to 3 seconds
-        // if (ServerConfig.config.getValue("auto_restart", false)) {
-        //     Invoker.setDefaultLongThreshold(3000L);
-        // }
 
-        Injector injector = Guice.createInjector(new Module());
-        BangServer server = injector.getInstance(BangServer.class);
-        try {
-            if(ServerConfig.townIndex == 0)
-            {
-                int charleyPort = Integer.parseInt(System.getProperty("charley_port"));
-                _netserver = new Server(charleyPort, charleyPort);
-                _netserver.setListener(new com.threerings.bang.server.Server());
-                if(!_netserver.isConnected())
-                {
-                    System.out.println( "Charlie failed to start!");
-                    System.exit(255);
-                }
-            }
-            server.init(injector);
-            server.run();
-            // annoyingly some background threads are hanging, so stick a fork in them for the time
-            // being; when run() returns the dobj mgr and invoker thread will already have exited
-            System.out.println("Server exiting...");
-            System.exit(0);
-        } catch (Exception e) {
-            System.out.println("Server initialization failed.");
-            e.printStackTrace();
-            System.exit(255);
-        }
+//        // // if we're on the dev server, up our long invoker warning to 3 seconds
+//        // if (ServerConfig.config.getValue("auto_restart", false)) {
+//        //     Invoker.setDefaultLongThreshold(3000L);
+//        // }
+//
+//        Injector injector = Guice.createInjector(new Module());
+//        BangServer server = injector.getInstance(BangServer.class);
+//        try {
+//            if(ServerConfig.townIndex == 0)
+//            {
+//                int charleyPort = Integer.parseInt(System.getProperty("charley_port"));
+//                _netserver = new Server(charleyPort, charleyPort);
+//                _netserver.setListener(new com.threerings.bang.server.Server());
+//                if(!_netserver.isConnected())
+//                {
+//                    System.out.println( "Charlie failed to start!");
+//                    System.exit(255);
+//                }
+//            }
+//            server.init(injector);
+//            server.run();
+//            // annoyingly some background threads are hanging, so stick a fork in them for the time
+//            // being; when run() returns the dobj mgr and invoker thread will already have exited
+//            System.out.println("Server exiting...");
+//            System.exit(0);
+//        } catch (Exception e) {
+//            System.out.println("Server initialization failed.");
+//            e.printStackTrace();
+//            System.exit(255);
+//        }
     }
 
     @Override // documentation inherited

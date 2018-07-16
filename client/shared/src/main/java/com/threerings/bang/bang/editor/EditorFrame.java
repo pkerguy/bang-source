@@ -61,7 +61,7 @@ public class EditorFrame
 //        }
 
         cfg = new LwjglApplicationConfiguration();
-        cfg.title = "Bang! Howdy Editor";
+        cfg.title = "Bang! Howdy Editor - Powered by ATHEME Engine";
         cfg.width = 1024;
         cfg.height = 768;
         // cfg.resizble = false;

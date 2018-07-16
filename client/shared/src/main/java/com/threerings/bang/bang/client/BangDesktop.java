@@ -10,11 +10,14 @@ import com.threerings.bang.client.BangApp;
 import com.threerings.bang.client.BangPrefs;
 import com.threerings.bang.steam.SteamStorage;
 import com.threerings.bang.util.DeploymentConfig;
+import com.yourfunworldstudios.nexusnet.BaseConfig;
+import com.yourfunworldstudios.nexusnet.NexusClient;
 import org.cryptomator.cryptofs.CryptoFileSystemProperties;
 import org.cryptomator.cryptofs.CryptoFileSystemProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,7 +36,7 @@ public class BangDesktop {
     public static String sudoUser = "UNKNOWN";
 
     public static void main(String[] args) {
-        System.out.println("Running Bang! Howdy Steam");
+        System.out.println("Running Atheme Engine V2.0.0");
         SteamStorage.init();
         //System.out.println("Your Steam ID is: " + SteamStorage.user.getSteamID().toString());
         boolean windowedFullScreen = false;
@@ -41,7 +44,7 @@ public class BangDesktop {
             windowedFullScreen = true;
         }
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        cfg.title = "Bang! Howdy";
+        cfg.title = "Bang! Howdy - Powered by ATHEME Engine";
         cfg.depth = BangPrefs.getDisplayBPP();
         if(new File("safemode.txt").exists()) {
             cfg.width = 800;
@@ -62,6 +65,7 @@ public class BangDesktop {
         cfg.resizable = false; // This glitches the game when resized if not set.
         // TODO: cfg.setFromDisplayMode when in fullscreen mode
         new LwjglApplication(new BangApp(), cfg);
+
     }
 
     private static class Option {

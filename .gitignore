@@ -8,3 +8,5 @@ log/*.log
 *.class
 *build/*
 server/src/main/resources/server.properties
+*/build/*
+*/lib/*

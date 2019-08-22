@@ -26,7 +26,6 @@ import com.jme.math.Matrix3f;
 import com.jme.math.Plane;
 import com.jme.math.Vector3f;
 import com.jme.renderer.Camera;
-
 import com.samskivert.util.ObserverList;
 import com.threerings.jme.JmeApp;
 

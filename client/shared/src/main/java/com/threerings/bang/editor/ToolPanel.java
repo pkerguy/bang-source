@@ -119,7 +119,7 @@ public class ToolPanel extends JPanel
     protected void addSelectAction (JPanel panel, int keyCode, final int index)
     {
         String key = "select_tool_" + index;
-        panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(
+        panel.getInputMap(JPanel.WHEN_FOCUSED).put(
             KeyStroke.getKeyStroke(keyCode, KeyEvent.CTRL_DOWN_MASK), key);
         panel.getActionMap().put(key, new AbstractAction() {
             public void actionPerformed (ActionEvent e) {

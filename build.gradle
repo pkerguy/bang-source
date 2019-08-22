@@ -48,7 +48,7 @@ allprojects {
       mavenLocal()
       mavenCentral()
       maven {
-        url "https://id.yourfunworld.com"
+        url "https://banghowdy.com/dev"
       }
       maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"

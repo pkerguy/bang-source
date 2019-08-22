@@ -1,6 +1,8 @@
 # Bang! Howdy Pardner
 
-PRIVATE REPOSITORY
 
+This is the Official Sourcecode for http://banghowdy.com
 
-All Rights Reserved
+If you want to fork this repository/game please follow the LICENSE file.
+
+Official Discord: https://discord.gg/HZgfNfz
